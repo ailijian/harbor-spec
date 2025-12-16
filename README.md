@@ -258,7 +258,7 @@ harbor diary log --summary "Refactor utils validation logic" --type refactor --i
 | `harbor audit --semantic` | 调用 LLM 进行语义一致性检查 |
 | `harbor diary draft` | AI 辅助生成决策日志草稿 |
 | `harbor ddt validate` | 验证测试用例与代码版本的绑定关系 |
-| `harbor gen l2` | 自动生成模块级的 README 文档 |
+| `harbor gen l2 --module <module> [--write]` | 生成指定模块的 L2 README（默认预览，`--write` 写入） |
 | `harbor diary log` | 写入结构化的决策日志 |
 
 ## 📊 生成 L2（Anchor）教程
@@ -269,7 +269,7 @@ harbor diary log --summary "Refactor utils validation logic" --type refactor --i
   - 运行 `harbor init` 完成初始化与 `code_roots` 配置
   - 构建索引：`harbor build-index`（读取并更新 `.harbor/cache/l3_index.json`）
 - 生成步骤
-  - 执行：`harbor gen l2`
+  - 执行：`harbor gen l2 --module harbor/core --write`
   - 工具会扫描 `code_roots`，基于索引为每个模块目录生成/更新 `README.md`
 - 成品内容
   - `Public API`：函数名、摘要、`strictness`、`DDT Status`
@@ -278,14 +278,18 @@ harbor diary log --summary "Refactor utils validation logic" --type refactor --i
 - 示例
   ```bash
   harbor build-index
-  harbor gen l2
+  harbor gen l2 --module harbor/core
+  harbor gen l2 --module harbor/core --write
   # 例如会生成：
-  # harbor/utils/README.md
-  # harbor/adapters/python/README.md
+  # harbor/core/README.md
   ```
 - 更新策略
   - 当 Docstring 或实现变更后：先 `harbor build-index`，再 `harbor gen l2`
   - L2 文件包含头部标识：`AUTO-GENERATED ... DO NOT EDIT MANUALLY`，请保持只读
+### 🧭 命令用法速查
+- 预览（不写文件）：`harbor gen l2 --module harbor/core`
+- 写入 README：`harbor gen l2 --module harbor/core --write`
+- 覆盖已有 README：在写入模式下追加 `--force`
 
 ## 🤝 Contribution
 

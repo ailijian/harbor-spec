@@ -72,10 +72,33 @@ def main():
     p_ddt_val.add_argument("--func", type=str, default=None)
     p_gen = sub.add_parser("gen", help="Generate views")
     p_gen_sub = p_gen.add_subparsers(dest="gen_cmd", required=True)
-    p_gen_l2 = p_gen_sub.add_parser("l2", help="Generate L2 README for a module")
-    p_gen_l2.add_argument("--module", type=str, required=True)
-    p_gen_l2.add_argument("--write", action="store_true")
-    p_gen_l2.add_argument("--force", action="store_true")
+    p_gen_l2 = p_gen_sub.add_parser(
+        "l2",
+        help="Generate L2 README for a module",
+        description=(
+            "Generate Anchor (L2) README for the specified module directory.\n\n"
+            "Examples:\n"
+            "  harbor gen l2 --module harbor/core\n"
+            "  harbor gen l2 --module harbor/core --write\n"
+        ),
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+    p_gen_l2.add_argument(
+        "--module",
+        type=str,
+        required=True,
+        help="Target module directory (e.g. harbor/core) to generate L2 view",
+    )
+    p_gen_l2.add_argument(
+        "--write",
+        action="store_true",
+        help="Write README.md to the module directory; default prints Markdown to console",
+    )
+    p_gen_l2.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite existing README.md when used with --write",
+    )
     p_diary = sub.add_parser("diary", help="Diary commands")
     p_diary_sub = p_diary.add_subparsers(dest="diary_cmd", required=True)
     p_diary_log = p_diary_sub.add_parser("log", help="Log a diary entry")
