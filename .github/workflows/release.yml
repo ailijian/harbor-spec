@@ -40,11 +40,12 @@ jobs:
 
       - name: Verify tag matches version
         if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
         run: |
           echo "github.ref=${{ github.ref }}"
           echo "GITHUB_REF=${GITHUB_REF}"
           TAG="${GITHUB_REF#refs/tags/}"
-          PKG_VER="$(python -c 'import tomllib, pathlib; print(tomllib.loads(pathlib.Path(\"pyproject.toml\").read_text(encoding=\"utf-8\"))[\"project\"][\"version\"])')"
+          PKG_VER="$(python -c "import tomllib, pathlib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])")"
           echo "Tag=${TAG}"
           echo "PackageVersion=${PKG_VER}"
           if [ "${TAG}" != "v${PKG_VER}" ] && [ "${TAG}" != "${PKG_VER}" ]; then
