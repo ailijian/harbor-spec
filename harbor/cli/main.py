@@ -10,6 +10,36 @@ from harbor.core.audit import SemanticGuard, resolve_provider
 
 
 def main():
+    """Harbor CLI 入口。
+
+    功能:
+      - 提供 `harbor` 命令的子命令入口：`build-index/status/ddt/gen/diary/audit`。
+      - 解析参数并委派到对应子系统。
+
+    使用场景:
+      - 开发者在本地与 CI 中调用 Harbor 管理上下文。
+
+    依赖:
+      - harbor.core.index.IndexBuilder
+      - harbor.core.sync.SyncEngine
+      - harbor.core.ddt.DDTScanner/DDTValidator
+      - harbor.core.l2.L2Generator
+      - harbor.core.diary.DiaryManager
+      - harbor.core.audit.SemanticGuard
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: once
+
+    Args:
+      None
+
+    Returns:
+      None
+
+    Raises:
+      RuntimeError: 当关键子系统初始化失败时。
+    """
     parser = argparse.ArgumentParser(prog="harbor", description="Harbor-spec CLI")
     sub = parser.add_subparsers(dest="command", required=True)
 

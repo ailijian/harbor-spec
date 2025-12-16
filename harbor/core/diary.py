@@ -88,7 +88,7 @@ class DiaryManager:
           OSError: 目录/文件不可写或创建失败。
           ConfigError: 项目根路径无 `specs/diary` 配置或不可访问。
         """
-        if summary or not isinstance(summary, str):
+        if not summary or not isinstance(summary, str):
             raise ValueError("summary is required")
         if type not in TYPE_SET:
             raise ValueError("invalid type")

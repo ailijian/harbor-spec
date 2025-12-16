@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2025-12-16T11:15:44Z",
+    "generated_at": "2025-12-16T12:03:07Z",
     "schema_version": "1.0.2"
   },
   "files": {
@@ -135,20 +135,20 @@
       "items": []
     },
     "E:/project/harbor-spec/harbor/cli/main.py": {
-      "mtime": 1765882536.0624878,
-      "file_hash": "457947c4e938647033adf484d2a393f343e118d778cd4a391421c4e1c91c8969",
+      "mtime": 1765886578.1320505,
+      "file_hash": "8e68eb3da69ec098c31d8229da13e89be4103d6bd9922080f43366793cf087cc",
       "items": [
         {
           "id": "harbor.cli.main.main",
           "qualified_name": "harbor.cli.main.main",
           "name": "main",
           "signature_hash": "50c8d6946e696d76a26eda6547d327ea3b014b27abd8d56e8065566dbb52100c",
-          "body_hash": "8fc16bab24bb1ed9d22890b0497096bcbdfe35c95e60081f58556ecf3b1aa24d",
-          "contract_hash": null,
-          "docstring_raw_hash": null,
-          "scope": null,
-          "strictness": null,
-          "lineno": 11
+          "body_hash": "cb3104b269a7fb0be53a1931fb077ddfcab6351c8ab03c8c9416f5e03925f6a2",
+          "contract_hash": "b09982ed5c1a942bd9b6264b44e5817666046c5edb4950823d6decb32a6523ac",
+          "docstring_raw_hash": "b9bcfbe11124209e2fe2b017637a31ddf997d50e6474576bf8849c25b4cddfd4",
+          "scope": "public",
+          "strictness": "strict",
+          "lineno": 12
         }
       ]
     },
@@ -558,7 +558,7 @@
       ]
     },
     "E:/project/harbor-spec/harbor/core/diary.py": {
-      "mtime": 1765882564.6986804,
+      "mtime": 1765886565.5493588,
       "file_hash": "2b15c452f522db6af58e2a5fe7b2be253312c5104dcd1e366a20d0e8ef6210c6",
       "items": [
         {
@@ -710,6 +710,96 @@
           "scope": "public",
           "strictness": "strict",
           "lineno": 1
+        }
+      ]
+    },
+    "E:/project/harbor-spec/harbor/core/audit.py": {
+      "mtime": 1765885675.6124797,
+      "file_hash": "c4e158f4e7114abd204e1bf26d8381bc10b8c278bf1efc79be3e7f8163bd0cdc",
+      "items": [
+        {
+          "id": "harbor.core.audit.LLMProvider.infer",
+          "qualified_name": "harbor.core.audit.LLMProvider.infer",
+          "name": "infer",
+          "signature_hash": "b470ad4991c97bb2529d552d4a75fbce31343765e0a7e7a62e9fa4335443569f",
+          "body_hash": "0c823067a4f59cbf27a34ba679d2d709be8eed559a64f05d6b5ae8f0342684a9",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 29
+        },
+        {
+          "id": "harbor.core.audit.MockProvider.infer",
+          "qualified_name": "harbor.core.audit.MockProvider.infer",
+          "name": "infer",
+          "signature_hash": "b470ad4991c97bb2529d552d4a75fbce31343765e0a7e7a62e9fa4335443569f",
+          "body_hash": "50ce9dd12e6db2c037f4380ab828a8347a3800f1eff7fa9adddaf3d9c7149d34",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 37
+        },
+        {
+          "id": "harbor.core.audit.OpenAIProvider.__init__",
+          "qualified_name": "harbor.core.audit.OpenAIProvider.__init__",
+          "name": "__init__",
+          "signature_hash": "506063f2e80b42399094055e9398c91dc49d424c61b8f0045af99967ef6a928a",
+          "body_hash": "6881d882e34372cff1c0da87b149e5c7e97320dfbc683203387f9e8e2fdafaca",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 42
+        },
+        {
+          "id": "harbor.core.audit.OpenAIProvider.infer",
+          "qualified_name": "harbor.core.audit.OpenAIProvider.infer",
+          "name": "infer",
+          "signature_hash": "b470ad4991c97bb2529d552d4a75fbce31343765e0a7e7a62e9fa4335443569f",
+          "body_hash": "4ebe402cad411c05d344140a4ae501bf2397956f480fca0b839ac7b22037d14d",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 49
+        },
+        {
+          "id": "harbor.core.audit.resolve_provider",
+          "qualified_name": "harbor.core.audit.resolve_provider",
+          "name": "resolve_provider",
+          "signature_hash": "50c8d6946e696d76a26eda6547d327ea3b014b27abd8d56e8065566dbb52100c",
+          "body_hash": "1787a968c80a184e2fe90ac961a6b515051e1ae77ec1c765a3d48406e1dfd0ce",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 65
+        },
+        {
+          "id": "harbor.core.audit.SemanticGuard.build_prompt",
+          "qualified_name": "harbor.core.audit.SemanticGuard.build_prompt",
+          "name": "build_prompt",
+          "signature_hash": "31c4dd1c1f7c710deabb91d00cb81130ccadf1f8c3e03cf4b962ed942e71e378",
+          "body_hash": "2b17484c966a3a6d04e4d450feac5e3061e0e3453c5ddc028bbc7269691ad6ed",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 82
+        },
+        {
+          "id": "harbor.core.audit.SemanticGuard.audit",
+          "qualified_name": "harbor.core.audit.SemanticGuard.audit",
+          "name": "audit",
+          "signature_hash": "5a55bd4b24fce902b98a64f209ac3ab8b78484a56bb5d4d34e1d1aae639e4258",
+          "body_hash": "9343e9746dce80218e1cee11d45a82e3f6b491cf4a26485630a56e4c64d725b9",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 95
         }
       ]
     }

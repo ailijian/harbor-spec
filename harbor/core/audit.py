@@ -61,6 +61,28 @@ class OpenAIProvider(LLMProvider):
         except Exception as e:
             return f"[ERROR]: {str(e)}"
 
+PROMPT_TEMPLATES = {
+    "en": (
+        "You are a code auditor. Check if the implementation matches the docstring contract.\n"
+        "Docstring:\n"
+        "{doc}\n"
+        "Code:\n"
+        "{code}\n"
+        "Focus on: Args, Returns, Raises.\n"
+        "If mismatch, output [MISMATCH]: reason. Else output [OK]."
+    ),
+    "zh": (
+        "你是一名代码审计专家。请检查下方的代码实现是否严格符合 Docstring 契约。\n"
+        "Docstring:\n"
+        "{doc}\n"
+        "Code:\n"
+        "{code}\n"
+        "请重点关注: 参数(Args), 返回值(Returns), 异常(Raises)。\n"
+        "若发现不一致，请输出 [MISMATCH]: 具体原因（请用中文简述）。\n"
+        "若完全一致，请输出 [OK]。"
+    ),
+}
+
 
 def resolve_provider() -> LLMProvider:
     load_dotenv()
@@ -82,15 +104,9 @@ class SemanticGuard:
     def build_prompt(self, contract: FunctionContract, source_code: str) -> str:
         doc = contract.docstring or ""
         lines = source_code.replace("\r\n", "\n").strip()
-        return (
-            "You are a code auditor. Check if the implementation matches the docstring contract.\n"
-            "Docstring:\n"
-            f"{doc}\n"
-            "Code:\n"
-            f"{lines}\n"
-            "Focus on: Args, Returns, Raises.\n"
-            "If mismatch, output [MISMATCH]: reason. Else output [OK]."
-        )
+        lang = (os.getenv("HARBOR_LANGUAGE") or "en").strip().lower()
+        tmpl = PROMPT_TEMPLATES.get(lang, PROMPT_TEMPLATES["en"])
+        return tmpl.format(doc=doc, code=lines)
 
     def audit(self, contract: FunctionContract, source_text: str, provider: LLMProvider) -> AuditResult:
         node = find_function_node(source_text, contract.lineno, contract.name)
