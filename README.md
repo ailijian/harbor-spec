@@ -102,11 +102,24 @@ cp .env.example .env
 
 ### 3\. Initialize
 
-构建初始索引，接管当前代码库：
+使用智能初始化生成配置并避免 `scanned=0`：
+
+```bash
+harbor init
+# 若已存在配置需要覆盖：
+# harbor init --force
+```
+
+初始化完成后，构建初始索引接管当前代码库：
 
 ```bash
 harbor build-index
 ```
+
+### Tips: 避免 `scanned=0`
+- 先运行 `harbor init` 生成 `.harbor/config.yaml`，确保 `code_roots` 指向真实代码位置（如 `src/**` 或包目录）。
+- 使用 `--force` 重新初始化以覆盖不合适的旧配置。
+- 如为脚本型仓库（根目录只有若干 `.py`），`harbor init` 会生成 `code_roots: ['*.py']`；若没有 `.py`，会兜底为 `['**/*.py']`。
 
 ## 🎮 Workflow: A Day with Harbor
 
@@ -155,6 +168,7 @@ harbor diary log --summary "Refactor utils validation logic" --type refactor --i
 
 | Command | Description |
 | :--- | :--- |
+| `harbor init` | 智能探测项目结构并生成 `.harbor/config.yaml`（支持 `--force` 覆盖） |
 | `harbor status` | 检查代码与索引的差异（Drift检测） |
 | `harbor build-index` | 更新 L3 索引缓存 (类似 `git commit`) |
 | `harbor audit --semantic` | 调用 LLM 进行语义一致性检查 |
