@@ -5,6 +5,8 @@ description = "Harbor-spec v1.0.2 reference implementation (Python-only)"
 requires-python = ">=3.10"
 dependencies = [
   "pyyaml",
+  "openai>=1.0.0",
+  "python-dotenv>=1.0.0",
 ]
 
 [project.scripts]
