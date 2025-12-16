@@ -1,0 +1,18 @@
+[project]
+name = "harbor-spec"
+version = "0.0.1"
+description = "Harbor-spec v1.0.2 reference implementation (Python-only)"
+requires-python = ">=3.10"
+dependencies = [
+  "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
