@@ -47,6 +47,7 @@ def main():
     p_audit = sub.add_parser("audit", help="Audit commands")
     p_audit.add_argument("--semantic", action="store_true")
     p_audit.add_argument("--diff-only", action="store_true", default=True)
+    p_audit.add_argument("--debug", action="store_true", default=False)
 
     args = parser.parse_args()
     if args.command == "build-index":
@@ -137,7 +138,8 @@ def main():
         rep = eng.check_status()
         provider = resolve_provider()
         guard = SemanticGuard()
-        print("Harbor Semantic Audit:")
+        model = getattr(provider, "model", "n/a")
+        print(f"Harbor Semantic Audit (Provider: {provider.name} Model: {model}):")
         targets = []
         targets.extend(rep.drift)
         targets.extend(rep.modified)
@@ -161,6 +163,8 @@ def main():
                 out_lines.append(f"ERROR {e.id} :: contract not found")
                 continue
             res = guard.audit(matched, src, provider)
+            if args.debug:
+                print(f"[DEBUG] Prompt >>>\n{res.prompt or ''}\n[DEBUG] Raw <<<\n{res.raw_output or ''}")
             if res.status == "OK":
                 out_lines.append(f"OK {e.id}")
             elif res.status == "MISMATCH":

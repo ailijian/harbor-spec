@@ -19,6 +19,8 @@ class AuditResult:
     reason: Optional[str]
     provider: str
     func_id: str
+    prompt: Optional[str] = None
+    raw_output: Optional[str] = None
 
 
 class LLMProvider:
@@ -30,15 +32,15 @@ class LLMProvider:
 
 class MockProvider(LLMProvider):
     name = "mock"
+    model = "n/a"
 
     def infer(self, prompt: str) -> str:
         return "[OK]"
 
 
 class OpenAIProvider(LLMProvider):
-    name = "openai"
-
-    def __init__(self, api_key: str, base_url: str, model: str) -> None:
+    def __init__(self, provider_name: str, api_key: str, base_url: str, model: str) -> None:
+        self.name = provider_name
         self.model = model
         if OpenAI is None:
             raise RuntimeError("openai library not available")
@@ -63,14 +65,14 @@ class OpenAIProvider(LLMProvider):
 def resolve_provider() -> LLMProvider:
     load_dotenv()
     prov = (os.getenv("HARBOR_LLM_PROVIDER") or "mock").strip().lower()
-    if prov == "openai":
+    if prov != "mock":
         api_key = os.getenv("HARBOR_LLM_API_KEY") or ""
         base_url = os.getenv("HARBOR_LLM_BASE_URL") or "https://api.openai.com/v1"
         model = os.getenv("HARBOR_LLM_MODEL") or "gpt-4o-mini"
         if not api_key:
             return MockProvider()
         try:
-            return OpenAIProvider(api_key=api_key, base_url=base_url, model=model)
+            return OpenAIProvider(provider_name=prov, api_key=api_key, base_url=base_url, model=model)
         except Exception:
             return MockProvider()
     return MockProvider()
@@ -105,11 +107,11 @@ class SemanticGuard:
         try:
             out = provider.infer(prompt).strip()
         except Exception as e:
-            return AuditResult(status="ERROR", reason=str(e), provider=provider.name, func_id=contract.id)
+            return AuditResult(status="ERROR", reason=str(e), provider=provider.name, func_id=contract.id, prompt=prompt, raw_output=None)
         up = out.upper()
         if up.startswith("[MISMATCH]"):
             reason = out.split("]", 1)[1].strip(": ").strip()
-            return AuditResult(status="MISMATCH", reason=reason or "mismatch", provider=provider.name, func_id=contract.id)
+            return AuditResult(status="MISMATCH", reason=reason or "mismatch", provider=provider.name, func_id=contract.id, prompt=prompt, raw_output=out)
         if "[OK]" in up:
-            return AuditResult(status="OK", reason=None, provider=provider.name, func_id=contract.id)
-        return AuditResult(status="ERROR", reason="unrecognized output", provider=provider.name, func_id=contract.id)
+            return AuditResult(status="OK", reason=None, provider=provider.name, func_id=contract.id, prompt=prompt, raw_output=out)
+        return AuditResult(status="ERROR", reason="unrecognized output", provider=provider.name, func_id=contract.id, prompt=prompt, raw_output=out)
