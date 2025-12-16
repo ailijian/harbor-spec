@@ -7,6 +7,13 @@ from rich.progress import Progress, TextColumn, BarColumn, MofNCompleteColumn, T
 from rich.panel import Panel
 from rich.prompt import Prompt
 
+# [env] 尝试加载 .env 文件
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
 from harbor.core.ddt import DDTScanner, DDTValidator
