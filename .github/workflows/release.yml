@@ -53,7 +53,7 @@ jobs:
           fi
 
       - name: Publish to PyPI (OIDC)
-        if: ${{ !secrets.PYPI_API_TOKEN }}
+        if: ${{ secrets.PYPI_API_TOKEN == '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
@@ -61,7 +61,7 @@ jobs:
           verbose: true
 
       - name: Publish to PyPI (API token)
-        if: ${{ secrets.PYPI_API_TOKEN }}
+        if: ${{ secrets.PYPI_API_TOKEN != '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
