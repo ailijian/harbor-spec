@@ -4,6 +4,7 @@ from pathlib import Path
 from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
 from harbor.core.ddt import DDTScanner, DDTValidator
+from harbor.core.l2 import L2Generator
 
 
 def main():
@@ -21,6 +22,12 @@ def main():
     p_ddt_val = p_ddt_sub.add_parser("validate", help="Validate DDT bindings against index and version map")
     p_ddt_val.add_argument("--module", type=str, default=None)
     p_ddt_val.add_argument("--func", type=str, default=None)
+    p_gen = sub.add_parser("gen", help="Generate views")
+    p_gen_sub = p_gen.add_subparsers(dest="gen_cmd", required=True)
+    p_gen_l2 = p_gen_sub.add_parser("l2", help="Generate L2 README for a module")
+    p_gen_l2.add_argument("--module", type=str, required=True)
+    p_gen_l2.add_argument("--write", action="store_true")
+    p_gen_l2.add_argument("--force", action="store_true")
 
     args = parser.parse_args()
     if args.command == "build-index":
@@ -78,6 +85,17 @@ def main():
                 print(f"  {typ.upper()} {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path}) :: {msg}")
         if not rep.valid and not rep.violations:
             print("\nNo DDT bindings found.")
+    elif args.command == "gen" and args.gen_cmd == "l2":
+        gen = L2Generator()
+        md = gen.generate(args.module)
+        if args.write:
+            target = gen.write(args.module, md, force=args.force)
+            if target is None:
+                print("No changes needed.")
+            else:
+                print(f"Wrote: {target.as_posix()}")
+        else:
+            print(md)
 
 
 if __name__ == "__main__":
