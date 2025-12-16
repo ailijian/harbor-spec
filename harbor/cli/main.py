@@ -7,6 +7,7 @@ from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.l2 import L2Generator
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
+from harbor.core.init import Initializer
 
 
 def main():
@@ -78,6 +79,8 @@ def main():
     p_audit.add_argument("--semantic", action="store_true")
     p_audit.add_argument("--diff-only", action="store_true", default=True)
     p_audit.add_argument("--debug", action="store_true", default=False)
+    p_init = sub.add_parser("init", help="Initialize Harbor config")
+    p_init.add_argument("--force", action="store_true")
 
     args = parser.parse_args()
     if args.command == "build-index":
@@ -210,6 +213,16 @@ def main():
         else:
             for ln in out_lines:
                 print(ln)
+    elif args.command == "init":
+        init = Initializer()
+        if init.config_path.exists() and not args.force:
+            print("Config file already exists.")
+            return
+        roots = init.detect_code_roots()
+        print(f"Auto-detected code roots: {roots}")
+        init.write_config(roots, force=args.force)
+        print("Initialized Harbor in current directory.")
+        print("Run 'harbor build-index' to start.")
 
 
 if __name__ == "__main__":
