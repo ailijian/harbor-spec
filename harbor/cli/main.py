@@ -6,6 +6,7 @@ from harbor.core.sync import SyncEngine
 from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.l2 import L2Generator
 from harbor.core.diary import DiaryManager
+from harbor.core.audit import SemanticGuard, resolve_provider
 
 
 def main():
@@ -43,6 +44,9 @@ def main():
     p_diary_export = p_diary_sub.add_parser("export", help="Export diary entries to Markdown")
     p_diary_export.add_argument("--since", type=str, default=None)
     p_diary_export.add_argument("--visibility", type=str, default="repo")
+    p_audit = sub.add_parser("audit", help="Audit commands")
+    p_audit.add_argument("--semantic", action="store_true")
+    p_audit.add_argument("--diff-only", action="store_true", default=True)
 
     args = parser.parse_args()
     if args.command == "build-index":
@@ -128,6 +132,46 @@ def main():
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")
         print(md)
+    elif args.command == "audit" and args.semantic:
+        eng = SyncEngine()
+        rep = eng.check_status()
+        provider = resolve_provider()
+        guard = SemanticGuard()
+        print("Harbor Semantic Audit:")
+        targets = []
+        targets.extend(rep.drift)
+        targets.extend(rep.modified)
+        if not args.diff_only:
+            targets.extend(rep.contract_changed)
+        out_lines = []
+        for e in targets:
+            try:
+                src = Path(e.file_path).read_text(encoding="utf-8")
+            except Exception as ex:
+                out_lines.append(f"ERROR {e.id} :: {str(ex)}")
+                continue
+            adapter = IndexBuilder().adapter  # reuse python adapter
+            contracts = list(adapter.parse_file(e.file_path))
+            matched = None
+            for fc in contracts:
+                if fc.id == e.id:
+                    matched = fc
+                    break
+            if matched is None:
+                out_lines.append(f"ERROR {e.id} :: contract not found")
+                continue
+            res = guard.audit(matched, src, provider)
+            if res.status == "OK":
+                out_lines.append(f"OK {e.id}")
+            elif res.status == "MISMATCH":
+                out_lines.append(f"POSSIBLE_SEMANTIC_DRIFT {e.id} :: {res.reason or ''}")
+            else:
+                out_lines.append(f"ERROR {e.id} :: {res.reason or ''}")
+        if not out_lines:
+            print("No targets.")
+        else:
+            for ln in out_lines:
+                print(ln)
 
 
 if __name__ == "__main__":
