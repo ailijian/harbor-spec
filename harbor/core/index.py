@@ -91,18 +91,22 @@ class IndexBuilder:
             if incremental and prev and prev.get("mtime") == mtime and prev.get("file_hash") == fhash:
                 skipped += 1
                 continue
-            source = p.read_text(encoding="utf-8")
-            items: List[Dict[str, Any]] = []
-            for fc in self.adapter.parse_file(fp):
-                node = find_function_node(source, fc.lineno, fc.name)
-                body_hash = compute_body_hash(source, node) if node else ""
-                items.append(self._index_entry(fc, body_hash))
-            files_index[fp] = {
-                "mtime": mtime,
-                "file_hash": fhash,
-                "items": items,
-            }
-            updated += 1
+            try:
+                source = p.read_text(encoding="utf-8")
+                items: List[Dict[str, Any]] = []
+                for fc in self.adapter.parse_file(fp):
+                    node = find_function_node(source, fc.lineno, fc.name)
+                    body_hash = compute_body_hash(source, node) if node else ""
+                    items.append(self._index_entry(fc, body_hash))
+                files_index[fp] = {
+                    "mtime": mtime,
+                    "file_hash": fhash,
+                    "items": items,
+                }
+                updated += 1
+            except Exception:
+                skipped += 1
+                continue
         payload = {
             "meta": {
                 "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),

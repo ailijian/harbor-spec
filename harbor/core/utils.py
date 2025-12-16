@@ -35,22 +35,24 @@ def compute_body_hash(source: str, fn_node: ast.AST) -> str:
         body = "".join(chunks)
     if not body:
         return hashlib.sha256(b"").hexdigest()
-    tokens = tokenize.generate_tokens(io.StringIO(body).readline)
-    parts: List[str] = []
-    for tok in tokens:
-        if tok.type in (
-            tokenize.COMMENT,
-            tokenize.NL,
-            tokenize.NEWLINE,
-            tokenize.INDENT,
-            tokenize.DEDENT,
-            tokenize.ENCODING,
-        ):
-            continue
-        val = tok.string.strip()
-        if not val:
-            continue
-        parts.append(val)
+    try:
+        tokens = tokenize.generate_tokens(io.StringIO(body).readline)
+        parts: List[str] = []
+        for tok in tokens:
+            if tok.type in (
+                tokenize.COMMENT,
+                tokenize.NL,
+                tokenize.NEWLINE,
+                tokenize.INDENT,
+                tokenize.DEDENT,
+                tokenize.ENCODING,
+            ):
+                continue
+            val = tok.string.strip()
+            if not val:
+                continue
+            parts.append(val)
+    except (tokenize.TokenError, IndentationError):
+        return "0000000000000000000000000000000000000000000000000000000000000000"
     normalized = " ".join(parts)
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
-
