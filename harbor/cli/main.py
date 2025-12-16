@@ -3,6 +3,7 @@ from pathlib import Path
 
 from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
+from harbor.core.ddt import DDTScanner, DDTValidator
 
 
 def main():
@@ -15,6 +16,11 @@ def main():
     p_build.add_argument("--cache-dir", type=str, default=None)
 
     p_status = sub.add_parser("status", help="Show Harbor context status (no implicit index update)")
+    p_ddt_validate = sub.add_parser("ddt", help="DDT commands")
+    p_ddt_sub = p_ddt_validate.add_subparsers(dest="ddt_cmd", required=True)
+    p_ddt_val = p_ddt_sub.add_parser("validate", help="Validate DDT bindings against index and version map")
+    p_ddt_val.add_argument("--module", type=str, default=None)
+    p_ddt_val.add_argument("--func", type=str, default=None)
 
     args = parser.parse_args()
     if args.command == "build-index":
@@ -51,6 +57,27 @@ def main():
         total = sum(rep.counts.values())
         if total == 0:
             print("\nNo changes detected.")
+    elif args.command == "ddt" and args.ddt_cmd == "validate":
+        scanner = DDTScanner()
+        bindings = scanner.scan_tests()
+        if args.func:
+            bindings = [b for b in bindings if b.func_id == args.func]
+        if args.module:
+            bindings = [b for b in bindings if b.func_id.startswith(args.module)]
+        validator = DDTValidator()
+        rep = validator.validate(bindings)
+        print("Harbor DDT Validation:")
+        print(f"Bindings scanned: {len(bindings)}")
+        if rep.valid:
+            print("\nValid bindings:")
+            for b in rep.valid:
+                print(f"  OK {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path})")
+        if rep.violations:
+            print("\nViolations:")
+            for typ, b, msg in rep.violations:
+                print(f"  {typ.upper()} {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path}) :: {msg}")
+        if not rep.valid and not rep.violations:
+            print("\nNo DDT bindings found.")
 
 
 if __name__ == "__main__":

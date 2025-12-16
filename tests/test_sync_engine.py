@@ -4,6 +4,7 @@ import json
 
 from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
+from harbor.test_utils import harbor_ddt_target
 
 
 def write_module(tmp_path: Path, content: str, name: str = "mod.py") -> Path:
@@ -12,6 +13,7 @@ def write_module(tmp_path: Path, content: str, name: str = "mod.py") -> Path:
     return p
 
 
+@harbor_ddt_target(func="harbor.core.sync.SyncEngine.check_status", l3_version=1, strategy="strict")
 def test_sync_engine_drift_detection(tmp_path: Path):
     cache_dir = tmp_path / ".harbor" / "cache"
     code_root = tmp_path / "src"
