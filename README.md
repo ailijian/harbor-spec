@@ -190,11 +190,12 @@ harbor status
 让 Harbor 的 AI 审计员检查你的修改是否违背了契约。
 
 ```bash
-harbor audit --semantic --format plain
-# 输出（plain 单行）：POSSIBLE_SEMANTIC_DRIFT harbor.utils.func :: 代码抛出 ValueError 但 Docstring 未声明
+harbor audit --semantic
+# 默认输出（JSONL，一行一个结果，适合管道）：
+# {"status":"POSSIBLE_SEMANTIC_DRIFT","func_id":"harbor.utils.func","file_path":"E:/project/.../utils.py","provider":"baidu","model":"ernie-4.0-turbo-8k","reason":"代码抛出 ValueError 但 Docstring 未声明"}
 #
-# 结构化输出（JSONL，一行一个结果，适合管道）：
-harbor audit --semantic --format jsonl
+# 纯文本单行（如需人读友好可选）：
+harbor audit --semantic --format plain
 # {"status":"POSSIBLE_SEMANTIC_DRIFT","func_id":"harbor.utils.func","file_path":"E:/project/.../utils.py","provider":"baidu","model":"ernie-4.0-turbo-8k","reason":"代码抛出 ValueError 但 Docstring 未声明"}
 ```
 
@@ -264,7 +265,7 @@ harbor diary log --summary "Refactor utils validation logic" --type refactor --i
 | `harbor config list` | 使用 Rich 表格打印当前配置（profile、code_roots、exclude_paths） |
 | `harbor config add <path>` | 追加 `<path>` 到 `code_roots`（自动去重并写回） |
 | `harbor config remove <path>` | 从 `code_roots` 移除 `<path>`（写回配置） |
-| `harbor audit --semantic` | 调用 LLM 进行语义一致性检查（支持 `--format jsonl`） |
+| `harbor audit --semantic` | 调用 LLM 进行语义一致性检查（默认 JSONL，支持 `--format plain`） |
 | `harbor diary draft` | AI 辅助生成决策日志草稿 |
 | `harbor ddt validate` | 验证测试用例与代码版本的绑定关系 |
 | `harbor gen l2 --module <module> [--write]` | 生成指定模块的 L2 README（默认预览，`--write` 写入） |

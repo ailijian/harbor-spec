@@ -128,7 +128,7 @@ def main():
     p_audit.add_argument("--semantic", action="store_true")
     p_audit.add_argument("--diff-only", action="store_true", default=True)
     p_audit.add_argument("--debug", action="store_true", default=False)
-    p_audit.add_argument("--format", type=str, choices=["plain", "jsonl"], default="plain")
+    p_audit.add_argument("--format", type=str, choices=["plain", "jsonl"], default="jsonl")   
     p_init = sub.add_parser("init", help="Initialize Harbor config")
     p_init.add_argument("--force", action="store_true")
 
