@@ -4,6 +4,7 @@ import yaml
 from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
+import json
 from rich.panel import Panel
 from rich.prompt import Prompt
 
@@ -127,6 +128,7 @@ def main():
     p_audit.add_argument("--semantic", action="store_true")
     p_audit.add_argument("--diff-only", action="store_true", default=True)
     p_audit.add_argument("--debug", action="store_true", default=False)
+    p_audit.add_argument("--format", type=str, choices=["plain", "jsonl"], default="plain")
     p_init = sub.add_parser("init", help="Initialize Harbor config")
     p_init.add_argument("--force", action="store_true")
 
@@ -402,7 +404,15 @@ def main():
             try:
                 src = Path(e.file_path).read_text(encoding="utf-8")
             except Exception as ex:
-                out_lines.append(f"ERROR {e.id} :: {str(ex)}")
+                if args.format == "jsonl":
+                    print(json.dumps({
+                        "status": "ERROR",
+                        "func_id": e.id,
+                        "file_path": e.file_path,
+                        "reason": str(ex)
+                    }, ensure_ascii=False))
+                else:
+                    out_lines.append(f"ERROR {e.id} :: {str(ex)}")
                 continue
             adapter = IndexBuilder().adapter  # reuse python adapter
             contracts = list(adapter.parse_file(e.file_path))
@@ -412,22 +422,43 @@ def main():
                     matched = fc
                     break
             if matched is None:
-                out_lines.append(f"ERROR {e.id} :: contract not found")
+                if args.format == "jsonl":
+                    print(json.dumps({
+                        "status": "ERROR",
+                        "func_id": e.id,
+                        "file_path": e.file_path,
+                        "reason": "contract not found"
+                    }, ensure_ascii=False))
+                else:
+                    out_lines.append(f"ERROR {e.id} :: contract not found")
                 continue
             res = guard.audit(matched, src, provider)
             if args.debug:
                 print(f"[DEBUG] Prompt >>>\n{res.prompt or ''}\n[DEBUG] Raw <<<\n{res.raw_output or ''}")
-            if res.status == "OK":
-                out_lines.append(f"OK {e.id}")
-            elif res.status == "MISMATCH":
-                out_lines.append(f"POSSIBLE_SEMANTIC_DRIFT {e.id} :: {res.reason or ''}")
+            reason = " ".join((res.reason or "").split())
+            if args.format == "jsonl":
+                print(json.dumps({
+                    "status": "OK" if res.status == "OK" else ("POSSIBLE_SEMANTIC_DRIFT" if res.status == "MISMATCH" else "ERROR"),
+                    "func_id": e.id,
+                    "file_path": e.file_path,
+                    "provider": provider.name,
+                    "model": model,
+                    "reason": reason if res.status != "OK" else None
+                }, ensure_ascii=False))
             else:
-                out_lines.append(f"ERROR {e.id} :: {res.reason or ''}")
+                if res.status == "OK":
+                    out_lines.append(f"OK {e.id}")
+                elif res.status == "MISMATCH":
+                    out_lines.append(f"POSSIBLE_SEMANTIC_DRIFT {e.id} :: {reason}")
+                else:
+                    out_lines.append(f"ERROR {e.id} :: {reason}")
         if not out_lines:
-            print("No targets.")
+            if args.format == "plain":
+                print("No targets.")
         else:
-            for ln in out_lines:
-                print(ln)
+            if args.format == "plain":
+                for ln in out_lines:
+                    print(ln)
     elif args.command == "init":
         init = Initializer()
         if init.config_path.exists() and not args.force:
