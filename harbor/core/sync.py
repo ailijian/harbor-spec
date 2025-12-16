@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import yaml
 
 from harbor.adapters.python.parser import PythonAdapter, FunctionContract
-from harbor.core.utils import compute_body_hash, find_function_node
+from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
 
 
 @dataclass
@@ -37,6 +37,7 @@ class SyncEngine:
         self.adapter = PythonAdapter()
         self.config = self._load_config(self.config_path)
         self.code_roots = self.config.get("code_roots", ["harbor/**"])
+        self.exclude_paths = self.config.get("exclude_paths", [])
 
     def check_status(self) -> StatusReport:
         """对比缓存索引与当前代码，输出 Harbor 上下文状态。
@@ -146,28 +147,4 @@ class SyncEngine:
         return json.loads(self.cache_file.read_text(encoding="utf-8"))
 
     def _iter_py_files(self) -> List[Path]:
-        roots = []
-        base = Path.cwd()
-        for pattern in self.code_roots:
-            if "**" in pattern or "*" in pattern:
-                for p in base.glob(pattern):
-                    if p.is_file() and p.suffix == ".py":
-                        roots.append(p)
-                    elif p.is_dir():
-                        roots.extend([x for x in p.rglob("*.py")])
-            else:
-                p = base / pattern
-                if p.is_dir():
-                    roots.extend([x for x in p.rglob("*.py")])
-                elif p.is_file() and p.suffix == ".py":
-                    roots.append(p)
-        seen = set()
-        dedup = []
-        for p in roots:
-            k = p.resolve().as_posix()
-            if k in seen:
-                continue
-            seen.add(k)
-            dedup.append(p)
-        return dedup
-
+        return iter_project_files(self.code_roots, self.exclude_paths)

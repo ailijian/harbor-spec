@@ -219,8 +219,10 @@ def main():
         else:
             print("No changes. Path not in code_roots.")
     elif args.command == "status":
-        eng = SyncEngine()
-        rep = eng.check_status()
+        console = Console()
+        with console.status("[bold blue][Scanning] Checking file system changes...", spinner="dots"):
+            eng = SyncEngine()
+            rep = eng.check_status()
         total = sum(rep.counts.values())
         if total == 0:
             print("No changes detected.")
