@@ -194,7 +194,49 @@ harbor audit --semantic
 # 输出: POSSIBLE_SEMANTIC_DRIFT ... [MISMATCH]: 代码抛出了 ValueError 但文档中未声明...
 ```
 
-### 5\. Lock & Record
+### 5\. AI 智能日志（Smart Diary）
+
+当你准备记录一次重要变更的“为什么”和“做了什么”，可以让 Harbor 先为你生成一份 AI 草稿，然后在终端中确认或微调：
+
+```bash
+harbor diary draft --visibility repo
+# 若遇到“AI 输出不可解析为 JSON”，可使用调试模式查看原始输出：
+harbor diary draft --visibility repo --debug
+# 过程:
+# [Status] Analyzing code changes...
+# [AI] Drafting diary entry...
+# 终端展示 Panel:
+# Summary: ...
+# Type: refactor
+# Importance: normal
+# Details:
+#   - 说明 WHY 和 WHAT（支持 Markdown）
+#
+# 提示: Save this entry? [Y]es / [e]dit summary / [n]o
+# 选择 Y 写入；选择 e 可编辑 Summary 后写入；选择 n 放弃
+```
+
+前置条件：
+- 已配置 LLM（见上文 Configuration），否则命令会友好提示配置 `HARBOR_LLM_PROVIDER` 和 `HARBOR_LLM_API_KEY`。
+- 先运行 `harbor status` 确认存在 Drift/Modified；不要在生成草稿前运行 `harbor build-index`，否则差异会被快照消化。保存草稿后再运行 `harbor build-index`。
+
+生成策略：
+- 自动聚合 `Drift/Modified` 的受影响函数，提取源码片段（自动截断以避免超长上下文）。
+- 通过 LLM 生成严格 JSON 的草稿字段：`summary/type/importance/details`。
+- 可见性通过 `--visibility` 参数控制（默认 `repo`）。
+
+兼容配置（ERNIE 示例）：
+- `.env` 设置：
+  - `HARBOR_LLM_PROVIDER=openai`
+  - `HARBOR_LLM_BASE_URL=<你的ERNIE OpenAI兼容端点>/v1`
+  - `HARBOR_LLM_MODEL=ernie-4.0`
+  - `HARBOR_LLM_API_KEY=<你的密钥>`
+  - `HARBOR_LANGUAGE=zh`
+  
+故障排查：
+- 若端点不支持 `response_format=json_object`，可能返回包裹文本；使用 `--debug` 查看原始输出，或切换到支持结构化输出的模型。
+
+### 6\. Lock & Record
 
 修复问题后，更新索引并记录决策日志。
 
@@ -214,6 +256,7 @@ harbor diary log --summary "Refactor utils validation logic" --type refactor --i
 | `harbor config add <path>` | 追加 `<path>` 到 `code_roots`（自动去重并写回） |
 | `harbor config remove <path>` | 从 `code_roots` 移除 `<path>`（写回配置） |
 | `harbor audit --semantic` | 调用 LLM 进行语义一致性检查 |
+| `harbor diary draft` | AI 辅助生成决策日志草稿 |
 | `harbor ddt validate` | 验证测试用例与代码版本的绑定关系 |
 | `harbor gen l2` | 自动生成模块级的 README 文档 |
 | `harbor diary log` | 写入结构化的决策日志 |

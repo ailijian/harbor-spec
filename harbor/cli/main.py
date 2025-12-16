@@ -4,6 +4,8 @@ import yaml
 from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
+from rich.panel import Panel
+from rich.prompt import Prompt
 
 from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
@@ -11,6 +13,7 @@ from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.l2 import L2Generator
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
+from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
 from harbor.core.init import Initializer
 
 
@@ -87,6 +90,9 @@ def main():
     p_diary_export = p_diary_sub.add_parser("export", help="Export diary entries to Markdown")
     p_diary_export.add_argument("--since", type=str, default=None)
     p_diary_export.add_argument("--visibility", type=str, default="repo")
+    p_diary_draft = p_diary_sub.add_parser("draft", help="Generate diary draft with AI")
+    p_diary_draft.add_argument("--visibility", type=str, default="repo")
+    p_diary_draft.add_argument("--debug", action="store_true", default=False)
     p_audit = sub.add_parser("audit", help="Audit commands")
     p_audit.add_argument("--semantic", action="store_true")
     p_audit.add_argument("--diff-only", action="store_true", default=True)
@@ -266,6 +272,65 @@ def main():
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")
         print(md)
+    elif args.command == "diary" and args.diary_cmd == "draft":
+        console = Console()
+        with console.status("[bold blue][Status] Analyzing code changes...", spinner="dots"):
+            eng = SyncEngine()
+            rep = eng.check_status()
+        if (rep.counts.get("drift", 0) + rep.counts.get("modified", 0)) == 0:
+            print("No changes detected. Nothing to draft.")
+            print("\n[Tip] 'diary draft' analyzes unindexed changes (Drift/Modified).")
+            print("If you just ran 'harbor build-index', the snapshot matches current code.")
+            print("Modify code first, then run 'harbor diary draft' before updating the index.")
+            return
+        drafter = DiaryDrafter(sync_engine=eng)
+        try:
+            with console.status("[bold magenta][AI] Drafting diary entry...", spinner="line"):
+                draft = drafter.generate_draft()
+        except LLMNotConfiguredError as e:
+            print(str(e))
+            print("请在环境中设置 HARBOR_LLM_PROVIDER=openai 与 HARBOR_LLM_API_KEY，再重试。")
+            return
+        except Exception as e:
+            print(f"AI drafting failed: {str(e)}")
+            if args.debug:
+                # 输出最近一次 prompt 与原始输出的调试信息
+                provider = resolve_provider()
+                print(f"[DEBUG] Provider: {provider.name} Model: {getattr(provider, 'model', 'n/a')}")
+                print("[DEBUG] 提示：确保端点支持 JSON 结构化输出（response_format=json_object）。")
+                print("[DEBUG] 如为 ERNIE 兼容端点，请设置 HARBOR_LLM_BASE_URL 和 HARBOR_LLM_MODEL=ernie-4.0。")
+                if getattr(drafter, "last_prompt", None):
+                    print(f"[DEBUG] Prompt >>>\n{drafter.last_prompt or ''}")
+                if getattr(drafter, "last_output", None):
+                    print(f"[DEBUG] Raw <<<\n{drafter.last_output or ''}")
+            return
+        if not draft:
+            print("No changes detected. Nothing to draft.")
+            return
+        panel_text = (
+            f"[bold]Summary[/bold]: {draft.get('summary','')}\n"
+            f"[bold]Type[/bold]: {draft.get('type','')}\n"
+            f"[bold]Importance[/bold]: {draft.get('importance','')}\n"
+            f"[bold]Details[/bold]:\n{draft.get('details','')}"
+        )
+        console.print(Panel(panel_text, title="Diary Draft (AI)", border_style="green"))
+        choice = Prompt.ask("Save this entry? [Y]es / [E]dit summary / [N]o", choices=["Y", "E", "N", "y", "e", "n"], default="Y")
+        ans = choice.upper()
+        if ans == "N":
+            print("Discarded.")
+            return
+        summary_final = draft.get("summary", "")
+        if ans == "E":
+            summary_final = Prompt.ask("New summary", default=summary_final)
+        mgr = DiaryManager()
+        entry = mgr.log(
+            summary=summary_final,
+            type=draft.get("type", "chore"),
+            importance=draft.get("importance", "normal"),
+            visibility=args.visibility or "repo",
+            details=draft.get("details"),
+        )
+        print(entry.to_json())
     elif args.command == "audit" and args.semantic:
         eng = SyncEngine()
         rep = eng.check_status()
