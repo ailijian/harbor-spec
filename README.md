@@ -218,6 +218,32 @@ harbor diary log --summary "Refactor utils validation logic" --type refactor --i
 | `harbor gen l2` | 自动生成模块级的 README 文档 |
 | `harbor diary log` | 写入结构化的决策日志 |
 
+## 📊 生成 L2（Anchor）教程
+
+**L2 是基于 L3 Docstring 的只读聚合视图**，用于在模块目录生成 `README.md`，展示 Public API、严格度与 DDT 绑定状态。请勿手动编辑生成的 L2 文件。
+
+- 前置准备
+  - 运行 `harbor init` 完成初始化与 `code_roots` 配置
+  - 构建索引：`harbor build-index`（读取并更新 `.harbor/cache/l3_index.json`）
+- 生成步骤
+  - 执行：`harbor gen l2`
+  - 工具会扫描 `code_roots`，基于索引为每个模块目录生成/更新 `README.md`
+- 成品内容
+  - `Public API`：函数名、摘要、`strictness`、`DDT Status`
+  - `Internal Details`（可选）：模块内的内部函数视图
+  - `Dependency (MVP)`：依赖占位视图（后续版本完善）
+- 示例
+  ```bash
+  harbor build-index
+  harbor gen l2
+  # 例如会生成：
+  # harbor/utils/README.md
+  # harbor/adapters/python/README.md
+  ```
+- 更新策略
+  - 当 Docstring 或实现变更后：先 `harbor build-index`，再 `harbor gen l2`
+  - L2 文件包含头部标识：`AUTO-GENERATED ... DO NOT EDIT MANUALLY`，请保持只读
+
 ## 🤝 Contribution
 
 Harbor 遵循 **Strict L3** 开发规范。
