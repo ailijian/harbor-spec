@@ -8,7 +8,7 @@ import hashlib
 import tokenize
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Iterator, Literal
 
 import yaml
 
@@ -24,6 +24,29 @@ class IndexReport:
     total_items: int
     cache_path: str
     elapsed_ms: int
+
+@dataclass
+class ProgressEvent:
+    """单文件进度事件。
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+
+    Args:
+      path (str): 当前处理的文件路径（posix 相对路径）。
+      index (int): 当前文件在总列表中的序号（从 1 开始）。
+      total (int): 待处理的文件总数。
+      cached (bool): 是否命中增量缓存（跳过解析）。
+      status (Literal): 处理状态：scanning | parsed | skipped | error。
+      items_count (int): 成功解析产生的条目数量（parsed 时有效）。
+    """
+    path: str
+    index: int
+    total: int
+    cached: bool
+    status: Literal["scanning", "parsed", "skipped", "error"]
+    items_count: int = 0
 
 
 class IndexBuilder:
@@ -76,13 +99,67 @@ class IndexBuilder:
           ConfigError: 当配置文件加载失败或内容不合法。
         """
         t0 = time.time()
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
-        old = self._load_cache()
         scanned = 0
         updated = 0
         skipped = 0
+        items_total = 0
+        for ev in self.iter_build(incremental=incremental):
+            if ev.status == "parsed":
+                scanned += 1
+                updated += 1
+                items_total += ev.items_count
+            elif ev.status == "skipped":
+                scanned += 1
+                skipped += 1
+            elif ev.status == "error":
+                scanned += 1
+                skipped += 1
+        elapsed_ms = int((time.time() - t0) * 1000)
+        return IndexReport(
+            scanned_files=scanned,
+            updated_files=updated,
+            skipped_files=skipped,
+            total_items=items_total,
+            cache_path=str(self.cache_file.as_posix()),
+            elapsed_ms=elapsed_ms,
+        )
+
+    def iter_build(self, incremental: bool = True) -> Iterator[ProgressEvent]:
+        """以生成器方式构建索引，逐文件产出进度事件。
+
+        功能:
+          - 与 `build` 相同的索引构建逻辑，但每处理一个文件即产出事件。
+          - 事件包含总数、当前序号、是否增量跳过、状态与产生条目数。
+          - 构建完成后写入缓存文件。
+
+        使用场景:
+          - CLI 层的 Rich 进度条渲染。
+
+        依赖:
+          - harbor.adapters.python.PythonAdapter
+          - .harbor/config.yaml 中的 code_roots
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: once
+
+        Args:
+          incremental (bool): 是否启用增量构建，默认为 True。
+
+        Returns:
+          Iterator[ProgressEvent]: 逐文件的进度事件。
+        """
+        t0 = time.time()
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        old = self._load_cache()
         files_index: Dict[str, Any] = old.get("files", {})
-        for p in self._iter_py_files():
+        scanned = 0
+        updated = 0
+        skipped = 0
+        items_total = 0
+        files = self._iter_py_files()
+        total = len(files)
+        for i, p in enumerate(files, start=1):
             scanned += 1
             fp = str(p.as_posix())
             mtime = p.stat().st_mtime
@@ -90,8 +167,10 @@ class IndexBuilder:
             prev = files_index.get(fp)
             if incremental and prev and prev.get("mtime") == mtime and prev.get("file_hash") == fhash:
                 skipped += 1
+                yield ProgressEvent(path=fp, index=i, total=total, cached=True, status="skipped")
                 continue
             try:
+                yield ProgressEvent(path=fp, index=i, total=total, cached=False, status="scanning")
                 source = p.read_text(encoding="utf-8")
                 items: List[Dict[str, Any]] = []
                 for fc in self.adapter.parse_file(fp):
@@ -103,9 +182,13 @@ class IndexBuilder:
                     "file_hash": fhash,
                     "items": items,
                 }
+                cnt = len(items)
+                items_total += cnt
                 updated += 1
+                yield ProgressEvent(path=fp, index=i, total=total, cached=False, status="parsed", items_count=cnt)
             except Exception:
                 skipped += 1
+                yield ProgressEvent(path=fp, index=i, total=total, cached=False, status="error")
                 continue
         payload = {
             "meta": {
@@ -115,16 +198,8 @@ class IndexBuilder:
             "files": files_index,
         }
         self._save_cache(payload)
-        elapsed_ms = int((time.time() - t0) * 1000)
-        total_items = sum(len(v.get("items", [])) for v in files_index.values())
-        return IndexReport(
-            scanned_files=scanned,
-            updated_files=updated,
-            skipped_files=skipped,
-            total_items=total_items,
-            cache_path=str(self.cache_file.as_posix()),
-            elapsed_ms=elapsed_ms,
-        )
+        # 为了保持旧接口统计能力，最终在 CLI 侧自行统计或读取缓存。
+        _ = (scanned, updated, skipped, items_total, int((time.time() - t0) * 1000))
 
     def _iter_py_files(self) -> List[Path]:
         roots = []

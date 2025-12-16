@@ -1,5 +1,9 @@
 import argparse
 from pathlib import Path
+import yaml
+from rich.console import Console
+from rich.table import Table
+from rich.progress import Progress, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
 
 from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
@@ -49,6 +53,14 @@ def main():
     p_build.add_argument("--code-root", action="append", default=None)
     p_build.add_argument("--cache-dir", type=str, default=None)
 
+    p_config = sub.add_parser("config", help="Manage Harbor config")
+    p_cfg_sub = p_config.add_subparsers(dest="cfg_cmd", required=True)
+    p_cfg_list = p_cfg_sub.add_parser("list", help="List current config values")
+    p_cfg_add = p_cfg_sub.add_parser("add", help="Add a path to code_roots")
+    p_cfg_add.add_argument("path", type=str)
+    p_cfg_remove = p_cfg_sub.add_parser("remove", help="Remove a path from code_roots")
+    p_cfg_remove.add_argument("path", type=str)
+
     p_status = sub.add_parser("status", help="Show Harbor context status (no implicit index update)")
     p_ddt_validate = sub.add_parser("ddt", help="DDT commands")
     p_ddt_sub = p_ddt_validate.add_subparsers(dest="ddt_cmd", required=True)
@@ -87,11 +99,96 @@ def main():
         code_roots = args.code_root
         cache_dir = Path(args.cache_dir) if args.cache_dir else None
         builder = IndexBuilder(code_roots=code_roots, cache_dir=cache_dir)
-        report = builder.build(incremental=not args.no_incremental)
+        scanned = 0
+        updated = 0
+        skipped = 0
+        items_total = 0
+        console = Console()
+        with Progress(
+            TextColumn("[bold blue]{task.description}"),
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+            console=console,
+        ) as progress:
+            task_id = progress.add_task("[扫描中] 初始化...", total=0)
+            total_set = False
+            for ev in builder.iter_build(incremental=not args.no_incremental):
+                if not total_set:
+                    progress.update(task_id, total=ev.total)
+                    total_set = True
+                if ev.status == "scanning":
+                    progress.update(task_id, description=f"[扫描中] {ev.path}")
+                elif ev.status == "parsed":
+                    scanned += 1
+                    updated += 1
+                    items_total += ev.items_count
+                    progress.update(task_id, advance=1, description=f"[完成] {ev.path}")
+                elif ev.status == "skipped":
+                    scanned += 1
+                    skipped += 1
+                    progress.update(task_id, advance=1, description=f"[跳过] {ev.path}")
+                elif ev.status == "error":
+                    scanned += 1
+                    progress.update(task_id, advance=1, description=f"[错误] {ev.path}")
         print(
-            f"scanned={report.scanned_files} updated={report.updated_files} skipped={report.skipped_files} "
-            f"items={report.total_items} cache={report.cache_path} elapsed_ms={report.elapsed_ms}"
+            f"scanned={scanned} updated={updated} skipped={skipped} "
+            f"items={items_total} cache={builder.cache_file.as_posix()}"
         )
+    elif args.command == "config" and args.cfg_cmd == "list":
+        cfg_path = Path(".harbor/config.yaml")
+        data = {}
+        if cfg_path.exists():
+            try:
+                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
+            except Exception:
+                data = {}
+        code_roots = data.get("code_roots", ["harbor/**"])
+        exclude_paths = data.get("exclude_paths", [])
+        profile = data.get("profile", "enforce_l3")
+        table = Table(title="Harbor Config")
+        table.add_column("Key", style="bold")
+        table.add_column("Value")
+        table.add_row("profile", profile)
+        table.add_row("code_roots", ", ".join(code_roots))
+        table.add_row("exclude_paths", ", ".join(exclude_paths))
+        Console().print(table)
+    elif args.command == "config" and args.cfg_cmd == "add":
+        cfg_path = Path(".harbor/config.yaml")
+        data = {}
+        if cfg_path.exists():
+            try:
+                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
+            except Exception:
+                data = {}
+        roots = data.get("code_roots", [])
+        p = args.path
+        if p not in roots:
+            roots.append(p)
+        data["code_roots"] = roots
+        data.setdefault("exclude_paths", [])
+        data.setdefault("profile", data.get("profile", "enforce_l3"))
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        print(f"Added '{p}' to code_roots.")
+    elif args.command == "config" and args.cfg_cmd == "remove":
+        cfg_path = Path(".harbor/config.yaml")
+        data = {}
+        if cfg_path.exists():
+            try:
+                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
+            except Exception:
+                data = {}
+        roots = data.get("code_roots", [])
+        p = args.path
+        if p in roots:
+            roots = [x for x in roots if x != p]
+            data["code_roots"] = roots
+            cfg_path.parent.mkdir(parents=True, exist_ok=True)
+            cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+            print(f"Removed '{p}' from code_roots.")
+        else:
+            print("No changes. Path not in code_roots.")
     elif args.command == "status":
         eng = SyncEngine()
         rep = eng.check_status()

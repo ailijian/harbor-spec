@@ -12,3 +12,4 @@
 {"ver": 1, "ts": "2025-12-16T10:55:55Z", "author": "'李健'", "type": "feature", "importance": "high", "visibility": "public", "summary": "实现 L2 锚点视图生成器", "details": "支持自动生成模块 README，集成 DDT 状态显示，实现 Strict/Standard 视觉分级。"}
 {"ver": 1, "ts": "2025-12-16T11:07:54Z", "author": "李健", "type": "feature", "importance": "normal", "visibility": "public", "summary": "新增 format_size 工具函数"}
 {"ver": 1, "ts": "2025-12-16T12:28:46Z", "author": "李健", "type": "chore", "importance": "normal", "visibility": "internal", "summary": "UX Review"}
+{"ver":1,"ts":"2025-12-16T12:45:00Z","author":"AI","type":"feature","importance":"high","visibility":"public","scope":["harbor.core.index","harbor.cli.main"],"functions":["harbor.core.index.IndexBuilder.iter_build"],"summary":"引入 Rich 进度与 Config CLI，提升开发者体验（DX）。","reason":"解决大项目构建索引无进度反馈与手动修改配置易错的问题。","ref_commit":""}

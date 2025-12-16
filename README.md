@@ -116,6 +116,45 @@ harbor init
 harbor build-index
 ```
 
+### 4\. 配置管理（Config CLI）
+
+通过命令行安全管理 `.harbor/config.yaml`，避免手动编辑出错：
+
+```bash
+# 追加路径到 code_roots（自动去重）
+harbor config add "backend/legacy/**"
+
+# 查看当前配置（Rich 表格）
+harbor config list
+
+# 从 code_roots 移除路径
+harbor config remove "backend/legacy/**"
+```
+
+运行 `harbor config list` 的示例输出：
+
+```
+Harbor Config
+profile       : enforce_l3
+code_roots    : harbor/**, backend/legacy/**
+exclude_paths : .venv/**, tests/**, build/**, dist/**, docs/**
+```
+
+### 5\. 进度可视化（Rich Progress）
+
+在大型项目上构建索引支持进度条与当前文件显示，过程更透明：
+
+```bash
+harbor build-index --no-incremental
+```
+
+示例输出：
+
+```
+[完成] E:/project/harbor-spec/harbor/utils/__init__.py ━━━━━━━━━━━━━━━━━━━━━━━━━ 18/18 0:00:00
+scanned=18 updated=18 skipped=0 items=63 cache=.harbor/cache/l3_index.json
+```
+
 ### Tips: 避免 `scanned=0`
 - 先运行 `harbor init` 生成 `.harbor/config.yaml`，确保 `code_roots` 指向真实代码位置（如 `src/**` 或包目录）。
 - 使用 `--force` 重新初始化以覆盖不合适的旧配置。
@@ -171,6 +210,9 @@ harbor diary log --summary "Refactor utils validation logic" --type refactor --i
 | `harbor init` | 智能探测项目结构并生成 `.harbor/config.yaml`（支持 `--force` 覆盖） |
 | `harbor status` | 检查代码与索引的差异（Drift检测） |
 | `harbor build-index` | 更新 L3 索引缓存 (类似 `git commit`) |
+| `harbor config list` | 使用 Rich 表格打印当前配置（profile、code_roots、exclude_paths） |
+| `harbor config add <path>` | 追加 `<path>` 到 `code_roots`（自动去重并写回） |
+| `harbor config remove <path>` | 从 `code_roots` 移除 `<path>`（写回配置） |
 | `harbor audit --semantic` | 调用 LLM 进行语义一致性检查 |
 | `harbor ddt validate` | 验证测试用例与代码版本的绑定关系 |
 | `harbor gen l2` | 自动生成模块级的 README 文档 |
