@@ -292,18 +292,39 @@ def main():
             print("请在环境中设置 HARBOR_LLM_PROVIDER=openai 与 HARBOR_LLM_API_KEY，再重试。")
             return
         except Exception as e:
-            print(f"AI drafting failed: {str(e)}")
-            if args.debug:
-                # 输出最近一次 prompt 与原始输出的调试信息
-                provider = resolve_provider()
-                print(f"[DEBUG] Provider: {provider.name} Model: {getattr(provider, 'model', 'n/a')}")
-                print("[DEBUG] 提示：确保端点支持 JSON 结构化输出（response_format=json_object）。")
-                print("[DEBUG] 如为 ERNIE 兼容端点，请设置 HARBOR_LLM_BASE_URL 和 HARBOR_LLM_MODEL=ernie-4.0。")
-                if getattr(drafter, "last_prompt", None):
-                    print(f"[DEBUG] Prompt >>>\n{drafter.last_prompt or ''}")
-                if getattr(drafter, "last_output", None):
-                    print(f"[DEBUG] Raw <<<\n{drafter.last_output or ''}")
-            return
+            msg = str(e)
+            lc = msg.lower()
+            if ("context" in lc and "length" in lc) or ("token" in lc and ("too many" in lc or "exceed" in lc)) or ("maximum context" in lc) or ("prompt too long" in lc):
+                print("提示：当前上下文可能超过模型限制。")
+                choice = Prompt.ask("是否使用简化上下文继续？ [Y]es / [N]o", choices=["Y", "N", "y", "n"], default="Y")
+                if choice.upper() == "Y":
+                    with console.status("[bold magenta][AI] Drafting with simplified context...", spinner="line"):
+                        try:
+                            draft = drafter.generate_draft(limit=6000)
+                        except Exception as e2:
+                            print(f"AI drafting failed: {str(e2)}")
+                            if args.debug:
+                                provider = resolve_provider()
+                                print(f"[DEBUG] Provider: {provider.name} Model: {getattr(provider, 'model', 'n/a')}")
+                                if getattr(drafter, "last_prompt", None):
+                                    print(f"[DEBUG] Prompt >>>\n{drafter.last_prompt or ''}")
+                                if getattr(drafter, "last_output", None):
+                                    print(f"[DEBUG] Raw <<<\n{drafter.last_output or ''}")
+                            return
+                else:
+                    return
+            else:
+                print(f"AI drafting failed: {str(e)}")
+                if args.debug:
+                    provider = resolve_provider()
+                    print(f"[DEBUG] Provider: {provider.name} Model: {getattr(provider, 'model', 'n/a')}")
+                    print("[DEBUG] 提示：确保端点支持 JSON 结构化输出（response_format=json_object）。")
+                    print("[DEBUG] 如为 ERNIE 兼容端点，请设置 HARBOR_LLM_BASE_URL 和 HARBOR_LLM_MODEL=ernie-4.0。")
+                    if getattr(drafter, "last_prompt", None):
+                        print(f"[DEBUG] Prompt >>>\n{drafter.last_prompt or ''}")
+                    if getattr(drafter, "last_output", None):
+                        print(f"[DEBUG] Raw <<<\n{drafter.last_output or ''}")
+                return
         if not draft:
             print("No changes detected. Nothing to draft.")
             return

@@ -268,7 +268,7 @@ class IndexBuilder:
         for d in sd_list:
             include_all = any(d == x for x in abs_dirs)
             for root, subdirs, filenames in os.walk(d):
-                rel_root = Path(root).resolve().relative_to(base).as_posix()
+                rel_root = Path(root).resolve().relative_to(d.resolve()).as_posix()
                 pruned = []
                 for s in list(subdirs):
                     rel_dir = (Path(rel_root) / s).as_posix() if rel_root else s
@@ -281,7 +281,7 @@ class IndexBuilder:
                         continue
                     rel_file = (Path(rel_root) / name).as_posix() if rel_root else name
                     if include_all or any(Path(rel_file).match(p) for p in patterns_rel):
-                        files.append((base / rel_file).resolve())
+                        files.append((Path(root) / name).resolve())
         # dedup result
         seen = {}
         dedup: List[Path] = []

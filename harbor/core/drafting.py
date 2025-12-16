@@ -32,7 +32,7 @@ class DiaryDrafter:
         adapter: Optional[PythonAdapter] = None,
         provider: Optional[LLMProvider] = None,
         diary_manager: Optional[DiaryManager] = None,
-        max_context_chars: int = 8000,
+        max_context_chars: Optional[int] = None,
     ) -> None:
         """AI 辅助生成 Diary 草稿。
 
@@ -59,7 +59,7 @@ class DiaryDrafter:
           adapter: Python 解析器实例，缺省自动创建。
           provider: LLM 提供者实例，缺省从环境解析。
           diary_manager: 日志管理器实例，缺省自动创建。
-          max_context_chars: 上下文截断上限（字符数）。
+        max_context_chars: 上下文截断上限（字符数）。缺省不限制。
 
         Raises:
           RuntimeError: 当 LLM 未配置或解析失败。
@@ -72,7 +72,7 @@ class DiaryDrafter:
         self.last_prompt: Optional[str] = None
         self.last_output: Optional[str] = None
 
-    def generate_draft(self) -> Optional[Dict]:
+    def generate_draft(self, limit: Optional[int] = None) -> Optional[Dict]:
         rep = self.eng.check_status()
         targets: List[StatusEntry] = []
         targets.extend(rep.drift)
@@ -82,7 +82,7 @@ class DiaryDrafter:
         prov = self.provider or resolve_provider()
         if getattr(prov, "name", "mock") == "mock":
             raise LLMNotConfiguredError("LLM 未配置。请设置 HARBOR_LLM_PROVIDER 与 HARBOR_LLM_API_KEY 后重试。")
-        ctx = self._extract_code_context(targets)
+        ctx = self._extract_code_context(targets, limit=limit)
         prompt = self._build_prompt(ctx)
         self.last_prompt = prompt
         out = prov.infer(prompt).strip()
@@ -104,9 +104,10 @@ class DiaryDrafter:
             imp = "normal"
         return {"summary": summary, "type": typ, "importance": imp, "details": details}
 
-    def _extract_code_context(self, entries: List[StatusEntry]) -> str:
+    def _extract_code_context(self, entries: List[StatusEntry], limit: Optional[int] = None) -> str:
         parts: List[str] = []
         total = 0
+        max_chars = self.max_context_chars if limit is None else limit
         for e in entries:
             fp = Path(e.file_path)
             try:
@@ -137,9 +138,10 @@ class DiaryDrafter:
             trimmed = self._trim_segment(seg, limit=2000)
             header = f"### file: {e.file_path}\n### func: {e.id}\n### change: {e.change_type}\n"
             block = f"{header}{trimmed}\n---\n"
-            if total + len(block) > self.max_context_chars:
-                parts.append(block[: max(0, self.max_context_chars - total)])
-                break
+            if isinstance(max_chars, int):
+                if total + len(block) > max_chars:
+                    parts.append(block[: max(0, max_chars - total)])
+                    break
             parts.append(block)
             total += len(block)
         return "\n".join(parts).strip()
