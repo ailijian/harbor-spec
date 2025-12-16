@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import yaml
 
 from harbor.adapters.python.parser import PythonAdapter, FunctionContract
+from harbor.core.utils import compute_body_hash, find_function_node
 
 
 @dataclass
@@ -93,8 +94,8 @@ class IndexBuilder:
             source = p.read_text(encoding="utf-8")
             items: List[Dict[str, Any]] = []
             for fc in self.adapter.parse_file(fp):
-                node = self._find_function_node(source, fc.lineno, fc.name)
-                body_hash = self._compute_body_hash(source, node) if node else ""
+                node = find_function_node(source, fc.lineno, fc.name)
+                body_hash = compute_body_hash(source, node) if node else ""
                 items.append(self._index_entry(fc, body_hash))
             files_index[fp] = {
                 "mtime": mtime,
@@ -187,51 +188,4 @@ class IndexBuilder:
             "lineno": fc.lineno,
         }
 
-    def _find_function_node(self, source: str, lineno: int, name: str) -> Optional[ast.AST]:
-        try:
-            tree = ast.parse(source)
-        except SyntaxError:
-            return None
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and getattr(node, "name", None) == name:
-                if getattr(node, "lineno", 0) == lineno:
-                    return node
-        return None
-
-    def _compute_body_hash(self, source: str, fn_node: ast.AST) -> str:
-        lines = source.splitlines(keepends=True)
-        body = ""
-        if hasattr(fn_node, "body"):
-            stmts = list(getattr(fn_node, "body"))
-            if stmts and isinstance(stmts[0], ast.Expr) and isinstance(getattr(stmts[0], "value", None), ast.Constant) and isinstance(stmts[0].value.value, str):
-                stmts = stmts[1:]
-            chunks: List[str] = []
-            for s in stmts:
-                start = getattr(s, "lineno", None)
-                end = getattr(s, "end_lineno", None)
-                if start is None or end is None:
-                    continue
-                seg = "".join(lines[start - 1 : end])
-                chunks.append(seg)
-            body = "".join(chunks)
-        if not body:
-            return hashlib.sha256(b"").hexdigest()
-        tokens = tokenize.generate_tokens(io.StringIO(body).readline)
-        parts: List[str] = []
-        for tok in tokens:
-            if tok.type in (
-                tokenize.COMMENT,
-                tokenize.NL,
-                tokenize.NEWLINE,
-                tokenize.INDENT,
-                tokenize.DEDENT,
-                tokenize.ENCODING,
-            ):
-                continue
-            val = tok.string.strip()
-            if not val:
-                continue
-            parts.append(val)
-        normalized = " ".join(parts)
-        return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
-
+    # body_hash 与节点查找逻辑已抽出至 harbor.core.utils 以供 SyncEngine 复用
