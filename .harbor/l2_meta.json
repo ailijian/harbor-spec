@@ -1,3 +1,4 @@
 {
-  "harbor/adapters/python": "4cd3c0baecbd2b9a561446441b94d0299de23a142604e5565711ddbaf634278a"
+  "harbor/adapters/python": "4cd3c0baecbd2b9a561446441b94d0299de23a142604e5565711ddbaf634278a",
+  "harbor/utils": "ac6171b02f0a592d15366f54518a966e5f72eb7208d8a0f50ec941112bc67ce4"
 }

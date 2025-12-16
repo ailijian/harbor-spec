@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2025-12-16T10:47:30Z",
+    "generated_at": "2025-12-16T11:06:41Z",
     "schema_version": "1.0.2"
   },
   "files": {
@@ -135,20 +135,20 @@
       "items": []
     },
     "E:/project/harbor-spec/harbor/cli/main.py": {
-      "mtime": 1765882042.1062183,
-      "file_hash": "cb6f8bb7b59550c5005a11a0663a14de3f232e9ea2ab7fc98f278a49dd3142f7",
+      "mtime": 1765882536.0624878,
+      "file_hash": "457947c4e938647033adf484d2a393f343e118d778cd4a391421c4e1c91c8969",
       "items": [
         {
           "id": "harbor.cli.main.main",
           "qualified_name": "harbor.cli.main.main",
           "name": "main",
           "signature_hash": "50c8d6946e696d76a26eda6547d327ea3b014b27abd8d56e8065566dbb52100c",
-          "body_hash": "d809fc3a018b5a8ddd39993a318504f4315684d5bf3fd9ed481e59662cd7cd78",
+          "body_hash": "8fc16bab24bb1ed9d22890b0497096bcbdfe35c95e60081f58556ecf3b1aa24d",
           "contract_hash": null,
           "docstring_raw_hash": null,
           "scope": null,
           "strictness": null,
-          "lineno": 10
+          "lineno": 11
         }
       ]
     },
@@ -463,13 +463,13 @@
       "items": []
     },
     "E:/project/harbor-spec/harbor/utils/__init__.py": {
-      "mtime": 1765878659.5300026,
-      "file_hash": "b04b9a85d3adc2dafa38ce9221940ef3d8267845b91d706d1c9fae1d8b3edc22",
+      "mtime": 1765883174.9346404,
+      "file_hash": "8cd14fb46125b95d9175945859d3cf298e8ff519c5fb6874c9293b664c947e51",
       "items": []
     },
     "E:/project/harbor-spec/harbor/core/l2.py": {
-      "mtime": 1765882035.5443418,
-      "file_hash": "5df7764761f27e3b9c42f4ad9ac7adb5457a413a9cd2f00a08a563e29ab2c848",
+      "mtime": 1765882315.103119,
+      "file_hash": "862647df8a076ad9054ebfc3b2fc5b22db083fb243dc6193730cac24818118be",
       "items": [
         {
           "id": "harbor.core.l2.L2Generator.__init__",
@@ -488,7 +488,7 @@
           "qualified_name": "harbor.core.l2.L2Generator.generate",
           "name": "generate",
           "signature_hash": "c9693e1bfb7bfd23d0be0ceb49c89da8458675f6ceedd4344976c953d4016aab",
-          "body_hash": "26e04aeb22c3170d57586ce65d0a862234faee435f9d802d0c897beaf274089e",
+          "body_hash": "c54c41846e9d7eb6e6b5347efb869156d3f39021f13728edb9d5fc47dbb4f6e2",
           "contract_hash": "eae31c8837771e4cb8e048739e41db02b79a313b27fe543ef06a8af8047e24a9",
           "docstring_raw_hash": "50331d04c568172fbcb14ea96fa513d94d448ec1876f465b4140f2a4f96e74bc",
           "scope": "public",
@@ -505,7 +505,7 @@
           "docstring_raw_hash": null,
           "scope": null,
           "strictness": null,
-          "lineno": 133
+          "lineno": 140
         },
         {
           "id": "harbor.core.l2.L2Generator.compute_meta_hash",
@@ -517,7 +517,7 @@
           "docstring_raw_hash": null,
           "scope": null,
           "strictness": null,
-          "lineno": 145
+          "lineno": 152
         },
         {
           "id": "harbor.core.l2.L2Generator._load_index",
@@ -529,7 +529,7 @@
           "docstring_raw_hash": null,
           "scope": null,
           "strictness": null,
-          "lineno": 148
+          "lineno": 155
         },
         {
           "id": "harbor.core.l2.L2Generator._load_meta",
@@ -541,7 +541,7 @@
           "docstring_raw_hash": null,
           "scope": null,
           "strictness": null,
-          "lineno": 153
+          "lineno": 160
         },
         {
           "id": "harbor.core.l2.L2Generator._save_meta",
@@ -553,7 +553,163 @@
           "docstring_raw_hash": null,
           "scope": null,
           "strictness": null,
-          "lineno": 161
+          "lineno": 168
+        }
+      ]
+    },
+    "E:/project/harbor-spec/harbor/core/diary.py": {
+      "mtime": 1765882564.6986804,
+      "file_hash": "2b15c452f522db6af58e2a5fe7b2be253312c5104dcd1e366a20d0e8ef6210c6",
+      "items": [
+        {
+          "id": "harbor.core.diary.DiaryEntry.to_json",
+          "qualified_name": "harbor.core.diary.DiaryEntry.to_json",
+          "name": "to_json",
+          "signature_hash": "a409bedfdc5ca85773f7c3205dc39c44e510f2094a5c7eab5a5738863d420992",
+          "body_hash": "306a1607d4f395f96313fa4559a702bafb16d668dcb944536113007f1cc78688",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 34
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager.__init__",
+          "qualified_name": "harbor.core.diary.DiaryManager.__init__",
+          "name": "__init__",
+          "signature_hash": "374a85599b8cd7b33b0207c47fc50e3fb229bda2f27bad2eb36f555c9791689c",
+          "body_hash": "d5e23a0d81b070bf758a36ebf70c991e6b55c40ed49d19d20e277f8cfb8fb4eb",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 39
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager.log",
+          "qualified_name": "harbor.core.diary.DiaryManager.log",
+          "name": "log",
+          "signature_hash": "0d6d868f777d8ed1881094c05a100448b85688024a93854faa90dfe99ecb3163",
+          "body_hash": "0f7cf46e86f74344c470d1805bfc90a2676a8fdbdd1372da351d555d1e34fb22",
+          "contract_hash": "f6a5ec7dd28e81e72d5c82dd588f05271f80c13e083d88ca96bfe7fef66a26fa",
+          "docstring_raw_hash": "93261b15f9461835a0d008e10bfa33afbb317bf9d2f50593786cb23040299de9",
+          "scope": "public",
+          "strictness": "strict",
+          "lineno": 43
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager.load_active",
+          "qualified_name": "harbor.core.diary.DiaryManager.load_active",
+          "name": "load_active",
+          "signature_hash": "cbe35130be4d0cff4eb1560d03b1328f86a87ae33a1b2d1d6df24fd76f68e3a2",
+          "body_hash": "1080992086675514dcddf8892aa12044a47c2e07d1325436d94fd65b43a99887",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 119
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager.export_markdown",
+          "qualified_name": "harbor.core.diary.DiaryManager.export_markdown",
+          "name": "export_markdown",
+          "signature_hash": "abbb6d96966b4653cb71e61d6f24b6099c9a8bc4d41669572de625d984cc02b4",
+          "body_hash": "b15ed640a9303d97ccec262dd50740a5201406933c408bd2cde87627c9869870",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 139
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager._resolve_diary_dir",
+          "qualified_name": "harbor.core.diary.DiaryManager._resolve_diary_dir",
+          "name": "_resolve_diary_dir",
+          "signature_hash": "f73b6c3b69295b3db8d0d5c3238f9de2b1ff7b657bb51a40579ddd5a259297c5",
+          "body_hash": "65fe3c2b441d292f2de2be57505adaac58f849786e7ef38b2e995296b723af2c",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 158
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager._current_file_path",
+          "qualified_name": "harbor.core.diary.DiaryManager._current_file_path",
+          "name": "_current_file_path",
+          "signature_hash": "d4d530449a0f3ae6758d7dfa664e3d8ed338afa38e75ed28aebeba2245d0dae6",
+          "body_hash": "ced4f7c183c4f9a4794bc328806dece79b07b629c78c4e7ed1386032182bf383",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 168
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager._resolve_author",
+          "qualified_name": "harbor.core.diary.DiaryManager._resolve_author",
+          "name": "_resolve_author",
+          "signature_hash": "a409bedfdc5ca85773f7c3205dc39c44e510f2094a5c7eab5a5738863d420992",
+          "body_hash": "f121d6b79251ce6e3ecd719084291c2ec1cf3b09a6fa4bab294a8c49f290d54d",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 173
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager._utc_now_iso",
+          "qualified_name": "harbor.core.diary.DiaryManager._utc_now_iso",
+          "name": "_utc_now_iso",
+          "signature_hash": "a409bedfdc5ca85773f7c3205dc39c44e510f2094a5c7eab5a5738863d420992",
+          "body_hash": "7860348fcbf20d5309b1fe59dd1822324b07c8cc645d14b43f67daa4b0b42f04",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 189
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager._parse_ts",
+          "qualified_name": "harbor.core.diary.DiaryManager._parse_ts",
+          "name": "_parse_ts",
+          "signature_hash": "17a2df58ae5b2a5d387d660e70c03bae1c005b57c5655b91a030a14a1580ceda",
+          "body_hash": "54b4d1cf28a35660e47c10f5f3c983e300cf1bc7a77f780df7bdde64342b1323",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 192
+        },
+        {
+          "id": "harbor.core.diary.DiaryManager._from_dict",
+          "qualified_name": "harbor.core.diary.DiaryManager._from_dict",
+          "name": "_from_dict",
+          "signature_hash": "80b5e36ef71982b4b05a6d3f10d68c7b224a6fe13fbf770d311b9e94e1fe87d9",
+          "body_hash": "c8b05fbbac3525563faa568e5a5409159ec379fcea83eaee31552a5f3d7777c9",
+          "contract_hash": null,
+          "docstring_raw_hash": null,
+          "scope": null,
+          "strictness": null,
+          "lineno": 198
+        }
+      ]
+    },
+    "E:/project/harbor-spec/harbor/utils/formatting.py": {
+      "mtime": 1765883168.7631285,
+      "file_hash": "f553fc03691e9c1cf1313f0ae87b7582ba5c778a6d6afd3f984269a493b002f9",
+      "items": [
+        {
+          "id": "harbor.utils.formatting.format_size",
+          "qualified_name": "harbor.utils.formatting.format_size",
+          "name": "format_size",
+          "signature_hash": "78ba5cca27ffb0d7d5a20d20ffba99c58a1241b45c99d81d5df0bf952a0e65a0",
+          "body_hash": "be71e5e8fb23ae6cbb7505ca7b366359ab88e439d4c5bf45a85a7bfa80cd32c4",
+          "contract_hash": "989e0d126bb78c9fdd68f17174504e1439ccb1cde95555af53302201dc4666f0",
+          "docstring_raw_hash": "253fce69b7f3a7993fb352b200ed0f61baf5d47161b0973e85590ecde8c9835d",
+          "scope": "public",
+          "strictness": "strict",
+          "lineno": 1
         }
       ]
     }
