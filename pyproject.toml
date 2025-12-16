@@ -7,6 +7,9 @@ dependencies = [
   "pyyaml",
 ]
 
+[project.scripts]
+harbor = "harbor.cli.main:main"
+
 [project.optional-dependencies]
 dev = [
   "pytest",
@@ -15,4 +18,3 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-
