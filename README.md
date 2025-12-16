@@ -25,7 +25,7 @@
 - 测试用例还在测旧版本的逻辑？👉 **Validation Gap (验证断层)**
 - 为什么上周我们要把这个参数改成 Optional？👉 **Memory Loss (决策遗忘)**
 
-**Harbor** 应运而生。它不是另一个 Copilot，它是 **Copilot 的监管者**。它是一套用于治理 AI 生成代码的 **"良知" (Conscience)** 与 **"记忆" (Memory)** 系统。
+**Harbor** 应运而生。它不是另一个 Copilot，它是 **Copilot 的监管者**。它是一套用于治理 AI 生成代码的 **"良知" (Conscience)** 与 **"记忆" (Memory)** 系统。它是“程序员到上下文工程师”这一革命性转变的关键工具，它的目标是成为vibe coding时代的Git。
 
 ## 🛡️ Core Philosophy
 
@@ -81,16 +81,22 @@ cd harbor-spec
 pip install -e .
 ```
 
+可选pypi安装：
+
+```bash
+pip install harbor-spec
+```
+
 ### 2\. Configuration
 
-配置 LLM 以启用 AI 语义审计（支持 DeepSeek, OpenAI 等兼容接口）：
+配置 LLM 以启用 AI 语义审计（支持 Ernie, DeepSeek, OpenAI 等兼容接口）：
 
 ```bash
 cp .env.example .env
 # 编辑 .env 文件:
 # HARBOR_LLM_PROVIDER=openai
-# HARBOR_LLM_API_KEY=sk-xxxx
-# HARBOR_LLM_BASE_URL=[https://api.deepseek.com](https://api.deepseek.com)
+# HARBOR_LLM_API_KEY=
+# HARBOR_LLM_BASE_URL=https://api.openai.com/v1
 # HARBOR_LANGUAGE=zh (可选，开启中文审计)
 ```
 
