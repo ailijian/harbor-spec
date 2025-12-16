@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2025-12-16T12:03:07Z",
+    "generated_at": "2025-12-16T12:28:08Z",
     "schema_version": "1.0.2"
   },
   "files": {
@@ -135,15 +135,15 @@
       "items": []
     },
     "E:/project/harbor-spec/harbor/cli/main.py": {
-      "mtime": 1765886578.1320505,
-      "file_hash": "8e68eb3da69ec098c31d8229da13e89be4103d6bd9922080f43366793cf087cc",
+      "mtime": 1765888034.5499854,
+      "file_hash": "0e4ce7072cb7390ebd46358a6e9e4828b529ace9d6937e098588e89ceb28e304",
       "items": [
         {
           "id": "harbor.cli.main.main",
           "qualified_name": "harbor.cli.main.main",
           "name": "main",
           "signature_hash": "50c8d6946e696d76a26eda6547d327ea3b014b27abd8d56e8065566dbb52100c",
-          "body_hash": "cb3104b269a7fb0be53a1931fb077ddfcab6351c8ab03c8c9416f5e03925f6a2",
+          "body_hash": "8f62e4b0907f8b95342490078d0ac9d3b13a5b0896a90c9b88080c56bdff7b7d",
           "contract_hash": "b09982ed5c1a942bd9b6264b44e5817666046c5edb4950823d6decb32a6523ac",
           "docstring_raw_hash": "b9bcfbe11124209e2fe2b017637a31ddf997d50e6474576bf8849c25b4cddfd4",
           "scope": "public",
@@ -714,8 +714,8 @@
       ]
     },
     "E:/project/harbor-spec/harbor/core/audit.py": {
-      "mtime": 1765885675.6124797,
-      "file_hash": "c4e158f4e7114abd204e1bf26d8381bc10b8c278bf1efc79be3e7f8163bd0cdc",
+      "mtime": 1765887380.707727,
+      "file_hash": "8de01ad214ff82ca8e09c8261f47fa25a82f798200cc637935a98d2a56b02a8a",
       "items": [
         {
           "id": "harbor.core.audit.LLMProvider.infer",
@@ -775,19 +775,19 @@
           "docstring_raw_hash": null,
           "scope": null,
           "strictness": null,
-          "lineno": 65
+          "lineno": 87
         },
         {
           "id": "harbor.core.audit.SemanticGuard.build_prompt",
           "qualified_name": "harbor.core.audit.SemanticGuard.build_prompt",
           "name": "build_prompt",
           "signature_hash": "31c4dd1c1f7c710deabb91d00cb81130ccadf1f8c3e03cf4b962ed942e71e378",
-          "body_hash": "2b17484c966a3a6d04e4d450feac5e3061e0e3453c5ddc028bbc7269691ad6ed",
+          "body_hash": "91191177938ce3f69c24ce97403892fe5cd3e2fc14983ee5124ea23be522b5fa",
           "contract_hash": null,
           "docstring_raw_hash": null,
           "scope": null,
           "strictness": null,
-          "lineno": 82
+          "lineno": 104
         },
         {
           "id": "harbor.core.audit.SemanticGuard.audit",
@@ -799,7 +799,7 @@
           "docstring_raw_hash": null,
           "scope": null,
           "strictness": null,
-          "lineno": 95
+          "lineno": 111
         }
       ]
     }

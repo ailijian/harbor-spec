@@ -85,11 +85,17 @@ def main():
         cache_dir = Path(args.cache_dir) if args.cache_dir else None
         builder = IndexBuilder(code_roots=code_roots, cache_dir=cache_dir)
         report = builder.build(incremental=not args.no_incremental)
-        print(f"scanned={report.scanned_files} updated={report.updated_files} skipped={report.skipped_files} items={report.total_items}")
-        print(f"cache={report.cache_path} elapsed_ms={report.elapsed_ms}")
+        print(
+            f"scanned={report.scanned_files} updated={report.updated_files} skipped={report.skipped_files} "
+            f"items={report.total_items} cache={report.cache_path} elapsed_ms={report.elapsed_ms}"
+        )
     elif args.command == "status":
         eng = SyncEngine()
         rep = eng.check_status()
+        total = sum(rep.counts.values())
+        if total == 0:
+            print("No changes detected.")
+            return
         print("Harbor Context Status:")
         if rep.drift:
             print("\nChanges to implementation (Drift):")
@@ -111,9 +117,6 @@ def main():
             print("\nMissing functions:")
             for e in rep.missing:
                 print(f"  ! {e.id}")
-        total = sum(rep.counts.values())
-        if total == 0:
-            print("\nNo changes detected.")
     elif args.command == "ddt" and args.ddt_cmd == "validate":
         scanner = DDTScanner()
         bindings = scanner.scan_tests()
@@ -132,7 +135,7 @@ def main():
         if rep.violations:
             print("\nViolations:")
             for typ, b, msg in rep.violations:
-                print(f"  {typ.upper()} {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path}) :: {msg}")
+                print(f"  [!] {typ.upper()} {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path}) :: {msg}")
         if not rep.valid and not rep.violations:
             print("\nNo DDT bindings found.")
     elif args.command == "gen" and args.gen_cmd == "l2":
@@ -175,6 +178,7 @@ def main():
         targets.extend(rep.modified)
         if not args.diff_only:
             targets.extend(rep.contract_changed)
+        print(f"targets={len(targets)}")
         out_lines = []
         for e in targets:
             try:
