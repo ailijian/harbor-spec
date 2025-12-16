@@ -5,6 +5,7 @@ from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
 from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.l2 import L2Generator
+from harbor.core.diary import DiaryManager
 
 
 def main():
@@ -28,6 +29,20 @@ def main():
     p_gen_l2.add_argument("--module", type=str, required=True)
     p_gen_l2.add_argument("--write", action="store_true")
     p_gen_l2.add_argument("--force", action="store_true")
+    p_diary = sub.add_parser("diary", help="Diary commands")
+    p_diary_sub = p_diary.add_subparsers(dest="diary_cmd", required=True)
+    p_diary_log = p_diary_sub.add_parser("log", help="Log a diary entry")
+    p_diary_log.add_argument("--summary", type=str, required=True)
+    p_diary_log.add_argument("--type", type=str, default="feature")
+    p_diary_log.add_argument("--importance", type=str, default="normal")
+    p_diary_log.add_argument("--visibility", type=str, default="internal")
+    p_diary_log.add_argument("--details", type=str, default=None)
+    p_diary_log.add_argument("--ref-commit", type=str, default=None)
+    p_diary_log.add_argument("--author", type=str, default=None)
+    p_diary_log.add_argument("--ts", type=str, default=None)
+    p_diary_export = p_diary_sub.add_parser("export", help="Export diary entries to Markdown")
+    p_diary_export.add_argument("--since", type=str, default=None)
+    p_diary_export.add_argument("--visibility", type=str, default="repo")
 
     args = parser.parse_args()
     if args.command == "build-index":
@@ -96,6 +111,23 @@ def main():
                 print(f"Wrote: {target.as_posix()}")
         else:
             print(md)
+    elif args.command == "diary" and args.diary_cmd == "log":
+        mgr = DiaryManager()
+        entry = mgr.log(
+            summary=args.summary,
+            type=args.type,
+            importance=args.importance,
+            visibility=args.visibility,
+            details=args.details,
+            ref_commit=args.ref_commit,
+            author=args.author,
+            ts=args.ts,
+        )
+        print(entry.to_json())
+    elif args.command == "diary" and args.diary_cmd == "export":
+        mgr = DiaryManager()
+        md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")
+        print(md)
 
 
 if __name__ == "__main__":
