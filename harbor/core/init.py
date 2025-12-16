@@ -109,9 +109,17 @@ class Initializer:
             "schema_version": "1.0.2",
             "profile": profile,
             "code_roots": code_roots,
-            "exclude_paths": [".venv/**", "tests/**", "build/**", "dist/**", "docs/**"],
+            "exclude_paths": [
+                ".venv/**",
+                "tests/**",
+                "build/**",
+                "dist/**",
+                "docs/**",
+                "node_modules/**",
+                ".next/**",
+                "coverage/**",
+            ],
         }
         text = yaml.safe_dump(payload, allow_unicode=True, sort_keys=False)
         self.config_path.write_text(text, encoding="utf-8")
         return self.config_path
-

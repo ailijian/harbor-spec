@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import ast
 import io
 import json
@@ -14,6 +15,7 @@ import yaml
 
 from harbor.adapters.python.parser import PythonAdapter, FunctionContract
 from harbor.core.utils import compute_body_hash, find_function_node
+from harbor.core.git_utils import GitIgnoreMatcher
 
 
 @dataclass
@@ -57,8 +59,8 @@ class IndexBuilder:
         config_path: Optional[Path] = None,
     ) -> None:
         self.config_path = config_path or Path(".harbor/config.yaml")
+        cfg = self._load_config(self.config_path)
         if code_roots is None or cache_dir is None:
-            cfg = self._load_config(self.config_path)
             code_roots = code_roots or cfg.get("code_roots", ["harbor/**"])
             cache_base = Path(".harbor") / "cache"
             cache_dir = cache_dir or cache_base
@@ -66,6 +68,8 @@ class IndexBuilder:
         self.cache_dir = cache_dir
         self.cache_file = self.cache_dir / "l3_index.json"
         self.adapter = PythonAdapter()
+        self.exclude_paths = cfg.get("exclude_paths", [])
+        self.gitignore = GitIgnoreMatcher.from_root(cfg_excludes=self.exclude_paths)
 
     def build(self, incremental: bool = True) -> IndexReport:
         """构建或增量更新 L3 索引到缓存。
@@ -202,25 +206,87 @@ class IndexBuilder:
         _ = (scanned, updated, skipped, items_total, int((time.time() - t0) * 1000))
 
     def _iter_py_files(self) -> List[Path]:
-        roots = []
-        for pattern in self.code_roots:
-            base = Path.cwd()
-            if "**" in pattern or "*" in pattern:
-                for p in base.glob(pattern):
-                    if p.is_file() and p.suffix == ".py":
-                        roots.append(p)
-                    elif p.is_dir():
-                        roots.extend([x for x in p.rglob("*.py")])
+        """生成待扫描的 Python 文件列表（支持 Git 感知剪枝）。
+
+        功能:
+          - 根据 `code_roots` 计算遍历起点，支持绝对/相对与 glob 模式。
+          - 通过 `.gitignore` 与 `exclude_paths` 在目录层级进行剪枝，避免进入大体量无关目录。
+          - 返回去重后的 `Path` 列表。
+
+        使用场景:
+          - `iter_build` 的文件枚举阶段。
+
+        依赖:
+          - GitIgnoreMatcher
+          - os.walk
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: read-only
+        """
+        base = Path.cwd().resolve()
+        patterns = self.code_roots or ["**/*.py"]
+        start_dirs: List[Path] = []
+        seed_files: List[Path] = []
+        abs_dirs: List[Path] = []
+        # collect starting points
+        for pat in patterns:
+            p_pat = Path(pat)
+            if p_pat.is_absolute():
+                if p_pat.is_dir():
+                    d = p_pat.resolve()
+                    start_dirs.append(d)
+                    abs_dirs.append(d)
+                elif p_pat.is_file() and p_pat.suffix == ".py":
+                    seed_files.append(p_pat.resolve())
+                continue
+            if pat.endswith("/**") or pat.endswith("/**/*.py"):
+                prefix = pat.split("/**")[0]
+                d = (base / prefix).resolve()
+                if d.exists() and d.is_dir():
+                    start_dirs.append(d)
+            elif "*" in pat:
+                start_dirs.append(base)
             else:
-                p = base / pattern
-                if p.is_dir():
-                    roots.extend([x for x in p.rglob("*.py")])
-                elif p.is_file() and p.suffix == ".py":
-                    roots.append(p)
+                d = (base / pat).resolve()
+                if d.exists() and d.is_dir():
+                    start_dirs.append(d)
+                elif d.exists() and d.is_file() and d.suffix == ".py":
+                    seed_files.append(d)
+        # dedup start dirs
+        sd_seen = {}
+        sd_list: List[Path] = []
+        for d in start_dirs:
+            k = d.as_posix()
+            if k in sd_seen:
+                continue
+            sd_seen[k] = True
+            sd_list.append(d)
+        files: List[Path] = []
+        files.extend(seed_files)
+        patterns_rel = [pat for pat in patterns if not Path(pat).is_absolute()]
+        for d in sd_list:
+            include_all = any(d == x for x in abs_dirs)
+            for root, subdirs, filenames in os.walk(d):
+                rel_root = Path(root).resolve().relative_to(base).as_posix()
+                pruned = []
+                for s in list(subdirs):
+                    rel_dir = (Path(rel_root) / s).as_posix() if rel_root else s
+                    if self.gitignore.match_dir(rel_dir):
+                        pruned.append(s)
+                if pruned:
+                    subdirs[:] = [x for x in subdirs if x not in pruned]
+                for name in filenames:
+                    if not name.endswith(".py"):
+                        continue
+                    rel_file = (Path(rel_root) / name).as_posix() if rel_root else name
+                    if include_all or any(Path(rel_file).match(p) for p in patterns_rel):
+                        files.append((base / rel_file).resolve())
+        # dedup result
         seen = {}
-        dedup = []
-        for p in roots:
-            k = p.resolve().as_posix()
+        dedup: List[Path] = []
+        for p in files:
+            k = p.as_posix()
             if k in seen:
                 continue
             seen[k] = True
