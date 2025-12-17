@@ -224,6 +224,15 @@ harbor lock
 
 -----
 
+## 🚀 What's New in v1.2.0
+
+- Smart Configuration：`harbor init` 现已自动探测 Django/Node.js/Go/Java 技术栈，并融合 `.gitignore` 规则生成更稳健的默认配置
+- SQLite Backend (WAL)：索引从 JSON 迁移至 SQLite，常驻 O(1) 内存占用、秒级启动与安全并发写入
+- Parallel Indexing：`harbor lock` 利用多核并行解析与哈希，适配大型 Monorepo 的高吞吐构建
+- Windows 兼容：全面适配路径归一化与并行处理，跨平台体验一致
+
+v1.2.0 重点围绕“工业级稳定性与规模化性能”，让 Harbor 更适合在企业级代码库中长期运行。
+
 ## 🧩 Features Deep Dive
 
 <details>
@@ -273,7 +282,12 @@ harbor config remove "legacy/**"     # 移除路径
 <details>
 <summary><strong>🚀 Performance Tuning (Monorepo)</strong></summary>
 
-对于大型项目，**排除无关目录**至关重要。`.harbor/config.yaml` 默认支持 Git 感知，但建议显式排除：
+对于大型项目，性能与可扩展性至关重要：
+- SQLite (WAL)：索引缓存持久化到 `.harbor/cache/harbor.db`，避免全量 JSON 读写，冷启动更快
+- 并行构建：`harbor lock` 默认多核并行解析与哈希，吞吐显著提升
+- 增量查询：`harbor status` 通过数据库增量对比，加速变更检测
+
+此外，**排除无关目录**非常关键。`.harbor/config.yaml` 默认支持 Git 感知，但建议显式排除：
 
 ```yaml
 exclude_paths:

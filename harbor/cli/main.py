@@ -561,9 +561,19 @@ def main():
         if init.config_path.exists() and not args.force:
             print("Config file already exists.")
             return
-        roots = init.detect_code_roots()
+        stacks, roots, excludes = init.autodetect()
+        if stacks:
+            print(f"[Harbor] Detected {' + '.join(stacks)} project.")
+        if excludes:
+            key_ex = []
+            for k in ["node_modules/**", ".venv/**", "dist/**", ".next/**", "build/**"]:
+                if k in excludes:
+                    key_ex.append(k.split("/")[0])
+            extra_cnt = max(len(excludes) - len(key_ex), 0)
+            if key_ex:
+                print(f"[Harbor] Auto-configured excludes: {', '.join(key_ex)}" + (f" (+{extra_cnt} more)" if extra_cnt > 0 else ""))
         print(f"Auto-detected code roots: {roots}")
-        init.write_config(roots, force=args.force)
+        init.write_config(roots, force=args.force, exclude_paths=excludes)
         print("Initialized Harbor in current directory.")
         print("Run 'harbor lock' to start.")
 

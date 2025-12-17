@@ -1,15 +1,14 @@
 def func1():
-    """测试函数。副作用：打印输出 x。
+    """测试函数。
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
-    @harbor.idempotency: once
 
     Args:
       None
 
     Returns:
-      int: 返回值 x
+      None
     """
     x = 2
     print(x)
