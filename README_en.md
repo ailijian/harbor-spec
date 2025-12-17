@@ -9,6 +9,7 @@
 [![Strictness](https://img.shields.io/badge/Harbor-L3%20Strict-purple?style=flat-square)](https://github.com/your-org/harbor-spec)
 
 **Manage AI like Code. Version Context like Git.**
+**It will help you complete the revolutionary transition from “programmer to context engineer.”**
 
 [Philosophy] • [Architecture] • [Quick Start] • [Migration Guide] • [Workflow] • [Cheatsheet]
 
