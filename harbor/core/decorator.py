@@ -162,6 +162,7 @@ class DecoratorEngine:
         lines = original.splitlines(keepends=True)
         changed = False
         out_lines = list(lines)
+        edits: List[Tuple[int, List[str]]] = []
         singleline_skipped_local = 0
         for fn in self._iter_function_nodes(tree):
             name = fn.name
@@ -183,7 +184,7 @@ class DecoratorEngine:
                 closing_idx = end - 1
                 indent = self._leading_whitespace(out_lines[closing_idx])
                 insert_block = [indent + "\n", indent + "@harbor.scope: public\n"]
-                out_lines[closing_idx:closing_idx] = insert_block
+                edits.append((closing_idx, insert_block))
                 changed = True
             else:
                 if strategy == "aggressive":
@@ -196,8 +197,11 @@ class DecoratorEngine:
                         base_indent + "@harbor.scope: public\n",
                         base_indent + '"""\n',
                     ]
-                    out_lines[insert_idx:insert_idx] = block
+                    edits.append((insert_idx, block))
                     changed = True
+        if edits:
+            for idx, block in sorted(edits, key=lambda x: x[0], reverse=True):
+                out_lines[idx:idx] = block
         diff = ""
         if changed:
             new_text = "".join(out_lines)
@@ -240,6 +244,7 @@ class DecoratorEngine:
             lines = original.splitlines(keepends=True)
             out_lines = list(lines)
             changed = False
+            edits: List[Tuple[int, List[str]]] = []
             for fn in self._iter_function_nodes(tree):
                 name = fn.name
                 if self._is_filtered_name(name):
@@ -261,7 +266,7 @@ class DecoratorEngine:
                     closing_idx = end - 1
                     indent = self._leading_whitespace(out_lines[closing_idx])
                     insert_block = [indent + "\n", indent + "@harbor.scope: public\n"]
-                    out_lines[closing_idx:closing_idx] = insert_block
+                    edits.append((closing_idx, insert_block))
                     changed = True
                 else:
                     without_doc += 1
@@ -275,8 +280,11 @@ class DecoratorEngine:
                             base_indent + "@harbor.scope: public\n",
                             base_indent + '"""\n',
                         ]
-                        out_lines[insert_idx:insert_idx] = block
+                        edits.append((insert_idx, block))
                         changed = True
+            if edits:
+                for idx, block in sorted(edits, key=lambda x: x[0], reverse=True):
+                    out_lines[idx:idx] = block
             if plan.will_write and not dry_run and changed:
                 new_text = "".join(out_lines)
                 plan.file_path.write_text(new_text, encoding="utf-8")
