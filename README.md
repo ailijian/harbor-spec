@@ -137,10 +137,10 @@ HARBOR_LANGUAGE=zh # 可选英文：en
 
 ### 5\. Build Baseline
 
-构建初始索引，接管当前代码库：
+锁定初始基线（将当前契约快照写入缓存），接管当前代码库：
 
 ```bash
-harbor build-index
+harbor lock
 ```
 
 -----
@@ -152,7 +152,7 @@ harbor build-index
 ### 1\. 扫描并标记 (Decorate)
 
 ```bash
-harbor decorate backend/ --strategy safe
+harbor adopt backend/ --strategy safe
 ```
 
   * **Safe Mode (默认)**: 仅识别已有 Docstring 但缺少 `@harbor.scope` 的函数。
@@ -161,10 +161,10 @@ harbor decorate backend/ --strategy safe
 
 ### 2\. 更新索引
 
-完成标记后，更新 Harbor 的记忆：
+完成接管后，锁定基线：
 
 ```bash
-harbor build-index
+harbor lock
 ```
 
 -----
@@ -196,11 +196,11 @@ harbor status
 
 ### Step 4: AI Audit
 
-调用 LLM 检查语义一致性。
+运行统一检查以同时验证语义与 DDT 绑定：
 
 ```bash
-harbor audit --semantic
-# 输出: [MISMATCH] 代码抛出了 ValueError 但 Docstring 未声明。
+harbor check
+# 输出: [Semantic] POSSIBLE_SEMANTIC_DRIFT ... 与 [DDT] Validation ...
 ```
 
 ### Step 5: Smart Diary (AI 智能日志) ✨
@@ -208,7 +208,7 @@ harbor audit --semantic
 代码修改完成后，让 AI 帮你写决策日志。
 
 ```bash
-harbor diary draft
+harbor log
 ```
 
   * Harbor 会分析未索引的变更（Drift），自动生成结构化日志草稿。
@@ -216,10 +216,10 @@ harbor diary draft
 
 ### Step 6: Lock & Record
 
-提交变更进入索引。
+锁定新的基线：
 
 ```bash
-harbor build-index
+harbor lock
 ```
 
 -----
@@ -240,6 +240,7 @@ def test_calculate_tax():
 ```
 
 运行 `harbor ddt validate`，如果契约升级到 v2，Harbor 会强制测试失败。
+推荐使用 `harbor check --fast`（仅运行 DDT 验证）。
 
 </details>
 
@@ -249,7 +250,7 @@ def test_calculate_tax():
 自动生成模块级的 README，作为代码质量仪表盘。
 
 ```bash
-harbor gen l2 --module harbor/core --write
+harbor docs --module harbor/core --write
 ```
 
 生成包含 Public API 列表、严格度状态及测试覆盖率的 Markdown 文档。
@@ -291,14 +292,15 @@ exclude_paths:
 | Command | Description |
 | :--- | :--- |
 | `harbor init` | 智能初始化项目配置 |
-| `harbor status` | 检查代码漂移 (Drift) |
-| `harbor build-index` | 更新索引 (Memory) |
-| `harbor decorate` | 交互式迁移存量代码 |
-| `harbor audit --semantic` | AI 语义审计 |
-| `harbor diary draft` | AI 辅助生成日志草稿 |
-| `harbor diary log` | 手动写入日志 |
-| `harbor gen l2` | 生成模块级文档 |
-| `harbor config` | 管理扫描路径配置 |
+| `harbor status` / `harbor st` | 查看上下文状态（Drift/Modified） |
+| `harbor lock` / `harbor commit` | 锁定当前 L3 契约快照为基线 |
+| `harbor check` | 统一语义审计与 DDT 验证 |
+| `harbor check --fast` | 仅运行 DDT 验证 |
+| `harbor log` | 上下文感知日志：无参 AI 草稿，`-m` 手动写入 |
+| `harbor log --export` | 导出 Diary Markdown |
+| `harbor adopt` | 交互式接管遗留代码进入治理体系 |
+| `harbor docs` | 生成模块级文档（L2） |
+| `harbor config` / `harbor conf` | 管理扫描路径配置 |
 
 -----
 

@@ -142,10 +142,10 @@ HARBOR_LANGUAGE=en  # Output reports in English
 
 ### 5\. Build Baseline
 
-Build the initial index to take control of your current codebase:
+Build the initial baseline (lock current contract snapshot) to take control of your codebase:
 
 ```bash
-harbor build-index
+harbor lock
 ```
 
 -----
@@ -157,7 +157,7 @@ Have a large existing codebase without Docstrings? Use the **Interactive Decorat
 ### 1\. Scan and Decorate
 
 ```bash
-harbor decorate backend/ --strategy safe
+harbor adopt backend/ --strategy safe
 ```
 
   * **Safe Mode (Default)**: Identifies functions that *have* docstrings but lack the `@harbor.scope` tag.
@@ -166,10 +166,10 @@ harbor decorate backend/ --strategy safe
 
 ### 2\. Update Index
 
-After decorating, update Harbor's memory:
+After adoption, lock the baseline:
 
 ```bash
-harbor build-index
+harbor lock
 ```
 
 -----
@@ -201,11 +201,11 @@ harbor status
 
 ### Step 4: AI Audit
 
-Invoke the LLM to check for semantic consistency.
+Run unified check to verify semantics and DDT bindings.
 
 ```bash
-harbor audit --semantic
-# Output: [MISMATCH] Code raises 'ValueError' but Docstring does not declare it.
+harbor check
+# Output: [Semantic] POSSIBLE_SEMANTIC_DRIFT ... and [DDT] Validation ...
 ```
 
 ### Step 5: Smart Diary (AI-Assisted Logging) ✨
@@ -213,7 +213,7 @@ harbor audit --semantic
 Finished the change? Let AI draft your decision log.
 
 ```bash
-harbor diary draft
+harbor log
 ```
 
   * Harbor analyzes unindexed changes (Drift) and generates a structured diary draft.
@@ -221,10 +221,10 @@ harbor diary draft
 
 ### Step 6: Lock & Record
 
-Commit the changes to the index.
+Lock the new baseline.
 
 ```bash
-harbor build-index
+harbor lock
 ```
 
 -----
@@ -244,7 +244,7 @@ def test_calculate_tax():
     ...
 ```
 
-Run `harbor ddt validate`. If the contract version upgrades to v2, Harbor forces the test to fail, reminding you to update validation logic.
+Run `harbor check --fast`. If the contract version upgrades to v2, Harbor forces the test to fail, reminding you to update validation logic.
 
 </details>
 
@@ -254,7 +254,7 @@ Run `harbor ddt validate`. If the contract version upgrades to v2, Harbor forces
 Automatically generate module-level READMEs as a quality dashboard.
 
 ```bash
-harbor gen l2 --module harbor/core --write
+harbor docs --module harbor/core --write
 ```
 
 Generates a Markdown file listing Public APIs, strictness status, and test coverage.
@@ -296,14 +296,15 @@ exclude_paths:
 | Command | Description |
 | :--- | :--- |
 | `harbor init` | Auto-detect structure and initialize config. |
-| `harbor status` | Check for Code Drift (Body vs Contract). |
-| `harbor build-index` | Update the L3 Index (Memory). |
-| `harbor decorate` | Interactively migrate legacy code. |
-| `harbor audit --semantic` | Run AI-powered semantic consistency checks. |
-| `harbor diary draft` | AI-assisted decision log drafting. |
-| `harbor diary log` | Manually write a decision log. |
-| `harbor gen l2` | Generate module-level documentation. |
-| `harbor config` | Manage code roots and paths. |
+| `harbor status` / `harbor st` | Check for context status (Drift/Modified). |
+| `harbor lock` / `harbor commit` | Lock current L3 snapshot into cache (baseline). |
+| `harbor check` | Unified semantic audit and DDT validation. |
+| `harbor check --fast` | Run DDT validation only. |
+| `harbor log` | Context-aware diary: AI Draft (no args) or manual `-m`. |
+| `harbor log --export` | Export diary Markdown. |
+| `harbor adopt` | Interactively adopt legacy code into Harbor governance. |
+| `harbor docs` | Generate module-level documentation (L2). |
+| `harbor config` / `harbor conf` | Manage code roots and paths. |
 
 -----
 
