@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚓ Harbor
+# ⚓ HarborSpec
 ### The Context Governance Engine for Vibe Coding
 
 [![CI Status](https://img.shields.io/github/actions/workflow/status/your-org/harbor-spec/ci.yml?style=flat-square)](https://github.com/your-org/harbor-spec/actions)
