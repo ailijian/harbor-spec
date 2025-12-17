@@ -19,3 +19,4 @@
 {"ver": 1, "ts": "2025-12-16T19:11:24Z", "author": "李健", "type": "refactor", "importance": "normal", "visibility": "repo", "summary": "CLI 入口函数调整", "details": "对 `harbor.cli.main.main` 函数进行了调整，主要涉及输出逻辑的优化和错误处理的改进。具体包括：\n1. 在输出 `POSSIBLE_SEMANTIC_DRIFT` 和 `ERROR` 信息时，增加了对 `args.format` 的判断，确保输出格式的一致性。\n2. 在 `init` 命令中，增加了对配置文件是否已存在的检查，并在存在时提示用户。\n3. 优化了 `init` 命令的输出信息，使其更加清晰。\n\n这些调整提高了代码的可读性和用户体验，属于代码重构（refactor）范畴，重要性为 normal。"}
 {"ver": 1, "ts": "2025-12-17T07:45:48Z", "author": "李健", "type": "chore", "importance": "normal", "visibility": "repo", "summary": "CLI 2.0 test entry"}
 {"ver": 1, "ts": "2025-12-17T07:46:43Z", "author": "李健", "type": "feature", "importance": "high", "visibility": "public", "summary": "CLI 2.0 重构：引入 lock/check/log/adopt/docs 并保留旧命令映射"}
+{"ver": 1, "ts": "2025-12-17T07:51:31Z", "author": "李健", "type": "chore", "importance": "normal", "visibility": "repo", "summary": "CLI 2.0 verification"}
