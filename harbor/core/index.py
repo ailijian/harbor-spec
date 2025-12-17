@@ -16,6 +16,7 @@ import yaml
 from harbor.adapters.python.parser import PythonAdapter, FunctionContract
 from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
 from harbor.core.git_utils import GitIgnoreMatcher
+from harbor.core.storage import HarborDB
 
 
 @dataclass
@@ -70,6 +71,11 @@ class IndexBuilder:
         self.adapter = PythonAdapter()
         self.exclude_paths = cfg.get("exclude_paths", [])
         self.gitignore = GitIgnoreMatcher.from_root(cfg_excludes=self.exclude_paths)
+        self.db = HarborDB(project_root=Path.cwd())
+        try:
+            self.db.migrate_from_json(self.cache_file)
+        except Exception:
+            pass
 
     def build(self, incremental: bool = True) -> IndexReport:
         """构建或增量更新 L3 索引到缓存。
@@ -124,7 +130,7 @@ class IndexBuilder:
             updated_files=updated,
             skipped_files=skipped,
             total_items=items_total,
-            cache_path=str(self.cache_file.as_posix()),
+            cache_path=str(self.db.db_path.as_posix()),
             elapsed_ms=elapsed_ms,
         )
 
@@ -155,8 +161,6 @@ class IndexBuilder:
         """
         t0 = time.time()
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        old = self._load_cache()
-        files_index: Dict[str, Any] = old.get("files", {})
         scanned = 0
         updated = 0
         skipped = 0
@@ -167,9 +171,12 @@ class IndexBuilder:
             scanned += 1
             fp = str(p.as_posix())
             mtime = p.stat().st_mtime
-            fhash = self._file_hash(p)
-            prev = files_index.get(fp)
-            if incremental and prev and prev.get("mtime") == mtime and prev.get("file_hash") == fhash:
+            db_meta = self.db.get_file(fp)
+            if incremental and db_meta and float(db_meta.get("last_modified", 0.0)) == float(mtime):
+                try:
+                    self.db.upsert_file(fp, mtime, "indexed")
+                except Exception:
+                    pass
                 skipped += 1
                 yield ProgressEvent(path=fp, index=i, total=total, cached=True, status="skipped")
                 continue
@@ -181,29 +188,63 @@ class IndexBuilder:
                     node = find_function_node(source, fc.lineno, fc.name)
                     body_hash = compute_body_hash(source, node) if node else ""
                     items.append(self._index_entry(fc, body_hash))
-                files_index[fp] = {
-                    "mtime": mtime,
-                    "file_hash": fhash,
-                    "items": items,
-                }
                 cnt = len(items)
+                with self.db.transaction():
+                    self.db.upsert_file(fp, mtime, "indexed")
+                    for it in items:
+                        meta = {
+                            "name": it.get("name"),
+                            "scope": it.get("scope"),
+                            "strictness": it.get("strictness"),
+                            "lineno": it.get("lineno"),
+                            "qualified_name": it.get("qualified_name"),
+                            "docstring_raw_hash": it.get("docstring_raw_hash"),
+                        }
+                        entry_obj = {
+                            "id": it.get("id"),
+                            "file_path": fp,
+                            "signature_hash": it.get("signature_hash"),
+                            "body_hash": it.get("body_hash"),
+                            "contract_hash": it.get("contract_hash"),
+                            "meta": meta,
+                        }
+                        self.db.upsert_entry(entry_obj)
                 items_total += cnt
                 updated += 1
                 yield ProgressEvent(path=fp, index=i, total=total, cached=False, status="parsed", items_count=cnt)
             except Exception:
+                try:
+                    self.db.upsert_file(fp, mtime, "error")
+                except Exception:
+                    pass
                 skipped += 1
                 yield ProgressEvent(path=fp, index=i, total=total, cached=False, status="error")
                 continue
-        payload = {
-            "meta": {
-                "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                "schema_version": "1.0.2",
-            },
-            "files": files_index,
-        }
-        self._save_cache(payload)
-        # 为了保持旧接口统计能力，最终在 CLI 侧自行统计或读取缓存。
         _ = (scanned, updated, skipped, items_total, int((time.time() - t0) * 1000))
+        try:
+            snapshot: Dict[str, Any] = {"meta": {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "schema_version": "1.0.2"}, "files": {}}
+            all_files = self.db.get_all_files()
+            for fp, mtime in all_files:
+                items = []
+                for it in self.db.get_file_entries(fp):
+                    items.append(
+                        {
+                            "id": it.get("id"),
+                            "qualified_name": it.get("meta", {}).get("qualified_name"),
+                            "name": it.get("meta", {}).get("name"),
+                            "signature_hash": it.get("signature_hash"),
+                            "body_hash": it.get("body_hash"),
+                            "contract_hash": it.get("contract_hash"),
+                            "docstring_raw_hash": it.get("meta", {}).get("docstring_raw_hash"),
+                            "scope": it.get("meta", {}).get("scope"),
+                            "strictness": it.get("meta", {}).get("strictness"),
+                            "lineno": it.get("meta", {}).get("lineno"),
+                        }
+                    )
+                snapshot["files"][fp] = {"mtime": mtime, "file_hash": "", "items": items}
+            self._save_cache(snapshot)
+        except Exception:
+            pass
 
     def _iter_py_files(self) -> List[Path]:
         """生成待扫描的 Python 文件列表（支持 Git 感知剪枝）。

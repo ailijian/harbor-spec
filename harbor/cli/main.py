@@ -215,7 +215,7 @@ def main():
                     progress.update(task_id, advance=1, description=f"[错误] {ev.path}")
         print(
             f"scanned={scanned} updated={updated} skipped={skipped} "
-            f"items={items_total} cache={builder.cache_file.as_posix()}"
+            f"items={items_total} db={builder.db.db_path.as_posix()}"
         )
     elif args.command == "config" and args.cfg_cmd == "list":
         cfg_path = Path(".harbor/config.yaml")

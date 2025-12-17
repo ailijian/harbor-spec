@@ -9,6 +9,7 @@ import yaml
 
 from harbor.adapters.python.parser import PythonAdapter, FunctionContract
 from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
+from harbor.core.storage import HarborDB
 
 
 @dataclass
@@ -33,11 +34,16 @@ class StatusReport:
 class SyncEngine:
     def __init__(self, config_path: Optional[Path] = None) -> None:
         self.config_path = config_path or Path(".harbor/config.yaml")
-        self.cache_file = Path(".harbor") / "cache" / "l3_index.json"
         self.adapter = PythonAdapter()
         self.config = self._load_config(self.config_path)
         self.code_roots = self.config.get("code_roots", ["harbor/**"])
         self.exclude_paths = self.config.get("exclude_paths", [])
+        self.db = HarborDB(project_root=Path.cwd())
+        try:
+            # 如果存在旧版 JSON 索引，优先迁移以提供基准
+            self.db.migrate_from_json(Path(".harbor") / "cache" / "l3_index.json")
+        except Exception:
+            pass
 
     def check_status(self) -> StatusReport:
         """对比缓存索引与当前代码，输出 Harbor 上下文状态。
@@ -66,56 +72,56 @@ class SyncEngine:
           IOError: 当索引缓存不可读。
           ConfigError: 当 `.harbor/config.yaml` 加载失败。
         """
-        cached = self._load_index_cache()
-        cached_map: Dict[str, Tuple[Dict[str, Any], str]] = {}
-        for fp, meta in cached.get("files", {}).items():
-            for it in meta.get("items", []):
-                cached_map[it["id"]] = (it, fp)
-
-        current_map: Dict[str, Tuple[Dict[str, Any], str]] = {}
-        for p in self._iter_py_files():
-            fp = str(p.as_posix())
-            source = p.read_text(encoding="utf-8")
-            for fc in self.adapter.parse_file(fp):
-                node = find_function_node(source, fc.lineno, fc.name)
-                body_hash = compute_body_hash(source, node) if node else ""
-                current_map[fc.id] = (
-                    {
-                        "id": fc.id,
-                        "name": fc.name,
-                        "body_hash": body_hash,
-                        "contract_hash": fc.contract_hash,
-                    },
-                    fp,
-                )
-
-        ids = set(cached_map.keys()) | set(current_map.keys())
         drift: List[StatusEntry] = []
         modified: List[StatusEntry] = []
         contract_changed: List[StatusEntry] = []
         untracked: List[StatusEntry] = []
         missing: List[StatusEntry] = []
 
-        for id_ in sorted(ids):
-            c_item = cached_map.get(id_)
-            n_item = current_map.get(id_)
-            if c_item and n_item:
-                c, c_fp = c_item
-                n, n_fp = n_item
-                body_changed = (c.get("body_hash") != n.get("body_hash"))
-                contract_changed_flag = (c.get("contract_hash") != n.get("contract_hash"))
-                if body_changed and not contract_changed_flag:
-                    drift.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=n_fp, change_type="Drift", details="Body changed, Contract static"))
-                elif body_changed and contract_changed_flag:
-                    modified.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=n_fp, change_type="Modified", details="Body + Contract changed"))
-                elif (not body_changed) and contract_changed_flag:
-                    contract_changed.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=n_fp, change_type="Contract Changed", details="Contract updated"))
-            elif n_item and not c_item:
-                n, n_fp = n_item
-                untracked.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=n_fp, change_type="Untracked", details="New function"))
-            elif c_item and not n_item:
-                c, c_fp = c_item
-                missing.append(StatusEntry(id=id_, name=c.get("name", ""), file_path=c_fp, change_type="Missing", details="Function removed"))
+        current_paths: List[str] = []
+        files = self._iter_py_files()
+        for p in files:
+            fp = str(p.as_posix())
+            current_paths.append(fp)
+            disk_mtime = p.stat().st_mtime
+            db_meta = self.db.get_file(fp)
+            if db_meta and float(db_meta.get("last_modified", 0.0)) == float(disk_mtime):
+                continue
+            source = p.read_text(encoding="utf-8")
+            new_items: Dict[str, Dict[str, Any]] = {}
+            for fc in self.adapter.parse_file(fp):
+                node = find_function_node(source, fc.lineno, fc.name)
+                body_hash = compute_body_hash(source, node) if node else ""
+                new_items[fc.id] = {
+                    "id": fc.id,
+                    "name": fc.name,
+                    "body_hash": body_hash,
+                    "contract_hash": fc.contract_hash,
+                }
+            old_items = {it["id"]: it for it in self.db.get_file_entries(fp)}
+            all_ids = set(old_items.keys()) | set(new_items.keys())
+            for id_ in sorted(all_ids):
+                c = old_items.get(id_)
+                n = new_items.get(id_)
+                if c and n:
+                    body_changed = (c.get("body_hash") != n.get("body_hash"))
+                    contract_changed_flag = (c.get("contract_hash") != n.get("contract_hash"))
+                    if body_changed and not contract_changed_flag:
+                        drift.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=fp, change_type="Drift", details="Body changed, Contract static"))
+                    elif body_changed and contract_changed_flag:
+                        modified.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=fp, change_type="Modified", details="Body + Contract changed"))
+                    elif (not body_changed) and contract_changed_flag:
+                        contract_changed.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=fp, change_type="Contract Changed", details="Contract updated"))
+                elif n and not c:
+                    untracked.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=fp, change_type="Untracked", details="New function"))
+                elif c and not n:
+                    missing.append(StatusEntry(id=id_, name=c.get("meta", {}).get("name", ""), file_path=fp, change_type="Missing", details="Function removed"))
+
+        db_files = [path for path, _ in self.db.get_all_files()]
+        for db_fp in db_files:
+            if db_fp not in current_paths:
+                for it in self.db.get_file_entries(db_fp):
+                    missing.append(StatusEntry(id=it.get("id", ""), name=it.get("meta", {}).get("name", ""), file_path=db_fp, change_type="Missing", details="File removed"))
 
         counts = {
             "drift": len(drift),
@@ -140,11 +146,6 @@ class SyncEngine:
             return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         except Exception:
             raise RuntimeError("ConfigError: failed to load .harbor/config.yaml")
-
-    def _load_index_cache(self) -> Dict[str, Any]:
-        if not self.cache_file.exists():
-            raise IOError("index cache not found: .harbor/cache/l3_index.json")
-        return json.loads(self.cache_file.read_text(encoding="utf-8"))
 
     def _iter_py_files(self) -> List[Path]:
         return iter_project_files(self.code_roots, self.exclude_paths)

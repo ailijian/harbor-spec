@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
+from harbor.core.storage import HarborDB
 
 
 @dataclass
@@ -158,9 +159,29 @@ class DDTValidator:
         return DDTReport(valid=valid, violations=violations, counts=counts)
 
     def _load_index(self, path: Path) -> Dict[str, Any]:
-        if not path.exists():
-            raise IOError("l3_index.json not found")
-        return json.loads(path.read_text(encoding="utf-8"))
+        if path.exists():
+            return json.loads(path.read_text(encoding="utf-8"))
+        db = HarborDB()
+        files: Dict[str, Any] = {}
+        for fp, mtime in db.get_all_files():
+            items = []
+            for it in db.get_file_entries(fp):
+                items.append(
+                    {
+                        "id": it.get("id"),
+                        "qualified_name": it.get("meta", {}).get("qualified_name"),
+                        "name": it.get("meta", {}).get("name"),
+                        "signature_hash": it.get("signature_hash"),
+                        "body_hash": it.get("body_hash"),
+                        "contract_hash": it.get("contract_hash"),
+                        "docstring_raw_hash": it.get("meta", {}).get("docstring_raw_hash"),
+                        "scope": it.get("meta", {}).get("scope"),
+                        "strictness": it.get("meta", {}).get("strictness"),
+                        "lineno": it.get("meta", {}).get("lineno"),
+                    }
+                )
+            files[fp] = {"mtime": mtime, "file_hash": "", "items": items}
+        return {"meta": {"schema_version": "1.0.2"}, "files": files}
 
     def _load_map(self, path: Path) -> Dict[str, Any]:
         if not path.exists():
@@ -169,4 +190,3 @@ class DDTValidator:
             return json.loads(path.read_text(encoding="utf-8"))
         except Exception:
             return {}
-
