@@ -23,6 +23,7 @@ from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
 from harbor.core.init import Initializer
+from harbor.core.decorator import DecoratorEngine
 
 
 def main():
@@ -73,6 +74,11 @@ def main():
     p_cfg_remove.add_argument("path", type=str)
 
     p_status = sub.add_parser("status", help="Show Harbor context status (no implicit index update)")
+    p_decorate = sub.add_parser("decorate", help="Interactive decorator to add @harbor.scope tags")
+    p_decorate.add_argument("path", type=str)
+    p_decorate.add_argument("--strategy", type=str, choices=["safe", "aggressive"], default="safe")
+    p_decorate.add_argument("--yes", action="store_true")
+    p_decorate.add_argument("--dry-run", action="store_true")
     p_ddt_validate = sub.add_parser("ddt", help="DDT commands")
     p_ddt_sub = p_ddt_validate.add_subparsers(dest="ddt_cmd", required=True)
     p_ddt_val = p_ddt_sub.add_parser("validate", help="Validate DDT bindings against index and version map")
@@ -306,6 +312,64 @@ def main():
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")
         print(md)
+    elif args.command == "decorate":
+        console = Console()
+        eng = DecoratorEngine()
+        candidates = eng.scan(args.path, strategy=args.strategy)
+        table = Table(title="Decorate Candidates")
+        table.add_column("Action")
+        table.add_column("Func")
+        table.add_column("File")
+        table.add_column("HasDoc")
+        table.add_column("HasScope")
+        doc_yes = 0
+        doc_no = 0
+        for c in candidates:
+            if c.has_docstring:
+                doc_yes += 1
+            else:
+                doc_no += 1
+            table.add_row(c.action, c.qualified_name, c.file_path.as_posix(), "Y" if c.has_docstring else "N", "Y" if c.has_scope_tag else "N")
+        console.print(table)
+        missing_scope_files = {}
+        for c in candidates:
+            if c.action == "Keep" and c.has_docstring and not c.has_scope_tag:
+                missing_scope_files[c.file_path.as_posix()] = c.file_path
+        create_docs_files = {}
+        if args.strategy == "aggressive":
+            for c in candidates:
+                if c.action == "Create" and not c.has_docstring:
+                    create_docs_files[c.file_path.as_posix()] = c.file_path
+        target_files = {}
+        for k, v in missing_scope_files.items():
+            target_files[k] = v
+        for k, v in create_docs_files.items():
+            target_files[k] = v
+        plans = []
+        singleline_skipped_total = 0
+        for f in target_files.values():
+            for p in eng.preview(f, strategy=args.strategy):
+                plans.append(p)
+                if p.will_write and p.diff_preview:
+                    pass
+        summary = f"Found {len(candidates)} candidates. {doc_yes} have docstrings, {doc_no} do not."
+        print(summary)
+        to_apply = [p for p in plans if p.will_write]
+        print(f"Planned changes to {len(to_apply)} files.")
+        if args.dry_run:
+            for p in to_apply:
+                if p.diff_preview:
+                    print(p.diff_preview)
+            return
+        if not args.yes:
+            choice = Prompt.ask(f"Apply changes to {len(to_apply)} files? [y/N]", choices=["y", "n", "Y", "N"], default="N")
+            if choice.upper() != "Y":
+                print("No changes applied.")
+                return
+        rep = eng.apply(plans, dry_run=False, strategy=args.strategy)
+        if rep.changed_files:
+            print(f"Changed {len(rep.changed_files)} files.")
+            print("[Tip] Source code modified. Run 'harbor build-index' to update the L3 index.")
     elif args.command == "diary" and args.diary_cmd == "draft":
         console = Console()
         with console.status("[bold blue][Status] Analyzing code changes...", spinner="dots"):

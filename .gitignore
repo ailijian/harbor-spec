@@ -209,3 +209,5 @@ __marimo__/
 # Trae IDE rules and Harbor internals
 .trae/
 .harbor/
+
+node_modules/

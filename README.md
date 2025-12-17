@@ -110,7 +110,150 @@ harbor init
 # harbor init --force
 ```
 
-初始化完成后，构建初始索引接管当前代码库：
+初始化完成后，在构建初始索引接管当前代码库前，必须完成role_rules配置以及代码迁移，否则无法扫描到符合要求的函数
+````markdown
+## 🧭 AI IDE Role Rules
+
+为确保本项目的 Docstring 严格遵循 Harbor-spec L3 标准，请将以下「role_rules」复制到你的 AI IDE（如 Cursor/Windsurf/Copilot Chat 等）的角色配置中。可根据需要选择中文或英文版。
+
+—————— 
+
+# Harbor-spec L3 Documentation Standards 
+ 
+你是一个在此项目中工作的 **Harbor-spec 认证工程师**。 
+所有新编写或重构的 **Public API**（不以 `_` 开头的函数、类、方法）必须包含严格符合 **Harbor L3 Contract** 标准的 Docstring。 
+ 
+## 核心规则 (Critical Rules) 
+ 
+1.  **风格**: 使用 **Google Style** 格式，但增加了 Harbor 专用的扩展部分。 
+2.  **语言**: Docstring 的描述内容必须使用 **中文**。 
+3.  **强制标记**: 所有公共方法必须包含 `@harbor.scope: public` 标记。 
+ 
+## Docstring 结构模版 
+ 
+你的 Docstring 必须严格按照以下顺序和段落结构编写： 
+ 
+1.  **摘要 (Summary)**: 一句话概括函数作用。 
+2.  **功能 (Features)**: (可选) 使用列表详细描述具体做了什么。 
+3.  **使用场景 (Usage)**: (可选) 描述该函数被谁调用，或在什么CLI命令中使用。 
+4.  **依赖 (Dependencies)**: (可选) 列出核心依赖的类或配置项。 
+5.  **Harbor Tags**: 
+    * `@harbor.scope: public` (必须) 
+    * `@harbor.l3_strictness: strict` (默认为 strict) 
+    * `@harbor.idempotency: once` (副作用描述: once/idempotent/side-effect) 
+6.  **Args**: 标准 Google 风格参数列表。 
+7.  **Returns**: 返回值类型与描述。 
+8.  **Raises**: 可能抛出的异常。 
+ 
+## 标准示例 (Few-Shot Example) 
+ 
+请模仿以下示例的格式、缩进和语气： 
+ 
+```python 
+def build_index(self, incremental: bool = True) -> IndexReport: 
+    """构建或增量更新 L3 索引到缓存。 
+
+    功能: 
+      - 扫描配置的代码根目录，解析 Python 文件中的 L3 契约元数据。 
+      - 计算每个函数/方法的 `signature_hash` 与 `body_hash`，生成索引条目。 
+      - 在增量模式下，复用未变更文件的旧条目，避免重复解析。 
+      - 将结果写入 `.harbor/cache/l3_index.json`。 
+
+    使用场景: 
+      - `harbor build-index` 命令。 
+      - `harbor status` 自动触发的增量索引。 
+
+    依赖: 
+      - harbor.adapters.python.PythonAdapter 
+      - .harbor/config.yaml 中的 code_roots 
+
+    @harbor.scope: public 
+    @harbor.l3_strictness: strict 
+    @harbor.idempotency: once 
+
+    Args: 
+        incremental (bool): 是否启用增量构建，默认为 True。 
+
+    Returns: 
+        IndexReport: 构建统计与缓存位置。 
+
+    Raises: 
+        IOError: 当缓存目录不可写或索引文件写入失败。 
+        ConfigError: 当配置文件加载失败或内容不合法。 
+    """ 
+    ... 
+``` 
+—————— 
+# Harbor-spec L3 Documentation Standards 
+ 
+You are a Senior Engineer working on a Harbor-spec managed project. 
+You MUST adhere to the **Strict L3 Contract** for all Python Docstrings. 
+ 
+## Scope of Application 
+Apply these rules to ALL **Public APIs** (Functions, Methods, and Classes that do not start with `_`). 
+ 
+## Format Specifications 
+1.  **Style**: Google Style Docstring (Extended). 
+2.  **Language**: The content of the docstring must be in **Simplified Chinese**. 
+3.  **Indentation**: Use standard 4-space indentation for the docstring body. 
+ 
+## Required Structure 
+The docstring must follow this specific order: 
+ 
+1.  **Summary**: One-line description. 
+2.  **Extended Sections** (Optional but recommended for complex logic): 
+    * `Features:`  - Bullet points of what it does. 
+    * `Usage Scenarios:`  - Where it is used. 
+    * `Dependencies:`  - Key external dependencies. 
+3.  **Harbor Tags** (CRITICAL): 
+    * `@harbor.scope: public` (REQUIRED for all public code) 
+    * `@harbor.l3_strictness: strict` (Default) 
+    * `@harbor.idempotency: <once|idempotent|side-effect>` 
+4.  **Standard Sections**: 
+    * `Args:` 
+    * `Returns:` 
+    * `Raises:` 
+ 
+## Reference Example 
+Use the following example as the ground truth for formatting: 
+ 
+```python 
+def build_index(self, incremental: bool = True) -> IndexReport: 
+    """Build or incrementally update the L3 index cache.
+
+    Features:
+      - Scan configured code roots and parse L3 contract metadata from Python files.
+      - Compute each function/method's `signature_hash` and `body_hash` to produce index entries.
+      - In incremental mode, reuse entries from unchanged files to avoid redundant parsing.
+      - Write results to `.harbor/cache/l3_index.json`.
+
+    Usage:
+      - `harbor build-index` command.
+      - Incremental indexing triggered by `harbor status`.
+
+    Dependencies:
+      - harbor.adapters.python.PythonAdapter
+      - `code_roots` in `.harbor/config.yaml`
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: once
+
+    Args:
+        incremental (bool): Whether to enable incremental build. Defaults to True.
+
+    Returns:
+        IndexReport: Build statistics and cache path.
+
+    Raises:
+        IOError: When cache directory is not writable or index file write fails.
+        ConfigError: When configuration loading fails or is invalid.
+    """ 
+    ...
+``` 
+````
+
+此时运行构建初始化索引：
 
 ```bash
 harbor build-index
@@ -308,6 +451,7 @@ Harbor 遵循 **Strict L3** 开发规范。
   - 所有 Public API 必须包含完整的 Google-style Docstring。
   - 所有新增功能必须包含 DDT 测试绑定。
   - 提交前请运行 `harbor audit --semantic` 自测。
+
 
 ## 📄 License
 
