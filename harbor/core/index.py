@@ -7,6 +7,7 @@ import json
 import time
 import hashlib
 import tokenize
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Iterator, Literal
@@ -52,12 +53,66 @@ class ProgressEvent:
     items_count: int = 0
 
 
+def process_file_worker(fp: str) -> Tuple[str, float, List[Dict[str, Any]], Optional[str]]:
+    """并行 Worker：解析并计算单文件条目。
+
+    功能:
+      - 读取 Python 源文件，使用 `PythonAdapter.parse_file` 提取契约。
+      - 查找函数节点并计算 `body_hash`，组装条目。
+
+    依赖:
+      - harbor.adapters.python.PythonAdapter
+      - harbor.core.utils.compute_body_hash/find_function_node
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+
+    Args:
+      fp (str): 需要处理的文件路径（posix 相对路径）。
+
+    Returns:
+      Tuple[str, float, List[Dict[str, Any]], Optional[str]]: (path, mtime, entries, error)
+    """
+    try:
+        p = Path(fp)
+        mtime = p.stat().st_mtime
+        source = p.read_text(encoding="utf-8")
+        adapter = PythonAdapter()
+        items: List[Dict[str, Any]] = []
+        for fc in adapter.parse_file(fp):
+            node = find_function_node(source, fc.lineno, fc.name)
+            body_hash = compute_body_hash(source, node) if node else ""
+            items.append(
+                {
+                    "id": fc.id,
+                    "qualified_name": fc.qualified_name,
+                    "name": fc.name,
+                    "signature_hash": fc.signature_hash,
+                    "body_hash": body_hash,
+                    "contract_hash": fc.contract_hash,
+                    "docstring_raw_hash": fc.docstring_raw_hash,
+                    "scope": fc.scope,
+                    "strictness": fc.strictness,
+                    "lineno": fc.lineno,
+                }
+            )
+        return fp, mtime, items, None
+    except Exception as ex:
+        try:
+            mtime = Path(fp).stat().st_mtime
+        except Exception:
+            mtime = 0.0
+        return fp, mtime, [], str(ex)
+
+
 class IndexBuilder:
     def __init__(
         self,
         code_roots: Optional[List[str]] = None,
         cache_dir: Optional[Path] = None,
         config_path: Optional[Path] = None,
+        max_workers: Optional[int] = None,
     ) -> None:
         self.config_path = config_path or Path(".harbor/config.yaml")
         cfg = self._load_config(self.config_path)
@@ -72,6 +127,7 @@ class IndexBuilder:
         self.exclude_paths = cfg.get("exclude_paths", [])
         self.gitignore = GitIgnoreMatcher.from_root(cfg_excludes=self.exclude_paths)
         self.db = HarborDB(project_root=Path.cwd())
+        self.max_workers = max_workers or os.cpu_count() or 1
         try:
             self.db.migrate_from_json(self.cache_file)
         except Exception:
@@ -81,8 +137,8 @@ class IndexBuilder:
         """构建或增量更新 L3 索引到缓存。
 
         功能:
-          - 扫描配置的代码根目录，解析 Python 文件中的 L3 契约元数据。
-          - 计算每个函数/方法的 `signature_hash` 与 `body_hash`，生成索引条目。
+          - 扫描配置的代码根目录，解析 Python 文件中的 L3 契约元数据（并行子进程执行 Parse & Hash）。
+          - 计算每个函数/方法的 `signature_hash` 与 `body_hash`，生成索引条目（主进程写入 SQLite）。
           - 在增量模式下，复用未变更文件的旧条目，避免重复解析。
           - 将结果写入 `.harbor/cache/l3_index.json`。
 
@@ -138,9 +194,9 @@ class IndexBuilder:
         """以生成器方式构建索引，逐文件产出进度事件。
 
         功能:
-          - 与 `build` 相同的索引构建逻辑，但每处理一个文件即产出事件。
-          - 事件包含总数、当前序号、是否增量跳过、状态与产生条目数。
-          - 构建完成后写入缓存文件。
+          - 改为 Producer-Consumer 并行架构：子进程执行 Parse & Hash，主进程写入 SQLite。
+          - 每个文件会在提交任务时产出一次 `scanning` 事件；完成后产出 `parsed/skipped/error` 事件。
+          - 事件包含总数、当前序号、是否增量跳过、状态与产生条目数；构建完成后写入缓存快照。
 
         使用场景:
           - CLI 层的 Rich 进度条渲染。
@@ -148,6 +204,7 @@ class IndexBuilder:
         依赖:
           - harbor.adapters.python.PythonAdapter
           - .harbor/config.yaml 中的 code_roots
+          - concurrent.futures.ProcessPoolExecutor（Windows 兼容：顶层函数序列化）
 
         @harbor.scope: public
         @harbor.l3_strictness: strict
@@ -167,10 +224,13 @@ class IndexBuilder:
         items_total = 0
         files = self._iter_py_files()
         total = len(files)
+        index_map: Dict[str, int] = {}
+        to_process: List[Tuple[str, float]] = []
         for i, p in enumerate(files, start=1):
-            scanned += 1
             fp = str(p.as_posix())
             mtime = p.stat().st_mtime
+            index_map[fp] = i
+            scanned += 1
             db_meta = self.db.get_file(fp)
             if incremental and db_meta and float(db_meta.get("last_modified", 0.0)) == float(mtime):
                 try:
@@ -179,47 +239,63 @@ class IndexBuilder:
                     pass
                 skipped += 1
                 yield ProgressEvent(path=fp, index=i, total=total, cached=True, status="skipped")
-                continue
-            try:
+            else:
                 yield ProgressEvent(path=fp, index=i, total=total, cached=False, status="scanning")
-                source = p.read_text(encoding="utf-8")
-                items: List[Dict[str, Any]] = []
-                for fc in self.adapter.parse_file(fp):
-                    node = find_function_node(source, fc.lineno, fc.name)
-                    body_hash = compute_body_hash(source, node) if node else ""
-                    items.append(self._index_entry(fc, body_hash))
-                cnt = len(items)
-                with self.db.transaction():
-                    self.db.upsert_file(fp, mtime, "indexed")
-                    for it in items:
-                        meta = {
-                            "name": it.get("name"),
-                            "scope": it.get("scope"),
-                            "strictness": it.get("strictness"),
-                            "lineno": it.get("lineno"),
-                            "qualified_name": it.get("qualified_name"),
-                            "docstring_raw_hash": it.get("docstring_raw_hash"),
-                        }
-                        entry_obj = {
-                            "id": it.get("id"),
-                            "file_path": fp,
-                            "signature_hash": it.get("signature_hash"),
-                            "body_hash": it.get("body_hash"),
-                            "contract_hash": it.get("contract_hash"),
-                            "meta": meta,
-                        }
-                        self.db.upsert_entry(entry_obj)
-                items_total += cnt
-                updated += 1
-                yield ProgressEvent(path=fp, index=i, total=total, cached=False, status="parsed", items_count=cnt)
-            except Exception:
-                try:
-                    self.db.upsert_file(fp, mtime, "error")
-                except Exception:
-                    pass
-                skipped += 1
-                yield ProgressEvent(path=fp, index=i, total=total, cached=False, status="error")
-                continue
+                to_process.append((fp, mtime))
+        if to_process:
+            with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
+                futures = {executor.submit(process_file_worker, fp): (fp, mtime) for fp, mtime in to_process}
+                for fut in as_completed(futures):
+                    fp, mtime = futures[fut]
+                    path, mtime2, entries, err = ("", 0.0, [], "unknown error")
+                    try:
+                        path, mtime2, entries, err = fut.result()
+                    except KeyboardInterrupt:
+                        executor.shutdown(wait=False, cancel_futures=True)
+                        raise
+                    except Exception as ex:
+                        err = str(ex)
+                    if err:
+                        try:
+                            self.db.upsert_file(fp, mtime, "error")
+                        except Exception:
+                            pass
+                        skipped += 1
+                        yield ProgressEvent(path=fp, index=index_map.get(fp, 0), total=total, cached=False, status="error")
+                        continue
+                    cnt = len(entries)
+                    try:
+                        with self.db.transaction():
+                            self.db.upsert_file(fp, mtime2 or mtime, "indexed")
+                            for it in entries:
+                                meta = {
+                                    "name": it.get("name"),
+                                    "scope": it.get("scope"),
+                                    "strictness": it.get("strictness"),
+                                    "lineno": it.get("lineno"),
+                                    "qualified_name": it.get("qualified_name"),
+                                    "docstring_raw_hash": it.get("docstring_raw_hash"),
+                                }
+                                entry_obj = {
+                                    "id": it.get("id"),
+                                    "file_path": fp,
+                                    "signature_hash": it.get("signature_hash"),
+                                    "body_hash": it.get("body_hash"),
+                                    "contract_hash": it.get("contract_hash"),
+                                    "meta": meta,
+                                }
+                                self.db.upsert_entry(entry_obj)
+                    except Exception:
+                        try:
+                            self.db.upsert_file(fp, mtime, "error")
+                        except Exception:
+                            pass
+                        skipped += 1
+                        yield ProgressEvent(path=fp, index=index_map.get(fp, 0), total=total, cached=False, status="error")
+                        continue
+                    items_total += cnt
+                    updated += 1
+                    yield ProgressEvent(path=fp, index=index_map.get(fp, 0), total=total, cached=False, status="parsed", items_count=cnt)
         _ = (scanned, updated, skipped, items_total, int((time.time() - t0) * 1000))
         try:
             snapshot: Dict[str, Any] = {"meta": {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "schema_version": "1.0.2"}, "files": {}}
