@@ -11,6 +11,31 @@ from typing import List, Optional
 from harbor.core.git_utils import GitIgnoreMatcher
 
 
+def derive_adopted_roots(file_paths: List[str], exclude_patterns: Optional[List[str]] = None, min_count: int = 5) -> List[str]:
+    base_excludes = exclude_patterns or []
+    matcher = GitIgnoreMatcher.from_root(cfg_excludes=base_excludes)
+    buckets: dict[str, int] = {}
+    for fp in file_paths:
+        if not fp or "/" not in fp:
+            # 跳过根级单文件或异常路径
+            continue
+        parts = fp.split("/")
+        prefix = parts[0]
+        if not prefix or matcher.match_dir(prefix):
+            continue
+        buckets[prefix] = buckets.get(prefix, 0) + 1
+    out: List[str] = []
+    for pref, cnt in buckets.items():
+        if cnt >= max(min_count, 1):
+            out.append(f"{pref}/**")
+    seen = {}
+    dedup: List[str] = []
+    for p in out:
+        if p in seen:
+            continue
+        seen[p] = True
+        dedup.append(p)
+    return dedup
 def find_function_node(source: str, lineno: int, name: str) -> Optional[ast.AST]:
     tree = ast.parse(source)
     for node in ast.walk(tree):

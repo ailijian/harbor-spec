@@ -118,6 +118,9 @@ def main():
     p_cfg_add.add_argument("path", type=str)
     p_cfg_remove = p_cfg_sub.add_parser("remove", help="Remove a path from code_roots")
     p_cfg_remove.add_argument("path", type=str)
+    p_cfg_adopted = p_cfg_sub.add_parser("adopted", help="Show or write derived adopted roots")
+    p_cfg_adopted.add_argument("--write", action="store_true")
+    p_cfg_adopted.add_argument("--min-count", type=int, default=5)
 
     p_status = sub.add_parser("status", help="Show Harbor context status (no implicit index update)")
 
@@ -285,6 +288,35 @@ def main():
             print(t("cli.config.removed", path=p))
         else:
             print(t("cli.config.nochanges"))
+    elif args.command == "config" and args.cfg_cmd == "adopted":
+        cfg_path = Path(".harbor/config.yaml")
+        data = {}
+        if cfg_path.exists():
+            try:
+                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
+            except Exception:
+                data = {}
+        excludes = data.get("exclude_paths", [])
+        db = IndexBuilder().db
+        files = [fp for fp, _ in db.get_all_files()]
+        from harbor.core.utils import derive_adopted_roots
+        derived = derive_adopted_roots(files, exclude_patterns=excludes, min_count=getattr(args, "min_count", 5))
+        table = Table(title=t("cli.config.title"))
+        table.add_column(t("cli.config.key"), style="bold")
+        table.add_column(t("cli.config.value"))
+        table.add_row("derived_adopted_roots", ", ".join(derived))
+        Console().print(table)
+        if getattr(args, "write", False):
+            adopted = data.get("adopted_roots", [])
+            for p in derived:
+                if p not in adopted:
+                    adopted.append(p)
+                if p not in data.get("code_roots", []):
+                    data["code_roots"] = data.get("code_roots", []) + [p]
+            data["adopted_roots"] = adopted
+            cfg_path.parent.mkdir(parents=True, exist_ok=True)
+            cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+            print(t("cli.config.adopted.wrote", count=len(derived)))
     elif args.command == "status":
         console = Console()
         with console.status(f"[bold blue]{t('cli.status.scanning')}", spinner="dots"):
