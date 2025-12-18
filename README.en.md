@@ -305,6 +305,8 @@ exclude_paths:
 | `harbor adopt` | Interactively adopt legacy code into Harbor governance. |
 | `harbor docs` | Generate module-level documentation (L2). |
 | `harbor config` / `harbor conf` | Manage code roots and paths. |
+| `harbor derive adopted-roots` | Auto-derive adopted roots and generate config entries. |
+| `harbor unadopt` | Revert adoption for target paths (undo Harbor governance). |
 
 -----
 

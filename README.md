@@ -315,6 +315,8 @@ exclude_paths:
 | `harbor adopt` | 交互式接管遗留代码进入治理体系 |
 | `harbor docs` | 生成模块级文档（L2） |
 | `harbor config` / `harbor conf` | 管理扫描路径配置 |
+| `harbor derive adopted-roots` | 自动派生已接管根路径并生成配置项 |
+| `harbor unadopt` | 取消接管目标路径（撤销 Harbor 治理） |
 
 -----
 
