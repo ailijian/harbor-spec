@@ -9,12 +9,7 @@ import json
 from rich.panel import Panel
 from rich.prompt import Prompt
 
-# [env] 尝试加载 .env 文件
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
+from harbor.utils.i18n import t, get_lang
 
 from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
@@ -44,6 +39,7 @@ def main():
       - harbor.core.l2.L2Generator
       - harbor.core.diary.DiaryManager
       - harbor.core.audit.SemanticGuard
+      - harbor.utils.i18n.t/get_lang
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
@@ -58,6 +54,11 @@ def main():
     Raises:
       RuntimeError: 当关键子系统初始化失败时。
     """
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        pass
     def _map_argv(argv):
         if not argv:
             return argv, None
@@ -193,30 +194,27 @@ def main():
             TimeElapsedColumn(),
             console=console,
         ) as progress:
-            task_id = progress.add_task("[扫描中] 初始化...", total=0)
+            task_id = progress.add_task(t("cli.lock.init"), total=0)
             total_set = False
             for ev in builder.iter_build(incremental=not args.no_incremental):
                 if not total_set:
                     progress.update(task_id, total=ev.total)
                     total_set = True
                 if ev.status == "scanning":
-                    progress.update(task_id, description=f"[扫描中] {ev.path}")
+                    progress.update(task_id, description=t("cli.lock.scanning", path=f"{ev.path}"))
                 elif ev.status == "parsed":
                     scanned += 1
                     updated += 1
                     items_total += ev.items_count
-                    progress.update(task_id, advance=1, description=f"[完成] {ev.path}")
+                    progress.update(task_id, advance=1, description=t("cli.lock.done", path=f"{ev.path}"))
                 elif ev.status == "skipped":
                     scanned += 1
                     skipped += 1
-                    progress.update(task_id, advance=1, description=f"[跳过] {ev.path}")
+                    progress.update(task_id, advance=1, description=t("cli.lock.skipped", path=f"{ev.path}"))
                 elif ev.status == "error":
                     scanned += 1
-                    progress.update(task_id, advance=1, description=f"[错误] {ev.path}")
-        print(
-            f"scanned={scanned} updated={updated} skipped={skipped} "
-            f"items={items_total} db={builder.db.db_path.as_posix()}"
-        )
+                    progress.update(task_id, advance=1, description=t("cli.lock.error", path=f"{ev.path}"))
+        print(t("cli.lock.summary", scanned=scanned, updated=updated, skipped=skipped, items=items_total, db=builder.db.db_path.as_posix()))
     elif args.command == "config" and args.cfg_cmd == "list":
         cfg_path = Path(".harbor/config.yaml")
         data = {}
@@ -228,12 +226,14 @@ def main():
         code_roots = data.get("code_roots", ["harbor/**"])
         exclude_paths = data.get("exclude_paths", [])
         profile = data.get("profile", "enforce_l3")
-        table = Table(title="Harbor Config")
-        table.add_column("Key", style="bold")
-        table.add_column("Value")
+        language = str(data.get("language", "auto"))
+        table = Table(title=t("cli.config.title"))
+        table.add_column(t("cli.config.key"), style="bold")
+        table.add_column(t("cli.config.value"))
         table.add_row("profile", profile)
         table.add_row("code_roots", ", ".join(code_roots))
         table.add_row("exclude_paths", ", ".join(exclude_paths))
+        table.add_row("language", language or "auto")
         Console().print(table)
     elif args.command == "config" and args.cfg_cmd == "add":
         cfg_path = Path(".harbor/config.yaml")
@@ -250,9 +250,10 @@ def main():
         data["code_roots"] = roots
         data.setdefault("exclude_paths", [])
         data.setdefault("profile", data.get("profile", "enforce_l3"))
+        data.setdefault("language", data.get("language", "auto"))
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
         cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
-        print(f"Added '{p}' to code_roots.")
+        print(t("cli.config.added", path=p))
     elif args.command == "config" and args.cfg_cmd == "remove":
         cfg_path = Path(".harbor/config.yaml")
         data = {}
@@ -268,37 +269,37 @@ def main():
             data["code_roots"] = roots
             cfg_path.parent.mkdir(parents=True, exist_ok=True)
             cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
-            print(f"Removed '{p}' from code_roots.")
+            print(t("cli.config.removed", path=p))
         else:
-            print("No changes. Path not in code_roots.")
+            print(t("cli.config.nochanges"))
     elif args.command == "status":
         console = Console()
-        with console.status("[bold blue][Scanning] Checking file system changes...", spinner="dots"):
+        with console.status(f"[bold blue]{t('cli.status.scanning')}", spinner="dots"):
             eng = SyncEngine()
             rep = eng.check_status()
         total = sum(rep.counts.values())
         if total == 0:
-            print("No changes detected.")
+            print(t("cli.status.nochanges"))
             return
-        print("Harbor Context Status:")
+        print(t("cli.status.title"))
         if rep.drift:
-            print("\nChanges to implementation (Drift):")
+            print(f"\n{t('cli.status.drift')}")
             for e in rep.drift:
                 print(f"  M {e.id} ({e.details})")
         if rep.contract_changed:
-            print("\nChanges to contract:")
+            print(f"\n{t('cli.status.contract')}")
             for e in rep.contract_changed:
                 print(f"  C {e.id} ({e.details})")
         if rep.modified:
-            print("\nChanges (Body + Contract):")
+            print(f"\n{t('cli.status.modified')}")
             for e in rep.modified:
                 print(f"  M {e.id} ({e.details})")
         if rep.untracked:
-            print("\nUntracked functions:")
+            print(f"\n{t('cli.status.untracked')}")
             for e in rep.untracked:
                 print(f"  ? {e.id}")
         if rep.missing:
-            print("\nMissing functions:")
+            print(f"\n{t('cli.status.missing')}")
             for e in rep.missing:
                 print(f"  ! {e.id}")
     elif args.command == "check":
@@ -310,9 +311,9 @@ def main():
             bindings = [b for b in bindings if b.func_id.startswith(args.module)]
         validator = DDTValidator()
         rep = validator.validate(bindings)
-        print("Harbor Check Report:")
-        print("\n[DDT] Validation:")
-        print(f"Bindings scanned: {len(bindings)}")
+        print(t("cli.check.title"))
+        print(f"\n{t('cli.check.ddt')}")
+        print(t("cli.check.bindings", count=len(bindings)))
         if rep.valid:
             for b in rep.valid:
                 print(f"  OK {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path})")
@@ -320,14 +321,14 @@ def main():
             for typ, b, msg in rep.violations:
                 print(f"  [!] {typ.upper()} {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path}) :: {msg}")
         if not rep.valid and not rep.violations:
-            print("  No DDT bindings found.")
+            print(f"  {t('cli.check.nobindings')}")
         if not args.fast:
             eng = SyncEngine()
             status = eng.check_status()
             provider = resolve_provider()
             guard = SemanticGuard()
             model = getattr(provider, "model", "n/a")
-            print("\n[Semantic] Audit:")
+            print(f"\n{t('cli.semantic.title')}")
             targets = []
             targets.extend(status.drift)
             targets.extend(status.modified)
@@ -389,7 +390,7 @@ def main():
                         out_lines.append(f"ERROR {e.id} :: {reason}")
             if not out_lines:
                 if args.format == "plain":
-                    print("No targets.")
+                    print(t("cli.semantic.notargets"))
             else:
                 if args.format == "plain":
                     for ln in out_lines:
@@ -400,9 +401,9 @@ def main():
         if args.write:
             target = gen.write(args.module, md, force=args.force)
             if target is None:
-                print("No changes needed.")
+                print(t("cli.docs.nochanges"))
             else:
-                print(f"Wrote: {target.as_posix()}")
+                print(t("cli.docs.wrote", path=target.as_posix()))
         else:
             print(md)
     elif args.command == "log" and args.export:
@@ -428,10 +429,10 @@ def main():
             eng = SyncEngine()
             rep = eng.check_status()
         if (rep.counts.get("drift", 0) + rep.counts.get("modified", 0)) == 0:
-            print("No changes detected. Nothing to draft.")
-            print("\n[Tip] 'log' analyzes unindexed changes (Drift/Modified).")
-            print("If you just ran 'harbor lock', the snapshot matches current code.")
-            print("Modify code first, then run 'harbor log' before updating the index.")
+            print(t("cli.log.nochanges"))
+            print(f"\n{t('cli.log.tip1')}")
+            print(t("cli.log.tip2"))
+            print(t("cli.log.tip3"))
             return
         drafter = DiaryDrafter(sync_engine=eng)
         try:
@@ -439,20 +440,20 @@ def main():
                 draft = drafter.generate_draft()
         except LLMNotConfiguredError as e:
             print(str(e))
-            print("请在环境中设置 HARBOR_LLM_PROVIDER=openai 与 HARBOR_LLM_API_KEY，再重试。")
+            print(t("cli.log.llm_env_hint"))
             return
         except Exception as e:
             msg = str(e)
             lc = msg.lower()
             if ("context" in lc and "length" in lc) or ("token" in lc and ("too many" in lc or "exceed" in lc)) or ("maximum context" in lc) or ("prompt too long" in lc):
-                print("提示：当前上下文可能超过模型限制。")
-                choice = Prompt.ask("是否使用简化上下文继续？ [Y]es / [N]o", choices=["Y", "N", "y", "n"], default="Y")
+                print(t("cli.log.context_too_long"))
+                choice = Prompt.ask(t("cli.log.ask_simplify"), choices=["Y", "N", "y", "n"], default="Y")
                 if choice.upper() == "Y":
                     with console.status("[bold magenta][AI] Drafting with simplified context...", spinner="line"):
                         try:
                             draft = drafter.generate_draft(limit=6000)
                         except Exception as e2:
-                            print(f"AI drafting failed: {str(e2)}")
+                            print(t("cli.log.ai_failed", msg=str(e2)))
                             if args.debug:
                                 provider = resolve_provider()
                                 print(f"[DEBUG] Provider: {provider.name} Model: {getattr(provider, 'model', 'n/a')}")
@@ -464,35 +465,35 @@ def main():
                 else:
                     return
             else:
-                print(f"AI drafting failed: {str(e)}")
+                print(t("cli.log.ai_failed", msg=str(e)))
                 if args.debug:
                     provider = resolve_provider()
                     print(f"[DEBUG] Provider: {provider.name} Model: {getattr(provider, 'model', 'n/a')}")
-                    print("[DEBUG] 提示：确保端点支持 JSON 结构化输出（response_format=json_object）。")
-                    print("[DEBUG] 如为 ERNIE 兼容端点，请设置 HARBOR_LLM_BASE_URL 和 HARBOR_LLM_MODEL=ernie-4.0。")
+                    print("[DEBUG] Ensure endpoint supports JSON structured output (response_format=json_object).")
+                    print("[DEBUG] For ERNIE-compatible endpoints, set HARBOR_LLM_BASE_URL and HARBOR_LLM_MODEL=ernie-4.0.")
                     if getattr(drafter, "last_prompt", None):
                         print(f"[DEBUG] Prompt >>>\n{drafter.last_prompt or ''}")
                     if getattr(drafter, "last_output", None):
                         print(f"[DEBUG] Raw <<<\n{drafter.last_output or ''}")
                 return
         if not draft:
-            print("No changes detected. Nothing to draft.")
+            print(t("cli.log.nochanges"))
             return
         panel_text = (
-            f"[bold]Summary[/bold]: {draft.get('summary','')}\n"
-            f"[bold]Type[/bold]: {draft.get('type','')}\n"
-            f"[bold]Importance[/bold]: {draft.get('importance','')}\n"
-            f"[bold]Details[/bold]:\n{draft.get('details','')}"
+            f"[bold]{t('cli.log.panel.summary')}[/bold]: {draft.get('summary','')}\n"
+            f"[bold]{t('cli.log.panel.type')}[/bold]: {draft.get('type','')}\n"
+            f"[bold]{t('cli.log.panel.importance')}[/bold]: {draft.get('importance','')}\n"
+            f"[bold]{t('cli.log.panel.details')}[/bold]:\n{draft.get('details','')}"
         )
-        console.print(Panel(panel_text, title="Diary Draft (AI)", border_style="green"))
-        choice = Prompt.ask("Save this entry? [Y]es / [E]dit summary / [N]o", choices=["Y", "E", "N", "y", "e", "n"], default="Y")
+        console.print(Panel(panel_text, title=t("cli.log.panel.title"), border_style="green"))
+        choice = Prompt.ask(t("cli.log.ask_save"), choices=["Y", "E", "N", "y", "e", "n"], default="Y")
         ans = choice.upper()
         if ans == "N":
-            print("Discarded.")
+            print(t("cli.log.discarded"))
             return
         summary_final = draft.get("summary", "")
         if ans == "E":
-            summary_final = Prompt.ask("New summary", default=summary_final)
+            summary_final = Prompt.ask(t("cli.log.ask_new_summary"), default=summary_final)
         mgr = DiaryManager()
         entry = mgr.log(
             summary=summary_final,
@@ -506,12 +507,12 @@ def main():
         console = Console()
         eng = DecoratorEngine()
         candidates = eng.scan(args.path, strategy=args.strategy)
-        table = Table(title="Decorate Candidates")
-        table.add_column("Action")
-        table.add_column("Func")
-        table.add_column("File")
-        table.add_column("HasDoc")
-        table.add_column("HasScope")
+        table = Table(title=t("cli.adopt.table.title"))
+        table.add_column(t("cli.adopt.table.action"))
+        table.add_column(t("cli.adopt.table.func"))
+        table.add_column(t("cli.adopt.table.file"))
+        table.add_column(t("cli.adopt.table.hasdoc"))
+        table.add_column(t("cli.adopt.table.hasscope"))
         doc_yes = 0
         doc_no = 0
         for c in candidates:
@@ -542,28 +543,28 @@ def main():
                 plans.append(p)
                 if p.will_write and p.diff_preview:
                     pass
-        summary = f"Found {len(candidates)} candidates. {doc_yes} have docstrings, {doc_no} do not."
+        summary = t("cli.adopt.summary", total=len(candidates), doc_yes=doc_yes, doc_no=doc_no)
         print(summary)
         to_apply = [p for p in plans if p.will_write]
-        print(f"Planned changes to {len(to_apply)} files.")
+        print(t("cli.adopt.planned", count=len(to_apply)))
         if args.dry_run:
             for p in to_apply:
                 if p.diff_preview:
                     print(p.diff_preview)
             return
         if not args.yes:
-            choice = Prompt.ask(f"Apply changes to {len(to_apply)} files? [y/N]", choices=["y", "n", "Y", "N"], default="N")
+            choice = Prompt.ask(t("cli.adopt.apply_prompt", count=len(to_apply)), choices=["y", "n", "Y", "N"], default="N")
             if choice.upper() != "Y":
-                print("No changes applied.")
+                print(t("cli.adopt.nochanges"))
                 return
     elif args.command == "init":
         init = Initializer()
         if init.config_path.exists() and not args.force:
-            print("Config file already exists.")
+            print(t("cli.init.exist"))
             return
         stacks, roots, excludes = init.autodetect()
         if stacks:
-            print(f"[Harbor] Detected {' + '.join(stacks)} project.")
+            print(t("cli.init.detected", stacks=" + ".join(stacks)))
         if excludes:
             key_ex = []
             for k in ["node_modules/**", ".venv/**", "dist/**", ".next/**", "build/**"]:
@@ -571,14 +572,14 @@ def main():
                     key_ex.append(k.split("/")[0])
             extra_cnt = max(len(excludes) - len(key_ex), 0)
             if key_ex:
-                print(f"[Harbor] Auto-configured excludes: {', '.join(key_ex)}" + (f" (+{extra_cnt} more)" if extra_cnt > 0 else ""))
-        print(f"Auto-detected code roots: {roots}")
+                print(t("cli.init.excludes", keys=", ".join(key_ex), extra=(f" (+{extra_cnt} more)" if extra_cnt > 0 else "")))
+        print(t("cli.init.roots", roots=roots))
         init.write_config(roots, force=args.force, exclude_paths=excludes)
-        print("Initialized Harbor in current directory.")
-        print("Run 'harbor lock' to start.")
+        print(t("cli.init.done"))
+        print(t("cli.init.next"))
 
     if deprecated:
-        Console().print(f"[yellow][Deprecated][/yellow] 命令 \"{deprecated}\" 已映射为 \"{argv_mapped[0]}\"，请更新为 v2.0 用法。")
+        Console().print(f"[yellow]{t('cli.deprecated', old=deprecated, new=argv_mapped[0])}[/yellow]")
 
 
 if __name__ == "__main__":

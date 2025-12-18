@@ -13,6 +13,7 @@ class DefaultConfig:
     profile: str
     code_roots: List[str]
     exclude_paths: List[str]
+    language: str
 
 
 class ProjectDetector:
@@ -314,12 +315,14 @@ class Initializer:
                 "env/**",
                 "node_modules/**",
             ],
+            language="auto",
         )
         payload: Dict[str, Any] = {
             "schema_version": cfg.schema_version,
             "profile": cfg.profile,
             "code_roots": cfg.code_roots,
             "exclude_paths": cfg.exclude_paths,
+            "language": cfg.language,
         }
         text = yaml.safe_dump(payload, allow_unicode=True, sort_keys=False)
         self.config_path.write_text(text, encoding="utf-8")

@@ -22,10 +22,10 @@ def test_init_detects_node(tmp_path: Path):
     try:
         os.chdir(tmp_path)
         out = run_cmd(["init", "--force"])
-        assert "[Harbor] Detected Node.js project." in out
-        assert "[Harbor] Auto-configured excludes:" in out
+        assert ("Detected Node.js" in out) or ("检测到 Node.js" in out)
+        assert ("Auto-configured excludes:" in out) or ("自动配置排除" in out)
         assert "node_modules" in out
-        assert "Auto-detected code roots:" in out
+        assert ("Auto-detected code roots:" in out) or ("自动探测的代码根" in out)
         cfg = (tmp_path / ".harbor" / "config.yaml").read_text(encoding="utf-8")
         assert "node_modules/**" in cfg
     finally:
@@ -38,8 +38,8 @@ def test_init_detects_django(tmp_path: Path):
     try:
         os.chdir(tmp_path)
         out = run_cmd(["init", "--force"])
-        assert "[Harbor] Detected Python(Django) project." in out
-        assert "Auto-detected code roots:" in out
+        assert ("Detected Python(Django)" in out) or ("检测到 Python(Django)" in out)
+        assert ("Auto-detected code roots:" in out) or ("自动探测的代码根" in out)
         cfg = (tmp_path / ".harbor" / "config.yaml").read_text(encoding="utf-8")
         assert ".venv/**" in cfg or "venv/**" in cfg
     finally:
