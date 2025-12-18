@@ -323,6 +323,7 @@ class Initializer:
             "code_roots": cfg.code_roots,
             "exclude_paths": cfg.exclude_paths,
             "language": cfg.language,
+            "adopted_roots": [],
         }
         text = yaml.safe_dump(payload, allow_unicode=True, sort_keys=False)
         self.config_path.write_text(text, encoding="utf-8")

@@ -26,8 +26,10 @@ def main():
     """Harbor CLI 入口。
 
     功能:
-      - 提供 `harbor` 命令的子命令入口：`init/status/lock/check/log/adopt/docs/config`。
+      - 提供 `harbor` 命令的子命令入口：`init/status/lock/check/log/adopt/unadopt/docs/config`。
       - 解析参数并委派到对应子系统。
+      - adopt：在应用装饰变更后，将接管目录注册到 `.harbor/config.yaml` 的 `code_roots`。
+      - unadopt：从 `.harbor/config.yaml` 的 `code_roots` 中移除接管目录。
 
     使用场景:
       - 开发者在本地与 CI 中调用 Harbor 管理上下文。
@@ -124,6 +126,8 @@ def main():
     p_adopt.add_argument("--strategy", type=str, choices=["safe", "aggressive"], default="safe")
     p_adopt.add_argument("--yes", action="store_true")
     p_adopt.add_argument("--dry-run", action="store_true")
+    p_unadopt = sub.add_parser("unadopt", help="Remove adopted directory from Harbor code_roots")
+    p_unadopt.add_argument("path", type=str)
 
     p_check = sub.add_parser("check", help="Run semantic and DDT checks")
     p_check.add_argument("--fast", action="store_true")
@@ -227,14 +231,18 @@ def main():
         exclude_paths = data.get("exclude_paths", [])
         profile = data.get("profile", "enforce_l3")
         language = str(data.get("language", "auto"))
+        adopted_roots = data.get("adopted_roots", [])
         table = Table(title=t("cli.config.title"))
         table.add_column(t("cli.config.key"), style="bold")
         table.add_column(t("cli.config.value"))
         table.add_row("profile", profile)
         table.add_row("code_roots", ", ".join(code_roots))
         table.add_row("exclude_paths", ", ".join(exclude_paths))
+        table.add_row("adopted_roots", ", ".join(adopted_roots))
         table.add_row("language", language or "auto")
         Console().print(table)
+        if code_roots == ["**/*.py"]:
+            print(t("cli.config.adopt_hint"))
     elif args.command == "config" and args.cfg_cmd == "add":
         cfg_path = Path(".harbor/config.yaml")
         data = {}
@@ -251,6 +259,7 @@ def main():
         data.setdefault("exclude_paths", [])
         data.setdefault("profile", data.get("profile", "enforce_l3"))
         data.setdefault("language", data.get("language", "auto"))
+        data.setdefault("adopted_roots", [])
         cfg_path.parent.mkdir(parents=True, exist_ok=True)
         cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
         print(t("cli.config.added", path=p))
@@ -267,6 +276,10 @@ def main():
         if p in roots:
             roots = [x for x in roots if x != p]
             data["code_roots"] = roots
+            adopted = data.get("adopted_roots", [])
+            if p in adopted:
+                adopted = [x for x in adopted if x != p]
+                data["adopted_roots"] = adopted
             cfg_path.parent.mkdir(parents=True, exist_ok=True)
             cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
             print(t("cli.config.removed", path=p))
@@ -557,6 +570,36 @@ def main():
             if choice.upper() != "Y":
                 print(t("cli.adopt.nochanges"))
                 return
+        rep = eng.apply(to_apply, dry_run=False, strategy=args.strategy)
+        cfg_path = Path(".harbor/config.yaml")
+        data = {}
+        if cfg_path.exists():
+            try:
+                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
+            except Exception:
+                data = {}
+        roots = data.get("code_roots", [])
+        p_in = Path(args.path)
+        base = p_in.parent if p_in.is_file() else p_in
+        try:
+            rel = base.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except Exception:
+            rel = base.as_posix()
+        pattern = f"{rel}/**" if base.is_dir() else rel
+        if pattern not in roots:
+            roots.append(pattern)
+        adopted_roots = data.get("adopted_roots", [])
+        if pattern not in adopted_roots:
+            adopted_roots.append(pattern)
+        data["code_roots"] = roots
+        data["adopted_roots"] = adopted_roots
+        data.setdefault("exclude_paths", [])
+        data.setdefault("profile", data.get("profile", "enforce_l3"))
+        data.setdefault("language", data.get("language", "auto"))
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        print(t("cli.adopt.applied", files=len(rep.changed_files)))
+        print(t("cli.adopt.added_config", path=pattern))
     elif args.command == "init":
         init = Initializer()
         if init.config_path.exists() and not args.force:
@@ -577,6 +620,34 @@ def main():
         init.write_config(roots, force=args.force, exclude_paths=excludes)
         print(t("cli.init.done"))
         print(t("cli.init.next"))
+    elif args.command == "unadopt":
+        cfg_path = Path(".harbor/config.yaml")
+        data = {}
+        if cfg_path.exists():
+            try:
+                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
+            except Exception:
+                data = {}
+        roots = data.get("code_roots", [])
+        p_in = Path(args.path)
+        base = p_in.parent if p_in.is_file() else p_in
+        try:
+            rel = base.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except Exception:
+            rel = base.as_posix()
+        pattern = f"{rel}/**" if base.is_dir() else rel
+        if pattern in roots:
+            roots = [x for x in roots if x != pattern]
+            data["code_roots"] = roots
+            adopted = data.get("adopted_roots", [])
+            if pattern in adopted:
+                adopted = [x for x in adopted if x != pattern]
+                data["adopted_roots"] = adopted
+            cfg_path.parent.mkdir(parents=True, exist_ok=True)
+            cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+            print(t("cli.config.removed", path=pattern))
+        else:
+            print(t("cli.config.nochanges"))
 
     if deprecated:
         Console().print(f"[yellow]{t('cli.deprecated', old=deprecated, new=argv_mapped[0])}[/yellow]")
