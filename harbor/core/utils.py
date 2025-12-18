@@ -11,17 +11,40 @@ from typing import List, Optional
 from harbor.core.git_utils import GitIgnoreMatcher
 
 
-def derive_adopted_roots(file_paths: List[str], exclude_patterns: Optional[List[str]] = None, min_count: int = 5) -> List[str]:
+def derive_adopted_roots(file_paths: List[str], exclude_patterns: Optional[List[str]] = None, min_count: int = 1) -> List[str]:
     base_excludes = exclude_patterns or []
     matcher = GitIgnoreMatcher.from_root(cfg_excludes=base_excludes)
     buckets: dict[str, int] = {}
+    blacklist = {
+        "tests",
+        "test",
+        "docs",
+        "node_modules",
+        ".harbor",
+        ".git",
+        ".venv",
+        "venv",
+        "env",
+        "dist",
+        "build",
+        "out",
+    }
     for fp in file_paths:
-        if not fp or "/" not in fp:
-            # 跳过根级单文件或异常路径
+        if not fp:
             continue
-        parts = fp.split("/")
+        s = str(fp).replace("\\", "/")
+        parts = [p for p in s.split("/") if p]
+        if not parts:
+            continue
+        # 兼容绝对路径（如 'C:/project/...')，跳过盘符段
         prefix = parts[0]
-        if not prefix or matcher.match_dir(prefix):
+        if ":" in prefix and len(parts) > 1:
+            prefix = parts[1]
+        if not prefix:
+            continue
+        if prefix in blacklist:
+            continue
+        if matcher.match_dir(prefix):
             continue
         buckets[prefix] = buckets.get(prefix, 0) + 1
     out: List[str] = []

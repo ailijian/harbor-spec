@@ -110,6 +110,8 @@ def main():
     p_lock.add_argument("--no-incremental", action="store_true")
     p_lock.add_argument("--code-root", action="append", default=None)
     p_lock.add_argument("--cache-dir", type=str, default=None)
+    p_lock.add_argument("--no-register-adopted", action="store_true")
+    p_lock.add_argument("--register-scan", action="store_true")
 
     p_config = sub.add_parser("config", help="Manage Harbor config")
     p_cfg_sub = p_config.add_subparsers(dest="cfg_cmd", required=True)
@@ -222,6 +224,44 @@ def main():
                     scanned += 1
                     progress.update(task_id, advance=1, description=t("cli.lock.error", path=f"{ev.path}"))
         print(t("cli.lock.summary", scanned=scanned, updated=updated, skipped=skipped, items=items_total, db=builder.db.db_path.as_posix()))
+        try:
+            db = builder.db
+            files = [fp for fp, _ in db.get_all_files()]
+            cfg_path = Path(".harbor/config.yaml")
+            cfg = {}
+            if cfg_path.exists():
+                try:
+                    cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
+                except Exception:
+                    cfg = {}
+            excludes = cfg.get("exclude_paths", [])
+            from harbor.core.utils import derive_adopted_roots
+            derived = derive_adopted_roots(files, exclude_patterns=excludes, min_count=1)
+            if not getattr(args, "no_register_adopted", False) and derived:
+                adopted = cfg.get("adopted_roots", [])
+                changed = False
+                for p in derived:
+                    if p not in adopted:
+                        adopted.append(p)
+                        changed = True
+                # 可选：同时注册到扫描目录
+                if getattr(args, "register_scan", False):
+                    roots = cfg.get("code_roots", [])
+                    for p in derived:
+                        if p not in roots:
+                            roots.append(p)
+                            changed = True
+                    cfg["code_roots"] = roots
+                if changed:
+                    cfg["adopted_roots"] = adopted
+                    cfg_path.parent.mkdir(parents=True, exist_ok=True)
+                    cfg_path.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
+                print(t("cli.lock.register_adopted_wrote", count=len(derived)))
+            else:
+                if derived:
+                    print(t("cli.lock.register_adopted_hint"))
+        except Exception:
+            pass
     elif args.command == "config" and args.cfg_cmd == "list":
         cfg_path = Path(".harbor/config.yaml")
         data = {}
@@ -300,7 +340,7 @@ def main():
         db = IndexBuilder().db
         files = [fp for fp, _ in db.get_all_files()]
         from harbor.core.utils import derive_adopted_roots
-        derived = derive_adopted_roots(files, exclude_patterns=excludes, min_count=getattr(args, "min_count", 5))
+        derived = derive_adopted_roots(files, exclude_patterns=excludes, min_count=getattr(args, "min_count", 1))
         table = Table(title=t("cli.config.title"))
         table.add_column(t("cli.config.key"), style="bold")
         table.add_column(t("cli.config.value"))
