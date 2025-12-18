@@ -227,7 +227,11 @@ class IndexBuilder:
         index_map: Dict[str, int] = {}
         to_process: List[Tuple[str, float]] = []
         for i, p in enumerate(files, start=1):
-            fp = str(p.as_posix())
+            root = self.db.root
+            try:
+                fp = str(p.resolve().relative_to(root).as_posix())
+            except Exception:
+                fp = str(p.resolve().as_posix())
             mtime = p.stat().st_mtime
             index_map[fp] = i
             scanned += 1
@@ -297,6 +301,10 @@ class IndexBuilder:
                     updated += 1
                     yield ProgressEvent(path=fp, index=index_map.get(fp, 0), total=total, cached=False, status="parsed", items_count=cnt)
         _ = (scanned, updated, skipped, items_total, int((time.time() - t0) * 1000))
+        try:
+            self.db.purge_missing(files)
+        except Exception:
+            pass
         try:
             snapshot: Dict[str, Any] = {"meta": {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "schema_version": "1.0.2"}, "files": {}}
             all_files = self.db.get_all_files()

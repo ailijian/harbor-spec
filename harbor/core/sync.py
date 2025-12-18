@@ -118,8 +118,11 @@ class SyncEngine:
                     missing.append(StatusEntry(id=id_, name=c.get("meta", {}).get("name", ""), file_path=fp, change_type="Missing", details="Function removed"))
 
         db_files = [path for path, _ in self.db.get_all_files()]
+        rel_current_set = set(
+            Path(fp).resolve().relative_to(self.db.root).as_posix() for fp in current_paths
+        )
         for db_fp in db_files:
-            if db_fp not in current_paths:
+            if db_fp not in rel_current_set:
                 for it in self.db.get_file_entries(db_fp):
                     missing.append(StatusEntry(id=it.get("id", ""), name=it.get("meta", {}).get("name", ""), file_path=db_fp, change_type="Missing", details="File removed"))
 
