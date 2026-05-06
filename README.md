@@ -177,6 +177,12 @@ harbor lock
 harbor start -> AI coding -> harbor checkpoint -> harbor finish -> harbor accept
 ```
 
+说明：`harbor finish` 当前不会自动刷新 docs。建议在任务完成或发起 PR 前执行：
+
+```bash
+harbor docs --changed --write
+```
+
 ### Step 1: Check Status
 
 开始工作前，确保环境干净。
@@ -266,9 +272,15 @@ def test_calculate_tax():
 
 ```bash
 harbor docs --module harbor/core --write
+harbor docs --changed --write
+harbor docs --all --write
 ```
 
 生成包含 Public API 列表、严格度状态及测试覆盖率的 Markdown 文档。
+支持三种模式：
+- `--module`：刷新单个模块
+- `--changed`：刷新变更模块
+- `--all`：刷新全部已索引模块
 
 </details>
 
@@ -324,6 +336,8 @@ exclude_paths:
 | `harbor log --export` | 导出 Diary Markdown |
 | `harbor adopt` | 交互式接管遗留代码进入治理体系 |
 | `harbor docs` | 生成模块级文档（L2） |
+| `harbor docs --changed --write` | 仅刷新变更模块的 L2 README |
+| `harbor docs --all --write` | 刷新全部已索引模块的 L2 README |
 | `harbor config` / `harbor conf` | 管理扫描路径配置 |
 
 -----

@@ -11,6 +11,35 @@ from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.utils import find_function_node
 
 
+def infer_module_from_path(path: str | Path) -> str:
+    """从文件路径推断模块目录（统一为 POSIX 风格）。"""
+    raw = str(path or "").strip()
+    if not raw:
+        return ""
+    norm = raw.replace("\\", "/")
+    parts = [p for p in norm.split("/") if p and p != "."]
+    if not parts:
+        return ""
+    last = parts[-1]
+    if last == "__init__.py" or "." in last:
+        parts = parts[:-1]
+    module = "/".join(parts).strip("/")
+    if module in ("", "."):
+        return ""
+    return module
+
+
+def collect_modules_from_paths(paths: List[str | Path]) -> List[str]:
+    modules = {infer_module_from_path(p) for p in paths}
+    modules.discard("")
+    return sorted(modules)
+
+
+def collect_all_indexed_modules(index_path: Optional[Path] = None) -> List[str]:
+    gen = L2Generator(index_path=index_path)
+    return gen.collect_all_indexed_modules()
+
+
 class L2Generator:
     def __init__(self, index_path: Optional[Path] = None, meta_path: Optional[Path] = None) -> None:
         self.index_path = index_path or (Path(".harbor") / "cache" / "l3_index.json")
@@ -151,6 +180,15 @@ class L2Generator:
 
     def compute_meta_hash(self, md: str) -> str:
         return hashlib.sha256(md.encode("utf-8")).hexdigest()
+
+    def collect_all_indexed_modules(self) -> List[str]:
+        idx = self._load_index(self.index_path)
+        paths: List[str] = []
+        for fp, meta in idx.get("files", {}).items():
+            if not meta.get("items"):
+                continue
+            paths.append(str(fp))
+        return collect_modules_from_paths(paths)
 
     def _load_index(self, path: Path) -> Dict[str, Any]:
         if path.exists():

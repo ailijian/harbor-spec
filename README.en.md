@@ -176,6 +176,18 @@ harbor lock
 
 ## 🔄 The Vibe Coding Workflow
 
+Recommended facade flow:
+
+```bash
+harbor start -> AI coding -> harbor checkpoint -> harbor finish -> harbor accept
+```
+
+Note: `harbor finish` does not auto-refresh docs yet. Before closing a task or opening a PR, run:
+
+```bash
+harbor docs --changed --write
+```
+
 ### Step 1: Check Status
 
 Before working, ensure the codebase is clean.
@@ -255,9 +267,15 @@ Automatically generate module-level READMEs as a quality dashboard.
 
 ```bash
 harbor docs --module harbor/core --write
+harbor docs --changed --write
+harbor docs --all --write
 ```
 
 Generates a Markdown file listing Public APIs, strictness status, and test coverage.
+Supported modes:
+- `--module`: refresh one module
+- `--changed`: refresh changed modules
+- `--all`: refresh all indexed modules
 
 </details>
 
@@ -304,6 +322,8 @@ exclude_paths:
 | `harbor log --export` | Export diary Markdown. |
 | `harbor adopt` | Interactively adopt legacy code into Harbor governance. |
 | `harbor docs` | Generate module-level documentation (L2). |
+| `harbor docs --changed --write` | Refresh L2 READMEs for changed modules only. |
+| `harbor docs --all --write` | Refresh L2 READMEs for all indexed modules. |
 | `harbor config` / `harbor conf` | Manage code roots and paths. |
 
 -----

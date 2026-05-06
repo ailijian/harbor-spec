@@ -14,7 +14,7 @@ from harbor.utils.i18n import t, get_lang
 from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
 from harbor.core.ddt import DDTScanner, DDTValidator
-from harbor.core.l2 import L2Generator
+from harbor.core.l2 import L2Generator, collect_all_indexed_modules, collect_modules_from_paths
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -150,18 +150,31 @@ def main():
         "docs",
         help="Generate L2 README for a module",
         description=(
-            "Generate Anchor (L2) README for the specified module directory.\n\n"
+            "Generate Anchor (L2) README for module(s).\n\n"
             "Examples:\n"
             "  harbor docs --module harbor/core\n"
             "  harbor docs --module harbor/core --write\n"
+            "  harbor docs --changed --write\n"
+            "  harbor docs --all --write\n"
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    p_docs.add_argument(
+    p_docs_group = p_docs.add_mutually_exclusive_group(required=True)
+    p_docs_group.add_argument(
         "--module",
         type=str,
-        required=True,
         help="Target module directory (e.g. harbor/core) to generate L2 view",
+    )
+    p_docs_group.add_argument(
+        "--changed",
+        action="store_true",
+        help="Detect changed modules and generate L2 view for each",
+    )
+    p_docs_group.add_argument(
+        "--all",
+        dest="all_modules",
+        action="store_true",
+        help="Generate L2 view for all indexed modules",
     )
     p_docs.add_argument(
         "--write",
@@ -528,15 +541,59 @@ def main():
         )
     elif args.command == "docs":
         gen = L2Generator()
-        md = gen.generate(args.module)
-        if args.write:
-            target = gen.write(args.module, md, force=args.force)
-            if target is None:
-                print(t("cli.docs.nochanges"))
+        if args.module:
+            md = gen.generate(args.module)
+            if args.write:
+                target = gen.write(args.module, md, force=args.force)
+                if target is None:
+                    print(t("cli.docs.nochanges"))
+                else:
+                    print(t("cli.docs.wrote", path=target.as_posix()))
             else:
-                print(t("cli.docs.wrote", path=target.as_posix()))
+                print(md)
         else:
-            print(md)
+            if args.changed:
+                rep = SyncEngine().check_status()
+                changed_paths = []
+                changed_paths.extend([e.file_path for e in rep.drift])
+                changed_paths.extend([e.file_path for e in rep.modified])
+                changed_paths.extend([e.file_path for e in rep.contract_changed])
+                changed_paths.extend([e.file_path for e in rep.untracked])
+                changed_paths.extend([e.file_path for e in rep.missing])
+                modules = collect_modules_from_paths(changed_paths)
+                if not modules:
+                    print(t("cli.docs.changed.none"))
+                    return
+                print(t("cli.docs.changed.found"))
+            else:
+                modules = collect_all_indexed_modules()
+                if not modules:
+                    print(t("cli.docs.all.none"))
+                    return
+                print(t("cli.docs.all.found"))
+            for module in modules:
+                print(f"- {module}")
+            if not args.write:
+                print("")
+                print(t("cli.docs.preview_only"))
+            updated = []
+            for module in modules:
+                md = gen.generate(module)
+                if args.write:
+                    target = gen.write(module, md, force=args.force)
+                    if target is not None:
+                        updated.append(target.as_posix())
+                else:
+                    print("")
+                    print(md)
+            if args.write:
+                if not updated:
+                    print(t("cli.docs.nochanges"))
+                else:
+                    print("")
+                    print(t("cli.docs.updated"))
+                    for path in updated:
+                        print(f"- {path}")
     elif args.command == "log" and args.export:
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")
