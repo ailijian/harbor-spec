@@ -1,8 +1,16 @@
 import sys
 from io import StringIO
 from contextlib import redirect_stdout
+from types import SimpleNamespace
+import pytest
 
+import harbor.cli.main as cli_main
 from harbor.cli.main import main
+
+
+@pytest.fixture(autouse=True)
+def _force_en_locale(monkeypatch):
+    monkeypatch.setenv("HARBOR_LANGUAGE", "en")
 
 
 def run_cmd(argv):
@@ -11,6 +19,21 @@ def run_cmd(argv):
         sys.argv = ["harbor"] + argv
         main()
     return buf.getvalue()
+
+
+def _clean_status_report():
+    return SimpleNamespace(
+        counts={"drift": 0, "contract_changed": 0, "modified": 0, "untracked": 0, "missing": 0},
+        drift=[],
+        contract_changed=[],
+        modified=[],
+        untracked=[],
+        missing=[],
+    )
+
+
+def _empty_validation_report():
+    return SimpleNamespace(valid=[], violations=[])
 
 
 def test_status_alias_st():
@@ -49,3 +72,128 @@ def test_gen_l2_maps_to_docs():
     out2 = run_cmd(["docs", "--module", "harbor/core"])
     assert "# Module:" in out1
     assert "# Module:" in out2
+
+
+def test_start_command_recognized(monkeypatch):
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    out = run_cmd(["start"])
+    assert "Harbor Start:" in out
+    assert "No Harbor changes detected. You can start AI coding." in out
+
+
+def test_checkpoint_command_recognized(monkeypatch):
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
+    monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
+    out = run_cmd(["checkpoint"])
+    assert "Harbor Checkpoint:" in out
+    assert "Harbor Check Report:" in out
+
+
+def test_finish_command_recognized(monkeypatch):
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
+    monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
+    monkeypatch.setattr(
+        cli_main,
+        "resolve_provider",
+        lambda: SimpleNamespace(name="mock", model="mock-model"),
+    )
+    out = run_cmd(["finish"])
+    assert "Harbor Finish:" in out
+    assert "Next steps:" in out
+    assert "harbor accept" in out
+
+
+def test_accept_maps_to_lock_logic(monkeypatch):
+    class FakeDB:
+        db_path = SimpleNamespace(as_posix=lambda: ".harbor/cache/harbor.db")
+
+        @staticmethod
+        def get_all_files():
+            return []
+
+    class FakeBuilder:
+        def __init__(self, code_roots=None, cache_dir=None):
+            self.db = FakeDB()
+
+        @staticmethod
+        def iter_build(incremental=True):
+            return iter([SimpleNamespace(total=0, status="scanning", path="fake.py", items_count=0)])
+
+    monkeypatch.setattr(cli_main, "IndexBuilder", FakeBuilder)
+    out = run_cmd(["accept"])
+    assert "scanned=0 updated=0 skipped=0 items=0" in out
+    assert "Accepted current Harbor baseline." in out
+
+
+def test_commit_alias_unchanged_maps_to_lock(monkeypatch):
+    calls = {"iter_build": 0}
+
+    class FakeDB:
+        db_path = SimpleNamespace(as_posix=lambda: ".harbor/cache/harbor.db")
+
+        @staticmethod
+        def get_all_files():
+            return []
+
+    class FakeBuilder:
+        def __init__(self, code_roots=None, cache_dir=None):
+            self.db = FakeDB()
+
+        @staticmethod
+        def iter_build(incremental=True):
+            calls["iter_build"] += 1
+            return iter([SimpleNamespace(total=0, status="scanning", path="fake.py", items_count=0)])
+
+    monkeypatch.setattr(cli_main, "IndexBuilder", FakeBuilder)
+    run_cmd(["commit"])
+    assert calls["iter_build"] == 1
+
+
+def test_checkpoint_does_not_trigger_semantic_audit(monkeypatch):
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
+    monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
+
+    def _should_not_call(*args, **kwargs):
+        raise AssertionError("semantic audit path should not run in checkpoint")
+
+    monkeypatch.setattr(cli_main, "resolve_provider", _should_not_call)
+    monkeypatch.setattr(cli_main.SemanticGuard, "audit", _should_not_call)
+    out = run_cmd(["checkpoint"])
+    assert "Harbor Checkpoint:" in out
+    assert "Harbor Check Report:" in out
+
+
+def test_finish_does_not_auto_run_docs_log_lock(monkeypatch):
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
+    monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
+    monkeypatch.setattr(
+        cli_main,
+        "resolve_provider",
+        lambda: SimpleNamespace(name="mock", model="mock-model"),
+    )
+
+    calls = {"docs": 0, "log": 0, "lock": 0}
+
+    def _docs_call(*args, **kwargs):
+        calls["docs"] += 1
+
+    def _log_call(*args, **kwargs):
+        calls["log"] += 1
+
+    def _lock_call(*args, **kwargs):
+        calls["lock"] += 1
+        return iter([])
+
+    monkeypatch.setattr(cli_main.L2Generator, "generate", _docs_call)
+    monkeypatch.setattr(cli_main.DiaryManager, "log", _log_call)
+    monkeypatch.setattr(cli_main.DiaryManager, "export_markdown", _log_call)
+    monkeypatch.setattr(cli_main.IndexBuilder, "iter_build", _lock_call)
+
+    run_cmd(["finish"])
+    assert calls["docs"] == 0
+    assert calls["log"] == 0
+    assert calls["lock"] == 0

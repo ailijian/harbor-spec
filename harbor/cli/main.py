@@ -125,6 +125,10 @@ def main():
     p_cfg_adopted.add_argument("--min-count", type=int, default=5)
 
     p_status = sub.add_parser("status", help="Show Harbor context status (no implicit index update)")
+    p_start = sub.add_parser("start", help="Workflow facade: run status before AI coding")
+    p_checkpoint = sub.add_parser("checkpoint", help="Workflow facade: status + check --fast")
+    p_finish = sub.add_parser("finish", help="Workflow facade: status + check + next steps")
+    p_accept = sub.add_parser("accept", help="Workflow facade alias for lock")
 
     p_adopt = sub.add_parser("adopt", help="Adopt legacy code into Harbor governance")
     p_adopt.add_argument("path", type=str)
@@ -187,9 +191,8 @@ def main():
     p_init.add_argument("--force", action="store_true")
 
     args = parser.parse_args(argv_mapped)
-    if args.command == "lock":
-        code_roots = args.code_root
-        cache_dir = Path(args.cache_dir) if args.cache_dir else None
+
+    def _run_lock(*, code_roots=None, cache_dir=None, no_incremental=False, no_register_adopted=False, register_scan=False):
         builder = IndexBuilder(code_roots=code_roots, cache_dir=cache_dir)
         scanned = 0
         updated = 0
@@ -205,7 +208,7 @@ def main():
         ) as progress:
             task_id = progress.add_task(t("cli.lock.init"), total=0)
             total_set = False
-            for ev in builder.iter_build(incremental=not args.no_incremental):
+            for ev in builder.iter_build(incremental=not no_incremental):
                 if not total_set:
                     progress.update(task_id, total=ev.total)
                     total_set = True
@@ -237,7 +240,7 @@ def main():
             excludes = cfg.get("exclude_paths", [])
             from harbor.core.utils import derive_adopted_roots
             derived = derive_adopted_roots(files, exclude_patterns=excludes, min_count=1)
-            if not getattr(args, "no_register_adopted", False) and derived:
+            if not no_register_adopted and derived:
                 adopted = cfg.get("adopted_roots", [])
                 changed = False
                 for p in derived:
@@ -245,7 +248,7 @@ def main():
                         adopted.append(p)
                         changed = True
                 # 可选：同时注册到扫描目录
-                if getattr(args, "register_scan", False):
+                if register_scan:
                     roots = cfg.get("code_roots", [])
                     for p in derived:
                         if p not in roots:
@@ -262,6 +265,161 @@ def main():
                     print(t("cli.lock.register_adopted_hint"))
         except Exception:
             pass
+
+    def _run_status():
+        console = Console()
+        with console.status(f"[bold blue]{t('cli.status.scanning')}", spinner="dots"):
+            eng = SyncEngine()
+            rep = eng.check_status()
+        total = sum(rep.counts.values())
+        if total == 0:
+            print(t("cli.status.nochanges"))
+            return rep, True
+        print(t("cli.status.title"))
+        if rep.drift:
+            print(f"\n{t('cli.status.drift')}")
+            for e in rep.drift:
+                print(f"  M {e.id} ({e.details})")
+        if rep.contract_changed:
+            print(f"\n{t('cli.status.contract')}")
+            for e in rep.contract_changed:
+                print(f"  C {e.id} ({e.details})")
+        if rep.modified:
+            print(f"\n{t('cli.status.modified')}")
+            for e in rep.modified:
+                print(f"  M {e.id} ({e.details})")
+        if rep.untracked:
+            print(f"\n{t('cli.status.untracked')}")
+            for e in rep.untracked:
+                print(f"  ? {e.id}")
+        if rep.missing:
+            print(f"\n{t('cli.status.missing')}")
+            for e in rep.missing:
+                print(f"  ! {e.id}")
+        return rep, False
+
+    def _run_check(*, fast=False, module=None, func=None, diff_only=True, debug=False, output_format="jsonl"):
+        scanner = DDTScanner()
+        bindings = scanner.scan_tests()
+        if func:
+            bindings = [b for b in bindings if b.func_id == func]
+        if module:
+            bindings = [b for b in bindings if b.func_id.startswith(module)]
+        validator = DDTValidator()
+        rep = validator.validate(bindings)
+        print(t("cli.check.title"))
+        print(f"\n{t('cli.check.ddt')}")
+        print(t("cli.check.bindings", count=len(bindings)))
+        if rep.valid:
+            for b in rep.valid:
+                print(f"  OK {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path})")
+        if rep.violations:
+            for typ, b, msg in rep.violations:
+                print(f"  [!] {typ.upper()} {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path}) :: {msg}")
+        if not rep.valid and not rep.violations:
+            print(f"  {t('cli.check.nobindings')}")
+        if not fast:
+            eng = SyncEngine()
+            status = eng.check_status()
+            provider = resolve_provider()
+            guard = SemanticGuard()
+            model = getattr(provider, "model", "n/a")
+            print(f"\n{t('cli.semantic.title')}")
+            targets = []
+            targets.extend(status.drift)
+            targets.extend(status.modified)
+            if not diff_only:
+                targets.extend(status.contract_changed)
+            print(f"targets={len(targets)}")
+            out_lines = []
+            for e in targets:
+                try:
+                    src = Path(e.file_path).read_text(encoding="utf-8")
+                except Exception as ex:
+                    if output_format == "jsonl":
+                        print(json.dumps({
+                            "status": "ERROR",
+                            "func_id": e.id,
+                            "file_path": e.file_path,
+                            "reason": str(ex)
+                        }, ensure_ascii=False))
+                    else:
+                        out_lines.append(f"ERROR {e.id} :: {str(ex)}")
+                    continue
+                adapter = IndexBuilder().adapter
+                contracts = list(adapter.parse_file(e.file_path))
+                matched = None
+                for fc in contracts:
+                    if fc.id == e.id:
+                        matched = fc
+                        break
+                if matched is None:
+                    if output_format == "jsonl":
+                        print(json.dumps({
+                            "status": "ERROR",
+                            "func_id": e.id,
+                            "file_path": e.file_path,
+                            "reason": "contract not found"
+                        }, ensure_ascii=False))
+                    else:
+                        out_lines.append(f"ERROR {e.id} :: contract not found")
+                    continue
+                res = guard.audit(matched, src, provider)
+                if debug:
+                    print(f"[DEBUG] Prompt >>>\n{res.prompt or ''}\n[DEBUG] Raw <<<\n{res.raw_output or ''}")
+                reason = " ".join((res.reason or "").split())
+                if output_format == "jsonl":
+                    print(json.dumps({
+                        "status": "OK" if res.status == "OK" else ("POSSIBLE_SEMANTIC_DRIFT" if res.status == "MISMATCH" else "ERROR"),
+                        "func_id": e.id,
+                        "file_path": e.file_path,
+                        "provider": provider.name,
+                        "model": model,
+                        "reason": reason if res.status != "OK" else None
+                    }, ensure_ascii=False))
+                else:
+                    if res.status == "OK":
+                        out_lines.append(f"OK {e.id}")
+                    elif res.status == "MISMATCH":
+                        out_lines.append(f"POSSIBLE_SEMANTIC_DRIFT {e.id} :: {reason}")
+                    else:
+                        out_lines.append(f"ERROR {e.id} :: {reason}")
+            if not out_lines:
+                if output_format == "plain":
+                    print(t("cli.semantic.notargets"))
+            else:
+                if output_format == "plain":
+                    for ln in out_lines:
+                        print(ln)
+
+    if args.command in ("lock", "accept"):
+        code_roots = args.code_root if args.command == "lock" else None
+        cache_dir = Path(args.cache_dir) if args.command == "lock" and args.cache_dir else None
+        _run_lock(
+            code_roots=code_roots,
+            cache_dir=cache_dir,
+            no_incremental=getattr(args, "no_incremental", False),
+            no_register_adopted=getattr(args, "no_register_adopted", False),
+            register_scan=getattr(args, "register_scan", False),
+        )
+        if args.command == "accept":
+            print(t("cli.accept.done"))
+    elif args.command == "start":
+        print(t("cli.start.title"))
+        _, clean = _run_status()
+        if clean:
+            print(t("cli.start.clean"))
+        else:
+            print(t("cli.start.dirty"))
+    elif args.command == "checkpoint":
+        print(t("cli.checkpoint.title"))
+        _run_status()
+        _run_check(fast=True)
+    elif args.command == "finish":
+        print(t("cli.finish.title"))
+        _run_status()
+        _run_check(fast=False)
+        print(t("cli.finish.next_steps"))
     elif args.command == "config" and args.cfg_cmd == "list":
         cfg_path = Path(".harbor/config.yaml")
         data = {}
@@ -358,128 +516,16 @@ def main():
             cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
             print(t("cli.config.adopted.wrote", count=len(derived)))
     elif args.command == "status":
-        console = Console()
-        with console.status(f"[bold blue]{t('cli.status.scanning')}", spinner="dots"):
-            eng = SyncEngine()
-            rep = eng.check_status()
-        total = sum(rep.counts.values())
-        if total == 0:
-            print(t("cli.status.nochanges"))
-            return
-        print(t("cli.status.title"))
-        if rep.drift:
-            print(f"\n{t('cli.status.drift')}")
-            for e in rep.drift:
-                print(f"  M {e.id} ({e.details})")
-        if rep.contract_changed:
-            print(f"\n{t('cli.status.contract')}")
-            for e in rep.contract_changed:
-                print(f"  C {e.id} ({e.details})")
-        if rep.modified:
-            print(f"\n{t('cli.status.modified')}")
-            for e in rep.modified:
-                print(f"  M {e.id} ({e.details})")
-        if rep.untracked:
-            print(f"\n{t('cli.status.untracked')}")
-            for e in rep.untracked:
-                print(f"  ? {e.id}")
-        if rep.missing:
-            print(f"\n{t('cli.status.missing')}")
-            for e in rep.missing:
-                print(f"  ! {e.id}")
+        _run_status()
     elif args.command == "check":
-        scanner = DDTScanner()
-        bindings = scanner.scan_tests()
-        if args.func:
-            bindings = [b for b in bindings if b.func_id == args.func]
-        if args.module:
-            bindings = [b for b in bindings if b.func_id.startswith(args.module)]
-        validator = DDTValidator()
-        rep = validator.validate(bindings)
-        print(t("cli.check.title"))
-        print(f"\n{t('cli.check.ddt')}")
-        print(t("cli.check.bindings", count=len(bindings)))
-        if rep.valid:
-            for b in rep.valid:
-                print(f"  OK {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path})")
-        if rep.violations:
-            for typ, b, msg in rep.violations:
-                print(f"  [!] {typ.upper()} {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path}) :: {msg}")
-        if not rep.valid and not rep.violations:
-            print(f"  {t('cli.check.nobindings')}")
-        if not args.fast:
-            eng = SyncEngine()
-            status = eng.check_status()
-            provider = resolve_provider()
-            guard = SemanticGuard()
-            model = getattr(provider, "model", "n/a")
-            print(f"\n{t('cli.semantic.title')}")
-            targets = []
-            targets.extend(status.drift)
-            targets.extend(status.modified)
-            if not args.diff_only:
-                targets.extend(status.contract_changed)
-            print(f"targets={len(targets)}")
-            out_lines = []
-            for e in targets:
-                try:
-                    src = Path(e.file_path).read_text(encoding="utf-8")
-                except Exception as ex:
-                    if args.format == "jsonl":
-                        print(json.dumps({
-                            "status": "ERROR",
-                            "func_id": e.id,
-                            "file_path": e.file_path,
-                            "reason": str(ex)
-                        }, ensure_ascii=False))
-                    else:
-                        out_lines.append(f"ERROR {e.id} :: {str(ex)}")
-                    continue
-                adapter = IndexBuilder().adapter
-                contracts = list(adapter.parse_file(e.file_path))
-                matched = None
-                for fc in contracts:
-                    if fc.id == e.id:
-                        matched = fc
-                        break
-                if matched is None:
-                    if args.format == "jsonl":
-                        print(json.dumps({
-                            "status": "ERROR",
-                            "func_id": e.id,
-                            "file_path": e.file_path,
-                            "reason": "contract not found"
-                        }, ensure_ascii=False))
-                    else:
-                        out_lines.append(f"ERROR {e.id} :: contract not found")
-                    continue
-                res = guard.audit(matched, src, provider)
-                if args.debug:
-                    print(f"[DEBUG] Prompt >>>\n{res.prompt or ''}\n[DEBUG] Raw <<<\n{res.raw_output or ''}")
-                reason = " ".join((res.reason or "").split())
-                if args.format == "jsonl":
-                    print(json.dumps({
-                        "status": "OK" if res.status == "OK" else ("POSSIBLE_SEMANTIC_DRIFT" if res.status == "MISMATCH" else "ERROR"),
-                        "func_id": e.id,
-                        "file_path": e.file_path,
-                        "provider": provider.name,
-                        "model": model,
-                        "reason": reason if res.status != "OK" else None
-                    }, ensure_ascii=False))
-                else:
-                    if res.status == "OK":
-                        out_lines.append(f"OK {e.id}")
-                    elif res.status == "MISMATCH":
-                        out_lines.append(f"POSSIBLE_SEMANTIC_DRIFT {e.id} :: {reason}")
-                    else:
-                        out_lines.append(f"ERROR {e.id} :: {reason}")
-            if not out_lines:
-                if args.format == "plain":
-                    print(t("cli.semantic.notargets"))
-            else:
-                if args.format == "plain":
-                    for ln in out_lines:
-                        print(ln)
+        _run_check(
+            fast=args.fast,
+            module=args.module,
+            func=args.func,
+            diff_only=args.diff_only,
+            debug=args.debug,
+            output_format=args.format,
+        )
     elif args.command == "docs":
         gen = L2Generator()
         md = gen.generate(args.module)

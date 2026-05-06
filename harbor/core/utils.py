@@ -36,10 +36,13 @@ def derive_adopted_roots(file_paths: List[str], exclude_patterns: Optional[List[
         parts = [p for p in s.split("/") if p]
         if not parts:
             continue
-        # 兼容绝对路径（如 'C:/project/...')，跳过盘符段
+        # 兼容绝对路径（如 'C:/project/...')，跳过盘符与项目根层级
         prefix = parts[0]
-        if ":" in prefix and len(parts) > 1:
-            prefix = parts[1]
+        if ":" in prefix:
+            if len(parts) > 2:
+                prefix = parts[2]
+            elif len(parts) > 1:
+                prefix = parts[1]
         if not prefix:
             continue
         if prefix in blacklist:

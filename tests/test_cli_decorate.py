@@ -27,4 +27,7 @@ def test_cli_dry_run_preview_counts(tmp_path: Path):
     finally:
         sys.argv = old_argv
     out = buf.getvalue()
-    assert "Found 1 candidates. 1 have docstrings, 0 do not." in out
+    assert (
+        "Found 1 candidates. 1 have docstrings, 0 do not." in out
+        or "找到 1 个候选。1 有 docstring，0 无。" in out
+    )

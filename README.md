@@ -171,6 +171,12 @@ harbor lock
 
 ## 🔄 The Vibe Coding Workflow
 
+推荐 UX（Facade CLI）：
+
+```bash
+harbor start -> AI coding -> harbor checkpoint -> harbor finish -> harbor accept
+```
+
 ### Step 1: Check Status
 
 开始工作前，确保环境干净。
@@ -306,6 +312,10 @@ exclude_paths:
 | Command | Description |
 | :--- | :--- |
 | `harbor init` | 智能初始化项目配置 |
+| `harbor start` | 工作流入口：开始 AI coding 前执行状态检查 |
+| `harbor checkpoint` | 工作流检查点：等价 `status + check --fast` |
+| `harbor finish` | 工作流收尾：等价 `status + check` 并提示下一步 |
+| `harbor accept` | 工作流确认：语义化别名，等价 `harbor lock` |
 | `harbor status` / `harbor st` | 查看上下文状态（Drift/Modified） |
 | `harbor lock` / `harbor commit` | 锁定当前 L3 契约快照为基线 |
 | `harbor check` | 统一语义审计与 DDT 验证 |
