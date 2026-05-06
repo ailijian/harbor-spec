@@ -182,10 +182,11 @@ Recommended facade flow:
 harbor start -> AI coding -> harbor checkpoint -> harbor finish -> harbor accept
 ```
 
-Note: `harbor finish` does not auto-refresh docs yet. Before closing a task or opening a PR, run:
+Note: `harbor finish` does not auto-refresh docs/module capsules yet. Before closing a task or opening a PR, run:
 
 ```bash
 harbor docs --changed --write
+harbor module seal --changed --write
 ```
 
 ### Step 1: Check Status
@@ -301,11 +302,18 @@ Generate AI maintenance context capsules for a specific module (deterministic, n
 harbor module inspect harbor/core
 harbor module seal harbor/core
 harbor module seal harbor/core --write
+harbor module seal --changed --write
+harbor module seal --all --write
 ```
 
 Notes:
 - Module Capsule is a derived maintenance view, not a source of truth.
 - It does not replace the L2 README (`<module>/README.md`).
+- `seal <module>`: refresh one module capsule.
+- `seal --changed`: refresh capsules for changed modules.
+- `seal --all`: refresh capsules for all indexed modules.
+- Default preview mode does not write files.
+- `--write` is required to update capsule files.
 - It helps AI agents load debug/review/refactor context faster.
 - Skill promotion is out of scope for this MVP.
 
@@ -346,6 +354,8 @@ exclude_paths:
 | `harbor module inspect <module>` | Show indexed context summary for one module (read-only, no file writes). |
 | `harbor module seal <module>` | Preview module capsule output (three docs, no file writes). |
 | `harbor module seal <module> --write` | Write module capsule files to `docs/harbor/modules/<module>/`. |
+| `harbor module seal --changed --write` | Batch write module capsules for changed modules. |
+| `harbor module seal --all --write` | Batch write module capsules for all indexed modules. |
 | `harbor config` / `harbor conf` | Manage code roots and paths. |
 
 -----

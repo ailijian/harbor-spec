@@ -200,9 +200,25 @@ def main():
     p_module_inspect.add_argument("module", type=str)
     p_module_seal = p_module_sub.add_parser(
         "seal",
-        help="Preview or write module capsule for one module",
+        help="Preview or write module capsule for one module, changed modules, or all indexed modules",
     )
-    p_module_seal.add_argument("module", type=str)
+    p_module_seal.add_argument(
+        "module",
+        nargs="?",
+        type=str,
+        help="Target module directory (e.g. harbor/core)",
+    )
+    p_module_seal.add_argument(
+        "--changed",
+        action="store_true",
+        help="Detect changed modules and generate module capsule for each",
+    )
+    p_module_seal.add_argument(
+        "--all",
+        dest="all_modules",
+        action="store_true",
+        help="Generate module capsule for all indexed modules",
+    )
     p_module_seal.add_argument(
         "--write",
         action="store_true",
@@ -648,27 +664,90 @@ def main():
             for tpath in tests:
                 print(f"- {tpath}")
     elif args.command == "module" and args.module_cmd == "seal":
-        context = collect_module_context(args.module)
-        module_name = context.get("module", "")
-        if not module_name:
-            print(t("cli.module.seal.none", module=args.module))
+        mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
+        if mode_count != 1:
+            parser.error("module seal requires exactly one mode: <module> or --changed or --all")
+
+        if args.module:
+            context = collect_module_context(args.module)
+            module_name = context.get("module", "")
+            if not module_name:
+                print(t("cli.module.seal.none", module=args.module))
+                return
+            if not context.get("key_files") and not context.get("contracts"):
+                print(t("cli.module.seal.none", module=module_name))
+                return
+            print(t("cli.module.seal.title", module=module_name))
+            previews = preview_module_capsule(context)
+            if not args.write:
+                print(t("cli.module.seal.preview_only"))
+                for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
+                    print("")
+                    print(f"--- {name} ---")
+                    print(previews[name])
+            else:
+                updated = write_module_capsule(context)
+                print(t("cli.module.seal.updated"))
+                for path in updated:
+                    print(f"- {path.as_posix()}")
             return
-        if not context.get("key_files") and not context.get("contracts"):
-            print(t("cli.module.seal.none", module=module_name))
-            return
-        print(t("cli.module.seal.title", module=module_name))
-        previews = preview_module_capsule(context)
-        if not args.write:
-            print(t("cli.module.seal.preview_only"))
-            for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
-                print("")
-                print(f"--- {name} ---")
-                print(previews[name])
+
+        if args.changed:
+            rep = SyncEngine().check_status()
+            changed_paths = []
+            changed_paths.extend([e.file_path for e in rep.drift])
+            changed_paths.extend([e.file_path for e in rep.modified])
+            changed_paths.extend([e.file_path for e in rep.contract_changed])
+            changed_paths.extend([e.file_path for e in rep.untracked])
+            changed_paths.extend([e.file_path for e in rep.missing])
+            modules = collect_modules_from_paths(changed_paths)
+            if not modules:
+                print(t("cli.module.seal.changed.none"))
+                return
+            print(t("cli.module.seal.changed.found"))
         else:
-            updated = write_module_capsule(context)
-            print(t("cli.module.seal.updated"))
-            for path in updated:
-                print(f"- {path.as_posix()}")
+            modules = collect_all_indexed_modules()
+            if not modules:
+                print(t("cli.module.seal.all.none"))
+                return
+            print(t("cli.module.seal.all.found"))
+
+        for module in modules:
+            print(f"- {module}")
+
+        valid_contexts = []
+        for module in modules:
+            context = collect_module_context(module)
+            if context.get("key_files") or context.get("contracts"):
+                valid_contexts.append(context)
+
+        if not valid_contexts:
+            if args.changed:
+                print(t("cli.module.seal.changed.none"))
+            else:
+                print(t("cli.module.seal.all.none"))
+            return
+
+        if not args.write:
+            print("")
+            print(t("cli.module.seal.batch.preview_only"))
+            for context in valid_contexts:
+                module_name = context.get("module", "")
+                previews = preview_module_capsule(context)
+                print("")
+                print(t("cli.module.seal.title", module=module_name))
+                for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
+                    print("")
+                    print(f"--- {name} ---")
+                    print(previews[name])
+            return
+
+        updated = []
+        for context in valid_contexts:
+            updated.extend(write_module_capsule(context))
+        print(t("cli.module.seal.batch.updated"))
+        for path in updated:
+            print(f"- {path.as_posix()}")
     elif args.command == "log" and args.export:
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")
