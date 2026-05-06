@@ -1,3 +1,23 @@
+# Unreleased - Workflow & Module Capsule Update
+
+## Added
+- Workflow facade commands: `start`, `checkpoint`, `finish`, `finish --sync-context`, `accept`
+- L2 README modes: `docs --changed`, `docs --all`
+- Module capsule commands: `module inspect`, `module seal`, `module seal --changed`, `module seal --all`
+- Module capsule stale detection: `module stale`, `module stale --changed`, `module stale --all`
+- Optional module skill promotion: `module promote-skill`
+
+## Changed
+- `module-card.md` now includes deterministic fingerprint frontmatter for stale detection.
+- `finish` supports explicit derived-context sync via `--sync-context`.
+
+## Compatibility
+- Existing `status/check/lock/docs/log` behavior is preserved.
+- Existing aliases are preserved.
+- `finish` default remains non-writing.
+
+---
+
 # Harbor-spec v1.2.0 — The Industrial Update
 
 ## 🚀 Major Features
@@ -25,4 +45,3 @@
 
 ## 📝 Acknowledgements
 感谢所有贡献者在 Phase 12–16 中的努力，使 Harbor 在工业级规模下更加稳定与高效。
-

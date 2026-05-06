@@ -135,15 +135,31 @@ def main():
     p_cfg_adopted.add_argument("--min-count", type=int, default=5)
 
     p_status = sub.add_parser("status", help="Show Harbor context status (no implicit index update)")
-    p_start = sub.add_parser("start", help="Workflow facade: run status before AI coding")
-    p_checkpoint = sub.add_parser("checkpoint", help="Workflow facade: status + check --fast")
-    p_finish = sub.add_parser("finish", help="Workflow facade: status + check + next steps")
+    p_start = sub.add_parser(
+        "start",
+        help="Workflow facade: run status before AI coding",
+        description="Workflow facade command: run status before AI coding.",
+    )
+    p_checkpoint = sub.add_parser(
+        "checkpoint",
+        help="Workflow facade: status + check --fast",
+        description="Workflow facade command: run status + check --fast.",
+    )
+    p_finish = sub.add_parser(
+        "finish",
+        help="Workflow facade: status + check + next steps",
+        description="Workflow facade command: run status + check and print guided next steps.",
+    )
     p_finish.add_argument(
         "--sync-context",
         action="store_true",
         help="Run finish checks and sync derived context views for changed modules",
     )
-    p_accept = sub.add_parser("accept", help="Workflow facade alias for lock")
+    p_accept = sub.add_parser(
+        "accept",
+        help="Workflow facade alias for lock",
+        description="Workflow facade command: semantic alias of harbor lock.",
+    )
 
     p_adopt = sub.add_parser("adopt", help="Adopt legacy code into Harbor governance")
     p_adopt.add_argument("path", type=str)
@@ -174,18 +190,17 @@ def main():
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    p_docs_group = p_docs.add_mutually_exclusive_group(required=True)
-    p_docs_group.add_argument(
+    p_docs.add_argument(
         "--module",
         type=str,
         help="Target module directory (e.g. harbor/core) to generate L2 view",
     )
-    p_docs_group.add_argument(
+    p_docs.add_argument(
         "--changed",
         action="store_true",
         help="Detect changed modules and generate L2 view for each",
     )
-    p_docs_group.add_argument(
+    p_docs.add_argument(
         "--all",
         dest="all_modules",
         action="store_true",
@@ -737,6 +752,9 @@ def main():
             output_format=args.format,
         )
     elif args.command == "docs":
+        docs_mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
+        if docs_mode_count != 1:
+            parser.error(t("cli.docs.mode_conflict"))
         gen = L2Generator()
         if args.module:
             md = gen.generate(args.module)
@@ -815,7 +833,7 @@ def main():
     elif args.command == "module" and args.module_cmd == "seal":
         mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
         if mode_count != 1:
-            parser.error("module seal requires exactly one mode: <module> or --changed or --all")
+            parser.error(t("cli.module.seal.mode_conflict"))
 
         if args.module:
             context = collect_module_context(args.module)
@@ -890,7 +908,7 @@ def main():
     elif args.command == "module" and args.module_cmd == "stale":
         mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
         if mode_count != 1:
-            parser.error("module stale requires exactly one mode: <module> or --changed or --all")
+            parser.error(t("cli.module.stale.mode_conflict"))
 
         if args.module:
             context = collect_module_context(args.module)

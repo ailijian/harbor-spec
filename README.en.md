@@ -15,7 +15,7 @@
 
 </div>
 
-Language: [English](README_en.md) | [中文](README.md)
+Language: [English](README.en.md) | [中文](README.md)
 
 ---
 
@@ -174,76 +174,87 @@ harbor lock
 
 -----
 
-## 🔄 The Vibe Coding Workflow
+## 🔄 Vibe Coding Workflow
 
 Recommended facade flow:
 
-```bash
-harbor start -> AI coding -> harbor checkpoint -> harbor finish --sync-context -> harbor log -> harbor accept
+```powershell
+harbor start
+# AI coding
+harbor checkpoint
+# more AI coding
+harbor finish
+# or, when ready to sync derived context:
+harbor finish --sync-context
+harbor log
+harbor accept
 ```
 
-Workflow Facade command set:
+### Workflow Facade Commands
 
-```bash
+```powershell
+harbor start
+harbor checkpoint
 harbor finish
 harbor finish --sync-context
 harbor accept
 ```
 
+Key semantics:
+- `harbor finish` does not auto-lock.
+- `harbor finish` does not auto-log.
+- `harbor finish` does not write README or Module Capsule by default.
+- `harbor finish --sync-context` writes changed L2 READMEs and changed Module Capsules, then checks stale status for changed capsules.
+- `harbor accept` is a semantic alias of `harbor lock`.
+
+### L2 README Generation
+
+```powershell
+harbor docs --module harbor/core
+harbor docs --module harbor/core --write
+harbor docs --changed
+harbor docs --changed --write
+harbor docs --all
+harbor docs --all --write
+```
+
 Notes:
-- `harbor finish` performs checks and prints next-step guidance only.
-- `harbor finish --sync-context` also refreshes changed L2 READMEs and changed Module Capsules, then checks stale status for changed capsules.
-- `harbor finish` never locks the baseline; use `harbor accept` when you are ready.
+- Default mode is preview and does not write files.
+- Only `--write` writes README files.
+- `--module`, `--changed`, and `--all` are mutually exclusive modes.
 
-### Step 1: Check Status
+### Module Capsule
 
-Before working, ensure the codebase is clean.
-
-```bash
-harbor status
-# Output: No changes detected.
+```powershell
+harbor module inspect harbor/core
+harbor module seal harbor/core
+harbor module seal harbor/core --write
+harbor module seal --changed --write
+harbor module seal --all --write
+harbor module stale harbor/core
+harbor module stale --changed
+harbor module stale --all
 ```
 
-### Step 2: Vibe Coding
+Notes:
+- Module Capsule is a derived maintenance view, not a source of truth.
+- `module seal` defaults to preview; only `--write` writes capsule files.
+- `module stale` is read-only and never writes files.
+- Single-module / `--changed` / `--all` modes are mutually exclusive.
 
-Use your AI assistant to modify code.
-*Scenario: You changed the logic in `utils.py` but forgot to update the Docstring.*
+### Optional Skill Promotion
 
-### Step 3: Detect Drift
-
-Harbor detects that the code has "drifted" from its contract.
-
-```bash
-harbor status
-# Output: M harbor.utils.func (Body changed, Contract static)
+```powershell
+harbor module promote-skill harbor/core
 ```
 
-### Step 4: AI Audit
+Notes:
+- `promote-skill` is an optional manual action.
+- Do not generate skills for all modules by default.
+- If capsule is missing or stale, run this first:
 
-Run unified check to verify semantics and DDT bindings.
-
-```bash
-harbor check
-# Output: [Semantic] POSSIBLE_SEMANTIC_DRIFT ... and [DDT] Validation ...
-```
-
-### Step 5: Smart Diary (AI-Assisted Logging) ✨
-
-Finished the change? Let AI draft your decision log.
-
-```bash
-harbor log
-```
-
-  * Harbor analyzes unindexed changes (Drift) and generates a structured diary draft.
-  * **Interactive**: You can confirm `[Y]` directly or edit the summary `[e]`.
-
-### Step 6: Lock & Record
-
-Lock the new baseline.
-
-```bash
-harbor lock
+```powershell
+harbor module seal harbor/core --write
 ```
 
 -----

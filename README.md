@@ -15,7 +15,7 @@
 
 </div>
 
-语言: [中文](README.md) | [English](README_en.md)
+语言: [中文](README.md) | [English](README.en.md)
 
 ---
 
@@ -169,76 +169,87 @@ harbor lock
 
 -----
 
-## 🔄 The Vibe Coding Workflow
+## 🔄 Vibe Coding Workflow
 
-推荐 UX（Facade CLI）：
+推荐工作流（Facade CLI）：
 
-```bash
-harbor start -> AI coding -> harbor checkpoint -> harbor finish --sync-context -> harbor log -> harbor accept
+```powershell
+harbor start
+# AI coding
+harbor checkpoint
+# more AI coding
+harbor finish
+# or, when ready to sync derived context:
+harbor finish --sync-context
+harbor log
+harbor accept
 ```
 
-Workflow Facade 命令建议：
+### Workflow Facade Commands
 
-```bash
+```powershell
+harbor start
+harbor checkpoint
 harbor finish
 harbor finish --sync-context
 harbor accept
 ```
 
+关键语义：
+- `harbor finish` 不会自动 `lock`。
+- `harbor finish` 不会自动 `log`。
+- `harbor finish` 默认不会写 README 或 Module Capsule。
+- `harbor finish --sync-context` 会写 changed L2 README 和 changed Module Capsule，并检查 changed capsule stale 状态。
+- `harbor accept` 是 `harbor lock` 的语义化 alias。
+
+### L2 README Generation
+
+```powershell
+harbor docs --module harbor/core
+harbor docs --module harbor/core --write
+harbor docs --changed
+harbor docs --changed --write
+harbor docs --all
+harbor docs --all --write
+```
+
 说明：
-- `harbor finish` 执行检查并给出下一步建议，不会自动写入派生视图。
-- `harbor finish --sync-context` 会在检查后刷新 changed L2 README 与 changed Module Capsules，并执行 changed capsule stale 检查。
-- `harbor finish` 不会锁定基线；需要用户显式执行 `harbor accept`。
+- 默认 preview，不写文件。
+- 只有 `--write` 才会写 README。
+- `--module`、`--changed`、`--all` 三种模式互斥。
 
-### Step 1: Check Status
+### Module Capsule
 
-开始工作前，确保环境干净。
-
-```bash
-harbor status
-# 输出: No changes detected.
+```powershell
+harbor module inspect harbor/core
+harbor module seal harbor/core
+harbor module seal harbor/core --write
+harbor module seal --changed --write
+harbor module seal --all --write
+harbor module stale harbor/core
+harbor module stale --changed
+harbor module stale --all
 ```
 
-### Step 2: Vibe Coding
+说明：
+- Module Capsule 是 derived maintenance view，不是 source of truth。
+- `module seal` 默认 preview，不写文件；仅 `--write` 会写 capsule。
+- `module stale` 只读检查，不写文件。
+- `module` 的单模块 / `--changed` / `--all` 三种模式互斥。
 
-使用 AI 助手修改代码。
-*场景：你修改了 `utils.py` 的逻辑，但忘记更新 Docstring。*
+### Optional Skill Promotion
 
-### Step 3: Detect Drift
-
-Harbor 发现代码“偷跑”。
-
-```bash
-harbor status
-# 输出: M harbor.utils.func (Body changed, Contract static)
+```powershell
+harbor module promote-skill harbor/core
 ```
 
-### Step 4: AI Audit
+说明：
+- `promote-skill` 是可选手动动作。
+- 不建议为所有模块默认生成 skill。
+- 若 capsule 缺失或过时，请先执行：
 
-运行统一检查以同时验证语义与 DDT 绑定：
-
-```bash
-harbor check
-# 输出: [Semantic] POSSIBLE_SEMANTIC_DRIFT ... 与 [DDT] Validation ...
-```
-
-### Step 5: Smart Diary (AI 智能日志) ✨
-
-代码修改完成后，让 AI 帮你写决策日志。
-
-```bash
-harbor log
-```
-
-  * Harbor 会分析未索引的变更（Drift），自动生成结构化日志草稿。
-  * **交互式确认**：你可以直接保存 `[Y]` 或微调 Summary `[e]`。
-
-### Step 6: Lock & Record
-
-锁定新的基线：
-
-```bash
-harbor lock
+```powershell
+harbor module seal harbor/core --write
 ```
 
 -----
