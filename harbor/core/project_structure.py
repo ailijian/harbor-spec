@@ -1,0 +1,640 @@
+from __future__ import annotations
+
+import json
+import re
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+from harbor.core.l2 import collect_all_indexed_modules, infer_module_from_path
+from harbor.core.module_capsule import normalize_module_path
+from harbor.core.module_skill import normalize_skill_slug
+from harbor.core.storage import HarborDB
+
+
+@dataclass
+class ProjectMetadata:
+    name: Optional[str]
+    version: Optional[str]
+    description: Optional[str]
+    entrypoint: Optional[str]
+
+
+@dataclass
+class ProjectModuleSummary:
+    module: str
+    key_files: List[str]
+    indexed_files_count: int
+    indexed_contracts_count: int
+    has_l2_readme: bool
+    has_module_capsule: bool
+    has_skill: bool
+
+
+@dataclass
+class ProjectAreaSummary:
+    area: str
+    purpose: str
+    discovered_files_count: int
+    indexed_contracts_count: int
+
+
+@dataclass
+class ProjectStructureContext:
+    metadata: ProjectMetadata
+    modules: List[ProjectModuleSummary]
+    supporting_areas: List["ProjectSupportingSummary"]
+    key_areas: List[ProjectAreaSummary]
+    has_indexed_modules: bool
+    discovery_mode: str
+    contract_aware: str
+    has_real_index_records: bool
+
+
+@dataclass
+class ProjectSupportingSummary:
+    area: str
+    purpose: str
+    key_files: List[str]
+
+
+def _normalize_rel_path(value: str) -> str:
+    return (value or "").replace("\\", "/").strip("/")
+
+
+def _to_project_relative_path(file_path: str, root: Path) -> str:
+    raw = str(file_path or "").strip()
+    if not raw:
+        return ""
+    norm = raw.replace("\\", "/")
+    try:
+        path_obj = Path(norm)
+    except Exception:
+        return _normalize_rel_path(norm)
+    if path_obj.is_absolute():
+        try:
+            return path_obj.resolve().relative_to(root.resolve()).as_posix()
+        except Exception:
+            return ""
+    return _normalize_rel_path(norm)
+
+
+def _sanitize_module(module: str, root: Path) -> str:
+    mod = normalize_module_path(module)
+    if not mod:
+        return ""
+    head = mod.split("/", 1)[0]
+    if ":" in head:
+        rel = _to_project_relative_path(mod, root)
+        if not rel:
+            return ""
+        return normalize_module_path(rel)
+    return mod
+
+
+def _belongs_to_module(file_path: str, module: str) -> bool:
+    rel = _normalize_rel_path(file_path)
+    mod = normalize_module_path(module)
+    if not rel or not mod:
+        return False
+    return rel == mod or rel.startswith(f"{mod}/")
+
+
+def _load_index(index_path: Path) -> Dict[str, Any]:
+    if index_path.exists():
+        try:
+            return json.loads(index_path.read_text(encoding="utf-8"))
+        except Exception:
+            return {"files": {}}
+
+    db = HarborDB(project_root=index_path.parents[2])
+    files: Dict[str, Any] = {}
+    for fp, mtime in db.get_all_files():
+        items = []
+        for it in db.get_file_entries(fp):
+            meta = it.get("meta", {}) or {}
+            items.append(
+                {
+                    "id": it.get("id"),
+                    "qualified_name": meta.get("qualified_name"),
+                    "name": meta.get("name"),
+                    "scope": meta.get("scope"),
+                    "strictness": meta.get("strictness"),
+                }
+            )
+        files[str(fp)] = {"mtime": mtime, "items": items}
+    return {"files": files}
+
+
+def _collect_fallback_files(root: Path) -> List[str]:
+    candidates = ["harbor/cli", "harbor/core", "harbor/utils", "tests", "docs"]
+    patterns = ("*.py", "*.md")
+    files: List[str] = []
+    for rel_dir in candidates:
+        base = root / rel_dir
+        if not base.exists() or not base.is_dir():
+            continue
+        for pattern in patterns:
+            for path in sorted(base.rglob(pattern)):
+                if not path.is_file():
+                    continue
+                try:
+                    rel = path.resolve().relative_to(root.resolve()).as_posix()
+                except Exception:
+                    continue
+                files.append(_normalize_rel_path(rel))
+    return sorted({f for f in files if f})
+
+
+def _build_transient_index_from_files(files: List[str]) -> Dict[str, Any]:
+    return {
+        "files": {
+            fp: {
+                "items": [],
+            }
+            for fp in sorted({f for f in files if f})
+        }
+    }
+
+
+def _extract_toml_string_block(text: str, section: str, key: str) -> Optional[str]:
+    pattern = rf"^\[{re.escape(section)}\]\s*$([\s\S]*?)(?=^\[|\Z)"
+    match = re.search(pattern, text, flags=re.MULTILINE)
+    if not match:
+        return None
+    block = match.group(1)
+    key_match = re.search(rf'^\s*{re.escape(key)}\s*=\s*"([^"]*)"\s*$', block, flags=re.MULTILINE)
+    if not key_match:
+        return None
+    value = key_match.group(1).strip()
+    return value or None
+
+
+def _read_project_metadata(root: Path) -> ProjectMetadata:
+    pyproject = root / "pyproject.toml"
+    if not pyproject.exists():
+        return ProjectMetadata(name=None, version=None, description=None, entrypoint=None)
+    try:
+        text = pyproject.read_text(encoding="utf-8")
+    except Exception:
+        return ProjectMetadata(name=None, version=None, description=None, entrypoint=None)
+
+    entrypoint = _extract_toml_string_block(text, "project.scripts", "harbor")
+    return ProjectMetadata(
+        name=_extract_toml_string_block(text, "project", "name"),
+        version=_extract_toml_string_block(text, "project", "version"),
+        description=_extract_toml_string_block(text, "project", "description"),
+        entrypoint=entrypoint,
+    )
+
+
+def _capsule_exists(root: Path, module: str) -> bool:
+    base = root / "docs" / "harbor" / "modules" / Path(module)
+    required = ["module-card.md", "review-checklist.md", "debug-playbook.md"]
+    return all((base / name).exists() for name in required)
+
+
+def _skill_exists(root: Path, module: str) -> bool:
+    slug = normalize_skill_slug(module)
+    return (root / ".agents" / "skills" / f"harbor-debug-{slug}" / "SKILL.md").exists()
+
+
+def _area_purpose(area: str) -> str:
+    mapping = {
+        "harbor/cli": "CLI command parsing and workflow facade",
+        "harbor/core": "Core Harbor logic",
+        "harbor/utils": "Shared utilities",
+        "tests": "Test suite",
+        "docs": "Documentation",
+    }
+    if area in mapping:
+        return mapping[area]
+    return f"Derived from indexed files under {area}."
+
+
+def _supporting_area_purpose(area: str) -> str:
+    mapping = {
+        "tests": "Test suite",
+        "tests/core": "Core test suite",
+        "tests/fixtures_sqlite": "Test fixtures",
+        "docs": "Documentation",
+        "docs/harbor": "Harbor rule and guide documents",
+    }
+    if area in mapping:
+        return mapping[area]
+    return f"Derived from discovered files under {area}."
+
+
+def _infer_area(file_path: str) -> str:
+    rel = _normalize_rel_path(file_path)
+    for area in ["harbor/cli", "harbor/core", "harbor/utils", "tests", "docs"]:
+        if rel == area or rel.startswith(f"{area}/"):
+            return area
+    first = rel.split("/", 1)[0] if rel else "unknown"
+    return first or "unknown"
+
+
+def _key_files_display(values: List[str], limit: int = 3) -> List[str]:
+    files = sorted(
+        {_normalize_rel_path(v) for v in values if _normalize_rel_path(v)},
+        key=rank_key_file,
+    )
+    if len(files) <= limit:
+        return files
+    tail = len(files) - limit
+    return files[:limit] + [f"... (+{tail} more)"]
+
+
+def classify_project_area(module: str, key_files: Optional[List[str]] = None) -> str:
+    mod = normalize_module_path(module)
+    if not mod:
+        return "supporting"
+
+    code_prefixes = [
+        "harbor/cli",
+        "harbor/core",
+        "harbor/utils",
+        "app",
+        "src",
+        "packages",
+        "backend",
+        "frontend",
+    ]
+    supporting_prefixes = [
+        "tests",
+        "docs",
+        "examples",
+        "scripts",
+    ]
+
+    for prefix in code_prefixes:
+        if mod == prefix or mod.startswith(f"{prefix}/"):
+            return "code"
+    for prefix in supporting_prefixes:
+        if mod == prefix or mod.startswith(f"{prefix}/"):
+            return "supporting"
+
+    files = [_normalize_rel_path(v) for v in (key_files or []) if _normalize_rel_path(v)]
+    has_python = any(f.endswith(".py") for f in files)
+    has_explicit_supporting_path = any(
+        f.startswith("tests/") or f.startswith("docs/") or f.startswith("scripts/") for f in files
+    )
+    if has_python and not has_explicit_supporting_path:
+        return "code"
+    return "supporting"
+
+
+def rank_key_file(path: str) -> tuple:
+    rel = _normalize_rel_path(path)
+    base = Path(rel).name.lower()
+
+    entry_files = {"main.py", "cli.py", "app.py", "server.py"}
+    semantic_files = {
+        "l2.py",
+        "module_capsule.py",
+        "module_skill.py",
+        "project_structure.py",
+        "stale.py",
+        "doctor.py",
+        "sync.py",
+        "index.py",
+        "storage.py",
+        "ddt.py",
+        "audit.py",
+    }
+    is_test_py = rel.endswith(".py") and (base.startswith("test_") or base.endswith("_test.py"))
+    is_impl_py = rel.endswith(".py") and base != "__init__.py" and not is_test_py
+
+    if base in entry_files:
+        priority = 1
+    elif base in semantic_files:
+        priority = 2
+    elif is_impl_py:
+        priority = 3
+    elif is_test_py:
+        priority = 4
+    elif base == "readme.md" or rel.endswith(".md"):
+        priority = 5
+    elif base == "__init__.py":
+        priority = 6
+    else:
+        priority = 7
+    return (priority, rel)
+
+
+def _table_cell(value: Optional[str]) -> str:
+    text = (value or "").strip()
+    if not text:
+        return "-"
+    return text.replace("|", r"\|")
+
+
+def _yes_no(value: bool) -> str:
+    return "yes" if value else "no"
+
+
+def collect_project_structure_context(root: Path, index_path: Optional[Path] = None) -> ProjectStructureContext:
+    root = root.resolve()
+    idx_path = index_path or (root / ".harbor" / "cache" / "l3_index.json")
+    index_data = _load_index(idx_path)
+
+    valid_files: List[str] = []
+    for fp in (index_data.get("files") or {}).keys():
+        rel = _to_project_relative_path(str(fp), root)
+        if rel:
+            valid_files.append(rel)
+
+    has_real_index_records = bool(valid_files)
+    used_filesystem_fallback = False
+    if not valid_files:
+        fallback_files = _collect_fallback_files(root)
+        if fallback_files:
+            index_data = _build_transient_index_from_files(fallback_files)
+            valid_files = fallback_files
+            used_filesystem_fallback = True
+
+    if has_real_index_records and used_filesystem_fallback:
+        discovery_mode = "Harbor index + filesystem fallback"
+        contract_aware = "partial"
+    elif has_real_index_records:
+        discovery_mode = "Harbor index"
+        contract_aware = "yes"
+    else:
+        discovery_mode = "filesystem fallback"
+        contract_aware = "no"
+
+    raw_modules = collect_all_indexed_modules(index_path=idx_path)
+    module_set = {m for m in (_sanitize_module(v, root) for v in raw_modules) if m}
+    if not module_set:
+        for fp in valid_files:
+            rel = _to_project_relative_path(str(fp), root)
+            module = _sanitize_module(infer_module_from_path(rel), root)
+            if module:
+                module_set.add(module)
+    modules = sorted(module_set)
+
+    code_modules: List[ProjectModuleSummary] = []
+    supporting_areas: List[ProjectSupportingSummary] = []
+    for module in modules:
+        module_norm = normalize_module_path(module)
+        module_files: List[str] = []
+        contract_count = 0
+        for fp, meta in (index_data.get("files") or {}).items():
+            rel = _to_project_relative_path(str(fp), root)
+            if not _belongs_to_module(rel, module_norm):
+                continue
+            module_files.append(rel)
+            contract_count += len(meta.get("items", []) or [])
+        unique_files = sorted({_normalize_rel_path(p) for p in module_files if _normalize_rel_path(p)})
+        key_files = _key_files_display(unique_files)
+        if classify_project_area(module_norm, unique_files) == "code":
+            code_modules.append(
+                ProjectModuleSummary(
+                    module=module_norm,
+                    key_files=key_files,
+                    indexed_files_count=len(unique_files),
+                    indexed_contracts_count=contract_count,
+                    has_l2_readme=(root / module_norm / "README.md").exists(),
+                    has_module_capsule=_capsule_exists(root, module_norm),
+                    has_skill=_skill_exists(root, module_norm),
+                )
+            )
+        else:
+            supporting_areas.append(
+                ProjectSupportingSummary(
+                    area=module_norm,
+                    purpose=_supporting_area_purpose(module_norm),
+                    key_files=key_files,
+                )
+            )
+
+    code_modules = sorted(code_modules, key=lambda x: x.module)
+    supporting_areas = sorted(supporting_areas, key=lambda x: x.area)
+
+    area_stats: Dict[str, Dict[str, int]] = {}
+    for fp, meta in (index_data.get("files") or {}).items():
+        rel = _to_project_relative_path(str(fp), root)
+        if not rel:
+            continue
+        area = _infer_area(rel)
+        area_stats.setdefault(area, {"files": 0, "contracts": 0})
+        area_stats[area]["files"] += 1
+        area_stats[area]["contracts"] += len(meta.get("items", []) or [])
+
+    ordered_areas: List[str] = []
+    for area in ["harbor/cli", "harbor/core", "harbor/utils", "tests", "docs"]:
+        if area in area_stats:
+            ordered_areas.append(area)
+    for area in sorted(area_stats):
+        if area not in ordered_areas:
+            ordered_areas.append(area)
+
+    key_areas = [
+        ProjectAreaSummary(
+            area=area,
+            purpose=_area_purpose(area),
+            discovered_files_count=area_stats[area]["files"],
+            indexed_contracts_count=area_stats[area]["contracts"],
+        )
+        for area in ordered_areas
+    ]
+
+    return ProjectStructureContext(
+        metadata=_read_project_metadata(root),
+        modules=code_modules,
+        supporting_areas=supporting_areas,
+        key_areas=key_areas,
+        has_indexed_modules=bool(code_modules),
+        discovery_mode=discovery_mode,
+        contract_aware=contract_aware,
+        has_real_index_records=has_real_index_records,
+    )
+
+
+def generate_project_structure_markdown(context: ProjectStructureContext) -> str:
+    metadata = context.metadata
+    discovery_notes = {
+        "filesystem fallback": "No Harbor index records were found, so this view was generated from filesystem discovery.",
+        "Harbor index": "This view was generated from Harbor indexed records.",
+        "Harbor index + filesystem fallback": "This view combines Harbor indexed records with filesystem fallback discovery.",
+    }
+    lines: List[str] = [
+        "# Project Structure",
+        "",
+        "> Generated by Harbor-spec.",
+        "> This is a derived project-level structure view, not a source of truth.",
+        "",
+        "## Project Metadata",
+        "",
+        "| Field | Value |",
+        "|---|---|",
+        f"| Name | {_table_cell(metadata.name)} |",
+        f"| Version | {_table_cell(metadata.version)} |",
+        f"| Description | {_table_cell(metadata.description)} |",
+        f"| CLI Entrypoint | {_table_cell(metadata.entrypoint)} |",
+        "",
+        "## Discovery Mode",
+        "",
+        "| Field | Value |",
+        "|---|---|",
+        f"| Mode | {_table_cell(context.discovery_mode)} |",
+        f"| Contract-aware | {_table_cell(context.contract_aware)} |",
+        f"| Notes | {_table_cell(discovery_notes.get(context.discovery_mode, '-'))} |",
+        "",
+        "When Discovery Mode is `filesystem fallback`, contract counts may be 0 because no Harbor index records were available.",
+        "Run `harbor lock` or `harbor adopt <path>` to build richer contract-aware structure.",
+        "",
+        "## Source of Truth",
+        "",
+        "This file is derived from indexed code, contracts, tests, module capsules, and project metadata.",
+        "",
+        "Do not edit this file as the source of truth.",
+        "",
+        "Update the underlying code, contracts, schemas, tests, or Harbor metadata, then regenerate this view.",
+        "",
+        "## Key Areas",
+        "",
+        "| Area | Purpose | Discovered Files | Indexed Contracts |",
+        "|---|---|---:|---:|",
+    ]
+    if context.key_areas:
+        for area in context.key_areas:
+            lines.append(
+                f"| {_table_cell(area.area)} | {_table_cell(area.purpose)} | {area.discovered_files_count} | {area.indexed_contracts_count} |"
+            )
+    else:
+        lines.append("| - | No indexed files found. | 0 | 0 |")
+
+    lines.extend(
+        [
+            "",
+            "## Code Modules",
+            "",
+            "| Module | Key Files | L2 README | Module Capsule | Skill |",
+            "|---|---|---|---|---|",
+        ]
+    )
+    if context.modules:
+        for module in context.modules:
+            key_files = ", ".join(module.key_files) if module.key_files else "-"
+            lines.append(
+                f"| {_table_cell(module.module)} | {_table_cell(key_files)} | {_yes_no(module.has_l2_readme)} | {_yes_no(module.has_module_capsule)} | {_yes_no(module.has_skill)} |"
+            )
+    else:
+        lines.append("| - | - | no | no | no |")
+        lines.append("")
+        lines.append("No indexed modules found.")
+
+    lines.extend(
+        [
+            "",
+            "## Supporting Areas",
+            "",
+            "| Area | Purpose | Key Files |",
+            "|---|---|---|",
+        ]
+    )
+    if context.supporting_areas:
+        for area in context.supporting_areas:
+            key_files = ", ".join(area.key_files) if area.key_files else "-"
+            lines.append(
+                f"| {_table_cell(area.area)} | {_table_cell(area.purpose)} | {_table_cell(key_files)} |"
+            )
+    else:
+        lines.append("| - | - | - |")
+
+    lines.extend(
+        [
+            "",
+            "## Main Harbor Workflows",
+            "",
+            "### AI Coding Workflow",
+            "",
+            "```text",
+            "harbor start",
+            "AI coding",
+            "harbor checkpoint",
+            "AI coding",
+            "harbor finish --sync-context",
+            "harbor stale",
+            "harbor doctor",
+            "harbor log",
+            "harbor accept",
+            "```",
+            "",
+            "### L2 README Workflow",
+            "",
+            "```text",
+            "harbor docs --module <module>",
+            "harbor docs --changed --write",
+            "harbor docs --all --write",
+            "```",
+            "",
+            "### Module Capsule Workflow",
+            "",
+            "```text",
+            "harbor module inspect <module>",
+            "harbor module seal <module> --write",
+            "harbor module stale <module>",
+            "harbor module promote-skill <module>",
+            "```",
+            "",
+            "### Health Check Workflow",
+            "",
+            "```text",
+            "harbor stale",
+            "harbor doctor",
+            "```",
+            "",
+            "## Where to Look First",
+            "",
+            "| Task | Start Here |",
+            "|---|---|",
+            "| CLI behavior | harbor/cli/main.py |",
+            "| L2 README generation | harbor/core/l2.py |",
+            "| Module Capsule generation | harbor/core/module_capsule.py |",
+            "| Module Skill promotion | harbor/core/module_skill.py |",
+            "| Stale checks | harbor/core/stale.py |",
+            "| Doctor checks | harbor/core/doctor.py |",
+            "| i18n text | harbor/utils/i18n.py |",
+            "| Release metadata | pyproject.toml, RELEASE.md |",
+            "| Tests | tests/ |",
+            "",
+            "## AI Context Loading Guidance",
+            "",
+            "For most coding tasks, load context in this order:",
+            "",
+            "1. `AGENTS.md`",
+            "2. Project Rules, if present",
+            "3. `docs/harbor/project-structure.md`",
+            "4. Relevant L2 README",
+            "5. Relevant Module Capsule",
+            "6. Relevant source files",
+            "7. Relevant tests",
+            "",
+            "Do not read the whole repository unless the project structure and module capsule are insufficient.",
+            "",
+            "## Regeneration",
+            "",
+            "To preview this file:",
+            "",
+            "```powershell",
+            "harbor project structure",
+            "```",
+            "",
+            "To update this file:",
+            "",
+            "```powershell",
+            "harbor project structure --write",
+            "```",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def write_project_structure(context: ProjectStructureContext, root: Path) -> Path:
+    target = root / "docs" / "harbor" / "project-structure.md"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(generate_project_structure_markdown(context), encoding="utf-8")
+    return target

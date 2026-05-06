@@ -284,6 +284,36 @@ harbor module promote-skill harbor/core
 harbor module seal harbor/core --write
 ```
 
+### Project Structure View
+
+```powershell
+harbor project structure
+harbor project structure --write
+```
+
+说明：
+- 该命令生成项目级派生视图 `docs/harbor/project-structure.md`。
+- Project Structure View 是 derived view，不是 Project Rules。
+- 它不替代 `AGENTS.md`、L2 README、Module Capsule 或源代码本身。
+- 它用于帮助 AI coding agent 在 debug、review、refactor 前快速理解项目结构。
+- 输出会将 `Code Modules` 与 `Supporting Areas` 分开展示。
+- 输出包含 `Discovery Mode` 区块，用于说明当前结构来源。
+- 当处于 filesystem fallback 模式时，`Indexed Contracts` 可能为 0，因为没有可用的 Harbor index records。
+- 默认模式仅预览，不写文件。
+- 仅 `--write` 会更新 `docs/harbor/project-structure.md`。
+- `harbor finish --sync-context` 不会自动刷新 Project Structure View。
+- 推荐在任务起始阶段手动执行：
+
+```powershell
+harbor project structure --write
+harbor start
+# AI coding
+harbor finish --sync-context
+harbor stale
+harbor doctor
+harbor accept
+```
+
 -----
 
 ## 🚀 What's New in v1.2.0（历史版本）
@@ -451,6 +481,8 @@ exclude_paths:
 | `harbor module seal --changed --write` | 批量写入变更模块的 Capsule |
 | `harbor module seal --all --write` | 批量写入全部已索引模块的 Capsule |
 | `harbor module promote-skill <module>` | 手动晋升模块为薄 Skill 入口（可选，写入 `.agents/skills/.../SKILL.md`） |
+| `harbor project structure` | 预览项目级派生结构视图（默认不写文件） |
+| `harbor project structure --write` | 写入 `docs/harbor/project-structure.md` |
 | `harbor config` / `harbor conf` | 管理扫描路径配置 |
 
 -----

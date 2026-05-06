@@ -51,6 +51,7 @@ def test_readme_contains_release_key_commands():
         "harbor stale",
         "harbor doctor",
         "harbor module promote-skill",
+        "harbor project structure --write",
     ]
     for phrase in required:
         assert phrase in readme_zh
@@ -63,6 +64,7 @@ def test_readme_en_contains_release_key_commands():
         "harbor stale",
         "harbor doctor",
         "harbor module promote-skill",
+        "harbor project structure --write",
     ]
     for phrase in required:
         assert phrase in readme_en
@@ -71,6 +73,8 @@ def test_readme_en_contains_release_key_commands():
 def test_release_notes_include_unreleased_v130_track():
     release_text = (_repo_root() / "RELEASE.md").read_text(encoding="utf-8")
     assert "Unreleased / v1.3.0 - Workflow & Module Capsule Update" in release_text
+    assert "harbor project structure" in release_text
+    assert "derived and does not replace Project Rules" in release_text
 
 
 def test_help_recognizes_core_release_commands():

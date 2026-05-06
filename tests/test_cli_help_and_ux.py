@@ -75,6 +75,13 @@ def test_module_help_lists_inspect_seal_stale_and_promote_skill():
     assert "promote-skill" in out_module
 
 
+def test_project_help_lists_structure_and_structure_help_lists_write():
+    out_project, _ = run_help(["project"])
+    out_structure, _ = run_help(["project", "structure"])
+    assert "structure" in out_project
+    assert "--write" in out_structure
+
+
 def test_docs_modes_error_message_is_friendly_and_clear():
     code, _, err = run_cmd(["docs", "--module", "harbor/core", "--changed"])
     assert code == 2
@@ -108,6 +115,7 @@ def test_readme_and_readme_en_include_key_new_command_phrases():
         "module promote-skill",
         "docs --changed",
         "module stale",
+        "project structure --write",
     ]
 
     for phrase in required_phrases:

@@ -289,6 +289,36 @@ Notes:
 harbor module seal harbor/core --write
 ```
 
+### Project Structure View
+
+```powershell
+harbor project structure
+harbor project structure --write
+```
+
+Notes:
+- This command generates `docs/harbor/project-structure.md`.
+- Project Structure View is a derived project-level view, not Project Rules.
+- It does not replace `AGENTS.md`, L2 README, Module Capsule, or source code.
+- It helps AI coding agents understand the project quickly before debugging, reviewing, or refactoring.
+- The generated view separates `Code Modules` from `Supporting Areas`.
+- The output includes a `Discovery Mode` section to explain how the structure was discovered.
+- In filesystem fallback mode, `Indexed Contracts` may be 0 because no Harbor index records are available.
+- Default mode is preview-only and does not write files.
+- Only `--write` updates `docs/harbor/project-structure.md`.
+- `harbor finish --sync-context` does not auto-update Project Structure View.
+- Suggested startup flow:
+
+```powershell
+harbor project structure --write
+harbor start
+# AI coding
+harbor finish --sync-context
+harbor stale
+harbor doctor
+harbor accept
+```
+
 -----
 
 ## 🧩 Features Deep Dive
@@ -441,6 +471,8 @@ exclude_paths:
 | `harbor module seal --changed --write` | Batch write module capsules for changed modules. |
 | `harbor module seal --all --write` | Batch write module capsules for all indexed modules. |
 | `harbor module promote-skill <module>` | Manually promote one module to an optional thin skill entrypoint (`.agents/skills/.../SKILL.md`). |
+| `harbor project structure` | Preview a derived project-level structure view (no file write by default). |
+| `harbor project structure --write` | Write `docs/harbor/project-structure.md`. |
 | `harbor config` / `harbor conf` | Manage code roots and paths. |
 
 -----

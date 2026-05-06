@@ -25,6 +25,11 @@ from harbor.core.module_skill import (
     check_capsule_ready_for_skill,
     write_module_skill,
 )
+from harbor.core.project_structure import (
+    collect_project_structure_context,
+    generate_project_structure_markdown,
+    write_project_structure,
+)
 from harbor.core.stale import (
     check_module_derived_views_stale,
     format_stale_summary,
@@ -342,6 +347,21 @@ def main():
         help="Generate a thin optional skill entrypoint for one module",
     )
     p_module_promote.add_argument("module", type=str)
+
+    p_project = sub.add_parser(
+        "project",
+        help="Project-level derived views",
+    )
+    p_project_sub = p_project.add_subparsers(dest="project_cmd", required=True)
+    p_project_structure = p_project_sub.add_parser(
+        "structure",
+        help="Preview or write project structure view",
+    )
+    p_project_structure.add_argument(
+        "--write",
+        action="store_true",
+        help="Write docs/harbor/project-structure.md; default prints preview",
+    )
 
     p_log = sub.add_parser("log", help="Context-aware diary logging")
     p_log.add_argument("-m", "--message", type=str, required=False)
@@ -1097,6 +1117,26 @@ def main():
         print(f"- docs/harbor/modules/{module_name}/module-card.md")
         print(f"- docs/harbor/modules/{module_name}/review-checklist.md")
         print(f"- docs/harbor/modules/{module_name}/debug-playbook.md")
+    elif args.command == "project" and args.project_cmd == "structure":
+        context = collect_project_structure_context(Path.cwd())
+        markdown = generate_project_structure_markdown(context)
+        if not args.write:
+            print(markdown)
+            print("")
+            print(t("cli.project.structure.preview_only"))
+            if not context.has_indexed_modules:
+                print(t("cli.project.structure.no_index"))
+            return
+        updated = write_project_structure(context, Path.cwd())
+        updated_display = updated.as_posix()
+        try:
+            updated_display = updated.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except Exception:
+            updated_display = updated.as_posix()
+        print(t("cli.project.structure.updated"))
+        print(f"- {updated_display}")
+        if not context.has_indexed_modules:
+            print(t("cli.project.structure.no_index"))
     elif args.command == "log" and args.export:
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")

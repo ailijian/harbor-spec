@@ -22,12 +22,16 @@
 - Machine-readable JSON output for:
   - `harbor stale --format json`
   - `harbor doctor --format json`
+- Project Structure View:
+  - `harbor project structure`
+  - `harbor project structure --write`
 
 ## Changed
 - `module-card.md` now includes deterministic fingerprint frontmatter.
 - `harbor finish` supports explicit context sync via `--sync-context`.
 - CLI help and mutually-exclusive argument errors are clearer.
 - README and README.en are aligned.
+- Project Structure View now separates code modules from supporting areas and ranks key files for better AI context loading.
 
 ## Compatibility
 - Existing `status`, `check`, `lock`, `docs --module`, and `log` behavior is preserved.
@@ -37,6 +41,8 @@
 - Text output remains the default for `harbor stale` and `harbor doctor`.
 - JSON output is advisory and does not change exit-code behavior.
 - `harbor accept` is a semantic alias for `harbor lock`.
+- Project Structure View is derived and does not replace Project Rules.
+- `harbor project structure` is preview-only by default and does not write files.
 
 ## Runtime Safety
 - No command automatically locks, logs, promotes skills, or writes context unless explicitly requested.
