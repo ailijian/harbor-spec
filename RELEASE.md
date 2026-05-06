@@ -19,6 +19,9 @@
 - Top-level advisory checks:
   - `harbor stale`
   - `harbor doctor`
+- Machine-readable JSON output for:
+  - `harbor stale --format json`
+  - `harbor doctor --format json`
 
 ## Changed
 - `module-card.md` now includes deterministic fingerprint frontmatter.
@@ -31,6 +34,8 @@
 - Existing aliases are preserved.
 - `harbor finish` default behavior remains non-writing.
 - `harbor stale` and `harbor doctor` are advisory and read-only.
+- Text output remains the default for `harbor stale` and `harbor doctor`.
+- JSON output is advisory and does not change exit-code behavior.
 - `harbor accept` is a semantic alias for `harbor lock`.
 
 ## Runtime Safety

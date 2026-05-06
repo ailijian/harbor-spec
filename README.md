@@ -212,6 +212,9 @@ harbor accept
 - `harbor stale` 不会自动修复；请用 `harbor docs --module <module> --write` 与 `harbor module seal <module> --write` 刷新。
 - 想只看派生视图是否过期，请用 `harbor stale`；想看整体 Harbor 健康，请用 `harbor doctor`。
 - MVP 阶段 `harbor stale` 为 advisory，检查完成后返回成功（未来可扩展 CI gate）。
+- `harbor stale --format json` 与 `harbor doctor --format json` 提供机器可读输出（只读、advisory）。
+- JSON 输出用于脚本集成、CI 准备、IDE 面板展示与后续自动化能力接入。
+- MVP 的 JSON 输出不改变现有 exit-code 行为；`--ci` 将在后续阶段单独引入。
 - `harbor accept` 是 `harbor lock` 的语义化 alias。
 
 ### L2 README Generation
@@ -245,10 +248,12 @@ harbor stale
 harbor stale --changed
 harbor stale --all
 harbor stale --module harbor/core
+harbor stale --format json
 harbor doctor
 harbor doctor --changed
 harbor doctor --all
 harbor doctor --module harbor/core
+harbor doctor --format json
 ```
 
 说明：
@@ -259,6 +264,9 @@ harbor doctor --module harbor/core
 - `harbor stale` 默认等价 `harbor stale --changed`。
 - `harbor doctor` 是顶层只读健康检查聚合；默认等价 `harbor doctor --changed`。
 - `harbor doctor` 不会自动修复，也不会写入 docs / capsule / skill。
+- `harbor stale --format json` 与 `harbor doctor --format json` 输出稳定机器可读 JSON（stdout 仅 JSON）。
+- JSON 输出是 advisory read-only 视图，不会触发修复、写入或 lock/log。
+- 当前 MVP 不改变 exit-code 行为；CI gate（如 `--ci`）将在后续版本提供。
 - `module` 的单模块 / `--changed` / `--all` 三种模式互斥。
 
 ### Optional Skill Promotion

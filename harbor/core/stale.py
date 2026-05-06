@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import re
 from typing import List, Optional
 
 from harbor.core.l2 import L2Generator
@@ -20,12 +21,30 @@ class ViewStaleResult:
     reason: Optional[str] = None
     suggested_command: Optional[str] = None
 
+    def to_dict(self, *, view_name: Optional[str] = None) -> dict:
+        is_up_to_date = self.status == "up_to_date"
+        return {
+            "view": view_name or self.view.lower().replace(" ", "_"),
+            "status": self.status,
+            "reason": None if is_up_to_date else _sanitize_json_text(self.reason),
+            "suggested_command": None if is_up_to_date else _sanitize_json_text(self.suggested_command),
+        }
+
 
 @dataclass
 class ModuleStaleSummary:
     module: str
     l2_readme: ViewStaleResult
     module_capsule: ViewStaleResult
+
+    def to_dict(self) -> dict:
+        return {
+            "module": _sanitize_module_for_json(self.module),
+            "views": [
+                self.l2_readme.to_dict(view_name="l2_readme"),
+                self.module_capsule.to_dict(view_name="module_capsule"),
+            ],
+        }
 
 
 def _normalize_l2_markdown_for_stale(text: str) -> str:
@@ -130,6 +149,40 @@ def format_stale_summary(results: List[ModuleStaleSummary], scope_text: str) -> 
     return "\n".join(lines)
 
 
+def stale_report_to_dict(results: List[ModuleStaleSummary], scope: str) -> dict:
+    normalized_results = sorted(results, key=lambda item: item.module)
+    stale_views = 0
+    up_to_date_views = 0
+    unknown_views = 0
+    for module_summary in normalized_results:
+        for view in (module_summary.l2_readme, module_summary.module_capsule):
+            if view.status == "up_to_date":
+                up_to_date_views += 1
+            elif view.status == "unknown":
+                unknown_views += 1
+            else:
+                stale_views += 1
+
+    overall_status = "pass"
+    if stale_views > 0 or unknown_views > 0:
+        overall_status = "warn"
+
+    return {
+        "command": "stale",
+        "scope": scope,
+        "status": overall_status,
+        "summary": {
+            "modules_checked": len(normalized_results),
+            "stale_views": stale_views,
+            "up_to_date_views": up_to_date_views,
+            "unknown_views": unknown_views,
+        },
+        "modules": [item.to_dict() for item in normalized_results],
+        "advisory": True,
+        "writes_files": False,
+    }
+
+
 def _format_view_lines(label: str, result: ViewStaleResult) -> List[str]:
     status = t("cli.stale.up_to_date")
     if result.status == "stale":
@@ -143,3 +196,33 @@ def _format_view_lines(label: str, result: ViewStaleResult) -> List[str]:
     if result.suggested_command and result.status != "up_to_date":
         lines.append(f"  {t('cli.stale.suggested')}: {result.suggested_command}")
     return lines
+
+
+_WINDOWS_ABS_PATH_RE = re.compile(r"(?i)\b[a-z]:[\\/][^\s\"']+")
+_POSIX_ABS_PATH_RE = re.compile(r"(?<![A-Za-z0-9_])/(?:[^ \t\r\n\"']+)")
+
+
+def _sanitize_module_for_json(module: str) -> str:
+    return _sanitize_single_path(module)
+
+
+def _sanitize_json_text(value: Optional[str]) -> Optional[str]:
+    if value is None:
+        return None
+
+    def _replace(match: re.Match) -> str:
+        return _sanitize_single_path(match.group(0))
+
+    sanitized = _WINDOWS_ABS_PATH_RE.sub(_replace, value)
+    sanitized = _POSIX_ABS_PATH_RE.sub(_replace, sanitized)
+    return sanitized
+
+
+def _sanitize_single_path(path_text: str) -> str:
+    candidate = Path(path_text)
+    if candidate.is_absolute():
+        try:
+            return candidate.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except Exception:
+            return candidate.name or path_text.replace("\\", "/")
+    return path_text.replace("\\", "/")

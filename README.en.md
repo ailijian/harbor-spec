@@ -217,6 +217,9 @@ Key semantics:
 - `harbor stale` does not fix stale views automatically; use `harbor docs --module <module> --write` and `harbor module seal <module> --write`.
 - Use `harbor stale` when you only need derived-view freshness; use `harbor doctor` for broader Harbor health.
 - MVP stale is advisory and returns success when the check completes (CI gating may be added later).
+- `harbor stale --format json` and `harbor doctor --format json` provide machine-readable output (read-only and advisory).
+- JSON output is intended for scripts, CI preparation, IDE panels, and future automation integrations.
+- MVP JSON output does not change current exit-code behavior; `--ci` will be introduced separately.
 - `harbor accept` is a semantic alias of `harbor lock`.
 
 ### L2 README Generation
@@ -250,10 +253,12 @@ harbor stale
 harbor stale --changed
 harbor stale --all
 harbor stale --module harbor/core
+harbor stale --format json
 harbor doctor
 harbor doctor --changed
 harbor doctor --all
 harbor doctor --module harbor/core
+harbor doctor --format json
 ```
 
 Notes:
@@ -264,6 +269,9 @@ Notes:
 - `harbor stale` defaults to `harbor stale --changed`.
 - `harbor doctor` is a top-level read-only health aggregate check and defaults to `harbor doctor --changed`.
 - `harbor doctor` does not fix issues and never writes docs/capsule/skill files.
+- `harbor stale --format json` and `harbor doctor --format json` emit deterministic machine-readable JSON (stdout contains JSON only).
+- JSON output is advisory read-only output and does not trigger fix/write/lock/log actions.
+- This MVP does not change exit-code behavior; CI gate mode (for example, `--ci`) will be added in a later step.
 - Single-module / `--changed` / `--all` modes are mutually exclusive.
 
 ### Optional Skill Promotion

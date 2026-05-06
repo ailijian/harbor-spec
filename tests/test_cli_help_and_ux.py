@@ -49,6 +49,15 @@ def test_doctor_help_lists_changed_all_and_module_flags():
     assert "--changed" in out_doctor
     assert "--all" in out_doctor
     assert "--module" in out_doctor
+    assert "--format" in out_doctor
+
+
+def test_stale_help_lists_changed_all_module_and_format_flags():
+    out_stale, _ = run_help(["stale"])
+    assert "--changed" in out_stale
+    assert "--all" in out_stale
+    assert "--module" in out_stale
+    assert "--format" in out_stale
 
 
 def test_docs_help_lists_changed_all_and_write_flags():

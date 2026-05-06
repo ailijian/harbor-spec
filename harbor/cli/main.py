@@ -28,6 +28,7 @@ from harbor.core.module_skill import (
 from harbor.core.stale import (
     check_module_derived_views_stale,
     format_stale_summary,
+    stale_report_to_dict,
 )
 from harbor.core.doctor import (
     build_doctor_report,
@@ -244,6 +245,13 @@ def main():
         action="store_true",
         help="Check stale status for all indexed modules",
     )
+    p_stale.add_argument(
+        "--format",
+        type=str,
+        choices=["text", "json"],
+        default="text",
+        help="Output format: text (default) or json",
+    )
     p_doctor = sub.add_parser(
         "doctor",
         help="Run read-only aggregated Harbor health checks",
@@ -263,6 +271,13 @@ def main():
         dest="all_modules",
         action="store_true",
         help="Run doctor checks for all indexed modules",
+    )
+    p_doctor.add_argument(
+        "--format",
+        type=str,
+        choices=["text", "json"],
+        default="text",
+        help="Output format: text (default) or json",
     )
 
     p_module = sub.add_parser(
@@ -853,40 +868,64 @@ def main():
             parser.error(t("cli.stale.mode_conflict"))
 
         scope_text = t("cli.stale.scope.changed")
+        scope_value = "changed"
         if args.module:
             modules = [args.module]
             scope_text = t("cli.stale.scope.module", module=args.module)
+            scope_value = f"module:{args.module}"
         elif args.all_modules:
             modules = collect_all_indexed_modules()
             scope_text = t("cli.stale.scope.all")
+            scope_value = "all"
             if not modules:
-                print(t("cli.stale.none_all"))
+                if args.format == "json":
+                    print(json.dumps(stale_report_to_dict([], scope=scope_value), ensure_ascii=False, sort_keys=True, indent=2))
+                else:
+                    print(t("cli.stale.none_all"))
                 return
         else:
             modules = _collect_changed_modules()
             if not modules:
-                print(t("cli.stale.none_changed"))
+                if args.format == "json":
+                    print(json.dumps(stale_report_to_dict([], scope=scope_value), ensure_ascii=False, sort_keys=True, indent=2))
+                else:
+                    print(t("cli.stale.none_changed"))
                 return
 
         results = [check_module_derived_views_stale(module) for module in modules]
-        print(format_stale_summary(results, scope_text=scope_text))
+        if args.format == "json":
+            payload = stale_report_to_dict(results, scope=scope_value)
+            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+        else:
+            print(format_stale_summary(results, scope_text=scope_text))
     elif args.command == "doctor":
         mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
         if mode_count > 1:
             parser.error(t("cli.doctor.mutually_exclusive"))
 
         scope_text = t("cli.doctor.scope.changed")
+        scope_value = "changed"
         if args.module:
             modules = [args.module]
             scope_text = t("cli.doctor.scope.module", module=args.module)
+            scope_value = f"module:{args.module}"
         elif args.all_modules:
             modules = collect_all_indexed_modules()
             scope_text = t("cli.doctor.scope.all")
+            scope_value = "all"
         else:
             modules = _collect_changed_modules()
 
-        report = build_doctor_report(scope=scope_text, modules=modules)
-        print(format_doctor_report(report))
+        report = build_doctor_report(
+            scope=scope_text,
+            modules=sorted(modules) if args.format == "json" else modules,
+        )
+        if args.format == "json":
+            payload = report.to_dict(command="doctor")
+            payload["scope"] = scope_value
+            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+        else:
+            print(format_doctor_report(report))
     elif args.command == "module" and args.module_cmd == "inspect":
         context = collect_module_context(args.module)
         module_name = context.get("module", "")

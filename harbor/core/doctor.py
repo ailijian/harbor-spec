@@ -24,11 +24,42 @@ class DoctorCheckResult:
     details: List[str]
     suggestions: List[str]
 
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "status": _status_to_json(self.status),
+            "details": [_sanitize_json_text(detail) for detail in self.details],
+            "suggestions": [_sanitize_json_text(suggestion) for suggestion in self.suggestions],
+        }
+
 
 @dataclass
 class DoctorReport:
     scope: str
     checks: List[DoctorCheckResult]
+
+    def to_dict(self, *, command: str = "doctor") -> dict:
+        summary = {
+            "pass": sum(1 for c in self.checks if c.status == PASS),
+            "warn": sum(1 for c in self.checks if c.status == WARN),
+            "fail": sum(1 for c in self.checks if c.status == FAIL),
+            "skip": sum(1 for c in self.checks if c.status == SKIP),
+        }
+        overall_status = "pass"
+        if summary["fail"] > 0:
+            overall_status = "fail"
+        elif summary["warn"] > 0:
+            overall_status = "warn"
+
+        return {
+            "command": command,
+            "scope": self.scope,
+            "status": overall_status,
+            "checks": [check.to_dict() for check in self.checks],
+            "summary": summary,
+            "advisory": True,
+            "writes_files": False,
+        }
 
 
 def run_config_index_check() -> DoctorCheckResult:
@@ -306,6 +337,39 @@ def _collect_next_steps(checks: List[DoctorCheckResult]) -> List[str]:
     return _unique(dynamic + base) if dynamic else []
 
 
+def _status_to_json(status: str) -> str:
+    mapping = {
+        PASS: "pass",
+        WARN: "warn",
+        FAIL: "fail",
+        SKIP: "skip",
+    }
+    return mapping.get(status, status.lower())
+
+
+_WINDOWS_ABS_PATH_RE = re.compile(r"(?i)\b[a-z]:[\\/][^\s\"']+")
+_POSIX_ABS_PATH_RE = re.compile(r"(?<![A-Za-z0-9_])/(?:[^ \t\r\n\"']+)")
+
+
+def _sanitize_json_text(value: str) -> str:
+    def _replace(match: re.Match) -> str:
+        return _sanitize_single_path(match.group(0))
+
+    sanitized = _WINDOWS_ABS_PATH_RE.sub(_replace, value)
+    sanitized = _POSIX_ABS_PATH_RE.sub(_replace, sanitized)
+    return sanitized
+
+
+def _sanitize_single_path(path_text: str) -> str:
+    candidate = Path(path_text)
+    if candidate.is_absolute():
+        try:
+            return candidate.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except Exception:
+            return candidate.name or path_text.replace("\\", "/")
+    return path_text.replace("\\", "/")
+
+
 def _unique(values: List[str]) -> List[str]:
     seen: Set[str] = set()
     result: List[str] = []
@@ -315,4 +379,3 @@ def _unique(values: List[str]) -> List[str]:
         seen.add(value)
         result.append(value)
     return result
-
