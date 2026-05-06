@@ -181,7 +181,7 @@ harbor checkpoint
 harbor finish
 # or, when ready to sync derived context:
 harbor finish --sync-context
-harbor stale
+harbor doctor
 harbor log
 harbor accept
 ```
@@ -193,6 +193,7 @@ harbor start
 harbor checkpoint
 harbor finish
 harbor finish --sync-context
+harbor doctor
 harbor accept
 ```
 
@@ -201,9 +202,13 @@ harbor accept
 - `harbor finish` 不会自动 `log`。
 - `harbor finish` 默认不会写 README 或 Module Capsule。
 - `harbor finish --sync-context` 会写 changed L2 README 和 changed Module Capsule，并检查 changed capsule stale 状态。
+- `harbor doctor` 是顶层只读健康检查聚合命令（advisory，不自动修复）。
+- `harbor doctor` 聚合检查 Config/Index、Workspace Status、DDT Fast、Derived Views、Skill References。
+- `harbor doctor` 不写文件、不自动 lock、不自动 log。
 - `harbor stale` 是只读聚合检查：同时检查 L2 README 与 Module Capsule 的新鲜度。
 - `harbor stale` 默认检查 changed modules；可用 `--all` 或 `--module <module>` 切换范围。
 - `harbor stale` 不会自动修复；请用 `harbor docs --module <module> --write` 与 `harbor module seal <module> --write` 刷新。
+- 想只看派生视图是否过期，请用 `harbor stale`；想看整体 Harbor 健康，请用 `harbor doctor`。
 - MVP 阶段 `harbor stale` 为 advisory，检查完成后返回成功（未来可扩展 CI gate）。
 - `harbor accept` 是 `harbor lock` 的语义化 alias。
 
@@ -238,6 +243,10 @@ harbor stale
 harbor stale --changed
 harbor stale --all
 harbor stale --module harbor/core
+harbor doctor
+harbor doctor --changed
+harbor doctor --all
+harbor doctor --module harbor/core
 ```
 
 说明：
@@ -246,6 +255,8 @@ harbor stale --module harbor/core
 - `module stale` 只读检查，不写文件。
 - `harbor stale` 是顶层只读聚合检查，同时检查 L2 README 与 Module Capsule。
 - `harbor stale` 默认等价 `harbor stale --changed`。
+- `harbor doctor` 是顶层只读健康检查聚合；默认等价 `harbor doctor --changed`。
+- `harbor doctor` 不会自动修复，也不会写入 docs / capsule / skill。
 - `module` 的单模块 / `--changed` / `--all` 三种模式互斥。
 
 ### Optional Skill Promotion
@@ -365,7 +376,7 @@ harbor module promote-skill harbor/core
 
 ```bash
 harbor finish --sync-context
-harbor stale
+harbor doctor
 harbor accept
 ```
 
@@ -402,6 +413,7 @@ exclude_paths:
 | `harbor checkpoint` | 工作流检查点：等价 `status + check --fast` |
 | `harbor finish` | 工作流收尾：等价 `status + check` 并提示下一步 |
 | `harbor finish --sync-context` | 工作流收尾增强：执行 `finish` 检查并同步 changed L2 README + Module Capsule，再执行 changed stale 检查 |
+| `harbor doctor` | 顶层只读健康检查聚合：默认检查 changed modules 的 Config/Index、Workspace、DDT、Derived Views、Skill References |
 | `harbor stale` | 顶层只读聚合检查：默认检查 changed modules 的 L2 README + Module Capsule 新鲜度 |
 | `harbor accept` | 工作流确认：语义化别名，等价 `harbor lock` |
 | `harbor status` / `harbor st` | 查看上下文状态（Drift/Modified） |
@@ -423,6 +435,9 @@ exclude_paths:
 | `harbor stale --changed` | 顶层批量检查变更模块的派生视图（L2 README + Module Capsule）是否过时 |
 | `harbor stale --all` | 顶层批量检查全部已索引模块的派生视图是否过时 |
 | `harbor stale --module <module>` | 顶层检查单模块派生视图是否过时（只读，不写文件） |
+| `harbor doctor --changed` | 顶层批量健康检查（变更模块范围，默认模式） |
+| `harbor doctor --all` | 顶层批量健康检查（全部已索引模块范围） |
+| `harbor doctor --module <module>` | 顶层健康检查（单模块范围） |
 | `harbor module seal --changed --write` | 批量写入变更模块的 Capsule |
 | `harbor module seal --all --write` | 批量写入全部已索引模块的 Capsule |
 | `harbor module promote-skill <module>` | 手动晋升模块为薄 Skill 入口（可选，写入 `.agents/skills/.../SKILL.md`） |

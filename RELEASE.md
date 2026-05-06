@@ -6,6 +6,7 @@
 - Module capsule commands: `module inspect`, `module seal`, `module seal --changed`, `module seal --all`
 - Module capsule stale detection: `module stale`, `module stale --changed`, `module stale --all`
 - Top-level read-only stale check: `harbor stale`, `harbor stale --changed`, `harbor stale --all`, `harbor stale --module <module>`
+- Read-only `harbor doctor` command: `harbor doctor`, `harbor doctor --changed`, `harbor doctor --all`, `harbor doctor --module <module>`
 - Optional module skill promotion: `module promote-skill`
 
 ## Changed
@@ -18,6 +19,8 @@
 - `finish` default remains non-writing.
 - `harbor stale` is advisory and does not write files.
 - Existing `module stale` behavior is unchanged.
+- `harbor doctor` is advisory and does not write files.
+- Existing `harbor stale` behavior is unchanged.
 
 ---
 

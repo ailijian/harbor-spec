@@ -186,7 +186,7 @@ harbor checkpoint
 harbor finish
 # or, when ready to sync derived context:
 harbor finish --sync-context
-harbor stale
+harbor doctor
 harbor log
 harbor accept
 ```
@@ -198,6 +198,7 @@ harbor start
 harbor checkpoint
 harbor finish
 harbor finish --sync-context
+harbor doctor
 harbor accept
 ```
 
@@ -206,9 +207,13 @@ Key semantics:
 - `harbor finish` does not auto-log.
 - `harbor finish` does not write README or Module Capsule by default.
 - `harbor finish --sync-context` writes changed L2 READMEs and changed Module Capsules, then checks stale status for changed capsules.
+- `harbor doctor` is a top-level read-only aggregate health check command (advisory, no auto-fix).
+- `harbor doctor` aggregates Config/Index, Workspace Status, DDT Fast, Derived Views, and Skill References checks.
+- `harbor doctor` does not write files, does not auto-lock, and does not auto-log.
 - `harbor stale` is a top-level read-only aggregate check for both L2 README and Module Capsule freshness.
 - `harbor stale` checks changed modules by default; use `--all` or `--module <module>` for other scopes.
 - `harbor stale` does not fix stale views automatically; use `harbor docs --module <module> --write` and `harbor module seal <module> --write`.
+- Use `harbor stale` when you only need derived-view freshness; use `harbor doctor` for broader Harbor health.
 - MVP stale is advisory and returns success when the check completes (CI gating may be added later).
 - `harbor accept` is a semantic alias of `harbor lock`.
 
@@ -243,6 +248,10 @@ harbor stale
 harbor stale --changed
 harbor stale --all
 harbor stale --module harbor/core
+harbor doctor
+harbor doctor --changed
+harbor doctor --all
+harbor doctor --module harbor/core
 ```
 
 Notes:
@@ -251,6 +260,8 @@ Notes:
 - `module stale` is read-only and never writes files.
 - `harbor stale` is a top-level read-only aggregate check for L2 README + Module Capsule.
 - `harbor stale` defaults to `harbor stale --changed`.
+- `harbor doctor` is a top-level read-only health aggregate check and defaults to `harbor doctor --changed`.
+- `harbor doctor` does not fix issues and never writes docs/capsule/skill files.
 - Single-module / `--changed` / `--all` modes are mutually exclusive.
 
 ### Optional Skill Promotion
@@ -360,7 +371,7 @@ Notes:
 
 ```bash
 harbor finish --sync-context
-harbor stale
+harbor doctor
 harbor accept
 ```
 
@@ -399,6 +410,7 @@ exclude_paths:
 | `harbor docs --changed --write` | Refresh L2 READMEs for changed modules only. |
 | `harbor docs --all --write` | Refresh L2 READMEs for all indexed modules. |
 | `harbor finish --sync-context` | Run `finish` checks, refresh changed L2 READMEs + Module Capsules, then run changed stale checks. |
+| `harbor doctor` | Top-level read-only aggregate health check; default scope is changed modules (Config/Index, Workspace, DDT Fast, Derived Views, Skill References). |
 | `harbor stale` | Top-level read-only aggregate check; default scope is changed modules (L2 README + Module Capsule). |
 | `harbor module inspect <module>` | Show indexed context summary for one module (read-only, no file writes). |
 | `harbor module seal <module>` | Preview module capsule output (three docs, no file writes). |
@@ -409,6 +421,9 @@ exclude_paths:
 | `harbor stale --changed` | Batch check changed modules for stale derived views (L2 README + Module Capsule). |
 | `harbor stale --all` | Batch check all indexed modules for stale derived views. |
 | `harbor stale --module <module>` | Check one module for stale derived views (read-only, no file writes). |
+| `harbor doctor --changed` | Batch aggregate health checks for changed modules (default mode). |
+| `harbor doctor --all` | Batch aggregate health checks for all indexed modules. |
+| `harbor doctor --module <module>` | Aggregate health checks for one module. |
 | `harbor module seal --changed --write` | Batch write module capsules for changed modules. |
 | `harbor module seal --all --write` | Batch write module capsules for all indexed modules. |
 | `harbor module promote-skill <module>` | Manually promote one module to an optional thin skill entrypoint (`.agents/skills/.../SKILL.md`). |

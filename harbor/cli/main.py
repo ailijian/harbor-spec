@@ -29,6 +29,10 @@ from harbor.core.stale import (
     check_module_derived_views_stale,
     format_stale_summary,
 )
+from harbor.core.doctor import (
+    build_doctor_report,
+    format_doctor_report,
+)
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -239,6 +243,26 @@ def main():
         dest="all_modules",
         action="store_true",
         help="Check stale status for all indexed modules",
+    )
+    p_doctor = sub.add_parser(
+        "doctor",
+        help="Run read-only aggregated Harbor health checks",
+    )
+    p_doctor.add_argument(
+        "--module",
+        type=str,
+        help="Target module directory (e.g. harbor/core)",
+    )
+    p_doctor.add_argument(
+        "--changed",
+        action="store_true",
+        help="Detect changed modules and run doctor checks in changed scope",
+    )
+    p_doctor.add_argument(
+        "--all",
+        dest="all_modules",
+        action="store_true",
+        help="Run doctor checks for all indexed modules",
     )
 
     p_module = sub.add_parser(
@@ -846,6 +870,23 @@ def main():
 
         results = [check_module_derived_views_stale(module) for module in modules]
         print(format_stale_summary(results, scope_text=scope_text))
+    elif args.command == "doctor":
+        mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
+        if mode_count > 1:
+            parser.error(t("cli.doctor.mutually_exclusive"))
+
+        scope_text = t("cli.doctor.scope.changed")
+        if args.module:
+            modules = [args.module]
+            scope_text = t("cli.doctor.scope.module", module=args.module)
+        elif args.all_modules:
+            modules = collect_all_indexed_modules()
+            scope_text = t("cli.doctor.scope.all")
+        else:
+            modules = _collect_changed_modules()
+
+        report = build_doctor_report(scope=scope_text, modules=modules)
+        print(format_doctor_report(report))
     elif args.command == "module" and args.module_cmd == "inspect":
         context = collect_module_context(args.module)
         module_name = context.get("module", "")

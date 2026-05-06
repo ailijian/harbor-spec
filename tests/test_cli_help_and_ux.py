@@ -44,6 +44,13 @@ def test_workflow_help_exposes_start_checkpoint_finish_accept():
     assert "semantic alias of harbor lock" in out_accept
 
 
+def test_doctor_help_lists_changed_all_and_module_flags():
+    out_doctor, _ = run_help(["doctor"])
+    assert "--changed" in out_doctor
+    assert "--all" in out_doctor
+    assert "--module" in out_doctor
+
+
 def test_docs_help_lists_changed_all_and_write_flags():
     out_docs, _ = run_help(["docs"])
     assert "--changed" in out_docs
@@ -88,6 +95,7 @@ def test_readme_and_readme_en_include_key_new_command_phrases():
 
     required_phrases = [
         "finish --sync-context",
+        "harbor doctor",
         "module promote-skill",
         "docs --changed",
         "module stale",
