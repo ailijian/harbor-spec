@@ -174,16 +174,21 @@ harbor lock
 推荐 UX（Facade CLI）：
 
 ```bash
-harbor start -> AI coding -> harbor checkpoint -> harbor finish -> harbor accept
+harbor start -> AI coding -> harbor checkpoint -> harbor finish --sync-context -> harbor log -> harbor accept
 ```
 
-说明：`harbor finish` 当前不会自动刷新 docs/module capsule。建议在任务完成或发起 PR 前执行：
+Workflow Facade 命令建议：
 
 ```bash
-harbor docs --changed --write
-harbor module stale --changed
-harbor module seal --changed --write
+harbor finish
+harbor finish --sync-context
+harbor accept
 ```
+
+说明：
+- `harbor finish` 执行检查并给出下一步建议，不会自动写入派生视图。
+- `harbor finish --sync-context` 会在检查后刷新 changed L2 README 与 changed Module Capsules，并执行 changed capsule stale 检查。
+- `harbor finish` 不会锁定基线；需要用户显式执行 `harbor accept`。
 
 ### Step 1: Check Status
 
@@ -334,6 +339,13 @@ harbor module promote-skill harbor/core
 - Skill promotion 是可选能力，多数模块只需要 Module Capsule。
 - 仅当模块复杂、维护频繁或反复 debug 时，才建议晋升为 Skill。
 - promote-skill 要求 capsule 已存在且为最新状态。
+- 推荐收口流（可选复查 stale）：
+
+```bash
+harbor finish --sync-context
+harbor module stale --changed   # 可选复查
+harbor accept
+```
 
 </details>
 
@@ -367,6 +379,7 @@ exclude_paths:
 | `harbor start` | 工作流入口：开始 AI coding 前执行状态检查 |
 | `harbor checkpoint` | 工作流检查点：等价 `status + check --fast` |
 | `harbor finish` | 工作流收尾：等价 `status + check` 并提示下一步 |
+| `harbor finish --sync-context` | 工作流收尾增强：执行 `finish` 检查并同步 changed L2 README + Module Capsule，再执行 changed stale 检查 |
 | `harbor accept` | 工作流确认：语义化别名，等价 `harbor lock` |
 | `harbor status` / `harbor st` | 查看上下文状态（Drift/Modified） |
 | `harbor lock` / `harbor commit` | 锁定当前 L3 契约快照为基线 |

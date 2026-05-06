@@ -80,6 +80,17 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.checkpoint.title": "Harbor Checkpoint:",
         "cli.finish.title": "Harbor Finish:",
         "cli.finish.next_steps": "Next steps:\n  - harbor docs --module <module> --write\n  - harbor log\n  - harbor accept",
+        "cli.finish.sync_context.title": "Context Sync:",
+        "cli.finish.sync_context.docs": "- Refreshing L2 README for changed modules...",
+        "cli.finish.sync_context.capsules": "- Refreshing Module Capsules for changed modules...",
+        "cli.finish.sync_context.stale": "- Checking Module Capsule stale status...",
+        "cli.finish.sync_context.none": "No changed modules detected. Context sync skipped.",
+        "cli.finish.sync_context.next_steps": (
+            "Next steps:\n"
+            "  - Run `harbor log` if this task involved an important decision or Contract Change.\n"
+            "  - Run `harbor accept` when you are ready to accept the new baseline.\n"
+            "  - Optionally run `harbor module promote-skill <module>` for high-value modules with up-to-date capsules."
+        ),
         "cli.accept.done": "Accepted current Harbor baseline.",
         "cli.check.title": "Harbor Check Report:",
         "cli.check.ddt": "[DDT] Validation:",
@@ -193,6 +204,17 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.checkpoint.title": "Harbor 检查点：",
         "cli.finish.title": "Harbor 收尾检查：",
         "cli.finish.next_steps": "建议下一步：\n  - harbor docs --module <module> --write\n  - harbor log\n  - harbor accept",
+        "cli.finish.sync_context.title": "上下文同步：",
+        "cli.finish.sync_context.docs": "- 刷新变更模块的 L2 README...",
+        "cli.finish.sync_context.capsules": "- 刷新变更模块的 Module Capsule...",
+        "cli.finish.sync_context.stale": "- 检查变更模块的 Module Capsule 过时状态...",
+        "cli.finish.sync_context.none": "未检测到变更模块。已跳过上下文同步。",
+        "cli.finish.sync_context.next_steps": (
+            "建议下一步：\n"
+            "  - 若本次任务包含重要决策或 Contract Change，请执行 `harbor log`。\n"
+            "  - 准备接受新基线时，请执行 `harbor accept`。\n"
+            "  - 可选：对高价值且 capsule 已最新的模块执行 `harbor module promote-skill <module>`。"
+        ),
         "cli.accept.done": "已接受当前 Harbor 基线。",
         "cli.check.title": "Harbor 检查报告：",
         "cli.check.ddt": "[DDT] 绑定校验：",

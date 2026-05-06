@@ -138,6 +138,11 @@ def main():
     p_start = sub.add_parser("start", help="Workflow facade: run status before AI coding")
     p_checkpoint = sub.add_parser("checkpoint", help="Workflow facade: status + check --fast")
     p_finish = sub.add_parser("finish", help="Workflow facade: status + check + next steps")
+    p_finish.add_argument(
+        "--sync-context",
+        action="store_true",
+        help="Run finish checks and sync derived context views for changed modules",
+    )
     p_accept = sub.add_parser("accept", help="Workflow facade alias for lock")
 
     p_adopt = sub.add_parser("adopt", help="Adopt legacy code into Harbor governance")
@@ -478,6 +483,107 @@ def main():
                     for ln in out_lines:
                         print(ln)
 
+    def _collect_changed_modules_from_status(rep):
+        changed_paths = []
+        changed_paths.extend([e.file_path for e in rep.drift])
+        changed_paths.extend([e.file_path for e in rep.modified])
+        changed_paths.extend([e.file_path for e in rep.contract_changed])
+        changed_paths.extend([e.file_path for e in rep.untracked])
+        changed_paths.extend([e.file_path for e in rep.missing])
+        return collect_modules_from_paths(changed_paths)
+
+    def _collect_changed_modules():
+        rep = SyncEngine().check_status()
+        return _collect_changed_modules_from_status(rep)
+
+    def _run_docs_changed(*, write=False, force=False, modules=None):
+        gen = L2Generator()
+        target_modules = modules if modules is not None else _collect_changed_modules()
+        if not target_modules:
+            print(t("cli.docs.changed.none"))
+            return []
+        print(t("cli.docs.changed.found"))
+        for module in target_modules:
+            print(f"- {module}")
+        if not write:
+            print("")
+            print(t("cli.docs.preview_only"))
+        updated = []
+        for module in target_modules:
+            md = gen.generate(module)
+            if write:
+                target = gen.write(module, md, force=force)
+                if target is not None:
+                    updated.append(target.as_posix())
+            else:
+                print("")
+                print(md)
+        if write:
+            if not updated:
+                print(t("cli.docs.nochanges"))
+            else:
+                print("")
+                print(t("cli.docs.updated"))
+                for path in updated:
+                    print(f"- {path}")
+        return target_modules
+
+    def _run_module_seal_changed(*, write=False, modules=None):
+        target_modules = modules if modules is not None else _collect_changed_modules()
+        if not target_modules:
+            print(t("cli.module.seal.changed.none"))
+            return []
+        print(t("cli.module.seal.changed.found"))
+        for module in target_modules:
+            print(f"- {module}")
+
+        valid_contexts = []
+        for module in target_modules:
+            context = collect_module_context(module)
+            if context.get("key_files") or context.get("contracts"):
+                valid_contexts.append(context)
+
+        if not valid_contexts:
+            print(t("cli.module.seal.changed.none"))
+            return target_modules
+
+        if not write:
+            print("")
+            print(t("cli.module.seal.batch.preview_only"))
+            for context in valid_contexts:
+                module_name = context.get("module", "")
+                previews = preview_module_capsule(context)
+                print("")
+                print(t("cli.module.seal.title", module=module_name))
+                for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
+                    print("")
+                    print(f"--- {name} ---")
+                    print(previews[name])
+            return target_modules
+
+        updated = []
+        for context in valid_contexts:
+            updated.extend(write_module_capsule(context))
+        print(t("cli.module.seal.batch.updated"))
+        for path in updated:
+            print(f"- {path.as_posix()}")
+        return target_modules
+
+    def _run_module_stale_changed(*, modules=None):
+        target_modules = modules if modules is not None else _collect_changed_modules()
+        if not target_modules:
+            print(t("cli.module.stale.none_changed"))
+            return []
+        print(t("cli.module.stale.changed.found"))
+        for module in target_modules:
+            context = collect_module_context(module)
+            result = check_module_capsule_stale(context)
+            status_text = t("cli.module.stale.up_to_date") if result.get("status") == "up_to_date" else t(
+                "cli.module.stale.stale"
+            )
+            print(f"- {module}: {status_text}")
+        return target_modules
+
     if args.command in ("lock", "accept"):
         code_roots = args.code_root if args.command == "lock" else None
         cache_dir = Path(args.cache_dir) if args.command == "lock" and args.cache_dir else None
@@ -505,7 +611,25 @@ def main():
         print(t("cli.finish.title"))
         _run_status()
         _run_check(fast=False)
-        print(t("cli.finish.next_steps"))
+        if not getattr(args, "sync_context", False):
+            print(t("cli.finish.next_steps"))
+        else:
+            print("")
+            print(t("cli.finish.sync_context.title"))
+            changed_modules = _collect_changed_modules()
+            if not changed_modules:
+                print(t("cli.finish.sync_context.none"))
+            else:
+                print(t("cli.finish.sync_context.docs"))
+                _run_docs_changed(write=True, modules=changed_modules)
+                print("")
+                print(t("cli.finish.sync_context.capsules"))
+                _run_module_seal_changed(write=True, modules=changed_modules)
+                print("")
+                print(t("cli.finish.sync_context.stale"))
+                _run_module_stale_changed(modules=changed_modules)
+            print("")
+            print(t("cli.finish.sync_context.next_steps"))
     elif args.command == "config" and args.cfg_cmd == "list":
         cfg_path = Path(".harbor/config.yaml")
         data = {}
@@ -626,18 +750,8 @@ def main():
                 print(md)
         else:
             if args.changed:
-                rep = SyncEngine().check_status()
-                changed_paths = []
-                changed_paths.extend([e.file_path for e in rep.drift])
-                changed_paths.extend([e.file_path for e in rep.modified])
-                changed_paths.extend([e.file_path for e in rep.contract_changed])
-                changed_paths.extend([e.file_path for e in rep.untracked])
-                changed_paths.extend([e.file_path for e in rep.missing])
-                modules = collect_modules_from_paths(changed_paths)
-                if not modules:
-                    print(t("cli.docs.changed.none"))
-                    return
-                print(t("cli.docs.changed.found"))
+                _run_docs_changed(write=args.write, force=args.force)
+                return
             else:
                 modules = collect_all_indexed_modules()
                 if not modules:
@@ -728,18 +842,8 @@ def main():
             return
 
         if args.changed:
-            rep = SyncEngine().check_status()
-            changed_paths = []
-            changed_paths.extend([e.file_path for e in rep.drift])
-            changed_paths.extend([e.file_path for e in rep.modified])
-            changed_paths.extend([e.file_path for e in rep.contract_changed])
-            changed_paths.extend([e.file_path for e in rep.untracked])
-            changed_paths.extend([e.file_path for e in rep.missing])
-            modules = collect_modules_from_paths(changed_paths)
-            if not modules:
-                print(t("cli.module.seal.changed.none"))
-                return
-            print(t("cli.module.seal.changed.found"))
+            _run_module_seal_changed(write=args.write)
+            return
         else:
             modules = collect_all_indexed_modules()
             if not modules:
@@ -805,18 +909,8 @@ def main():
             return
 
         if args.changed:
-            rep = SyncEngine().check_status()
-            changed_paths = []
-            changed_paths.extend([e.file_path for e in rep.drift])
-            changed_paths.extend([e.file_path for e in rep.modified])
-            changed_paths.extend([e.file_path for e in rep.contract_changed])
-            changed_paths.extend([e.file_path for e in rep.untracked])
-            changed_paths.extend([e.file_path for e in rep.missing])
-            modules = collect_modules_from_paths(changed_paths)
-            if not modules:
-                print(t("cli.module.stale.none_changed"))
-                return
-            print(t("cli.module.stale.changed.found"))
+            _run_module_stale_changed()
+            return
         else:
             modules = collect_all_indexed_modules()
             if not modules:
