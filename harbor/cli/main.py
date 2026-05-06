@@ -25,6 +25,10 @@ from harbor.core.module_skill import (
     check_capsule_ready_for_skill,
     write_module_skill,
 )
+from harbor.core.stale import (
+    check_module_derived_views_stale,
+    format_stale_summary,
+)
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -215,6 +219,26 @@ def main():
         "--force",
         action="store_true",
         help="Overwrite existing README.md when used with --write",
+    )
+    p_stale = sub.add_parser(
+        "stale",
+        help="Check stale status of derived context views (L2 README + Module Capsule)",
+    )
+    p_stale.add_argument(
+        "--module",
+        type=str,
+        help="Target module directory (e.g. harbor/core)",
+    )
+    p_stale.add_argument(
+        "--changed",
+        action="store_true",
+        help="Detect changed modules and check stale status for each",
+    )
+    p_stale.add_argument(
+        "--all",
+        dest="all_modules",
+        action="store_true",
+        help="Check stale status for all indexed modules",
     )
 
     p_module = sub.add_parser(
@@ -799,6 +823,29 @@ def main():
                     print(t("cli.docs.updated"))
                     for path in updated:
                         print(f"- {path}")
+    elif args.command == "stale":
+        mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
+        if mode_count > 1:
+            parser.error(t("cli.stale.mode_conflict"))
+
+        scope_text = t("cli.stale.scope.changed")
+        if args.module:
+            modules = [args.module]
+            scope_text = t("cli.stale.scope.module", module=args.module)
+        elif args.all_modules:
+            modules = collect_all_indexed_modules()
+            scope_text = t("cli.stale.scope.all")
+            if not modules:
+                print(t("cli.stale.none_all"))
+                return
+        else:
+            modules = _collect_changed_modules()
+            if not modules:
+                print(t("cli.stale.none_changed"))
+                return
+
+        results = [check_module_derived_views_stale(module) for module in modules]
+        print(format_stale_summary(results, scope_text=scope_text))
     elif args.command == "module" and args.module_cmd == "inspect":
         context = collect_module_context(args.module)
         module_name = context.get("module", "")

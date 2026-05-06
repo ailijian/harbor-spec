@@ -5,6 +5,7 @@
 - L2 README modes: `docs --changed`, `docs --all`
 - Module capsule commands: `module inspect`, `module seal`, `module seal --changed`, `module seal --all`
 - Module capsule stale detection: `module stale`, `module stale --changed`, `module stale --all`
+- Top-level read-only stale check: `harbor stale`, `harbor stale --changed`, `harbor stale --all`, `harbor stale --module <module>`
 - Optional module skill promotion: `module promote-skill`
 
 ## Changed
@@ -15,6 +16,8 @@
 - Existing `status/check/lock/docs/log` behavior is preserved.
 - Existing aliases are preserved.
 - `finish` default remains non-writing.
+- `harbor stale` is advisory and does not write files.
+- Existing `module stale` behavior is unchanged.
 
 ---
 

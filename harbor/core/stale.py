@@ -1,0 +1,145 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+from typing import List, Optional
+
+from harbor.core.l2 import L2Generator
+from harbor.core.module_capsule import (
+    check_module_capsule_stale,
+    collect_module_context,
+    normalize_module_path,
+)
+from harbor.utils.i18n import t
+
+
+@dataclass
+class ViewStaleResult:
+    view: str
+    status: str
+    reason: Optional[str] = None
+    suggested_command: Optional[str] = None
+
+
+@dataclass
+class ModuleStaleSummary:
+    module: str
+    l2_readme: ViewStaleResult
+    module_capsule: ViewStaleResult
+
+
+def _normalize_l2_markdown_for_stale(text: str) -> str:
+    lines = []
+    for raw in (text or "").replace("\r\n", "\n").replace("\r", "\n").split("\n"):
+        if raw.startswith("Generated At: "):
+            continue
+        lines.append(raw)
+    return "\n".join(lines).strip()
+
+
+def check_l2_readme_stale(module: str, *, generator: Optional[L2Generator] = None) -> ViewStaleResult:
+    normalized = normalize_module_path(module)
+    suggest = f"harbor docs --module {normalized} --write"
+    context = collect_module_context(normalized)
+    if not context.get("key_files") and not context.get("contracts"):
+        return ViewStaleResult(
+            view="L2 README",
+            status="unknown",
+            reason="no indexed records found for module",
+            suggested_command=None,
+        )
+
+    gen = generator or L2Generator()
+    expected = gen.generate(normalized)
+    readme_path = Path(normalized) / "README.md"
+    if not readme_path.exists():
+        return ViewStaleResult(
+            view="L2 README",
+            status="stale",
+            reason="README.md not found",
+            suggested_command=suggest,
+        )
+
+    try:
+        current = readme_path.read_text(encoding="utf-8")
+    except Exception:
+        return ViewStaleResult(
+            view="L2 README",
+            status="stale",
+            reason="README content mismatch",
+            suggested_command=suggest,
+        )
+
+    if _normalize_l2_markdown_for_stale(current) != _normalize_l2_markdown_for_stale(expected):
+        return ViewStaleResult(
+            view="L2 README",
+            status="stale",
+            reason="README content mismatch",
+            suggested_command=suggest,
+        )
+
+    return ViewStaleResult(
+        view="L2 README",
+        status="up_to_date",
+        reason="up to date",
+        suggested_command=None,
+    )
+
+
+def check_module_derived_views_stale(module: str) -> ModuleStaleSummary:
+    normalized = normalize_module_path(module)
+    context = collect_module_context(normalized)
+    l2_result = check_l2_readme_stale(normalized)
+
+    capsule_raw = check_module_capsule_stale(context)
+    capsule_status = "up_to_date" if capsule_raw.get("status") == "up_to_date" else "stale"
+    capsule_reason = capsule_raw.get("reason") or ""
+    capsule_suggest = None
+    if capsule_status != "up_to_date" and capsule_reason != "no indexed records found for module":
+        capsule_suggest = f"harbor module seal {normalized} --write"
+
+    capsule_result = ViewStaleResult(
+        view="Module Capsule",
+        status=capsule_status,
+        reason=capsule_reason or None,
+        suggested_command=capsule_suggest,
+    )
+    return ModuleStaleSummary(module=normalized, l2_readme=l2_result, module_capsule=capsule_result)
+
+
+def format_stale_summary(results: List[ModuleStaleSummary], scope_text: str) -> str:
+    lines: List[str] = []
+    lines.append(t("cli.stale.title"))
+    lines.append(f"Scope: {scope_text}")
+
+    all_up_to_date = True
+    for summary in results:
+        module_all_ok = summary.l2_readme.status == "up_to_date" and summary.module_capsule.status == "up_to_date"
+        if not module_all_ok:
+            all_up_to_date = False
+        lines.append("")
+        lines.append(summary.module)
+        lines.extend(_format_view_lines(t("cli.stale.l2"), summary.l2_readme))
+        lines.extend(_format_view_lines(t("cli.stale.capsule"), summary.module_capsule))
+
+    if results:
+        lines.append("")
+    if all_up_to_date:
+        lines.append(t("cli.stale.all_up_to_date"))
+
+    return "\n".join(lines)
+
+
+def _format_view_lines(label: str, result: ViewStaleResult) -> List[str]:
+    status = t("cli.stale.up_to_date")
+    if result.status == "stale":
+        status = t("cli.stale.stale")
+    elif result.status == "unknown":
+        status = t("cli.stale.unknown")
+
+    lines = [f"- {label}: {status}"]
+    if result.reason and result.status != "up_to_date":
+        lines.append(f"  {t('cli.stale.reason')}: {result.reason}")
+    if result.suggested_command and result.status != "up_to_date":
+        lines.append(f"  {t('cli.stale.suggested')}: {result.suggested_command}")
+    return lines
