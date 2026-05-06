@@ -1,26 +1,46 @@
-# Unreleased - Workflow & Module Capsule Update
+# Unreleased / v1.3.0 - Workflow & Module Capsule Update
 
 ## Added
-- Workflow facade commands: `start`, `checkpoint`, `finish`, `finish --sync-context`, `accept`
-- L2 README modes: `docs --changed`, `docs --all`
-- Module capsule commands: `module inspect`, `module seal`, `module seal --changed`, `module seal --all`
-- Module capsule stale detection: `module stale`, `module stale --changed`, `module stale --all`
-- Top-level read-only stale check: `harbor stale`, `harbor stale --changed`, `harbor stale --all`, `harbor stale --module <module>`
-- Read-only `harbor doctor` command: `harbor doctor`, `harbor doctor --changed`, `harbor doctor --all`, `harbor doctor --module <module>`
-- Optional module skill promotion: `module promote-skill`
+- Workflow facade commands:
+  - `harbor start`
+  - `harbor checkpoint`
+  - `harbor finish --sync-context`
+  - `harbor accept`
+- L2 README refresh modes:
+  - `harbor docs --changed`
+  - `harbor docs --all`
+- Module Capsule commands:
+  - `harbor module inspect`
+  - `harbor module seal`
+  - `harbor module seal --changed`
+  - `harbor module seal --all`
+  - `harbor module stale`
+  - `harbor module promote-skill`
+- Top-level advisory checks:
+  - `harbor stale`
+  - `harbor doctor`
 
 ## Changed
-- `module-card.md` now includes deterministic fingerprint frontmatter for stale detection.
-- `finish` supports explicit derived-context sync via `--sync-context`.
+- `module-card.md` now includes deterministic fingerprint frontmatter.
+- `harbor finish` supports explicit context sync via `--sync-context`.
+- CLI help and mutually-exclusive argument errors are clearer.
+- README and README.en are aligned.
 
 ## Compatibility
-- Existing `status/check/lock/docs/log` behavior is preserved.
+- Existing `status`, `check`, `lock`, `docs --module`, and `log` behavior is preserved.
 - Existing aliases are preserved.
-- `finish` default remains non-writing.
-- `harbor stale` is advisory and does not write files.
-- Existing `module stale` behavior is unchanged.
-- `harbor doctor` is advisory and does not write files.
-- Existing `harbor stale` behavior is unchanged.
+- `harbor finish` default behavior remains non-writing.
+- `harbor stale` and `harbor doctor` are advisory and read-only.
+- `harbor accept` is a semantic alias for `harbor lock`.
+
+## Runtime Safety
+- No command automatically locks, logs, promotes skills, or writes context unless explicitly requested.
+- Preview mode remains the default for docs and capsule generation where applicable.
+
+## Migration Notes / 升级总览
+- 本轮以发布收口为目标，重点是版本、文档、release notes 与命令帮助叙事对齐。
+- 未新增任何 CLI 命令；现有命令行为语义保持不变。
+- 升级后建议先执行 `harbor --help`、`harbor finish --help`、`harbor module --help` 验证入口与说明一致性。
 
 ---
 

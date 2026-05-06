@@ -191,6 +191,8 @@ harbor log
 harbor accept
 ```
 
+Release track note: current packaging alignment targets `Unreleased / v1.3.0` in `RELEASE.md`.
+
 ### Workflow Facade Commands
 
 ```powershell
@@ -399,6 +401,9 @@ exclude_paths:
 | Command | Description |
 | :--- | :--- |
 | `harbor init` | Auto-detect structure and initialize config. |
+| `harbor start` | Workflow entrypoint: run status checks before AI coding. |
+| `harbor checkpoint` | Workflow checkpoint: equivalent to `status + check --fast`. |
+| `harbor finish` | Workflow wrap-up: equivalent to `status + check` with guided next steps. |
 | `harbor status` / `harbor st` | Check for context status (Drift/Modified). |
 | `harbor lock` / `harbor commit` | Lock current L3 snapshot into cache (baseline). |
 | `harbor check` | Unified semantic audit and DDT validation. |
@@ -412,6 +417,7 @@ exclude_paths:
 | `harbor finish --sync-context` | Run `finish` checks, refresh changed L2 READMEs + Module Capsules, then run changed stale checks. |
 | `harbor doctor` | Top-level read-only aggregate health check; default scope is changed modules (Config/Index, Workspace, DDT Fast, Derived Views, Skill References). |
 | `harbor stale` | Top-level read-only aggregate check; default scope is changed modules (L2 README + Module Capsule). |
+| `harbor accept` | Workflow confirmation: semantic alias of `harbor lock`. |
 | `harbor module inspect <module>` | Show indexed context summary for one module (read-only, no file writes). |
 | `harbor module seal <module>` | Preview module capsule output (three docs, no file writes). |
 | `harbor module seal <module> --write` | Write module capsule files to `docs/harbor/modules/<module>/`. |

@@ -186,6 +186,8 @@ harbor log
 harbor accept
 ```
 
+发布轨道说明：当前发布收口以 `RELEASE.md` 中 `Unreleased / v1.3.0` 为准。
+
 ### Workflow Facade Commands
 
 ```powershell
@@ -276,7 +278,7 @@ harbor module seal harbor/core --write
 
 -----
 
-## 🚀 What's New in v1.2.0
+## 🚀 What's New in v1.2.0（历史版本）
 
 - Smart Configuration：`harbor init` 现已自动探测 Django/Node.js/Go/Java 技术栈，并融合 `.gitignore` 规则生成更稳健的默认配置
 - SQLite Backend (WAL)：索引从 JSON 迁移至 SQLite，常驻 O(1) 内存占用、秒级启动与安全并发写入
