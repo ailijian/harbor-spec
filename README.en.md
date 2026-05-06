@@ -293,6 +293,25 @@ harbor config remove "legacy/**"     # Remove scan path
 </details>
 
 <details>
+<summary><strong>🧱 Module Capsule MVP</strong></summary>
+
+Generate AI maintenance context capsules for a specific module (deterministic, no LLM):
+
+```bash
+harbor module inspect harbor/core
+harbor module seal harbor/core
+harbor module seal harbor/core --write
+```
+
+Notes:
+- Module Capsule is a derived maintenance view, not a source of truth.
+- It does not replace the L2 README (`<module>/README.md`).
+- It helps AI agents load debug/review/refactor context faster.
+- Skill promotion is out of scope for this MVP.
+
+</details>
+
+<details>
 <summary><strong>🚀 Performance Tuning (Monorepo)</strong></summary>
 
 For large projects, **excluding irrelevant directories** is vital. While `.harbor/config.yaml` supports Git-aware filtering, explicit exclusion is recommended:
@@ -324,6 +343,9 @@ exclude_paths:
 | `harbor docs` | Generate module-level documentation (L2). |
 | `harbor docs --changed --write` | Refresh L2 READMEs for changed modules only. |
 | `harbor docs --all --write` | Refresh L2 READMEs for all indexed modules. |
+| `harbor module inspect <module>` | Show indexed context summary for one module (read-only, no file writes). |
+| `harbor module seal <module>` | Preview module capsule output (three docs, no file writes). |
+| `harbor module seal <module> --write` | Write module capsule files to `docs/harbor/modules/<module>/`. |
 | `harbor config` / `harbor conf` | Manage code roots and paths. |
 
 -----

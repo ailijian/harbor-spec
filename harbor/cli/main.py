@@ -15,6 +15,7 @@ from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
 from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.l2 import L2Generator, collect_all_indexed_modules, collect_modules_from_paths
+from harbor.core.module_capsule import collect_module_context, preview_module_capsule, write_module_capsule
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -185,6 +186,27 @@ def main():
         "--force",
         action="store_true",
         help="Overwrite existing README.md when used with --write",
+    )
+
+    p_module = sub.add_parser(
+        "module",
+        help="Inspect or generate module capsule for one module",
+    )
+    p_module_sub = p_module.add_subparsers(dest="module_cmd", required=True)
+    p_module_inspect = p_module_sub.add_parser(
+        "inspect",
+        help="Inspect indexed context for one module",
+    )
+    p_module_inspect.add_argument("module", type=str)
+    p_module_seal = p_module_sub.add_parser(
+        "seal",
+        help="Preview or write module capsule for one module",
+    )
+    p_module_seal.add_argument("module", type=str)
+    p_module_seal.add_argument(
+        "--write",
+        action="store_true",
+        help="Write capsule files under docs/harbor/modules/<module>/",
     )
 
     p_log = sub.add_parser("log", help="Context-aware diary logging")
@@ -594,6 +616,59 @@ def main():
                     print(t("cli.docs.updated"))
                     for path in updated:
                         print(f"- {path}")
+    elif args.command == "module" and args.module_cmd == "inspect":
+        context = collect_module_context(args.module)
+        module_name = context.get("module", "")
+        if not module_name:
+            print(t("cli.module.inspect.none", module=args.module))
+            return
+        print(t("cli.module.inspect.title", module=module_name))
+        if not context.get("key_files") and not context.get("contracts"):
+            print(t("cli.module.inspect.none", module=module_name))
+            return
+        print(f"Module: {module_name}")
+        print(f"Strictness: {context.get('strictness', 'standard')}")
+        print("Key files:")
+        for fp in context.get("key_files", []):
+            print(f"- {fp}")
+        print("")
+        print("Indexed contracts:")
+        contracts = context.get("contracts", [])
+        if not contracts:
+            print("- No indexed contracts found for this module.")
+        else:
+            for c in contracts:
+                print(f"- {c.get('symbol')}")
+        print("")
+        print("Tests:")
+        tests = context.get("tests", [])
+        if not tests:
+            print("- No test files detected by Harbor.")
+        else:
+            for tpath in tests:
+                print(f"- {tpath}")
+    elif args.command == "module" and args.module_cmd == "seal":
+        context = collect_module_context(args.module)
+        module_name = context.get("module", "")
+        if not module_name:
+            print(t("cli.module.seal.none", module=args.module))
+            return
+        if not context.get("key_files") and not context.get("contracts"):
+            print(t("cli.module.seal.none", module=module_name))
+            return
+        print(t("cli.module.seal.title", module=module_name))
+        previews = preview_module_capsule(context)
+        if not args.write:
+            print(t("cli.module.seal.preview_only"))
+            for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
+                print("")
+                print(f"--- {name} ---")
+                print(previews[name])
+        else:
+            updated = write_module_capsule(context)
+            print(t("cli.module.seal.updated"))
+            for path in updated:
+                print(f"- {path.as_posix()}")
     elif args.command == "log" and args.export:
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")

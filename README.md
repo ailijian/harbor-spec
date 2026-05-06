@@ -298,6 +298,25 @@ harbor config remove "legacy/**"     # 移除路径
 </details>
 
 <details>
+<summary><strong>🧱 Module Capsule MVP</strong></summary>
+
+为指定模块生成 AI 维护上下文胶囊（deterministic、无 LLM）：
+
+```bash
+harbor module inspect harbor/core
+harbor module seal harbor/core
+harbor module seal harbor/core --write
+```
+
+说明：
+- Module Capsule 是派生维护视图，不是事实源。
+- 它不替代 L2 README（`<module>/README.md`）。
+- 目标是帮助 AI agent 更快进入 debug/review/refactor 上下文。
+- Skill promotion 不在本次 MVP 范围内。
+
+</details>
+
+<details>
 <summary><strong>🚀 Performance Tuning (Monorepo)</strong></summary>
 
 对于大型项目，性能与可扩展性至关重要：
@@ -338,6 +357,9 @@ exclude_paths:
 | `harbor docs` | 生成模块级文档（L2） |
 | `harbor docs --changed --write` | 仅刷新变更模块的 L2 README |
 | `harbor docs --all --write` | 刷新全部已索引模块的 L2 README |
+| `harbor module inspect <module>` | 查看指定模块的索引上下文摘要（只读，不写文件） |
+| `harbor module seal <module>` | 预览模块 Capsule（三份文档，不写文件） |
+| `harbor module seal <module> --write` | 写入模块 Capsule 到 `docs/harbor/modules/<module>/` |
 | `harbor config` / `harbor conf` | 管理扫描路径配置 |
 
 -----
