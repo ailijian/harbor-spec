@@ -84,6 +84,8 @@ def test_module_seal_write_creates_three_files(tmp_path: Path, monkeypatch):
     card = (out_dir / "module-card.md").read_text(encoding="utf-8")
     checklist = (out_dir / "review-checklist.md").read_text(encoding="utf-8")
     playbook = (out_dir / "debug-playbook.md").read_text(encoding="utf-8")
+    assert card.startswith("---\n")
+    assert "fingerprint:" in card
     assert "# Module Card: harbor/core" in card
     assert "## Contract Checks" in checklist
     assert "## First Files to Inspect" in playbook

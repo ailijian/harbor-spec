@@ -181,6 +181,7 @@ harbor start -> AI coding -> harbor checkpoint -> harbor finish -> harbor accept
 
 ```bash
 harbor docs --changed --write
+harbor module stale --changed
 harbor module seal --changed --write
 ```
 
@@ -307,6 +308,9 @@ harbor config remove "legacy/**"     # 移除路径
 harbor module inspect harbor/core
 harbor module seal harbor/core
 harbor module seal harbor/core --write
+harbor module stale harbor/core
+harbor module stale --changed
+harbor module stale --all
 harbor module seal --changed --write
 harbor module seal --all --write
 ```
@@ -317,8 +321,12 @@ harbor module seal --all --write
 - `seal <module>`：刷新单模块 capsule。
 - `seal --changed`：刷新变更模块的 capsule。
 - `seal --all`：刷新全部已索引模块的 capsule。
+- `stale <module>`：检查单模块 capsule 是否与当前索引上下文一致。
+- `stale --changed`：检查变更模块的 capsule 是否过时。
+- `stale --all`：检查全部已索引模块的 capsule 是否过时。
 - 默认是 preview 模式，不写文件。
 - 仅 `--write` 才会更新 capsule 文件。
+- stale 命令只做检查，不写文件；若过时请执行 `seal --write` 刷新。
 - 目标是帮助 AI agent 更快进入 debug/review/refactor 上下文。
 - Skill promotion 不在本次 MVP 范围内。
 
@@ -368,6 +376,9 @@ exclude_paths:
 | `harbor module inspect <module>` | 查看指定模块的索引上下文摘要（只读，不写文件） |
 | `harbor module seal <module>` | 预览模块 Capsule（三份文档，不写文件） |
 | `harbor module seal <module> --write` | 写入模块 Capsule 到 `docs/harbor/modules/<module>/` |
+| `harbor module stale <module>` | 检查指定模块 Capsule 是否过时（只读，不写文件） |
+| `harbor module stale --changed` | 批量检查变更模块 Capsule 是否过时 |
+| `harbor module stale --all` | 批量检查全部已索引模块 Capsule 是否过时 |
 | `harbor module seal --changed --write` | 批量写入变更模块的 Capsule |
 | `harbor module seal --all --write` | 批量写入全部已索引模块的 Capsule |
 | `harbor config` / `harbor conf` | 管理扫描路径配置 |

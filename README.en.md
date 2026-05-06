@@ -186,6 +186,7 @@ Note: `harbor finish` does not auto-refresh docs/module capsules yet. Before clo
 
 ```bash
 harbor docs --changed --write
+harbor module stale --changed
 harbor module seal --changed --write
 ```
 
@@ -302,6 +303,9 @@ Generate AI maintenance context capsules for a specific module (deterministic, n
 harbor module inspect harbor/core
 harbor module seal harbor/core
 harbor module seal harbor/core --write
+harbor module stale harbor/core
+harbor module stale --changed
+harbor module stale --all
 harbor module seal --changed --write
 harbor module seal --all --write
 ```
@@ -312,8 +316,12 @@ Notes:
 - `seal <module>`: refresh one module capsule.
 - `seal --changed`: refresh capsules for changed modules.
 - `seal --all`: refresh capsules for all indexed modules.
+- `stale <module>`: check whether one module capsule matches current indexed context.
+- `stale --changed`: check stale status for changed module capsules.
+- `stale --all`: check stale status for all indexed module capsules.
 - Default preview mode does not write files.
 - `--write` is required to update capsule files.
+- `stale` is read-only and never writes files; run `seal --write` to refresh stale capsules.
 - It helps AI agents load debug/review/refactor context faster.
 - Skill promotion is out of scope for this MVP.
 
@@ -354,6 +362,9 @@ exclude_paths:
 | `harbor module inspect <module>` | Show indexed context summary for one module (read-only, no file writes). |
 | `harbor module seal <module>` | Preview module capsule output (three docs, no file writes). |
 | `harbor module seal <module> --write` | Write module capsule files to `docs/harbor/modules/<module>/`. |
+| `harbor module stale <module>` | Check whether one module capsule is stale (read-only, no file writes). |
+| `harbor module stale --changed` | Batch check stale module capsules for changed modules. |
+| `harbor module stale --all` | Batch check stale module capsules for all indexed modules. |
 | `harbor module seal --changed --write` | Batch write module capsules for changed modules. |
 | `harbor module seal --all --write` | Batch write module capsules for all indexed modules. |
 | `harbor config` / `harbor conf` | Manage code roots and paths. |

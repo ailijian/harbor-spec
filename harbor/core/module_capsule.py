@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+import yaml
 
 from harbor.core.storage import HarborDB
 
@@ -22,6 +25,27 @@ def module_capsule_dir(module: str, output_root: Optional[Path] = None) -> Path:
 
 def _sort_unique(values: List[str]) -> List[str]:
     return sorted({v for v in values if v})
+
+
+def _normalize_rel_path(value: str) -> str:
+    return (value or "").replace("\\", "/").strip("/")
+
+
+def _stable_contract_rows(contracts: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    rows: List[Dict[str, str]] = []
+    for c in contracts or []:
+        symbol = str(c.get("symbol") or "").strip()
+        if not symbol:
+            continue
+        rows.append(
+            {
+                "symbol": symbol,
+                "file": _normalize_rel_path(str(c.get("file") or "")),
+                "scope": str(c.get("scope") or "unknown"),
+                "strictness": str(c.get("strictness") or "standard"),
+            }
+        )
+    return sorted(rows, key=lambda x: (x["symbol"], x["file"], x["scope"], x["strictness"]))
 
 
 def _strictness_rank(value: str) -> int:
@@ -132,6 +156,98 @@ def collect_module_context(module: str, index_path: Optional[Path] = None) -> Di
     }
 
 
+def compute_module_fingerprint(context: Dict[str, Any]) -> str:
+    module = normalize_module_path(str(context.get("module") or ""))
+    key_files = _sort_unique([_normalize_rel_path(str(p)) for p in (context.get("key_files") or [])])
+    tests = _sort_unique([_normalize_rel_path(str(p)) for p in (context.get("tests") or [])])
+    contracts = _stable_contract_rows(context.get("contracts") or [])
+    strictness = str(context.get("strictness") or "standard")
+    payload = {
+        "module": module,
+        "key_files": key_files,
+        "contracts": contracts,
+        "tests": tests,
+        "strictness": strictness,
+    }
+    stable = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(stable.encode("utf-8")).hexdigest()
+
+
+def build_module_card_frontmatter(context: Dict[str, Any]) -> str:
+    contracts = _stable_contract_rows(context.get("contracts") or [])
+    symbols = _sort_unique([row["symbol"] for row in contracts])
+    data = {
+        "harbor_capsule_version": 1,
+        "module": normalize_module_path(str(context.get("module") or "")),
+        "fingerprint": compute_module_fingerprint(context),
+        "source_files": _sort_unique([_normalize_rel_path(str(p)) for p in (context.get("key_files") or [])]),
+        "contracts": symbols,
+    }
+    frontmatter = yaml.safe_dump(data, allow_unicode=True, sort_keys=False).strip()
+    return f"---\n{frontmatter}\n---\n\n"
+
+
+def read_capsule_fingerprint(module_card_path: Path) -> Optional[str]:
+    if not module_card_path.exists():
+        return None
+    try:
+        text = module_card_path.read_text(encoding="utf-8")
+    except Exception:
+        return None
+    lines = text.splitlines()
+    if len(lines) < 3 or lines[0].strip() != "---":
+        return None
+    end_idx = -1
+    for i in range(1, len(lines)):
+        if lines[i].strip() == "---":
+            end_idx = i
+            break
+    if end_idx < 0:
+        return None
+    try:
+        payload = yaml.safe_load("\n".join(lines[1:end_idx])) or {}
+    except Exception:
+        return None
+    fp = str(payload.get("fingerprint") or "").strip()
+    return fp or None
+
+
+def check_module_capsule_stale(context: Dict[str, Any], output_root: Optional[Path] = None) -> Dict[str, str]:
+    module = normalize_module_path(str(context.get("module") or ""))
+    key_files = context.get("key_files") or []
+    contracts = context.get("contracts") or []
+    current_fingerprint = compute_module_fingerprint(context)
+    result = {
+        "module": module,
+        "status": "stale",
+        "reason": "",
+        "current_fingerprint": current_fingerprint,
+        "stored_fingerprint": "",
+    }
+    if not key_files and not contracts:
+        result["reason"] = "no indexed records found for module"
+        return result
+
+    module_card_path = module_capsule_dir(module, output_root=output_root) / "module-card.md"
+    if not module_card_path.exists():
+        result["reason"] = "module-card.md not found"
+        return result
+
+    stored = read_capsule_fingerprint(module_card_path)
+    if not stored:
+        result["reason"] = "fingerprint missing"
+        return result
+
+    result["stored_fingerprint"] = stored
+    if stored != current_fingerprint:
+        result["reason"] = "fingerprint mismatch"
+        return result
+
+    result["status"] = "up_to_date"
+    result["reason"] = "up to date"
+    return result
+
+
 def generate_module_card(context: Dict[str, Any]) -> str:
     module = context.get("module", "")
     key_files = context.get("key_files", []) or []
@@ -231,7 +347,8 @@ def generate_module_card(context: Dict[str, Any]) -> str:
             "",
         ]
     )
-    return "\n".join(lines)
+    body = "\n".join(lines)
+    return build_module_card_frontmatter(context) + body
 
 
 def generate_review_checklist(context: Dict[str, Any]) -> str:

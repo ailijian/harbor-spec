@@ -15,7 +15,12 @@ from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
 from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.l2 import L2Generator, collect_all_indexed_modules, collect_modules_from_paths
-from harbor.core.module_capsule import collect_module_context, preview_module_capsule, write_module_capsule
+from harbor.core.module_capsule import (
+    check_module_capsule_stale,
+    collect_module_context,
+    preview_module_capsule,
+    write_module_capsule,
+)
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -223,6 +228,27 @@ def main():
         "--write",
         action="store_true",
         help="Write capsule files under docs/harbor/modules/<module>/",
+    )
+    p_module_stale = p_module_sub.add_parser(
+        "stale",
+        help="Check whether module capsule is stale for one module, changed modules, or all indexed modules",
+    )
+    p_module_stale.add_argument(
+        "module",
+        nargs="?",
+        type=str,
+        help="Target module directory (e.g. harbor/core)",
+    )
+    p_module_stale.add_argument(
+        "--changed",
+        action="store_true",
+        help="Detect changed modules and check stale status for each",
+    )
+    p_module_stale.add_argument(
+        "--all",
+        dest="all_modules",
+        action="store_true",
+        help="Check stale status for all indexed modules",
     )
 
     p_log = sub.add_parser("log", help="Context-aware diary logging")
@@ -748,6 +774,54 @@ def main():
         print(t("cli.module.seal.batch.updated"))
         for path in updated:
             print(f"- {path.as_posix()}")
+    elif args.command == "module" and args.module_cmd == "stale":
+        mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
+        if mode_count != 1:
+            parser.error("module stale requires exactly one mode: <module> or --changed or --all")
+
+        if args.module:
+            context = collect_module_context(args.module)
+            module_name = context.get("module", "") or args.module
+            result = check_module_capsule_stale(context)
+            print(t("cli.module.stale.title", module=module_name))
+            if result.get("status") == "up_to_date":
+                print(f"- {t('cli.module.stale.status')}: {t('cli.module.stale.up_to_date')}")
+                print(f"- {t('cli.module.stale.fingerprint')}: {result.get('current_fingerprint', '')}")
+            else:
+                print(f"- {t('cli.module.stale.status')}: {t('cli.module.stale.stale')}")
+                print(f"- {t('cli.module.stale.reason')}: {result.get('reason', '')}")
+                if result.get("reason") != "no indexed records found for module":
+                    print(f"- {t('cli.module.stale.suggest')}:")
+                    print(f"  harbor module seal {module_name} --write")
+            return
+
+        if args.changed:
+            rep = SyncEngine().check_status()
+            changed_paths = []
+            changed_paths.extend([e.file_path for e in rep.drift])
+            changed_paths.extend([e.file_path for e in rep.modified])
+            changed_paths.extend([e.file_path for e in rep.contract_changed])
+            changed_paths.extend([e.file_path for e in rep.untracked])
+            changed_paths.extend([e.file_path for e in rep.missing])
+            modules = collect_modules_from_paths(changed_paths)
+            if not modules:
+                print(t("cli.module.stale.none_changed"))
+                return
+            print(t("cli.module.stale.changed.found"))
+        else:
+            modules = collect_all_indexed_modules()
+            if not modules:
+                print(t("cli.module.stale.none_all"))
+                return
+            print(t("cli.module.stale.all.found"))
+
+        for module in modules:
+            context = collect_module_context(module)
+            result = check_module_capsule_stale(context)
+            status_text = t("cli.module.stale.up_to_date") if result.get("status") == "up_to_date" else t(
+                "cli.module.stale.stale"
+            )
+            print(f"- {module}: {status_text}")
     elif args.command == "log" and args.export:
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")

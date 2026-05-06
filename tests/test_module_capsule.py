@@ -2,12 +2,14 @@ import json
 from pathlib import Path
 
 from harbor.core.module_capsule import (
+    compute_module_fingerprint,
     collect_module_context,
     generate_debug_playbook,
     generate_module_card,
     generate_review_checklist,
     module_capsule_dir,
     normalize_module_path,
+    read_capsule_fingerprint,
     write_module_capsule,
 )
 
@@ -134,3 +136,8 @@ def test_write_module_capsule_writes_three_files(tmp_path: Path):
     assert names == ["module-card.md", "review-checklist.md", "debug-playbook.md"]
     for p in written:
         assert p.exists()
+    card = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md"
+    card_text = card.read_text(encoding="utf-8")
+    assert card_text.startswith("---\n")
+    assert "fingerprint:" in card_text
+    assert read_capsule_fingerprint(card) == compute_module_fingerprint(ctx)

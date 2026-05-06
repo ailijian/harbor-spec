@@ -186,6 +186,9 @@ def test_module_seal_changed_write_creates_three_files_per_module(tmp_path: Path
     for p in expected:
         assert p.exists()
         assert p.as_posix().replace(str(tmp_path).replace("\\", "/") + "/", "") in out
+    assert "fingerprint:" in (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md").read_text(
+        encoding="utf-8"
+    )
 
 
 def test_module_seal_all_write_creates_three_files_per_module(tmp_path: Path, monkeypatch):
@@ -206,3 +209,6 @@ def test_module_seal_all_write_creates_three_files_per_module(tmp_path: Path, mo
     for p in expected:
         assert p.exists()
         assert p.as_posix().replace(str(tmp_path).replace("\\", "/") + "/", "") in out
+    assert "fingerprint:" in (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "cli" / "module-card.md").read_text(
+        encoding="utf-8"
+    )
