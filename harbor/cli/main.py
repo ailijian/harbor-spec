@@ -21,6 +21,10 @@ from harbor.core.module_capsule import (
     preview_module_capsule,
     write_module_capsule,
 )
+from harbor.core.module_skill import (
+    check_capsule_ready_for_skill,
+    write_module_skill,
+)
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -250,6 +254,11 @@ def main():
         action="store_true",
         help="Check stale status for all indexed modules",
     )
+    p_module_promote = p_module_sub.add_parser(
+        "promote-skill",
+        help="Generate a thin optional skill entrypoint for one module",
+    )
+    p_module_promote.add_argument("module", type=str)
 
     p_log = sub.add_parser("log", help="Context-aware diary logging")
     p_log.add_argument("-m", "--message", type=str, required=False)
@@ -822,6 +831,33 @@ def main():
                 "cli.module.stale.stale"
             )
             print(f"- {module}: {status_text}")
+    elif args.command == "module" and args.module_cmd == "promote-skill":
+        context = collect_module_context(args.module)
+        check = check_capsule_ready_for_skill(args.module, context=context)
+        module_name = check.get("module", "") or args.module
+        status = check.get("status")
+
+        if status == "unknown_module":
+            print(t("cli.module.promote_skill.unknown_module", module=module_name))
+            print(t("cli.module.promote_skill.unknown_module.hint", module=module_name))
+            return
+        if status == "missing_capsule":
+            print(t("cli.module.promote_skill.missing_capsule", module=module_name))
+            print(t("cli.module.promote_skill.seal_hint", module=module_name))
+            return
+        if status == "stale_capsule":
+            print(t("cli.module.promote_skill.stale_capsule", module=module_name))
+            print(t("cli.module.promote_skill.stale_hint", module=module_name))
+            return
+
+        target = write_module_skill(module_name)
+        print(t("cli.module.promote_skill.generated"))
+        print(f"- {target.as_posix()}")
+        print("")
+        print(t("cli.module.promote_skill.references", module=module_name))
+        print(f"- docs/harbor/modules/{module_name}/module-card.md")
+        print(f"- docs/harbor/modules/{module_name}/review-checklist.md")
+        print(f"- docs/harbor/modules/{module_name}/debug-playbook.md")
     elif args.command == "log" and args.export:
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")

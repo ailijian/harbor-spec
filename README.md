@@ -313,6 +313,7 @@ harbor module stale --changed
 harbor module stale --all
 harbor module seal --changed --write
 harbor module seal --all --write
+harbor module promote-skill harbor/core
 ```
 
 说明：
@@ -328,7 +329,11 @@ harbor module seal --all --write
 - 仅 `--write` 才会更新 capsule 文件。
 - stale 命令只做检查，不写文件；若过时请执行 `seal --write` 刷新。
 - 目标是帮助 AI agent 更快进入 debug/review/refactor 上下文。
-- Skill promotion 不在本次 MVP 范围内。
+- `promote-skill <module>` 会生成一个薄 Skill 入口，路径为 `.agents/skills/harbor-debug-<slug>/SKILL.md`。
+- Skill 只引用 capsule（三件套）路径，不复制 capsule 全文。
+- Skill promotion 是可选能力，多数模块只需要 Module Capsule。
+- 仅当模块复杂、维护频繁或反复 debug 时，才建议晋升为 Skill。
+- promote-skill 要求 capsule 已存在且为最新状态。
 
 </details>
 
@@ -381,6 +386,7 @@ exclude_paths:
 | `harbor module stale --all` | 批量检查全部已索引模块 Capsule 是否过时 |
 | `harbor module seal --changed --write` | 批量写入变更模块的 Capsule |
 | `harbor module seal --all --write` | 批量写入全部已索引模块的 Capsule |
+| `harbor module promote-skill <module>` | 手动晋升模块为薄 Skill 入口（可选，写入 `.agents/skills/.../SKILL.md`） |
 | `harbor config` / `harbor conf` | 管理扫描路径配置 |
 
 -----

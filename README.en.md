@@ -308,6 +308,7 @@ harbor module stale --changed
 harbor module stale --all
 harbor module seal --changed --write
 harbor module seal --all --write
+harbor module promote-skill harbor/core
 ```
 
 Notes:
@@ -323,7 +324,11 @@ Notes:
 - `--write` is required to update capsule files.
 - `stale` is read-only and never writes files; run `seal --write` to refresh stale capsules.
 - It helps AI agents load debug/review/refactor context faster.
-- Skill promotion is out of scope for this MVP.
+- `promote-skill <module>` creates a thin skill entrypoint at `.agents/skills/harbor-debug-<slug>/SKILL.md`.
+- The skill references capsule paths only and does not copy capsule content.
+- Skill promotion is optional; most modules only need Module Capsules.
+- Promote a module only when it is complex, frequently maintained, or repeatedly debugged.
+- `promote-skill` requires an existing and up-to-date module capsule.
 
 </details>
 
@@ -367,6 +372,7 @@ exclude_paths:
 | `harbor module stale --all` | Batch check stale module capsules for all indexed modules. |
 | `harbor module seal --changed --write` | Batch write module capsules for changed modules. |
 | `harbor module seal --all --write` | Batch write module capsules for all indexed modules. |
+| `harbor module promote-skill <module>` | Manually promote one module to an optional thin skill entrypoint (`.agents/skills/.../SKILL.md`). |
 | `harbor config` / `harbor conf` | Manage code roots and paths. |
 
 -----
