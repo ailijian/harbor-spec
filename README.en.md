@@ -212,6 +212,8 @@ Key semantics:
 - `harbor doctor` is a top-level read-only aggregate health check command (advisory, no auto-fix).
 - `harbor doctor` aggregates Config/Index, Workspace Status, DDT Fast, Derived Views, and Skill References checks.
 - `harbor doctor` does not write files, does not auto-lock, and does not auto-log.
+- `harbor workspace inspect` is a read-only workspace layout inspection command that reports canonical paths, legacy paths, Git tracking, generated views, and advisory.
+- `harbor workspace inspect` does not migrate, does not delete legacy files, and does not change write behavior (`workspace migrate` remains a future phase).
 - When `specs/diary/*.jsonl` exists, `harbor doctor` emits a legacy diary advisory (workspace layout / project memory guidance, not a derived-view freshness signal).
 - Legacy diary advisory appears only when at least one `*.jsonl` exists; an empty `specs/diary` directory does not trigger it.
 - Diary advisory is WARN-only (not FAIL), with no automatic migration or deletion of `specs/diary`.
@@ -476,6 +478,7 @@ exclude_paths:
 | `harbor docs --all --write` | Refresh L2 READMEs for all indexed modules. |
 | `harbor finish --sync-context` | Run `finish` checks, refresh changed L2 READMEs + Module Capsules, then run changed stale checks. |
 | `harbor doctor` | Top-level read-only aggregate health check; default scope is changed modules (Config/Index, Workspace, DDT Fast, Derived Views, Skill References). |
+| `harbor workspace inspect` | Top-level read-only workspace layout inspection: reports canonical/legacy paths, Git tracking, generated views, and advisory (no migration, no deletion). |
 | `harbor stale` | Top-level read-only aggregate check; default scope is changed modules (canonical L2 README + Module Capsule), with separate module README export advisory. |
 | `harbor accept` | Workflow confirmation: semantic alias of `harbor lock`. |
 | `harbor module inspect <module>` | Show indexed context summary for one module (read-only, no file writes). |

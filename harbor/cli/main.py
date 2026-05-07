@@ -41,6 +41,11 @@ from harbor.core.doctor import (
     build_doctor_report,
     format_doctor_report,
 )
+from harbor.core.workspace_inspect import (
+    build_workspace_inspect_report,
+    format_workspace_inspect_report,
+    workspace_inspect_report_to_dict,
+)
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -281,6 +286,22 @@ def main():
         help="Run doctor checks for all indexed modules",
     )
     p_doctor.add_argument(
+        "--format",
+        type=str,
+        choices=["text", "json"],
+        default="text",
+        help="Output format: text (default) or json",
+    )
+    p_workspace = sub.add_parser(
+        "workspace",
+        help="Workspace layout inspection commands",
+    )
+    p_workspace_sub = p_workspace.add_subparsers(dest="workspace_cmd", required=True)
+    p_workspace_inspect = p_workspace_sub.add_parser(
+        "inspect",
+        help="Inspect current Harbor workspace layout (read-only advisory)",
+    )
+    p_workspace_inspect.add_argument(
         "--format",
         type=str,
         choices=["text", "json"],
@@ -1080,6 +1101,13 @@ def main():
             print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
         else:
             print(format_doctor_report(report))
+    elif args.command == "workspace" and args.workspace_cmd == "inspect":
+        report = build_workspace_inspect_report(Path.cwd())
+        if args.format == "json":
+            payload = workspace_inspect_report_to_dict(report)
+            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+        else:
+            print(format_workspace_inspect_report(report))
     elif args.command == "module" and args.module_cmd == "inspect":
         context = collect_module_context(args.module)
         module_name = context.get("module", "")

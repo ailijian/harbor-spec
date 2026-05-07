@@ -1108,6 +1108,16 @@ harbor workspace migrate --dry-run
 harbor workspace migrate --write
 ```
 
+Phase 2F-A (Workspace Inspect MVP) constraints:
+
+```text
+harbor workspace inspect is a read-only advisory command
+it reports canonical paths / legacy paths / Git tracking / generated views / advisory
+it does not run workspace migrate
+it does not delete legacy files
+it does not modify any write behavior
+```
+
 ## 10.4 v2.0 possible behavior
 
 Make `.harbor/views/` the default canonical location.
@@ -1536,6 +1546,14 @@ which paths exist
 which paths are tracked or ignored
 legacy paths detected
 migration suggestions
+```
+
+Phase 2F-A implementation note:
+
+```text
+inspect only reports and advises
+no migration/deletion/write side effects
+workspace migrate remains a future phase
 ```
 
 ## Step 8: Add dry-run migration

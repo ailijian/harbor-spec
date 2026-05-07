@@ -207,6 +207,8 @@ harbor accept
 - `harbor doctor` 是顶层只读健康检查聚合命令（advisory，不自动修复）。
 - `harbor doctor` 聚合检查 Config/Index、Workspace Status、DDT Fast、Derived Views、Skill References。
 - `harbor doctor` 不写文件、不自动 lock、不自动 log。
+- `harbor workspace inspect` 是只读 workspace layout 体检命令：报告 canonical paths、legacy paths、Git tracking、generated views 与 advisory。
+- `harbor workspace inspect` 不执行迁移、不删除 legacy 文件、不修改任何写入行为（`workspace migrate` 仍为后续阶段）。
 - 若存在 `specs/diary/*.jsonl`，`harbor doctor` 会给出 legacy diary advisory（workspace layout / project memory 提示，不属于 derived view freshness）。
 - `harbor doctor` 的 legacy diary advisory 仅在存在 `*.jsonl` 时出现；`specs/diary` 空目录不提示。
 - diary advisory 为 WARN 提示，不是 FAIL；不会自动迁移或删除 `specs/diary`。
@@ -476,6 +478,7 @@ exclude_paths:
 | `harbor finish` | 工作流收尾：等价 `status + check` 并提示下一步 |
 | `harbor finish --sync-context` | 工作流收尾增强：执行 `finish` 检查并同步 changed L2 README + Module Capsule，再执行 changed stale 检查 |
 | `harbor doctor` | 顶层只读健康检查聚合：默认检查 changed modules 的 Config/Index、Workspace、DDT、Derived Views、Skill References |
+| `harbor workspace inspect` | 顶层只读 workspace layout 检查：展示 canonical/legacy 路径、Git tracking、generated views 与 advisory（不迁移、不删除） |
 | `harbor stale` | 顶层只读聚合检查：默认检查 changed modules 的 canonical L2 README + Module Capsule，并单独报告 module README export advisory |
 | `harbor accept` | 工作流确认：语义化别名，等价 `harbor lock` |
 | `harbor status` / `harbor st` | 查看上下文状态（Drift/Modified） |

@@ -1104,6 +1104,16 @@ harbor workspace migrate --dry-run
 harbor workspace migrate --write
 ```
 
+Phase 2F-A（Workspace Inspect MVP）补充约束：
+
+```text
+harbor workspace inspect 为只读 advisory 命令
+报告 canonical paths / legacy paths / Git tracking / generated views / advisory
+不执行 workspace migrate
+不删除 legacy 文件
+不修改任何写入行为
+```
+
 ## 10.4 v2.0 可能行为
 
 将 `.harbor/views/` 作为默认 canonical 位置。
@@ -1542,6 +1552,14 @@ harbor workspace inspect
 哪些路径被 Git 追踪或忽略
 是否检测到 legacy paths
 迁移建议
+```
+
+Phase 2F-A 实现说明：
+
+```text
+inspect 仅报告与提示
+不做迁移/删除/写入副作用
+workspace migrate 仍属于后续阶段
 ```
 
 ## Step 8：新增 dry-run migration

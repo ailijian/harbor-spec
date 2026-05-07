@@ -4,6 +4,8 @@
 - Workspace config canonical write target is `.harbor/config/harbor.yaml`.
 - Legacy `.harbor/config.yaml` remains readable for compatibility.
 - `harbor project structure --write` now writes canonical `.harbor/views/project-structure.md` by default.
+- Added `harbor workspace inspect` (read-only advisory) to report workspace canonical paths, legacy paths, Git tracking, generated views, and summary advisory.
+- `harbor workspace inspect` supports `--format text|json` and does not migrate, delete legacy files, or modify write behavior.
 - `docs/harbor/project-structure.md` is now an optional export target, enabled only when:
   - `views.export.docs.enabled=true`
   - `views.export.docs.root` is configured (default `docs/harbor`)
