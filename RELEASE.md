@@ -6,6 +6,9 @@
 - `harbor project structure --write` now writes canonical `.harbor/views/project-structure.md` by default.
 - Added `harbor workspace inspect` (read-only advisory) to report workspace canonical paths, legacy paths, Git tracking, generated views, and summary advisory.
 - `harbor workspace inspect` supports `--format text|json` and does not migrate, delete legacy files, or modify write behavior.
+- Added `harbor workspace migrate --dry-run` (read-only planning) to generate workspace layout migration plan items without executing migration actions.
+- `harbor workspace migrate --dry-run` supports `--format text|json`; JSON output is a single object with `mode=dry_run` and `writes_files=false`.
+- `harbor workspace migrate` without `--dry-run` now exits non-zero with: `only --dry-run is supported in this version`.
 - `docs/harbor/project-structure.md` is now an optional export target, enabled only when:
   - `views.export.docs.enabled=true`
   - `views.export.docs.root` is configured (default `docs/harbor`)
@@ -43,6 +46,7 @@
 - Legacy `docs/harbor/project-structure.md` is not deleted or auto-migrated in this phase.
 - Legacy `.harbor/l2_meta.json` is not deleted or auto-migrated in this phase.
 - Legacy `specs/diary/*.jsonl` is not deleted or auto-migrated in this phase.
+- `harbor workspace migrate --dry-run` does not copy, move, delete, or modify files and does not change `.gitignore`/workspace config.
 - `harbor stale` text/json outputs do not include diary advisory; diary legacy advisory is scoped to `harbor doctor`.
 - Legacy `tests/fixtures_sqlite/README.md` is kept as a legacy L2 export artifact in this phase.
 - Legacy `docs/harbor/modules/*` files are not deleted or auto-migrated in this phase.

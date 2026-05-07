@@ -46,6 +46,11 @@ from harbor.core.workspace_inspect import (
     format_workspace_inspect_report,
     workspace_inspect_report_to_dict,
 )
+from harbor.core.workspace_migrate import (
+    build_workspace_migrate_dry_run_report,
+    format_workspace_migrate_report,
+    workspace_migrate_report_to_dict,
+)
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -302,6 +307,22 @@ def main():
         help="Inspect current Harbor workspace layout (read-only advisory)",
     )
     p_workspace_inspect.add_argument(
+        "--format",
+        type=str,
+        choices=["text", "json"],
+        default="text",
+        help="Output format: text (default) or json",
+    )
+    p_workspace_migrate = p_workspace_sub.add_parser(
+        "migrate",
+        help="Generate workspace migration plan (dry-run only in current phase)",
+    )
+    p_workspace_migrate.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print migration plan only. No files are changed.",
+    )
+    p_workspace_migrate.add_argument(
         "--format",
         type=str,
         choices=["text", "json"],
@@ -1108,6 +1129,15 @@ def main():
             print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
         else:
             print(format_workspace_inspect_report(report))
+    elif args.command == "workspace" and args.workspace_cmd == "migrate":
+        if not getattr(args, "dry_run", False):
+            parser.error(t("cli.workspace.migrate.error.only_dry_run"))
+        report = build_workspace_migrate_dry_run_report(Path.cwd())
+        if args.format == "json":
+            payload = workspace_migrate_report_to_dict(report)
+            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+        else:
+            print(format_workspace_migrate_report(report))
     elif args.command == "module" and args.module_cmd == "inspect":
         context = collect_module_context(args.module)
         module_name = context.get("module", "")

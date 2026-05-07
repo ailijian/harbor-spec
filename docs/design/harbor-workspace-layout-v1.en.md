@@ -1118,6 +1118,20 @@ it does not delete legacy files
 it does not modify any write behavior
 ```
 
+Phase 2F-B (Workspace Migrate Dry-run MVP) constraints:
+
+```text
+add harbor workspace migrate --dry-run (with --format text/json)
+the command only generates a migration plan and does not execute migration
+no file copy
+no file move
+no file delete
+no config update
+no .gitignore update
+no diary migration
+if --dry-run is missing, return an error that only --dry-run is supported in this version
+```
+
 ## 10.4 v2.0 possible behavior
 
 Make `.harbor/views/` the default canonical location.

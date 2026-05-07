@@ -1114,6 +1114,20 @@ harbor workspace inspect 为只读 advisory 命令
 不修改任何写入行为
 ```
 
+Phase 2F-B（Workspace Migrate Dry-run MVP）补充约束：
+
+```text
+新增 harbor workspace migrate --dry-run（支持 --format text/json）
+该命令仅生成 migration plan，不执行真实迁移
+不复制文件
+不移动文件
+不删除文件
+不修改配置
+不修改 .gitignore
+不迁移 diary
+若未传 --dry-run，应报错提示当前版本仅支持 --dry-run
+```
+
 ## 10.4 v2.0 可能行为
 
 将 `.harbor/views/` 作为默认 canonical 位置。
