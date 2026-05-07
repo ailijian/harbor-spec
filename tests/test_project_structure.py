@@ -145,7 +145,8 @@ def test_generate_markdown_contains_required_sections_and_is_deterministic(tmp_p
     assert re.search(r"\d{4}-\d{2}-\d{2}", markdown) is None
 
 
-def test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing(tmp_path: Path):
+def test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
     (tmp_path / "pyproject.toml").write_text(
         "\n".join(["[project]", 'name = "harbor-spec"', '[project.scripts]', 'harbor = "harbor.cli.main:main"']),
         encoding="utf-8",

@@ -3,12 +3,14 @@ from __future__ import annotations
 import ast
 import json
 import hashlib
+import re
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.utils import find_function_node
+from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
 
 
 def infer_module_from_path(path: str | Path) -> str:
@@ -35,6 +37,28 @@ def collect_modules_from_paths(paths: List[str | Path]) -> List[str]:
     return sorted(modules)
 
 
+def normalize_indexed_module_candidate(path: str | Path, *, repo_root: Optional[Path] = None) -> str:
+    """将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。"""
+    module = infer_module_from_path(path)
+    if not module:
+        return ""
+
+    root = (repo_root or Path.cwd()).resolve()
+    normalized = module.replace("\\", "/")
+    is_windows_abs = bool(re.match(r"(?i)^[a-z]:/", normalized))
+    candidate = Path(normalized)
+    is_absolute = candidate.is_absolute() or normalized.startswith("//") or is_windows_abs
+    if not is_absolute:
+        return normalized
+
+    try:
+        rel = candidate.resolve().relative_to(root).as_posix()
+    except Exception:
+        # Keep outside-repo absolute module so CLI can emit skip+warning.
+        return normalized
+    return infer_module_from_path(rel)
+
+
 def collect_all_indexed_modules(index_path: Optional[Path] = None) -> List[str]:
     gen = L2Generator(index_path=index_path)
     return gen.collect_all_indexed_modules()
@@ -42,8 +66,23 @@ def collect_all_indexed_modules(index_path: Optional[Path] = None) -> List[str]:
 
 class L2Generator:
     def __init__(self, index_path: Optional[Path] = None, meta_path: Optional[Path] = None) -> None:
+        self.repo_root = Path.cwd().resolve()
+        workspace_paths = load_workspace_paths(self.repo_root, enforce_write_safety=True)
+        self.l2_view_root = workspace_paths.l2_view_root.resolve()
+        self._ensure_within_root(
+            self.l2_view_root,
+            root=self.repo_root,
+            field_name="l2.canonical_root",
+            raw_value=self.l2_view_root.as_posix(),
+        )
         self.index_path = index_path or (Path(".harbor") / "cache" / "l3_index.json")
-        self.meta_path = meta_path or (Path(".harbor") / "l2_meta.json")
+        self.meta_path = self._resolve_meta_path(meta_path)
+        self.legacy_meta_path = (self.repo_root / ".harbor" / "l2_meta.json").resolve()
+        loaded = load_workspace_config(self.repo_root)
+        cfg = loaded.get("config") or {}
+        export_options = parse_workspace_export_options(cfg)
+        module_readme_options = ((export_options.get("l2", {}) or {}).get("module_readme", {}) or {})
+        self.export_module_readme_enabled = bool(module_readme_options.get("enabled", True))
         self.scanner = DDTScanner()
         # validator uses default paths unless overridden
         self.validator = DDTValidator()
@@ -166,29 +205,50 @@ class L2Generator:
         md = "\n".join(lines)
         return md
 
-    def write(self, module_path: str, md: str, force: bool = False) -> Optional[Path]:
-        meta = self._load_meta(self.meta_path)
+    def write(self, module_path: str, md: str, force: bool = False) -> Optional[List[Path]]:
+        module_norm = self._safe_module_subpath(module_path)
+        if not module_norm:
+            raise ValueError("Invalid module path: module path cannot be empty.")
+
+        meta = self._load_meta()
         current_hash = self.compute_meta_hash(md)
-        prev_hash = meta.get(module_path)
+        prev_hash = meta.get(module_norm)
         if prev_hash == current_hash and not force:
             return None
-        target = Path(module_path) / "README.md"
-        target.write_text(md, encoding="utf-8")
-        meta[module_path] = current_hash
+
+        written_paths: List[Path] = []
+        canonical_readme = self._resolve_canonical_readme_path(module_norm)
+        canonical_readme.parent.mkdir(parents=True, exist_ok=True)
+        canonical_readme.write_text(md, encoding="utf-8")
+        written_paths.append(canonical_readme)
+
+        if self.export_module_readme_enabled:
+            export_readme = self._resolve_export_readme_path(module_norm)
+            if export_readme.resolve() != canonical_readme.resolve():
+                export_readme.parent.mkdir(parents=True, exist_ok=True)
+                export_readme.write_text(md, encoding="utf-8")
+                written_paths.append(export_readme)
+
+        meta[module_norm] = current_hash
         self._save_meta(self.meta_path, meta)
-        return target
+        return written_paths
 
     def compute_meta_hash(self, md: str) -> str:
         return hashlib.sha256(md.encode("utf-8")).hexdigest()
 
+    def canonical_readme_path(self, module_path: str) -> Path:
+        return self._resolve_canonical_readme_path(module_path)
+
     def collect_all_indexed_modules(self) -> List[str]:
         idx = self._load_index(self.index_path)
-        paths: List[str] = []
+        modules: List[str] = []
         for fp, meta in idx.get("files", {}).items():
             if not meta.get("items"):
                 continue
-            paths.append(str(fp))
-        return collect_modules_from_paths(paths)
+            module = normalize_indexed_module_candidate(str(fp), repo_root=self.repo_root)
+            if module:
+                modules.append(module)
+        return sorted(set(modules))
 
     def _load_index(self, path: Path) -> Dict[str, Any]:
         if path.exists():
@@ -216,7 +276,15 @@ class L2Generator:
             files[fp] = {"mtime": mtime, "file_hash": "", "items": items}
         return {"meta": {"schema_version": "1.0.2"}, "files": files}
 
-    def _load_meta(self, path: Path) -> Dict[str, Any]:
+    def _load_meta(self, path: Optional[Path] = None) -> Dict[str, Any]:
+        if path is not None:
+            return self._read_meta_file(path)
+        meta = self._read_meta_file(self.meta_path)
+        if meta:
+            return meta
+        return self._read_meta_file(self.legacy_meta_path)
+
+    def _read_meta_file(self, path: Path) -> Dict[str, Any]:
         if not path.exists():
             return {}
         try:
@@ -227,3 +295,67 @@ class L2Generator:
     def _save_meta(self, path: Path, meta: Dict[str, Any]) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def _resolve_meta_path(self, meta_path: Optional[Path]) -> Path:
+        if meta_path is None:
+            return (self.l2_view_root / "_meta.json").resolve()
+        candidate = Path(meta_path)
+        if not candidate.is_absolute():
+            candidate = self.repo_root / candidate
+        resolved = candidate.resolve()
+        self._ensure_within_root(
+            resolved,
+            root=self.repo_root,
+            field_name="l2.meta_path",
+            raw_value=str(meta_path),
+        )
+        return resolved
+
+    def _resolve_canonical_readme_path(self, module_path: str) -> Path:
+        safe_module = self._safe_module_subpath(module_path)
+        target = (self.l2_view_root / safe_module / "README.md").resolve()
+        self._ensure_within_root(
+            target,
+            root=self.l2_view_root,
+            field_name="l2.canonical_root",
+            raw_value=module_path,
+        )
+        self._ensure_within_root(
+            target,
+            root=self.repo_root,
+            field_name="module",
+            raw_value=module_path,
+        )
+        return target
+
+    def _resolve_export_readme_path(self, module_path: str) -> Path:
+        safe_module = self._safe_module_subpath(module_path)
+        target = (self.repo_root / safe_module / "README.md").resolve()
+        self._ensure_within_root(
+            target,
+            root=self.repo_root,
+            field_name="module",
+            raw_value=module_path,
+        )
+        return target
+
+    def _safe_module_subpath(self, module_path: str) -> str:
+        normalized = str(module_path or "").strip().replace("\\", "/")
+        while "//" in normalized:
+            normalized = normalized.replace("//", "/")
+        normalized = normalized.strip("/")
+        if not normalized:
+            return ""
+        parts = [part for part in normalized.split("/") if part not in ("", ".")]
+        if any(part == ".." for part in parts):
+            raise ValueError(f"Invalid module path: '{module_path}'. Relative parent segments are not allowed.")
+        return "/".join(parts)
+
+    def _ensure_within_root(self, path: Path, *, root: Path, field_name: str, raw_value: str) -> None:
+        try:
+            path.resolve().relative_to(root.resolve())
+        except ValueError as exc:
+            raise ValueError(
+                f"Invalid workspace path for '{field_name}': '{raw_value}'. "
+                f"Resolved path '{path.resolve().as_posix()}' escapes repo root '{root.resolve().as_posix()}'."
+            ) from exc

@@ -1,4 +1,4 @@
-# Unreleased / v1.3.1 - Workspace Layout Migration (Phase 2A-2C)
+# Unreleased / v1.3.1 - Workspace Layout Migration (Phase 2A-2D-A)
 
 ## Changed
 - Workspace config canonical write target is `.harbor/config/harbor.yaml`.
@@ -12,6 +12,10 @@
 - `harbor module stale` now evaluates canonical capsule freshness from `.harbor/views/modules/<module>/module-card.md`.
 - `harbor module promote-skill` now references canonical capsule paths under `.harbor/views/modules/<module>/...`.
 - Doctor skill-reference check supports canonical capsule references and keeps legacy docs references as compatibility mode (non-canonical).
+- `harbor docs --write` now writes canonical L2 README to `.harbor/views/l2/<module>/README.md`.
+- `<module>/README.md` is now treated as an optional L2 export target (enabled by default via `l2.export.module_readme.enabled=true`).
+- L2 metadata canonical write target is now `.harbor/views/l2/_meta.json`.
+- Legacy `.harbor/l2_meta.json` remains read-compatible and is no longer a write target.
 - `harbor project structure` (without `--write`) remains preview-only and writes nothing.
 - `.gitignore` no longer uses broad `.harbor/` ignore; Harbor tracking now uses subdirectory-level policies.
 - Default tracked Harbor workspace assets include `.harbor/config/`, `.harbor/policy/`, `.harbor/views/project-structure.md`, `.harbor/diary/`, and selected `.harbor/reports/`.
@@ -19,7 +23,8 @@
 
 ## Compatibility
 - Legacy `docs/harbor/project-structure.md` is not deleted or auto-migrated in this phase.
-- L2 README / diary / `harbor docs` command behavior is unchanged in this phase.
+- Legacy `.harbor/l2_meta.json` is not deleted or auto-migrated in this phase.
+- Legacy `tests/fixtures_sqlite/README.md` is kept as a legacy L2 export artifact in this phase.
 - Legacy `docs/harbor/modules/*` files are not deleted or auto-migrated in this phase.
 
 ## Migration Notes / 升级说明
@@ -29,6 +34,10 @@
 - `docs/harbor/project-structure.md` is an optional export target and is disabled by default.
 - Module Capsule canonical path is `.harbor/views/modules/<module>/`.
 - `docs/harbor/modules/<module>/` is an optional docs export target and is disabled by default.
+- L2 README canonical path is `.harbor/views/l2/<module>/README.md`.
+- L2 metadata canonical path is `.harbor/views/l2/_meta.json`.
+- `<module>/README.md` remains an optional export target for compatibility and stays enabled by default.
+- Legacy `.harbor/l2_meta.json` remains read-compatible and is not auto-deleted.
 - `.harbor/` is the canonical Harbor workspace and should not be ignored as a whole in `.gitignore`.
 
 ---

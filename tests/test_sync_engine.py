@@ -14,7 +14,8 @@ def write_module(tmp_path: Path, content: str, name: str = "mod.py") -> Path:
 
 
 @harbor_ddt_target(func="harbor.core.sync.SyncEngine.check_status", l3_version=1, strategy="strict")
-def test_sync_engine_drift_detection(tmp_path: Path):
+def test_sync_engine_drift_detection(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
     cache_dir = tmp_path / ".harbor" / "cache"
     code_root = tmp_path / "src"
     code_root.mkdir(parents=True, exist_ok=True)

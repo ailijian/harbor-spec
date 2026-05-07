@@ -1,6 +1,8 @@
 import argparse
+import re
 import sys
 from pathlib import Path
+from typing import List, Tuple
 from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
@@ -224,12 +226,12 @@ def main():
     p_docs.add_argument(
         "--write",
         action="store_true",
-        help="Write README.md to the module directory; default prints Markdown to console",
+        help="Write canonical L2 README under .harbor/views/l2/<module>/README.md (and optional <module>/README.md export); default prints Markdown to console",
     )
     p_docs.add_argument(
         "--force",
         action="store_true",
-        help="Overwrite existing README.md when used with --write",
+        help="Force overwrite of canonical/export README targets when used with --write",
     )
     p_stale = sub.add_parser(
         "stale",
@@ -585,13 +587,17 @@ def main():
                     for ln in out_lines:
                         print(ln)
 
-    def _collect_changed_modules_from_status(rep):
+    def _collect_changed_paths_from_status(rep):
         changed_paths = []
         changed_paths.extend([e.file_path for e in rep.drift])
         changed_paths.extend([e.file_path for e in rep.modified])
         changed_paths.extend([e.file_path for e in rep.contract_changed])
         changed_paths.extend([e.file_path for e in rep.untracked])
         changed_paths.extend([e.file_path for e in rep.missing])
+        return changed_paths
+
+    def _collect_changed_modules_from_status(rep):
+        changed_paths = _collect_changed_paths_from_status(rep)
         cwd = Path.cwd().resolve()
         workspace_paths = []
         for raw_path in changed_paths:
@@ -608,15 +614,123 @@ def main():
         rep = SyncEngine().check_status()
         return _collect_changed_modules_from_status(rep)
 
+    def _collect_changed_modules_for_docs():
+        rep = SyncEngine().check_status()
+        changed_paths = _collect_changed_paths_from_status(rep)
+        return collect_modules_from_paths(changed_paths)
+
     def _to_repo_relative_display(path: Path) -> str:
         try:
             return path.resolve().relative_to(Path.cwd().resolve()).as_posix()
         except Exception:
             return path.as_posix()
 
+    def _normalize_l2_write_paths(result) -> List[Path]:
+        def _is_l2_meta(path_obj: Path) -> bool:
+            return path_obj.name == "_meta.json"
+
+        if result is None:
+            return []
+        if isinstance(result, Path):
+            return [] if _is_l2_meta(result) else [result]
+        if isinstance(result, (list, tuple)):
+            out: List[Path] = []
+            for item in result:
+                if isinstance(item, Path):
+                    if not _is_l2_meta(item):
+                        out.append(item)
+                else:
+                    candidate = Path(str(item))
+                    if not _is_l2_meta(candidate):
+                        out.append(candidate)
+            return out
+        candidate = Path(str(result))
+        return [] if _is_l2_meta(candidate) else [candidate]
+
+    def _sanitize_module_for_display(module: str, *, repo_root: Path) -> str:
+        raw = str(module or "").strip()
+        if not raw:
+            return "<outside-repo>"
+        normalized = raw.replace("\\", "/")
+        candidate = Path(normalized)
+        if candidate.is_absolute() or re.match(r"(?i)^[a-z]:/", normalized):
+            try:
+                rel = candidate.resolve().relative_to(repo_root.resolve()).as_posix()
+                return rel
+            except Exception:
+                base = candidate.name or Path(normalized.rstrip("/")).name
+                return f"<outside-repo>/{base}" if base else "<outside-repo>"
+        return normalized.strip("/") or "<outside-repo>"
+
+    def _classify_module_safety(module: str, *, repo_root: Path) -> Tuple[bool, str, str]:
+        raw = str(module or "").strip()
+        if not raw:
+            return False, t("cli.docs.unsafe_reason.invalid"), ""
+
+        normalized = raw.replace("\\", "/")
+        while "//" in normalized:
+            normalized = normalized.replace("//", "/")
+
+        # Absolute modules are only valid when they can be mapped back into repo root.
+        parts = [part for part in normalized.split("/") if part not in ("", ".")]
+        head = parts[0] if parts else ""
+        is_windows_abs = bool(re.match(r"(?i)^[a-z]:$", head)) or bool(re.match(r"(?i)^[a-z]:/", normalized))
+        is_absolute = normalized.startswith("/") or normalized.startswith("//") or is_windows_abs
+        if is_absolute:
+            candidate = Path(normalized)
+            try:
+                rel = candidate.resolve().relative_to(repo_root.resolve()).as_posix()
+            except Exception:
+                return False, t("cli.docs.unsafe_reason.outside_root"), ""
+            rel_parts = [part for part in rel.split("/") if part not in ("", ".")]
+            if not rel_parts or any(part == ".." for part in rel_parts):
+                return False, t("cli.docs.unsafe_reason.invalid"), ""
+            parts = rel_parts
+        else:
+            if not parts:
+                return False, t("cli.docs.unsafe_reason.invalid"), ""
+            if any(part == ".." for part in parts):
+                return False, t("cli.docs.unsafe_reason.traversal"), ""
+
+        # Accept file-path candidates by inferring their parent module.
+        if parts and (parts[-1] == "__init__.py" or "." in parts[-1]):
+            parts = parts[:-1]
+        if not parts:
+            return False, t("cli.docs.unsafe_reason.invalid"), ""
+        if any(part == ".." for part in parts):
+            return False, t("cli.docs.unsafe_reason.traversal"), ""
+        return True, "", "/".join(parts)
+
+    def _select_safe_modules(modules: List[str], *, strict: bool = False) -> Tuple[List[str], List[Tuple[str, str]]]:
+        repo_root = Path.cwd().resolve()
+        safe_modules: List[str] = []
+        skipped: List[Tuple[str, str]] = []
+        seen = set()
+        for module in modules:
+            is_safe, reason, normalized = _classify_module_safety(module, repo_root=repo_root)
+            if is_safe and normalized:
+                if normalized not in seen:
+                    seen.add(normalized)
+                    safe_modules.append(normalized)
+                continue
+            display = _sanitize_module_for_display(str(module), repo_root=repo_root)
+            if strict:
+                raise ValueError(t("cli.docs.module_unsafe", module=display, reason=reason))
+            skipped.append((display, reason))
+        return safe_modules, skipped
+
+    def _print_skipped_unsafe_modules(skipped: List[Tuple[str, str]]) -> None:
+        if not skipped:
+            return
+        print(t("cli.docs.skipped_unsafe.title"))
+        for display, reason in skipped:
+            print(f"- {display} ({reason})")
+
     def _run_docs_changed(*, write=False, force=False, modules=None):
         gen = L2Generator()
-        target_modules = modules if modules is not None else _collect_changed_modules()
+        raw_modules = modules if modules is not None else _collect_changed_modules_for_docs()
+        target_modules, skipped = _select_safe_modules(list(raw_modules), strict=False)
+        _print_skipped_unsafe_modules(skipped)
         if not target_modules:
             print(t("cli.docs.changed.none"))
             return []
@@ -630,9 +744,8 @@ def main():
         for module in target_modules:
             md = gen.generate(module)
             if write:
-                target = gen.write(module, md, force=force)
-                if target is not None:
-                    updated.append(target.as_posix())
+                targets = _normalize_l2_write_paths(gen.write(module, md, force=force))
+                updated.extend(targets)
             else:
                 print("")
                 print(md)
@@ -643,7 +756,7 @@ def main():
                 print("")
                 print(t("cli.docs.updated"))
                 for path in updated:
-                    print(f"- {path}")
+                    print(f"- {_to_repo_relative_display(path)}")
         return target_modules
 
     def _run_module_seal_changed(*, write=False, modules=None):
@@ -739,11 +852,12 @@ def main():
             print("")
             print(t("cli.finish.sync_context.title"))
             changed_modules = _collect_changed_modules()
-            if not changed_modules:
+            docs_modules = _collect_changed_modules_for_docs()
+            if not changed_modules and not docs_modules:
                 print(t("cli.finish.sync_context.none"))
             else:
                 print(t("cli.finish.sync_context.docs"))
-                _run_docs_changed(write=True, modules=changed_modules)
+                _run_docs_changed(write=True, modules=docs_modules)
                 print("")
                 print(t("cli.finish.sync_context.capsules"))
                 _run_module_seal_changed(write=True, modules=changed_modules)
@@ -837,13 +951,19 @@ def main():
             parser.error(t("cli.docs.mode_conflict"))
         gen = L2Generator()
         if args.module:
-            md = gen.generate(args.module)
+            module_name = args.module
             if args.write:
-                target = gen.write(args.module, md, force=args.force)
-                if target is None:
+                selected, _ = _select_safe_modules([args.module], strict=True)
+                module_name = selected[0]
+            md = gen.generate(module_name)
+            if args.write:
+                targets = _normalize_l2_write_paths(gen.write(module_name, md, force=args.force))
+                if not targets:
                     print(t("cli.docs.nochanges"))
                 else:
-                    print(t("cli.docs.wrote", path=target.as_posix()))
+                    print(t("cli.docs.updated"))
+                    for path in targets:
+                        print(f"- {_to_repo_relative_display(path)}")
             else:
                 print(md)
         else:
@@ -851,7 +971,9 @@ def main():
                 _run_docs_changed(write=args.write, force=args.force)
                 return
             else:
-                modules = collect_all_indexed_modules()
+                raw_modules = collect_all_indexed_modules()
+                modules, skipped = _select_safe_modules(raw_modules, strict=False)
+                _print_skipped_unsafe_modules(skipped)
                 if not modules:
                     print(t("cli.docs.all.none"))
                     return
@@ -865,9 +987,8 @@ def main():
             for module in modules:
                 md = gen.generate(module)
                 if args.write:
-                    target = gen.write(module, md, force=args.force)
-                    if target is not None:
-                        updated.append(target.as_posix())
+                    targets = _normalize_l2_write_paths(gen.write(module, md, force=args.force))
+                    updated.extend(targets)
                 else:
                     print("")
                     print(md)
@@ -878,7 +999,7 @@ def main():
                     print("")
                     print(t("cli.docs.updated"))
                     for path in updated:
-                        print(f"- {path}")
+                        print(f"- {_to_repo_relative_display(path)}")
     elif args.command == "stale":
         mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
         if mode_count > 1:

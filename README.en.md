@@ -236,6 +236,11 @@ harbor docs --all --write
 Notes:
 - Default mode is preview and does not write files.
 - Only `--write` writes README files.
+- Canonical L2 README path is `.harbor/views/l2/<module>/README.md`.
+- `<module>/README.md` remains an optional export target by default (`l2.export.module_readme.enabled=true`).
+- When `l2.export.module_readme.enabled=false`, only canonical L2 README is written.
+- L2 metadata canonical path is `.harbor/views/l2/_meta.json`.
+- Legacy `.harbor/l2_meta.json` remains read-compatible but is no longer a write target.
 - `--module`, `--changed`, and `--all` are mutually exclusive modes.
 
 ### Module Capsule
@@ -396,7 +401,7 @@ harbor module promote-skill harbor/core
 
 Notes:
 - Module Capsule is a derived maintenance view, not a source of truth.
-- It does not replace the L2 README (`<module>/README.md`).
+- It does not replace the L2 README (canonical: `.harbor/views/l2/<module>/README.md`; optional export: `<module>/README.md`).
 - `seal <module>`: refresh one module capsule.
 - `seal --changed`: refresh capsules for changed modules.
 - `seal --all`: refresh capsules for all indexed modules.

@@ -33,14 +33,14 @@ def test_l2_readme_stale_when_missing(tmp_path: Path, monkeypatch):
     _write_index(tmp_path)
     result = check_l2_readme_stale("harbor/core")
     assert result.status == "stale"
-    assert result.reason == "README.md not found"
+    assert result.reason == "canonical README.md not found"
     assert result.suggested_command == "harbor docs --module harbor/core --write"
 
 
 def test_l2_readme_up_to_date_when_content_matches_except_timestamp(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
-    readme = tmp_path / "harbor" / "core" / "README.md"
+    readme = tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md"
     readme.parent.mkdir(parents=True, exist_ok=True)
     readme.write_text(
         "A\nGenerated At: 2020-01-01T00:00:00Z\nB\n",
@@ -57,7 +57,7 @@ def test_l2_readme_up_to_date_when_content_matches_except_timestamp(tmp_path: Pa
 def test_l2_readme_stale_when_content_differs(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
-    readme = tmp_path / "harbor" / "core" / "README.md"
+    readme = tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md"
     readme.parent.mkdir(parents=True, exist_ok=True)
     readme.write_text("OLD\n", encoding="utf-8")
     monkeypatch.setattr("harbor.core.stale.L2Generator.generate", lambda self, module: "NEW\n")
@@ -78,7 +78,7 @@ def test_l2_readme_unknown_when_no_indexed_records(tmp_path: Path, monkeypatch):
 def test_l2_readme_check_does_not_write_file(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
-    readme = tmp_path / "harbor" / "core" / "README.md"
+    readme = tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md"
     readme.parent.mkdir(parents=True, exist_ok=True)
     original = "SAME\nGenerated At: 2020-01-01T00:00:00Z\n"
     readme.write_text(original, encoding="utf-8")

@@ -118,7 +118,10 @@ def test_finish_sync_context_runs_status_check_docs_seal_stale(monkeypatch):
     monkeypatch.setattr(
         cli_main.L2Generator,
         "write",
-        lambda self, module, md, force=False: docs_written.append(module) or (Path(module) / "README.md"),
+        lambda self, module, md, force=False: docs_written.append(module) or [
+            Path(".harbor/views/l2") / module / "README.md",
+            Path(module) / "README.md",
+        ],
     )
     monkeypatch.setattr(
         cli_main,
@@ -215,9 +218,11 @@ def test_finish_sync_context_write_boundary_only_allows_docs_and_capsules(monkey
     monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# {module}")
 
     def _write_readme(self, module, md, force=False):
-        p = Path(module) / "README.md"
-        written_paths.append(p.as_posix())
-        return p
+        canonical = Path(".harbor/views/l2") / module / "README.md"
+        exported = Path(module) / "README.md"
+        written_paths.append(canonical.as_posix())
+        written_paths.append(exported.as_posix())
+        return [canonical, exported]
 
     monkeypatch.setattr(cli_main.L2Generator, "write", _write_readme)
     monkeypatch.setattr(
@@ -238,6 +243,7 @@ def test_finish_sync_context_write_boundary_only_allows_docs_and_capsules(monkey
     out = run_cmd(["finish", "--sync-context"])
     assert "Context Sync:" in out
     assert written_paths
+    assert any(path.startswith(".harbor/views/l2/") for path in written_paths)
     assert any(path.endswith("/README.md") for path in written_paths)
     assert any(path.startswith(".harbor/views/modules/") for path in written_paths)
     for path in written_paths:
@@ -263,9 +269,11 @@ def test_finish_sync_context_ignores_changed_modules_outside_workspace(monkeypat
     monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# {module}")
 
     def _write_readme(self, module, md, force=False):
-        path = Path(module) / "README.md"
-        written_paths.append(path.as_posix())
-        return path
+        canonical = Path(".harbor/views/l2") / module / "README.md"
+        exported = Path(module) / "README.md"
+        written_paths.append(canonical.as_posix())
+        written_paths.append(exported.as_posix())
+        return [canonical, exported]
 
     monkeypatch.setattr(cli_main.L2Generator, "write", _write_readme)
     monkeypatch.setattr(
@@ -288,9 +296,15 @@ def test_finish_sync_context_ignores_changed_modules_outside_workspace(monkeypat
     monkeypatch.setattr(cli_main, "write_module_capsule", _write_capsule)
     monkeypatch.setattr(cli_main, "check_module_capsule_stale", lambda context: {"status": "up_to_date"})
 
-    _ = run_cmd(["finish", "--sync-context"])
+    out = run_cmd(["finish", "--sync-context"])
+    assert "Skipped unsafe indexed modules:" in out
+    assert "outside repository root" in out
+    assert "<outside-repo>" in out
+    assert ".harbor/views/l2/harbor/core/README.md" in written_paths
     assert "harbor/core/README.md" in written_paths
     assert ".harbor/views/modules/harbor/core/module-card.md" in written_paths
     assert ".harbor/views/modules/harbor/core/review-checklist.md" in written_paths
     assert ".harbor/views/modules/harbor/core/debug-playbook.md" in written_paths
+    context_sync_output = out.split("Context Sync:", 1)[1]
+    assert "C:/Users/GM/AppData/Local/Temp/outside.py" not in context_sync_output
     assert all("C:/Users/GM/AppData/Local/Temp" not in path for path in written_paths)

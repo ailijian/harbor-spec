@@ -4,7 +4,8 @@ from pathlib import Path
 from harbor.core.storage import HarborDB
 
 
-def test_storage_migration_imports_json_to_sqlite(tmp_path):
+def test_storage_migration_imports_json_to_sqlite(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
     cache_dir = Path(".harbor") / "cache"
     cache_dir.mkdir(parents=True, exist_ok=True)
     json_path = cache_dir / "l3_index.json"
@@ -40,4 +41,3 @@ def test_storage_migration_imports_json_to_sqlite(tmp_path):
     # 备份文件存在
     backups = list(cache_dir.glob("l3_index.json.bak-*"))
     assert backups, "expected backup file after migration"
-

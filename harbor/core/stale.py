@@ -70,12 +70,12 @@ def check_l2_readme_stale(module: str, *, generator: Optional[L2Generator] = Non
 
     gen = generator or L2Generator()
     expected = gen.generate(normalized)
-    readme_path = Path(normalized) / "README.md"
+    readme_path = gen.canonical_readme_path(normalized)
     if not readme_path.exists():
         return ViewStaleResult(
             view="L2 README",
             status="stale",
-            reason="README.md not found",
+            reason="canonical README.md not found",
             suggested_command=suggest,
         )
 

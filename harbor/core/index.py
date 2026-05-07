@@ -127,7 +127,9 @@ class IndexBuilder:
         self.adapter = PythonAdapter()
         self.exclude_paths = cfg.get("exclude_paths", [])
         self.gitignore = GitIgnoreMatcher.from_root(cfg_excludes=self.exclude_paths)
-        self.db = HarborDB(project_root=Path.cwd())
+        # Keep SQLite storage colocated with the selected cache directory so
+        # tests/workspaces using isolated cache roots never write to repo-global cache.
+        self.db = HarborDB(db_path=self.cache_dir / "harbor.db", project_root=Path.cwd())
         self.max_workers = max_workers or os.cpu_count() or 1
         try:
             self.db.migrate_from_json(self.cache_file)

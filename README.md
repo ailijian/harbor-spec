@@ -231,6 +231,11 @@ harbor docs --all --write
 说明：
 - 默认 preview，不写文件。
 - 只有 `--write` 才会写 README。
+- canonical L2 README 路径为 `.harbor/views/l2/<module>/README.md`。
+- 默认会额外导出 `<module>/README.md`（`l2.export.module_readme.enabled=true`）。
+- `l2.export.module_readme.enabled=false` 时仅写 canonical L2 README。
+- L2 metadata canonical 路径为 `.harbor/views/l2/_meta.json`。
+- legacy `.harbor/l2_meta.json` 仅读取兼容，不再作为写入目标。
 - `--module`、`--changed`、`--all` 三种模式互斥。
 
 ### Module Capsule
@@ -401,7 +406,7 @@ harbor module promote-skill harbor/core
 
 说明：
 - Module Capsule 是派生维护视图，不是事实源。
-- 它不替代 L2 README（`<module>/README.md`）。
+- 它不替代 L2 README（canonical：`.harbor/views/l2/<module>/README.md`，可选导出：`<module>/README.md`）。
 - `seal <module>`：刷新单模块 capsule。
 - `seal --changed`：刷新变更模块的 capsule。
 - `seal --all`：刷新全部已索引模块的 capsule。

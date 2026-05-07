@@ -985,12 +985,26 @@ Optional export target:
 
 This is a sensitive compatibility area because many users expect module README files to live next to source modules.
 
+L2 metadata canonical target:
+
+```text
+.harbor/views/l2/_meta.json
+```
+
+Legacy compatibility:
+
+```text
+.harbor/l2_meta.json (read-compatible only, no longer a write target)
+```
+
 Therefore, L2 README should support configurable output:
 
 ```yaml
 l2:
   canonical_root: .harbor/views/l2
-  export_to_module_readme: true
+  export:
+    module_readme:
+      enabled: true
 ```
 
 ## 9.4 Diary

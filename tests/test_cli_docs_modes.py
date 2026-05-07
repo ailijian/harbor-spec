@@ -94,7 +94,7 @@ def test_changed_modules_detect_and_generate_each(monkeypatch):
     assert "Changed modules detected:" in out
     assert "- harbor/cli" in out
     assert "- harbor/core" in out
-    assert "Preview only. Use --write to update files." in out
+    assert "Preview only. Use --write to update canonical L2 README files" in out
     assert generated == ["harbor/cli", "harbor/core"]
     assert wrote == []
 
@@ -119,6 +119,23 @@ def test_collect_all_indexed_modules_from_index_records(tmp_path: Path):
     assert modules == ["harbor/cli", "harbor/core"]
 
 
+def test_collect_all_indexed_modules_normalizes_repo_absolute_file_paths(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    idx_path = tmp_path / "l3_index.json"
+    payload = {
+        "files": {
+            str((tmp_path / "harbor" / "core" / "l2.py").resolve()): {"items": [{"id": "a"}]},
+            str((tmp_path / "harbor" / "cli" / "main.py").resolve()): {"items": [{"id": "b"}]},
+            "C:/Users/GM/AppData/Local/Temp/outside.py": {"items": [{"id": "c"}]},
+        }
+    }
+    idx_path.write_text(json.dumps(payload), encoding="utf-8")
+    modules = collect_all_indexed_modules(index_path=idx_path)
+    assert "harbor/cli" in modules
+    assert "harbor/core" in modules
+    assert "C:/Users/GM/AppData/Local/Temp" in modules
+
+
 def test_docs_all_preview_does_not_write(monkeypatch):
     monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda: ["harbor/cli", "harbor/core"])
     monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# Module: {module}")
@@ -130,8 +147,8 @@ def test_docs_all_preview_does_not_write(monkeypatch):
 
     monkeypatch.setattr(cli_main.L2Generator, "write", _write)
     out = run_cmd(["docs", "--all"])
-    assert "Generating L2 README for all indexed modules:" in out
-    assert "Preview only. Use --write to update files." in out
+    assert "Generating canonical L2 README for all indexed modules:" in out
+    assert "Preview only. Use --write to update canonical L2 README files" in out
     assert write_calls["count"] == 0
 
 
@@ -146,13 +163,193 @@ def test_docs_all_write_updates_each_module(monkeypatch):
 
     def _write(self, module, md, force=False):
         wrote.append(module)
-        return Path(module) / "README.md"
+        return [
+            Path(".harbor/views/l2") / module / "README.md",
+            Path(module) / "README.md",
+        ]
 
     monkeypatch.setattr(cli_main.L2Generator, "generate", _gen)
     monkeypatch.setattr(cli_main.L2Generator, "write", _write)
     out = run_cmd(["docs", "--all", "--write"])
     assert "Updated:" in out
+    assert "- .harbor/views/l2/harbor/cli/README.md" in out
+    assert "- .harbor/views/l2/harbor/core/README.md" in out
     assert "- harbor/cli/README.md" in out
     assert "- harbor/core/README.md" in out
     assert generated == ["harbor/cli", "harbor/core"]
     assert wrote == ["harbor/cli", "harbor/core"]
+
+
+def test_docs_module_write_canonical_first_and_filters_meta(monkeypatch):
+    monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# Module: {module}")
+
+    def _write(self, module, md, force=False):
+        return [
+            Path(".harbor/views/l2") / module / "README.md",
+            Path(".harbor/views/l2/_meta.json"),
+            Path(module) / "README.md",
+        ]
+
+    monkeypatch.setattr(cli_main.L2Generator, "write", _write)
+    out = run_cmd(["docs", "--module", "harbor/core", "--write"])
+    assert "Updated:" in out
+    assert "- .harbor/views/l2/harbor/core/README.md" in out
+    assert "- harbor/core/README.md" in out
+    assert ".harbor/views/l2/_meta.json" not in out
+    canonical_idx = out.index("- .harbor/views/l2/harbor/core/README.md")
+    export_idx = out.index("- harbor/core/README.md")
+    assert canonical_idx < export_idx
+
+
+def test_docs_all_write_skips_unsafe_indexed_modules_and_continues(monkeypatch):
+    monkeypatch.setattr(
+        cli_main,
+        "collect_all_indexed_modules",
+        lambda: ["harbor/core", "C:/Users/GM/AppData/Local/Temp/project/src", "../outside", ""],
+    )
+    generated = []
+    wrote = []
+
+    def _gen(self, module):
+        generated.append(module)
+        return f"# Module: {module}"
+
+    def _write(self, module, md, force=False):
+        wrote.append(module)
+        return [
+            Path(".harbor/views/l2") / module / "README.md",
+            Path(module) / "README.md",
+        ]
+
+    monkeypatch.setattr(cli_main.L2Generator, "generate", _gen)
+    monkeypatch.setattr(cli_main.L2Generator, "write", _write)
+
+    out = run_cmd(["docs", "--all", "--write"])
+    assert "Skipped unsafe indexed modules:" in out
+    assert "outside repository root" in out
+    assert "contains parent traversal" in out
+    assert "<outside-repo>" in out
+    assert "C:/Users/GM/AppData/Local/Temp/project/src" not in out
+    assert generated == ["harbor/core"]
+    assert wrote == ["harbor/core"]
+    assert "- .harbor/views/l2/harbor/core/README.md" in out
+    assert "- harbor/core/README.md" in out
+
+
+def test_docs_all_write_supports_repo_absolute_file_candidate(monkeypatch):
+    repo_root = Path.cwd().resolve()
+    monkeypatch.setattr(
+        cli_main,
+        "collect_all_indexed_modules",
+        lambda: [
+            f"{repo_root.as_posix()}/harbor/core/l2.py",
+            "harbor/cli/main.py",
+            "C:/Users/GM/AppData/Local/Temp/outside.py",
+        ],
+    )
+    generated = []
+    wrote = []
+
+    def _gen(self, module):
+        generated.append(module)
+        return f"# Module: {module}"
+
+    def _write(self, module, md, force=False):
+        wrote.append(module)
+        return [
+            Path(".harbor/views/l2") / module / "README.md",
+            Path(module) / "README.md",
+        ]
+
+    monkeypatch.setattr(cli_main.L2Generator, "generate", _gen)
+    monkeypatch.setattr(cli_main.L2Generator, "write", _write)
+
+    out = run_cmd(["docs", "--all", "--write"])
+    assert "Skipped unsafe indexed modules:" in out
+    assert "<outside-repo>" in out
+    assert "C:/Users/GM/AppData/Local/Temp/outside.py" not in out
+    assert generated == ["harbor/core", "harbor/cli"]
+    assert wrote == ["harbor/core", "harbor/cli"]
+    assert "- .harbor/views/l2/harbor/core/README.md" in out
+    assert "- .harbor/views/l2/harbor/cli/README.md" in out
+
+
+def test_docs_all_write_only_unsafe_modules_returns_zero_and_does_not_write(monkeypatch):
+    monkeypatch.setattr(
+        cli_main,
+        "collect_all_indexed_modules",
+        lambda: ["C:/Users/GM/AppData/Local/Temp/outside.py", "../outside", ""],
+    )
+    calls = {"write": 0}
+    monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# Module: {module}")
+
+    def _write(self, module, md, force=False):
+        calls["write"] += 1
+        return [Path(".harbor/views/l2") / module / "README.md"]
+
+    monkeypatch.setattr(cli_main.L2Generator, "write", _write)
+
+    out = run_cmd(["docs", "--all", "--write"])
+    assert "Skipped unsafe indexed modules:" in out
+    assert "outside repository root" in out
+    assert "contains parent traversal" in out
+    assert "No indexed modules found. Nothing to generate." in out
+    assert calls["write"] == 0
+
+
+def test_docs_changed_write_skips_external_changed_module_and_writes_safe(monkeypatch):
+    rep = SimpleNamespace(
+        drift=[SimpleNamespace(file_path="harbor/core/sync.py")],
+        modified=[SimpleNamespace(file_path="C:/Users/GM/AppData/Local/Temp/outside.py")],
+        contract_changed=[],
+        untracked=[],
+        missing=[],
+    )
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: rep)
+    generated = []
+    wrote = []
+
+    def _gen(self, module):
+        generated.append(module)
+        return f"# Module: {module}"
+
+    def _write(self, module, md, force=False):
+        wrote.append(module)
+        return [
+            Path(".harbor/views/l2") / module / "README.md",
+            Path(module) / "README.md",
+        ]
+
+    monkeypatch.setattr(cli_main.L2Generator, "generate", _gen)
+    monkeypatch.setattr(cli_main.L2Generator, "write", _write)
+
+    out = run_cmd(["docs", "--changed", "--write"])
+    assert "Skipped unsafe indexed modules:" in out
+    assert "outside repository root" in out
+    assert "<outside-repo>" in out
+    assert "C:/Users/GM/AppData/Local/Temp/outside.py" not in out
+    assert generated == ["harbor/core"]
+    assert wrote == ["harbor/core"]
+
+
+@pytest.mark.parametrize(
+    "unsafe_module",
+    [
+        "../outside",
+        "C:/Users/GM/AppData/Local/Temp/demo",
+        "harbor/../../outside",
+    ],
+)
+def test_docs_module_write_rejects_explicit_unsafe_module(monkeypatch, unsafe_module):
+    calls = {"write": 0}
+    monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# Module: {module}")
+
+    def _write(self, module, md, force=False):
+        calls["write"] += 1
+        return [Path(".harbor/views/l2") / module / "README.md"]
+
+    monkeypatch.setattr(cli_main.L2Generator, "write", _write)
+
+    with pytest.raises(ValueError, match="Unsafe module is not allowed"):
+        run_cmd(["docs", "--module", unsafe_module, "--write"])
+    assert calls["write"] == 0

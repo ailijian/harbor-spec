@@ -981,12 +981,26 @@ docs/harbor/modules/<module>/
 
 这是敏感兼容区，因为很多用户预期模块 README 应放在模块旁边。
 
+L2 metadata canonical target：
+
+```text
+.harbor/views/l2/_meta.json
+```
+
+legacy compatibility：
+
+```text
+.harbor/l2_meta.json (read-compatible only, no longer write target)
+```
+
 因此，L2 README 应支持可配置输出：
 
 ```yaml
 l2:
   canonical_root: .harbor/views/l2
-  export_to_module_readme: true
+  export:
+    module_readme:
+      enabled: true
 ```
 
 ## 9.4 Diary

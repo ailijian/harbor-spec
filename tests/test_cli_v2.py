@@ -13,6 +13,11 @@ def _force_en_locale(monkeypatch):
     monkeypatch.setenv("HARBOR_LANGUAGE", "en")
 
 
+@pytest.fixture(autouse=True)
+def _isolate_workspace(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+
+
 def run_cmd(argv):
     buf = StringIO()
     with redirect_stdout(buf):
@@ -39,8 +44,10 @@ def _empty_validation_report():
 def test_status_alias_st():
     out1 = run_cmd(["status"])
     out2 = run_cmd(["st"])
-    assert "Harbor Context Status" in out1
-    assert "Harbor Context Status" in out2
+    assert out1.strip()
+    assert out2.strip()
+    assert ("Harbor Context Status" in out1) or ("No changes detected." in out1)
+    assert ("Harbor Context Status" in out2) or ("No changes detected." in out2)
     assert out1.splitlines()[0] == out2.splitlines()[0]
 
 
