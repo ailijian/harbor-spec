@@ -111,8 +111,10 @@ def check_module_derived_views_stale(module: str) -> ModuleStaleSummary:
     l2_result = check_l2_readme_stale(normalized)
 
     capsule_raw = check_module_capsule_stale(context)
-    capsule_status = "up_to_date" if capsule_raw.get("status") == "up_to_date" else "stale"
     capsule_reason = capsule_raw.get("reason") or ""
+    capsule_status = "up_to_date" if capsule_raw.get("status") == "up_to_date" else "stale"
+    if capsule_reason == "no indexed records found for module":
+        capsule_status = "unknown"
     capsule_suggest = None
     if capsule_status != "up_to_date" and capsule_reason != "no indexed records found for module":
         capsule_suggest = f"harbor module seal {normalized} --write"

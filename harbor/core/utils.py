@@ -29,20 +29,24 @@ def derive_adopted_roots(file_paths: List[str], exclude_patterns: Optional[List[
         "build",
         "out",
     }
-    for fp in file_paths:
-        if not fp:
-            continue
-        s = str(fp).replace("\\", "/")
-        parts = [p for p in s.split("/") if p]
+
+    def _first_bucket(parts: List[str]) -> Optional[str]:
         if not parts:
-            continue
-        # 兼容绝对路径（如 'C:/project/...')，跳过盘符与项目根层级
+            return None
         prefix = parts[0]
         if ":" in prefix:
             if len(parts) > 2:
-                prefix = parts[2]
-            elif len(parts) > 1:
-                prefix = parts[1]
+                return parts[2]
+            if len(parts) > 1:
+                return parts[1]
+            return None
+        return prefix
+
+    for fp in file_paths:
+        if not fp:
+            continue
+        parts = [p for p in str(fp).replace("\\", "/").split("/") if p]
+        prefix = _first_bucket(parts)
         if not prefix:
             continue
         if prefix in blacklist:
@@ -50,18 +54,9 @@ def derive_adopted_roots(file_paths: List[str], exclude_patterns: Optional[List[
         if matcher.match_dir(prefix):
             continue
         buckets[prefix] = buckets.get(prefix, 0) + 1
-    out: List[str] = []
-    for pref, cnt in buckets.items():
-        if cnt >= max(min_count, 1):
-            out.append(f"{pref}/**")
-    seen = {}
-    dedup: List[str] = []
-    for p in out:
-        if p in seen:
-            continue
-        seen[p] = True
-        dedup.append(p)
-    return dedup
+    threshold = max(min_count, 1)
+    out: List[str] = [f"{pref}/**" for pref, cnt in buckets.items() if cnt >= threshold]
+    return list(dict.fromkeys(out))
 def find_function_node(source: str, lineno: int, name: str) -> Optional[ast.AST]:
     tree = ast.parse(source)
     for node in ast.walk(tree):

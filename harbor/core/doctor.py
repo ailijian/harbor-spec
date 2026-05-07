@@ -213,12 +213,14 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
             (t("cli.stale.l2"), summary.l2_readme),
             (t("cli.stale.capsule"), summary.module_capsule),
         ):
-            if view_result.status != "up_to_date":
-                status = WARN
-                reason = view_result.reason or "stale"
-                stale_details.append(f"{summary.module} {view_name} stale: {reason}")
-                if view_result.suggested_command:
-                    suggestions.append(view_result.suggested_command)
+            if view_result.status == "up_to_date":
+                continue
+            status = WARN
+            detail_status = _derived_view_detail_status(view_result.status)
+            reason = view_result.reason or detail_status
+            stale_details.append(f"{summary.module} {view_name} {detail_status}: {reason}")
+            if view_result.suggested_command:
+                suggestions.append(view_result.suggested_command)
 
     if status == PASS:
         return DoctorCheckResult(
@@ -345,6 +347,16 @@ def _status_to_json(status: str) -> str:
         SKIP: "skip",
     }
     return mapping.get(status, status.lower())
+
+
+def _derived_view_detail_status(status: str) -> str:
+    if status == "unknown":
+        return "unknown"
+    if status == "stale":
+        return "stale"
+    if status == "up_to_date":
+        return "up to date"
+    return (status or "stale").replace("_", " ")
 
 
 _WINDOWS_ABS_PATH_RE = re.compile(r"(?i)\b[a-z]:[\\/][^\s\"']+")

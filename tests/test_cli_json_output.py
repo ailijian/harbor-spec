@@ -165,3 +165,26 @@ def test_json_output_does_not_include_absolute_paths(monkeypatch):
 
     assert re.search(r"(?i)[a-z]:[\\/]", stale_out) is None
     assert re.search(r"(?i)[a-z]:[\\/]", doctor_out) is None
+
+
+def test_doctor_json_derived_view_detail_keeps_unknown_semantics(monkeypatch):
+    monkeypatch.setattr(
+        cli_main,
+        "build_doctor_report",
+        lambda scope, modules: DoctorReport(
+            scope=scope,
+            checks=[
+                DoctorCheckResult(
+                    "Derived Views",
+                    WARN,
+                    ["tests/fixtures_sqlite L2 README unknown: no indexed records found for module"],
+                    [],
+                )
+            ],
+        ),
+    )
+    out = run_cmd(["doctor", "--module", "tests/fixtures_sqlite", "--format", "json"])
+    payload = json.loads(out)
+    details = payload["checks"][0]["details"]
+    assert any("unknown: no indexed records found for module" in item for item in details)
+    assert all("stale: no indexed records found for module" not in item for item in details)

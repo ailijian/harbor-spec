@@ -355,7 +355,7 @@ def main():
     p_project_sub = p_project.add_subparsers(dest="project_cmd", required=True)
     p_project_structure = p_project_sub.add_parser(
         "structure",
-        help="Preview or write project structure view",
+        help="Preview or write derived project structure view",
     )
     p_project_structure.add_argument(
         "--write",
@@ -588,7 +588,17 @@ def main():
         changed_paths.extend([e.file_path for e in rep.contract_changed])
         changed_paths.extend([e.file_path for e in rep.untracked])
         changed_paths.extend([e.file_path for e in rep.missing])
-        return collect_modules_from_paths(changed_paths)
+        cwd = Path.cwd().resolve()
+        workspace_paths = []
+        for raw_path in changed_paths:
+            p = Path(str(raw_path))
+            abs_path = p if p.is_absolute() else (cwd / p)
+            try:
+                rel = abs_path.resolve().relative_to(cwd).as_posix()
+            except Exception:
+                continue
+            workspace_paths.append(rel)
+        return collect_modules_from_paths(workspace_paths)
 
     def _collect_changed_modules():
         rep = SyncEngine().check_status()

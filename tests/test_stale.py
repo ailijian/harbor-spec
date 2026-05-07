@@ -104,3 +104,11 @@ def test_check_module_derived_views_stale_returns_both_views(tmp_path: Path, mon
     assert summary.module_capsule.status == "stale"
     assert summary.module_capsule.reason == "module-card.md not found"
 
+
+def test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_index(tmp_path)
+    summary = check_module_derived_views_stale("harbor/unknown")
+    assert summary.l2_readme.status == "unknown"
+    assert summary.module_capsule.status == "unknown"
+    assert summary.module_capsule.reason == "no indexed records found for module"

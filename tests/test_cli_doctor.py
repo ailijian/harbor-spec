@@ -130,3 +130,21 @@ def test_doctor_is_advisory_and_does_not_trigger_write_or_llm_paths(monkeypatch)
 
     _ = run_cmd(["doctor"])
     assert calls == {"docs_write": 0, "capsule_write": 0, "lock": 0, "log": 0, "promote": 0, "semantic": 0}
+
+
+def test_doctor_text_output_uses_unknown_for_no_indexed_records(monkeypatch):
+    report = DoctorReport(
+        scope="module: harbor/unknown",
+        checks=[
+            DoctorCheckResult(
+                "Derived Views",
+                "WARN",
+                ["harbor/unknown L2 README unknown: no indexed records found for module"],
+                [],
+            )
+        ],
+    )
+    monkeypatch.setattr(cli_main, "build_doctor_report", lambda scope, modules: report)
+    out = run_cmd(["doctor", "--module", "harbor/unknown"])
+    assert "unknown: no indexed records found for module" in out
+    assert "stale: no indexed records found for module" not in out

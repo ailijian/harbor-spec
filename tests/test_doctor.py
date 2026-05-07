@@ -72,6 +72,29 @@ def test_derived_views_check_reuses_stale_results(monkeypatch):
     assert any("harbor docs --module harbor/core --write" in s for s in result.suggestions)
 
 
+def test_derived_views_check_marks_unknown_detail_as_unknown_not_stale(monkeypatch):
+    def _unknown_summary(module):
+        return SimpleNamespace(
+            module=module,
+            l2_readme=SimpleNamespace(
+                status="unknown",
+                reason="no indexed records found for module",
+                suggested_command=None,
+            ),
+            module_capsule=SimpleNamespace(
+                status="unknown",
+                reason="no indexed records found for module",
+                suggested_command=None,
+            ),
+        )
+
+    monkeypatch.setattr(doctor, "check_module_derived_views_stale", _unknown_summary)
+    result = doctor.run_derived_views_check(["tests/fixtures_sqlite"])
+    assert result.status == doctor.WARN
+    assert any("unknown: no indexed records found for module" in d for d in result.details)
+    assert all("stale: no indexed records found for module" not in d for d in result.details)
+
+
 def test_skill_reference_check_skips_when_agents_skills_missing(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     result = doctor.run_skill_reference_check()
@@ -122,4 +145,3 @@ def test_build_doctor_report_is_read_only(monkeypatch):
     monkeypatch.setattr(Path, "write_text", _write_forbidden, raising=False)
     report = doctor.build_doctor_report(scope="changed modules", modules=["harbor/core"])
     assert len(report.checks) == 5
-

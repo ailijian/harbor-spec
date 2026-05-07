@@ -240,3 +240,54 @@ def test_finish_sync_context_write_boundary_only_allows_docs_and_capsules(monkey
     for path in written_paths:
         assert all(marker not in path for marker in forbidden_markers)
 
+
+def test_finish_sync_context_ignores_changed_modules_outside_workspace(monkeypatch):
+    _patch_finish_basics(monkeypatch)
+    monkeypatch.setattr(
+        cli_main.SyncEngine,
+        "check_status",
+        lambda self: SimpleNamespace(
+            counts={"drift": 1, "contract_changed": 0, "modified": 1, "untracked": 0, "missing": 0},
+            drift=[SimpleNamespace(id="a", details="x", file_path="harbor/core/sync.py")],
+            contract_changed=[],
+            modified=[SimpleNamespace(id="b", details="y", file_path="C:/Users/GM/AppData/Local/Temp/outside.py")],
+            untracked=[],
+            missing=[],
+        ),
+    )
+
+    written_paths = []
+    monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# {module}")
+
+    def _write_readme(self, module, md, force=False):
+        path = Path(module) / "README.md"
+        written_paths.append(path.as_posix())
+        return path
+
+    monkeypatch.setattr(cli_main.L2Generator, "write", _write_readme)
+    monkeypatch.setattr(
+        cli_main,
+        "collect_module_context",
+        lambda module: {"module": module, "key_files": [f"{module}/x.py"], "contracts": []},
+    )
+
+    def _write_capsule(context):
+        module = context.get("module", "")
+        rel_base = Path("docs/harbor/modules") / module
+        paths = [
+            rel_base / "module-card.md",
+            rel_base / "review-checklist.md",
+            rel_base / "debug-playbook.md",
+        ]
+        written_paths.extend([p.as_posix() for p in paths])
+        return paths
+
+    monkeypatch.setattr(cli_main, "write_module_capsule", _write_capsule)
+    monkeypatch.setattr(cli_main, "check_module_capsule_stale", lambda context: {"status": "up_to_date"})
+
+    _ = run_cmd(["finish", "--sync-context"])
+    assert "harbor/core/README.md" in written_paths
+    assert "docs/harbor/modules/harbor/core/module-card.md" in written_paths
+    assert "docs/harbor/modules/harbor/core/review-checklist.md" in written_paths
+    assert "docs/harbor/modules/harbor/core/debug-playbook.md" in written_paths
+    assert all("C:/Users/GM/AppData/Local/Temp" not in path for path in written_paths)
