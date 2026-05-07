@@ -25,7 +25,13 @@
 - `harbor doctor` Derived Views now include:
   - module README export advisory (`l2_readme_export`)
   - legacy metadata advisory when `.harbor/l2_meta.json` is detected
+- `harbor doctor` Derived Views now also include legacy diary advisory when `specs/diary/*.jsonl` exists:
+  - `specs/diary` is legacy read-compatible diary storage
+  - canonical diary path is `.harbor/diary`
+  - new diary entries are written to `.harbor/diary`
+  - no automatic cleanup/migration/deletion is performed
 - Export mismatch and legacy metadata are advisory WARN signals (not FAIL), and no automatic cleanup/migration is performed.
+- Legacy diary advisory is WARN-only (not FAIL), appears once even if multiple legacy files exist, and does not appear for empty `specs/diary/`.
 - `harbor project structure` (without `--write`) remains preview-only and writes nothing.
 - `.gitignore` no longer uses broad `.harbor/` ignore; Harbor tracking now uses subdirectory-level policies.
 - Default tracked Harbor workspace assets include `.harbor/config/`, `.harbor/policy/`, `.harbor/views/project-structure.md`, `.harbor/diary/`, and selected `.harbor/reports/`.
@@ -35,6 +41,7 @@
 - Legacy `docs/harbor/project-structure.md` is not deleted or auto-migrated in this phase.
 - Legacy `.harbor/l2_meta.json` is not deleted or auto-migrated in this phase.
 - Legacy `specs/diary/*.jsonl` is not deleted or auto-migrated in this phase.
+- `harbor stale` text/json outputs do not include diary advisory; diary legacy advisory is scoped to `harbor doctor`.
 - Legacy `tests/fixtures_sqlite/README.md` is kept as a legacy L2 export artifact in this phase.
 - Legacy `docs/harbor/modules/*` files are not deleted or auto-migrated in this phase.
 

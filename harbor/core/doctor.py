@@ -230,7 +230,7 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
             if view_result.status == "disabled":
                 stale_details.append(f"{summary.module} {view_name} disabled: {view_result.reason or 'disabled'}")
                 continue
-            status = WARN
+            status = _merge_status(status, WARN)
             detail_status = _derived_view_detail_status(view_result.status)
             reason = view_result.reason or detail_status
             stale_details.append(f"{summary.module} {view_name} {detail_status}: {reason}")
@@ -239,9 +239,18 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
 
     legacy_meta = Path(".harbor") / "l2_meta.json"
     if legacy_meta.exists():
-        status = WARN
+        status = _merge_status(status, WARN)
         stale_details.append(t("cli.doctor.derived_views.legacy_meta_detected"))
         stale_details.append(t("cli.doctor.derived_views.legacy_meta_canonical"))
+
+    legacy_diary_pattern = Path("specs") / "diary"
+    has_legacy_diary_jsonl = any(path.is_file() for path in legacy_diary_pattern.glob("*.jsonl"))
+    if has_legacy_diary_jsonl:
+        status = _merge_status(status, WARN)
+        stale_details.append(t("cli.doctor.derived_views.legacy_diary_advisory"))
+        stale_details.append(t("cli.doctor.derived_views.legacy_diary_canonical"))
+        stale_details.append(t("cli.doctor.derived_views.legacy_diary_new_writes"))
+        stale_details.append(t("cli.doctor.derived_views.legacy_diary_no_auto_migration"))
 
     if status == PASS and not stale_details:
         return DoctorCheckResult(
@@ -252,7 +261,7 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
         )
     return DoctorCheckResult(
         name=t("cli.doctor.derived_views"),
-        status=(PASS if status == PASS else WARN),
+        status=status,
         details=stale_details,
         suggestions=_unique(suggestions),
     )
@@ -386,6 +395,13 @@ def _status_to_json(status: str) -> str:
         SKIP: "skip",
     }
     return mapping.get(status, status.lower())
+
+
+def _merge_status(current: str, incoming: str) -> str:
+    rank = {PASS: 0, WARN: 1, FAIL: 2}
+    cur_rank = rank.get(current, 0)
+    incoming_rank = rank.get(incoming, 0)
+    return current if cur_rank >= incoming_rank else incoming
 
 
 def _derived_view_detail_status(status: str) -> str:

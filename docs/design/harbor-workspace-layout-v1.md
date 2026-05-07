@@ -1302,6 +1302,11 @@ canonical 不可用时，export 状态为 unknown/skipped，不执行 out-of-syn
 export disabled 必须显式展示为 disabled 且不计入 warn
 legacy .harbor/l2_meta.json advisory 仅由 harbor doctor 提示（stale 不提示）
 doctor 可因 export mismatch / legacy metadata 给出 WARN，但不应 FAIL
+legacy diary advisory（specs/diary/*.jsonl）仅由 harbor doctor 提示（stale 文本/JSON 不提示）
+该 diary advisory 属于 workspace layout / project memory 提示，不属于 derived view freshness
+specs/diary 仅在存在 *.jsonl 时提示；空目录不提示；多个 legacy 文件只提示一条
+doctor 对 legacy diary 只做 read-compatible advisory：canonical 为 .harbor/diary，新写入仅 .harbor/diary
+不自动迁移、不自动删除、不写 specs/diary
 ```
 
 ## 13.3 `harbor finish --sync-context`

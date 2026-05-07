@@ -89,6 +89,8 @@ def test_stale_module_mode_runs(monkeypatch):
     assert "- Module Capsule: stale" in out
     assert "harbor docs --module harbor/core --write" in out
     assert "harbor module seal harbor/core --write" in out
+    assert "specs/diary" not in out
+    assert ".harbor/diary" not in out
 
 
 def test_stale_modes_are_mutually_exclusive():

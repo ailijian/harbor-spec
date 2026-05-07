@@ -212,6 +212,9 @@ Key semantics:
 - `harbor doctor` is a top-level read-only aggregate health check command (advisory, no auto-fix).
 - `harbor doctor` aggregates Config/Index, Workspace Status, DDT Fast, Derived Views, and Skill References checks.
 - `harbor doctor` does not write files, does not auto-lock, and does not auto-log.
+- When `specs/diary/*.jsonl` exists, `harbor doctor` emits a legacy diary advisory (workspace layout / project memory guidance, not a derived-view freshness signal).
+- Legacy diary advisory appears only when at least one `*.jsonl` exists; an empty `specs/diary` directory does not trigger it.
+- Diary advisory is WARN-only (not FAIL), with no automatic migration or deletion of `specs/diary`.
 - `harbor stale` is a top-level read-only aggregate check for both L2 README and Module Capsule freshness.
 - `harbor stale` checks changed modules by default; use `--all` or `--module <module>` for other scopes.
 - canonical L2 freshness in `harbor stale` is determined only by `.harbor/views/l2/<module>/README.md`.
@@ -278,6 +281,8 @@ Notes:
 - `harbor doctor` is a top-level read-only health aggregate check and defaults to `harbor doctor --changed`.
 - `harbor doctor` does not fix issues and never writes docs/capsule/skill files.
 - `harbor doctor` Derived Views include `l2_readme_export` advisory and legacy `.harbor/l2_meta.json` advisory (read-compatible note only; no auto-migration/deletion).
+- `harbor doctor` also shows a legacy diary advisory when `specs/diary/*.jsonl` exists: `specs/diary` stays legacy read-compatible, canonical path is `.harbor/diary`, new entries write to `.harbor/diary`, and no auto-migration/deletion is performed.
+- `harbor stale` (text and JSON) does not include diary advisory.
 - `harbor stale --format json` and `harbor doctor --format json` emit deterministic machine-readable JSON (stdout contains JSON only).
 - JSON output is advisory read-only output and does not trigger fix/write/lock/log actions.
 - This MVP does not change exit-code behavior; CI gate mode (for example, `--ci`) will be added in a later step.

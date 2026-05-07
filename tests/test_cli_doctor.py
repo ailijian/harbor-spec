@@ -148,3 +148,27 @@ def test_doctor_text_output_uses_unknown_for_no_indexed_records(monkeypatch):
     out = run_cmd(["doctor", "--module", "harbor/unknown"])
     assert "unknown: no indexed records found for module" in out
     assert "stale: no indexed records found for module" not in out
+
+
+def test_doctor_text_output_includes_legacy_diary_advisory(monkeypatch):
+    report = DoctorReport(
+        scope="module: harbor/core",
+        checks=[
+            DoctorCheckResult(
+                "Derived Views",
+                "WARN",
+                [
+                    "workspace layout/project memory advisory: legacy diary storage detected at specs/diary (not a derived view freshness signal)",
+                    "canonical diary path: .harbor/diary",
+                    "new diary entries are written to .harbor/diary",
+                    "no automatic cleanup or migration is performed for specs/diary",
+                ],
+                [],
+            )
+        ],
+    )
+    monkeypatch.setattr(cli_main, "build_doctor_report", lambda scope, modules: report)
+    out = run_cmd(["doctor", "--module", "harbor/core"])
+    assert "workspace layout/project memory advisory" in out
+    assert "specs/diary" in out
+    assert ".harbor/diary" in out

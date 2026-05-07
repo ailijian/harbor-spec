@@ -105,7 +105,9 @@ def test_derived_views_check_marks_unknown_detail_as_unknown_not_stale(monkeypat
     assert all("stale: no indexed records found for module" not in d for d in result.details)
 
 
-def test_derived_views_check_shows_disabled_without_counting_warn(monkeypatch):
+def test_derived_views_check_shows_disabled_without_counting_warn(monkeypatch, tmp_path: Path):
+    monkeypatch.chdir(tmp_path)
+
     def _disabled_summary(module):
         return SimpleNamespace(
             module=module,
@@ -137,6 +139,59 @@ def test_derived_views_check_warns_for_legacy_metadata_but_never_fail(monkeypatc
     assert result.status == doctor.WARN
     assert all("FAIL" not in d for d in result.details)
     assert any(".harbor/l2_meta.json" in d for d in result.details)
+
+
+def test_derived_views_check_warns_for_legacy_diary_jsonl(monkeypatch, tmp_path: Path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(doctor, "check_module_derived_views_stale", lambda module: _sample_summary(module, stale=False))
+    legacy_dir = tmp_path / "specs" / "diary"
+    legacy_dir.mkdir(parents=True, exist_ok=True)
+    (legacy_dir / "2026-05.jsonl").write_text('{"summary":"legacy"}\n', encoding="utf-8")
+    result = doctor.run_derived_views_check(["harbor/core"])
+    assert result.status == doctor.WARN
+    assert any("workspace layout/project memory advisory" in d for d in result.details)
+    assert any("specs/diary" in d for d in result.details)
+    assert all("FAIL" not in d for d in result.details)
+
+
+def test_derived_views_check_legacy_diary_empty_dir_no_warning(monkeypatch, tmp_path: Path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(doctor, "check_module_derived_views_stale", lambda module: _sample_summary(module, stale=False))
+    (tmp_path / "specs" / "diary").mkdir(parents=True, exist_ok=True)
+    result = doctor.run_derived_views_check(["harbor/core"])
+    assert result.status == doctor.PASS
+    assert all("specs/diary" not in d for d in result.details)
+
+
+def test_derived_views_check_legacy_diary_coexistence_single_advisory_and_no_mutation(monkeypatch, tmp_path: Path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(doctor, "check_module_derived_views_stale", lambda module: _sample_summary(module, stale=False))
+    canonical_dir = tmp_path / ".harbor" / "diary"
+    canonical_dir.mkdir(parents=True, exist_ok=True)
+    (canonical_dir / "2026-05.jsonl").write_text('{"summary":"canonical"}\n', encoding="utf-8")
+
+    legacy_dir = tmp_path / "specs" / "diary"
+    legacy_dir.mkdir(parents=True, exist_ok=True)
+    legacy_a = legacy_dir / "2026-05.jsonl"
+    legacy_b = legacy_dir / "2026-06.jsonl"
+    legacy_a.write_text('{"summary":"legacy-a"}\n', encoding="utf-8")
+    legacy_b.write_text('{"summary":"legacy-b"}\n', encoding="utf-8")
+    before_content = legacy_a.read_text(encoding="utf-8")
+    before_mtime_ns = legacy_a.stat().st_mtime_ns
+
+    result = doctor.run_derived_views_check(["harbor/core"])
+    assert result.status == doctor.WARN
+    assert sum(1 for d in result.details if "workspace layout/project memory advisory" in d) == 1
+    assert any(".harbor/diary" in d for d in result.details)
+    assert legacy_a.read_text(encoding="utf-8") == before_content
+    assert legacy_a.stat().st_mtime_ns >= before_mtime_ns
+
+
+def test_merge_status_never_downgrades_fail():
+    assert doctor._merge_status(doctor.PASS, doctor.WARN) == doctor.WARN
+    assert doctor._merge_status(doctor.WARN, doctor.WARN) == doctor.WARN
+    assert doctor._merge_status(doctor.FAIL, doctor.WARN) == doctor.FAIL
+    assert doctor._merge_status(doctor.FAIL, doctor.PASS) == doctor.FAIL
 
 
 def test_skill_reference_check_skips_when_agents_skills_missing(tmp_path: Path, monkeypatch):

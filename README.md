@@ -207,6 +207,9 @@ harbor accept
 - `harbor doctor` 是顶层只读健康检查聚合命令（advisory，不自动修复）。
 - `harbor doctor` 聚合检查 Config/Index、Workspace Status、DDT Fast、Derived Views、Skill References。
 - `harbor doctor` 不写文件、不自动 lock、不自动 log。
+- 若存在 `specs/diary/*.jsonl`，`harbor doctor` 会给出 legacy diary advisory（workspace layout / project memory 提示，不属于 derived view freshness）。
+- `harbor doctor` 的 legacy diary advisory 仅在存在 `*.jsonl` 时出现；`specs/diary` 空目录不提示。
+- diary advisory 为 WARN 提示，不是 FAIL；不会自动迁移或删除 `specs/diary`。
 - `harbor stale` 是只读聚合检查：同时检查 L2 README 与 Module Capsule 的新鲜度。
 - `harbor stale` 默认检查 changed modules；可用 `--all` 或 `--module <module>` 切换范围。
 - `harbor stale` 的 canonical L2 freshness 仅由 `.harbor/views/l2/<module>/README.md` 判定。
@@ -273,6 +276,8 @@ harbor doctor --format json
 - `harbor doctor` 是顶层只读健康检查聚合；默认等价 `harbor doctor --changed`。
 - `harbor doctor` 不会自动修复，也不会写入 docs / capsule / skill。
 - `harbor doctor` 的 Derived Views 会显示 `l2_readme_export` advisory 与 legacy `.harbor/l2_meta.json` advisory（只读兼容提示，不自动迁移/删除）。
+- `harbor doctor` 还会在检测到 `specs/diary/*.jsonl` 时显示 legacy diary advisory：`specs/diary` 为 legacy read-compatible，canonical 路径是 `.harbor/diary`，新条目写入 `.harbor/diary`，不自动迁移/删除。
+- `harbor stale`（文本与 JSON）不会显示 diary advisory。
 - `harbor stale --format json` 与 `harbor doctor --format json` 输出稳定机器可读 JSON（stdout 仅 JSON）。
 - JSON 输出是 advisory read-only 视图，不会触发修复、写入或 lock/log。
 - 当前 MVP 不改变 exit-code 行为；CI gate（如 `--ci`）将在后续版本提供。

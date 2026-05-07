@@ -90,6 +90,8 @@ def test_stale_json_output_has_required_fields_and_no_extra_text(monkeypatch):
     assert payload["writes_files"] is False
     view_names = [v["view"] for v in payload["modules"][0]["views"]]
     assert "l2_readme_export" in view_names
+    assert "specs/diary" not in out
+    assert ".harbor/diary" not in out
     assert out.strip() == json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
 
 
@@ -197,3 +199,34 @@ def test_doctor_json_derived_view_detail_keeps_unknown_semantics(monkeypatch):
     details = payload["checks"][0]["details"]
     assert any("unknown: no indexed records found for module" in item for item in details)
     assert all("stale: no indexed records found for module" not in item for item in details)
+
+
+def test_doctor_json_includes_legacy_diary_advisory(monkeypatch):
+    monkeypatch.setattr(
+        cli_main,
+        "build_doctor_report",
+        lambda scope, modules: DoctorReport(
+            scope=scope,
+            checks=[
+                DoctorCheckResult(
+                    "Derived Views",
+                    WARN,
+                    [
+                        "workspace layout/project memory advisory: legacy diary storage detected at specs/diary (not a derived view freshness signal)",
+                        "canonical diary path: .harbor/diary",
+                        "new diary entries are written to .harbor/diary",
+                        "no automatic cleanup or migration is performed for specs/diary",
+                    ],
+                    [],
+                )
+            ],
+        ),
+    )
+    out = run_cmd(["doctor", "--module", "harbor/core", "--format", "json"])
+    payload = json.loads(out)
+    details = payload["checks"][0]["details"]
+    assert any("workspace layout/project memory advisory" in item for item in details)
+    assert any("specs/diary" in item for item in details)
+    assert any(".harbor/diary" in item for item in details)
+    assert re.search(r"(?i)[a-z]:[\\/]", out) is None
+    assert out.strip() == json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)

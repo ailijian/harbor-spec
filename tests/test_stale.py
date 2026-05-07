@@ -231,3 +231,5 @@ def test_stale_json_contains_l2_readme_export_view_name(tmp_path: Path, monkeypa
     view_names = [item["view"] for item in loaded["modules"][0]["views"]]
     assert "l2_readme" in view_names
     assert "l2_readme_export" in view_names
+    assert "specs/diary" not in dumped
+    assert ".harbor/diary" not in dumped
