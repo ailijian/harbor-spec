@@ -1128,6 +1128,22 @@ Phase 2F-B（Workspace Migrate Dry-run MVP）补充约束：
 若未传 --dry-run，应报错提示当前版本仅支持 --dry-run
 ```
 
+Phase 2F-C（Release Hardening & Workspace Layout Freeze）补充约束：
+
+```text
+本阶段不实现 harbor workspace migrate --write
+本阶段不新增功能命令
+本阶段不复制/移动/删除 legacy 文件
+.harbor/ 是 canonical Harbor workspace
+docs/design/ 是人工设计文档
+docs/harbor/ 是 optional docs export，不是 canonical storage
+.agents/skills/ 是外部集成 export target
+specs/diary/ 与 .harbor/l2_meta.json 仅 legacy read-compatible，不是 canonical 写入目标
+module README 是 export target，不是 canonical 存储
+harbor workspace inspect 是只读
+harbor workspace migrate --dry-run 是只读
+```
+
 ## 10.4 v2.0 可能行为
 
 将 `.harbor/views/` 作为默认 canonical 位置。

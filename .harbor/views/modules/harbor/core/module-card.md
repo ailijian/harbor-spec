@@ -1,7 +1,7 @@
 ---
 harbor_capsule_version: 1
 module: harbor/core
-fingerprint: b7ce703e3bb915ae6da0e95c1a7e9d2021ffc87e77b466abce632ebbcfe28b50
+fingerprint: 168c75f9df87ad556bb08a958af4ef985f8129a33cf1aa18f096589ce1421e55
 source_files:
 - harbor/core/__init__.py
 - harbor/core/audit.py
@@ -486,6 +486,8 @@ tests/test_cli_module_capsule_stale.py
 tests/test_cli_module_skill.py
 tests/test_cli_project_structure.py
 tests/test_cli_stale.py
+tests/test_cli_workspace_inspect.py
+tests/test_cli_workspace_migrate.py
 tests/test_ddt_validate.py
 tests/test_decorator_engine.py
 tests/test_diary_workspace_paths.py
@@ -506,6 +508,8 @@ tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_utils_format.py
 tests/test_workspace_gitignore_policy.py
+tests/test_workspace_inspect.py
+tests/test_workspace_migrate.py
 tests/test_workspace_paths.py
 ```
 

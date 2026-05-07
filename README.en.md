@@ -217,6 +217,7 @@ Key semantics:
 - `harbor workspace migrate --dry-run` is a read-only migration-planning command that only generates a migration plan.
 - `harbor workspace migrate --dry-run` does not copy/move/delete files, does not modify config, does not modify `.gitignore`, and does not migrate diary data.
 - In this version, `harbor workspace migrate` must be called with `--dry-run`; otherwise it errors and explains that only dry-run is supported.
+- `harbor workspace migrate --write` is **not implemented** in the current version; release hardening only validates dry-run behavior.
 - When `specs/diary/*.jsonl` exists, `harbor doctor` emits a legacy diary advisory (workspace layout / project memory guidance, not a derived-view freshness signal).
 - Legacy diary advisory appears only when at least one `*.jsonl` exists; an empty `specs/diary` directory does not trigger it.
 - Diary advisory is WARN-only (not FAIL), with no automatic migration or deletion of `specs/diary`.

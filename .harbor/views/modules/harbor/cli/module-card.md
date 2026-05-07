@@ -1,7 +1,7 @@
 ---
 harbor_capsule_version: 1
 module: harbor/cli
-fingerprint: 36f6cb597776ccaa93a9a02af1d192ee9573752b1eeccdb8c31f67ce32d5fde6
+fingerprint: a81e66fce2574a8c91c491fc5b777d8ad10338df965b0ac6c504f8b4b565312c
 source_files:
 - harbor/cli/__init__.py
 - harbor/cli/main.py
@@ -57,6 +57,8 @@ tests/test_cli_module_skill.py
 tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_cli_v2.py
+tests/test_cli_workspace_inspect.py
+tests/test_cli_workspace_migrate.py
 ```
 
 ## Review Focus

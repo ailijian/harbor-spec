@@ -1132,6 +1132,22 @@ no diary migration
 if --dry-run is missing, return an error that only --dry-run is supported in this version
 ```
 
+Phase 2F-C (Release Hardening & Workspace Layout Freeze) constraints:
+
+```text
+Do not implement harbor workspace migrate --write in this phase
+Do not add new functional commands in this phase
+Do not copy/move/delete legacy files in this phase
+.harbor/ is the canonical Harbor workspace
+docs/design/ contains human-authored design docs
+docs/harbor/ is an optional docs export target, not canonical storage
+.agents/skills/ is an external integration export target
+specs/diary/ and .harbor/l2_meta.json are legacy read-compatible only, not canonical write targets
+module README files are export targets, not canonical storage
+harbor workspace inspect is read-only
+harbor workspace migrate --dry-run is read-only
+```
+
 ## 10.4 v2.0 possible behavior
 
 Make `.harbor/views/` the default canonical location.

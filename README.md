@@ -212,6 +212,7 @@ harbor accept
 - `harbor workspace migrate --dry-run` 是只读迁移计划命令：仅生成 migration plan，不执行真实迁移。
 - `harbor workspace migrate --dry-run` 不复制/移动/删除文件，不修改 config，不修改 `.gitignore`，不迁移 diary。
 - 当前版本 `harbor workspace migrate` 必须显式传 `--dry-run`，否则会报错提示仅支持 dry-run。
+- 当前版本 `harbor workspace migrate --write` **未实现**（不可用）；release hardening 阶段仅支持 dry-run 验证。
 - 若存在 `specs/diary/*.jsonl`，`harbor doctor` 会给出 legacy diary advisory（workspace layout / project memory 提示，不属于 derived view freshness）。
 - `harbor doctor` 的 legacy diary advisory 仅在存在 `*.jsonl` 时出现；`specs/diary` 空目录不提示。
 - diary advisory 为 WARN 提示，不是 FAIL；不会自动迁移或删除 `specs/diary`。
