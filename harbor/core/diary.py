@@ -38,6 +38,14 @@ class DiaryEntry:
 
 class DiaryManager:
     def __init__(self, repo_root: Optional[Path] = None, config_path: Optional[Path] = None) -> None:
+        """初始化 Diary 路径上下文（canonical 写入 + legacy 读取兼容）。
+
+        规则:
+          - `repo_root` 优先；若未提供，可从 `config_path` 兼容推断。
+          - canonical diary root 由工作区配置解析（默认 `.harbor/diary`）。
+          - `specs/diary` 与 `diary.dir` 仅作为 legacy read-compatible source。
+          - 所有兼容路径必须位于 repo root 内；越界时抛 `ValueError`。
+        """
         self.repo_root = self._resolve_repo_root(explicit_repo_root=repo_root, config_path=config_path)
         self.config_path = config_path or resolve_workspace_config_path(self.repo_root)
         workspace_paths = load_workspace_paths(self.repo_root, enforce_write_safety=True)

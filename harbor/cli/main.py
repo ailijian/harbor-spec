@@ -91,7 +91,8 @@ def main():
       None
 
     Raises:
-      RuntimeError: 当关键子系统初始化失败时。
+      SystemExit: 当参数解析、帮助输出或 argparse 错误触发退出时。
+      Exception: 其他底层子系统异常可能透传（未统一包装为 RuntimeError）。
     """
     try:
         from dotenv import load_dotenv
