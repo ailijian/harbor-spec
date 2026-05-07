@@ -18,6 +18,7 @@ from harbor.adapters.python.parser import PythonAdapter, FunctionContract
 from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
 from harbor.core.git_utils import GitIgnoreMatcher
 from harbor.core.storage import HarborDB
+from harbor.core.workspace import resolve_workspace_config_path
 
 
 @dataclass
@@ -114,7 +115,7 @@ class IndexBuilder:
         config_path: Optional[Path] = None,
         max_workers: Optional[int] = None,
     ) -> None:
-        self.config_path = config_path or Path(".harbor/config.yaml")
+        self.config_path = config_path or resolve_workspace_config_path(Path.cwd())
         cfg = self._load_config(self.config_path)
         if code_roots is None or cache_dir is None:
             code_roots = code_roots or cfg.get("code_roots", ["harbor/**"])
@@ -356,7 +357,7 @@ class IndexBuilder:
         try:
             return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         except Exception:
-            raise RuntimeError("ConfigError: failed to load .harbor/config.yaml")
+            raise RuntimeError(f"ConfigError: failed to load {path.as_posix()}")
 
     def _load_cache(self) -> Dict[str, Any]:
         if not self.cache_file.exists():

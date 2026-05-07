@@ -10,6 +10,7 @@ import yaml
 from harbor.adapters.python.parser import PythonAdapter, FunctionContract
 from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
 from harbor.core.storage import HarborDB
+from harbor.core.workspace import resolve_workspace_config_path
 
 
 @dataclass
@@ -33,7 +34,7 @@ class StatusReport:
 
 class SyncEngine:
     def __init__(self, config_path: Optional[Path] = None) -> None:
-        self.config_path = config_path or Path(".harbor/config.yaml")
+        self.config_path = config_path or resolve_workspace_config_path(Path.cwd())
         self.adapter = PythonAdapter()
         self.config = self._load_config(self.config_path)
         self.code_roots = self.config.get("code_roots", ["harbor/**"])
@@ -146,7 +147,7 @@ class SyncEngine:
         try:
             return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         except Exception:
-            raise RuntimeError("ConfigError: failed to load .harbor/config.yaml")
+            raise RuntimeError(f"ConfigError: failed to load {path.as_posix()}")
 
     def _iter_py_files(self) -> List[Path]:
         return iter_project_files(self.code_roots, self.exclude_paths)

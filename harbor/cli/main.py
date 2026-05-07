@@ -1,7 +1,6 @@
 import argparse
 import sys
 from pathlib import Path
-import yaml
 from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
@@ -44,6 +43,7 @@ from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
 from harbor.core.init import Initializer
 from harbor.core.decorator import DecoratorEngine
+from harbor.core.workspace import load_workspace_config, write_workspace_config
 
 
 def main():
@@ -381,6 +381,16 @@ def main():
 
     args = parser.parse_args(argv_mapped)
 
+    def _load_cfg_data_safe():
+        try:
+            loaded = load_workspace_config(Path.cwd())
+            return dict(loaded.get("config") or {})
+        except Exception:
+            return {}
+
+    def _write_cfg_data(data):
+        write_workspace_config(Path.cwd(), data)
+
     def _run_lock(*, code_roots=None, cache_dir=None, no_incremental=False, no_register_adopted=False, register_scan=False):
         builder = IndexBuilder(code_roots=code_roots, cache_dir=cache_dir)
         scanned = 0
@@ -419,13 +429,7 @@ def main():
         try:
             db = builder.db
             files = [fp for fp, _ in db.get_all_files()]
-            cfg_path = Path(".harbor/config.yaml")
-            cfg = {}
-            if cfg_path.exists():
-                try:
-                    cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
-                except Exception:
-                    cfg = {}
+            cfg = _load_cfg_data_safe()
             excludes = cfg.get("exclude_paths", [])
             from harbor.core.utils import derive_adopted_roots
             derived = derive_adopted_roots(files, exclude_patterns=excludes, min_count=1)
@@ -446,8 +450,7 @@ def main():
                     cfg["code_roots"] = roots
                 if changed:
                     cfg["adopted_roots"] = adopted
-                    cfg_path.parent.mkdir(parents=True, exist_ok=True)
-                    cfg_path.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
+                    _write_cfg_data(cfg)
                 print(t("cli.lock.register_adopted_wrote", count=len(derived)))
             else:
                 if derived:
@@ -739,13 +742,7 @@ def main():
             print("")
             print(t("cli.finish.sync_context.next_steps"))
     elif args.command == "config" and args.cfg_cmd == "list":
-        cfg_path = Path(".harbor/config.yaml")
-        data = {}
-        if cfg_path.exists():
-            try:
-                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
-            except Exception:
-                data = {}
+        data = _load_cfg_data_safe()
         code_roots = data.get("code_roots", ["harbor/**"])
         exclude_paths = data.get("exclude_paths", [])
         profile = data.get("profile", "enforce_l3")
@@ -763,13 +760,7 @@ def main():
         if code_roots == ["**/*.py"]:
             print(t("cli.config.adopt_hint"))
     elif args.command == "config" and args.cfg_cmd == "add":
-        cfg_path = Path(".harbor/config.yaml")
-        data = {}
-        if cfg_path.exists():
-            try:
-                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
-            except Exception:
-                data = {}
+        data = _load_cfg_data_safe()
         roots = data.get("code_roots", [])
         p = args.path
         if p not in roots:
@@ -779,17 +770,10 @@ def main():
         data.setdefault("profile", data.get("profile", "enforce_l3"))
         data.setdefault("language", data.get("language", "auto"))
         data.setdefault("adopted_roots", [])
-        cfg_path.parent.mkdir(parents=True, exist_ok=True)
-        cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        _write_cfg_data(data)
         print(t("cli.config.added", path=p))
     elif args.command == "config" and args.cfg_cmd == "remove":
-        cfg_path = Path(".harbor/config.yaml")
-        data = {}
-        if cfg_path.exists():
-            try:
-                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
-            except Exception:
-                data = {}
+        data = _load_cfg_data_safe()
         roots = data.get("code_roots", [])
         p = args.path
         if p in roots:
@@ -799,19 +783,12 @@ def main():
             if p in adopted:
                 adopted = [x for x in adopted if x != p]
                 data["adopted_roots"] = adopted
-            cfg_path.parent.mkdir(parents=True, exist_ok=True)
-            cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+            _write_cfg_data(data)
             print(t("cli.config.removed", path=p))
         else:
             print(t("cli.config.nochanges"))
     elif args.command == "config" and args.cfg_cmd == "adopted":
-        cfg_path = Path(".harbor/config.yaml")
-        data = {}
-        if cfg_path.exists():
-            try:
-                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
-            except Exception:
-                data = {}
+        data = _load_cfg_data_safe()
         excludes = data.get("exclude_paths", [])
         db = IndexBuilder().db
         files = [fp for fp, _ in db.get_all_files()]
@@ -830,8 +807,7 @@ def main():
                 if p not in data.get("code_roots", []):
                     data["code_roots"] = data.get("code_roots", []) + [p]
             data["adopted_roots"] = adopted
-            cfg_path.parent.mkdir(parents=True, exist_ok=True)
-            cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+            _write_cfg_data(data)
             print(t("cli.config.adopted.wrote", count=len(derived)))
     elif args.command == "status":
         _run_status()
@@ -1299,13 +1275,7 @@ def main():
                 print(t("cli.adopt.nochanges"))
                 return
         rep = eng.apply(to_apply, dry_run=False, strategy=args.strategy)
-        cfg_path = Path(".harbor/config.yaml")
-        data = {}
-        if cfg_path.exists():
-            try:
-                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
-            except Exception:
-                data = {}
+        data = _load_cfg_data_safe()
         roots = data.get("code_roots", [])
         p_in = Path(args.path)
         base = p_in.parent if p_in.is_file() else p_in
@@ -1324,8 +1294,7 @@ def main():
         data.setdefault("exclude_paths", [])
         data.setdefault("profile", data.get("profile", "enforce_l3"))
         data.setdefault("language", data.get("language", "auto"))
-        cfg_path.parent.mkdir(parents=True, exist_ok=True)
-        cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        _write_cfg_data(data)
         print(t("cli.adopt.applied", files=len(rep.changed_files)))
         print(t("cli.adopt.added_config", path=pattern))
     elif args.command == "init":
@@ -1349,13 +1318,7 @@ def main():
         print(t("cli.init.done"))
         print(t("cli.init.next"))
     elif args.command == "unadopt":
-        cfg_path = Path(".harbor/config.yaml")
-        data = {}
-        if cfg_path.exists():
-            try:
-                data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
-            except Exception:
-                data = {}
+        data = _load_cfg_data_safe()
         roots = data.get("code_roots", [])
         p_in = Path(args.path)
         base = p_in.parent if p_in.is_file() else p_in
@@ -1371,8 +1334,7 @@ def main():
             if pattern in adopted:
                 adopted = [x for x in adopted if x != pattern]
                 data["adopted_roots"] = adopted
-            cfg_path.parent.mkdir(parents=True, exist_ok=True)
-            cfg_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+            _write_cfg_data(data)
             print(t("cli.config.removed", path=pattern))
         else:
             print(t("cli.config.nochanges"))

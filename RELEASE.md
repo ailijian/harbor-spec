@@ -48,6 +48,15 @@
 - No command automatically locks, logs, promotes skills, or writes context unless explicitly requested.
 - Preview mode remains the default for docs and capsule generation where applicable.
 
+## Release Validation
+
+- Dogfooding completed across 8 RC scenarios.
+- Mini RC Rerun completed after RC Fix Pack 1.
+- `pytest` passed with 185 tests.
+- Issue-001 / Issue-002 / Issue-003 verified fixed.
+- No workspace-outside writes observed in the final rerun.
+- `harbor stale` and `harbor doctor` text/json outputs verified.
+
 ## Migration Notes / 升级总览
 - 本轮以发布收口为目标，重点是版本、文档、release notes 与命令帮助叙事对齐。
 - 未新增任何 CLI 命令；现有命令行为语义保持不变。

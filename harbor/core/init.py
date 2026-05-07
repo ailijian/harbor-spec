@@ -191,8 +191,8 @@ class ProjectDetector:
 class Initializer:
     def __init__(self, cwd: Optional[Path] = None) -> None:
         self.cwd = cwd or Path.cwd()
-        self.config_dir = self.cwd / ".harbor"
-        self.config_path = self.config_dir / "config.yaml"
+        self.config_dir = self.cwd / ".harbor" / "config"
+        self.config_path = self.config_dir / "harbor.yaml"
 
     def autodetect(self) -> Tuple[List[str], List[str], List[str]]:
         """高级启发式自动探测。
@@ -216,7 +216,7 @@ class Initializer:
           - 支持 src 布局、平铺包布局与脚本布局的兜底。
 
         使用场景:
-          - `harbor init` 命令自动生成 `.harbor/config.yaml`。
+          - `harbor init` 命令自动生成 `.harbor/config/harbor.yaml`。
 
         依赖:
           - pathlib.Path
@@ -273,7 +273,7 @@ class Initializer:
         return ["**/*.py"]
 
     def write_config(self, code_roots: List[str], force: bool = False, profile: str = "enforce_l3", exclude_paths: Optional[List[str]] = None) -> Path:
-        """写入 `.harbor/config.yaml`。
+        """写入 `.harbor/config/harbor.yaml`。
 
         功能:
           - 在 `.harbor/` 目录生成配置文件，包含 `code_roots/exclude_paths/profile`。

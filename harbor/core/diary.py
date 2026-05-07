@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
+from harbor.core.workspace import resolve_workspace_config_path
 
 
 VISIBILITY_ORDER = {"internal": 0, "repo": 1, "public": 2}
@@ -37,7 +38,7 @@ class DiaryEntry:
 
 class DiaryManager:
     def __init__(self, config_path: Optional[Path] = None) -> None:
-        self.config_path = config_path or Path(".harbor/config.yaml")
+        self.config_path = config_path or resolve_workspace_config_path(Path.cwd())
         self.diary_dir = self._resolve_diary_dir(self.config_path)
 
     def log(
@@ -161,7 +162,7 @@ class DiaryManager:
         try:
             cfg = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         except Exception:
-            raise RuntimeError("ConfigError: failed to load .harbor/config.yaml")
+            raise RuntimeError(f"ConfigError: failed to load {path.as_posix()}")
         d = cfg.get("diary", {}).get("dir") or "specs/diary"
         return Path(d)
 

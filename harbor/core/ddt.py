@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 from harbor.core.storage import HarborDB
+from harbor.core.workspace import resolve_workspace_config_path
 
 
 @dataclass
@@ -28,7 +29,7 @@ class DDTReport:
 
 class DDTScanner:
     def __init__(self, config_path: Optional[Path] = None) -> None:
-        self.config_path = config_path or Path(".harbor/config.yaml")
+        self.config_path = config_path or resolve_workspace_config_path(Path.cwd())
         self.config = self._load_config(self.config_path)
         self.test_roots = self.config.get("test_roots", ["tests"])
 

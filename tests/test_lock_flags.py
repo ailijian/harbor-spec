@@ -19,8 +19,9 @@ def test_lock_no_register_adopted(tmp_path: Path, monkeypatch):
     main()
     sys.argv = ["harbor", "lock", "--no-register-adopted"]
     main()
-    cfg = (proj / ".harbor" / "config.yaml")
+    cfg = proj / ".harbor" / "config" / "harbor.yaml"
     data = yaml.safe_load(cfg.read_text(encoding="utf-8")) or {}
+    assert not (proj / ".harbor" / "config.yaml").exists()
     assert "pkg/**" not in data.get("adopted_roots", [])
 
 
@@ -31,7 +32,8 @@ def test_lock_register_scan(tmp_path: Path, monkeypatch):
     main()
     sys.argv = ["harbor", "lock", "--register-scan"]
     main()
-    cfg = (proj / ".harbor" / "config.yaml")
+    cfg = proj / ".harbor" / "config" / "harbor.yaml"
     data = yaml.safe_load(cfg.read_text(encoding="utf-8")) or {}
+    assert not (proj / ".harbor" / "config.yaml").exists()
     assert "pkg/**" in data.get("adopted_roots", [])
     assert "pkg/**" in data.get("code_roots", [])
