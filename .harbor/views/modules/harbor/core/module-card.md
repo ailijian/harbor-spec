@@ -1,7 +1,7 @@
 ---
 harbor_capsule_version: 1
 module: harbor/core
-fingerprint: 34c6478a6a75ed71b4e86a4abc0a231469830f5ebc478737524c1e0a57bcf765
+fingerprint: b9f87e92f9b87430ca758bc3d8249976c9b86d36f1dcaa863235fcde8064aa2e
 source_files:
 - harbor/core/__init__.py
 - harbor/core/audit.py
@@ -112,9 +112,16 @@ contracts:
 - harbor.core.init.ProjectDetector._parse_gitignore
 - harbor.core.init.ProjectDetector.detect
 - harbor.core.l2.L2Generator.__init__
+- harbor.core.l2.L2Generator._ensure_within_root
 - harbor.core.l2.L2Generator._load_index
 - harbor.core.l2.L2Generator._load_meta
+- harbor.core.l2.L2Generator._read_meta_file
+- harbor.core.l2.L2Generator._resolve_canonical_readme_path
+- harbor.core.l2.L2Generator._resolve_export_readme_path
+- harbor.core.l2.L2Generator._resolve_meta_path
+- harbor.core.l2.L2Generator._safe_module_subpath
 - harbor.core.l2.L2Generator._save_meta
+- harbor.core.l2.L2Generator.canonical_readme_path
 - harbor.core.l2.L2Generator.collect_all_indexed_modules
 - harbor.core.l2.L2Generator.compute_meta_hash
 - harbor.core.l2.L2Generator.generate
@@ -122,6 +129,7 @@ contracts:
 - harbor.core.l2.collect_all_indexed_modules
 - harbor.core.l2.collect_modules_from_paths
 - harbor.core.l2.infer_module_from_path
+- harbor.core.l2.normalize_indexed_module_candidate
 - harbor.core.module_capsule._belongs_to_module
 - harbor.core.module_capsule._ensure_within_root
 - harbor.core.module_capsule._load_index
@@ -350,9 +358,16 @@ harbor/core/workspace.py
 | harbor.core.init.ProjectDetector._parse_gitignore | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector.detect | harbor/core/init.py | public | strict |
 | harbor.core.l2.L2Generator.__init__ | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._ensure_within_root | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_index | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_meta | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._read_meta_file | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._resolve_canonical_readme_path | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._resolve_export_readme_path | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._resolve_meta_path | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._safe_module_subpath | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._save_meta | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator.canonical_readme_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
@@ -360,6 +375,7 @@ harbor/core/workspace.py
 | harbor.core.l2.collect_all_indexed_modules | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.collect_modules_from_paths | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.infer_module_from_path | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.normalize_indexed_module_candidate | harbor/core/l2.py | unknown | standard |
 | harbor.core.module_capsule._belongs_to_module | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._ensure_within_root | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._load_index | harbor/core/module_capsule.py | unknown | standard |
@@ -480,6 +496,7 @@ tests/test_index_builder_bad_syntax.py
 tests/test_index_progress.py
 tests/test_init_detector.py
 tests/test_initializer.py
+tests/test_l2_paths.py
 tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py

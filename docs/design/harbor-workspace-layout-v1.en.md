@@ -1286,6 +1286,17 @@ Stale should check canonical views first:
 
 Then optionally check exported views if export is enabled.
 
+Phase 2D-B implementation status:
+
+```text
+canonical L2 freshness is determined only by .harbor/views/l2/<module>/README.md
+module README export is reported as a separate advisory view named l2_readme_export
+when canonical is unavailable, export is unknown/skipped and out-of-sync comparison is skipped
+disabled export must be explicitly represented as disabled and must not count as warn
+legacy .harbor/l2_meta.json advisory appears only in harbor doctor (not in stale)
+doctor may WARN on export mismatch / legacy metadata, but should not FAIL because of them
+```
+
 ## 13.3 `harbor finish --sync-context`
 
 Future behavior:

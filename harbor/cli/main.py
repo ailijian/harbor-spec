@@ -363,7 +363,7 @@ def main():
     p_project_structure.add_argument(
         "--write",
         action="store_true",
-        help="Write docs/harbor/project-structure.md; default prints preview",
+        help="Write canonical .harbor/views/project-structure.md (and optional docs export if enabled); default prints preview",
     )
 
     p_log = sub.add_parser("log", help="Context-aware diary logging")

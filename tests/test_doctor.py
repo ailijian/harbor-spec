@@ -32,6 +32,11 @@ def _sample_summary(module: str, stale: bool):
             reason=reason,
             suggested_command=(f"harbor docs --module {module} --write" if stale else None),
         ),
+        l2_readme_export=SimpleNamespace(
+            status=status,
+            reason=("module README export out of sync" if stale else "up to date"),
+            suggested_command=(f"harbor docs --module {module} --write" if stale else None),
+        ),
         module_capsule=SimpleNamespace(
             status=status,
             reason=reason,
@@ -81,6 +86,11 @@ def test_derived_views_check_marks_unknown_detail_as_unknown_not_stale(monkeypat
                 reason="no indexed records found for module",
                 suggested_command=None,
             ),
+            l2_readme_export=SimpleNamespace(
+                status="unknown",
+                reason="canonical L2 README unavailable",
+                suggested_command=None,
+            ),
             module_capsule=SimpleNamespace(
                 status="unknown",
                 reason="no indexed records found for module",
@@ -93,6 +103,40 @@ def test_derived_views_check_marks_unknown_detail_as_unknown_not_stale(monkeypat
     assert result.status == doctor.WARN
     assert any("unknown: no indexed records found for module" in d for d in result.details)
     assert all("stale: no indexed records found for module" not in d for d in result.details)
+
+
+def test_derived_views_check_shows_disabled_without_counting_warn(monkeypatch):
+    def _disabled_summary(module):
+        return SimpleNamespace(
+            module=module,
+            l2_readme=SimpleNamespace(status="up_to_date", reason="up to date", suggested_command=None),
+            l2_readme_export=SimpleNamespace(
+                status="disabled",
+                reason="module README export disabled by config",
+                suggested_command=None,
+            ),
+            module_capsule=SimpleNamespace(status="up_to_date", reason="up to date", suggested_command=None),
+        )
+
+    monkeypatch.setattr(doctor, "check_module_derived_views_stale", _disabled_summary)
+    monkeypatch.setattr(Path, "exists", lambda self: False, raising=False)
+    result = doctor.run_derived_views_check(["harbor/core"])
+    assert result.status == doctor.PASS
+    assert any("disabled:" in d and "module README export disabled by config" in d for d in result.details)
+
+
+def test_derived_views_check_warns_for_legacy_metadata_but_never_fail(monkeypatch):
+    monkeypatch.setattr(doctor, "check_module_derived_views_stale", lambda module: _sample_summary(module, stale=False))
+    monkeypatch.setattr(
+        Path,
+        "exists",
+        lambda self: True if self.as_posix().endswith(".harbor/l2_meta.json") else False,
+        raising=False,
+    )
+    result = doctor.run_derived_views_check(["harbor/core"])
+    assert result.status == doctor.WARN
+    assert all("FAIL" not in d for d in result.details)
+    assert any(".harbor/l2_meta.json" in d for d in result.details)
 
 
 def test_skill_reference_check_skips_when_agents_skills_missing(tmp_path: Path, monkeypatch):

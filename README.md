@@ -209,6 +209,9 @@ harbor accept
 - `harbor doctor` 不写文件、不自动 lock、不自动 log。
 - `harbor stale` 是只读聚合检查：同时检查 L2 README 与 Module Capsule 的新鲜度。
 - `harbor stale` 默认检查 changed modules；可用 `--all` 或 `--module <module>` 切换范围。
+- `harbor stale` 的 canonical L2 freshness 仅由 `.harbor/views/l2/<module>/README.md` 判定。
+- `harbor stale` 会单独报告 `l2_readme_export`（`<module>/README.md`）advisory，不会混淆 canonical `l2_readme`。
+- 若 canonical L2 不可用，`l2_readme_export` 只会标记 unknown/skipped，不做 out-of-sync 比较。
 - `harbor stale` 不会自动修复；请用 `harbor docs --module <module> --write` 与 `harbor module seal <module> --write` 刷新。
 - 想只看派生视图是否过期，请用 `harbor stale`；想看整体 Harbor 健康，请用 `harbor doctor`。
 - MVP 阶段 `harbor stale` 为 advisory，检查完成后返回成功（未来可扩展 CI gate）。
@@ -269,6 +272,7 @@ harbor doctor --format json
 - `harbor stale` 默认等价 `harbor stale --changed`。
 - `harbor doctor` 是顶层只读健康检查聚合；默认等价 `harbor doctor --changed`。
 - `harbor doctor` 不会自动修复，也不会写入 docs / capsule / skill。
+- `harbor doctor` 的 Derived Views 会显示 `l2_readme_export` advisory 与 legacy `.harbor/l2_meta.json` advisory（只读兼容提示，不自动迁移/删除）。
 - `harbor stale --format json` 与 `harbor doctor --format json` 输出稳定机器可读 JSON（stdout 仅 JSON）。
 - JSON 输出是 advisory read-only 视图，不会触发修复、写入或 lock/log。
 - 当前 MVP 不改变 exit-code 行为；CI gate（如 `--ci`）将在后续版本提供。
@@ -467,7 +471,7 @@ exclude_paths:
 | `harbor finish` | 工作流收尾：等价 `status + check` 并提示下一步 |
 | `harbor finish --sync-context` | 工作流收尾增强：执行 `finish` 检查并同步 changed L2 README + Module Capsule，再执行 changed stale 检查 |
 | `harbor doctor` | 顶层只读健康检查聚合：默认检查 changed modules 的 Config/Index、Workspace、DDT、Derived Views、Skill References |
-| `harbor stale` | 顶层只读聚合检查：默认检查 changed modules 的 L2 README + Module Capsule 新鲜度 |
+| `harbor stale` | 顶层只读聚合检查：默认检查 changed modules 的 canonical L2 README + Module Capsule，并单独报告 module README export advisory |
 | `harbor accept` | 工作流确认：语义化别名，等价 `harbor lock` |
 | `harbor status` / `harbor st` | 查看上下文状态（Drift/Modified） |
 | `harbor lock` / `harbor commit` | 锁定当前 L3 契约快照为基线 |

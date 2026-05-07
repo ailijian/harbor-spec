@@ -467,3 +467,153 @@ Workspace: `e:/project/harbor-spec`
 ### remaining warnings
 - 本轮 `docs --changed` 与 `finish --sync-context` 在验证时点均无 changed modules，因此属于“无变化路径”验证结果。
 - 当前未引入 session 级全局 post-test 守卫 fixture（采用 targeted regression），后续如需更强约束可在测试基建层补充。
+
+## Phase 2D-B.5 Semantic Drift Triage
+- Date: 2026-05-07
+- Scope:
+  - 仅 triage `harbor finish --sync-context` 输出的 `POSSIBLE_SEMANTIC_DRIFT`。
+  - 审查 Phase 2A-2D-B 路径迁移后 canonical/legacy 文案基线。
+  - 不进入 Phase 2E，不迁移 diary，不新增命令，不实现 workspace inspect/migrate。
+
+### semantic drift summary
+- command:
+  - `harbor finish --sync-context`
+- first capture:
+  - `targets=14`，均为 `POSSIBLE_SEMANTIC_DRIFT`
+- post-fix capture:
+  - `targets=15`，其中：
+    - `POSSIBLE_SEMANTIC_DRIFT=13`
+    - `OK=1`（`harbor.core.stale.format_stale_summary`）
+    - `ERROR=1`（`harbor.cli.main.main`，LLM provider 输入长度上限）
+
+### triage table (from first capture)
+| file / symbol | reported drift | related contract/docstring | related implementation | classification | recommended action |
+|---|---|---|---|---|---|
+| `harbor/core/doctor.py` / `harbor.core.doctor._derived_view_detail_status` | Docstring 粒度不足、未完整覆盖 fallback | 函数无/弱 docstring 约束 | 状态值映射含 fallback 逻辑 | stale docstring | 已补充 Args/Returns 与 fallback 说明 |
+| `harbor/core/doctor.py` / `harbor.core.doctor.run_derived_views_check` | Docstring 不完整，无法严格对照 | 函数无/弱 docstring 约束 | 聚合三类视图并处理 disabled/legacy 语义 | stale docstring | 已补充行为语义 docstring |
+| `harbor/core/stale.py` / `harbor.core.stale.ModuleStaleSummary.to_dict` | 返回结构描述不充分 | 方法无/弱 docstring | 返回稳定 dict 结构（JSON payload 组成部分） | stale docstring | 已补充序列化说明 |
+| `harbor/core/stale.py` / `harbor.core.stale._format_view_lines` | 参数/返回说明不足 | 函数无/弱 docstring | 生成 stale 文本行 | stale docstring | 已补充简洁 docstring |
+| `harbor/core/stale.py` / `harbor.core.stale.check_module_derived_views_stale` | 返回对象结构说明不足 | 函数无/弱 docstring | 聚合 l2/l2_export/capsule 结果 | stale docstring | 已补充 Args/Returns 与三视图语义 |
+| `harbor/core/stale.py` / `harbor.core.stale.format_stale_summary` | 参数说明不足 | 函数无/弱 docstring | 渲染 CLI 文本摘要 | stale docstring | 已补充 Args/Returns；复跑后为 `OK` |
+| `harbor/core/stale.py` / `harbor.core.stale.stale_report_to_dict` | 返回字段说明不足 | 函数无/弱 docstring | 生成 machine-readable stale JSON | stale docstring | 已补充 Args/Returns |
+| `tests/test_cli_json_output.py` / `_sample_stale_summary` | 要求测试 helper 提供完整契约文档 | 测试辅助函数通常不作为 Harbor public contract | 构造测试样例对象 | false positive | 仅记录，不改功能 |
+| `tests/test_cli_json_output.py` / `test_stale_json_output_has_required_fields_and_no_extra_text` | 将测试断言函数按产品契约严格审计 | 测试函数非外部契约源 | monkeypatch + 断言 | false positive | 仅记录，不改功能 |
+| `tests/test_cli_stale.py` / `_sample_summary` | 与上类似，测试 helper 文档缺失 | 测试辅助函数非外部契约源 | 构造 stale summary 样本 | false positive | 仅记录，不改功能 |
+| `tests/test_doctor.py` / `_sample_summary` | 与上类似 | 测试辅助函数非外部契约源 | 构造 doctor summary 样本 | false positive | 仅记录，不改功能 |
+| `tests/test_doctor.py` / `test_derived_views_check_marks_unknown_detail_as_unknown_not_stale` | 将测试函数按运行时契约审计 | 测试函数非外部契约源 | 单元测试断言 unknown 文案 | false positive | 仅记录，不改功能 |
+| `tests/test_stale.py` / `test_check_module_derived_views_stale_returns_both_views` | 将测试函数按产品契约审计 | 测试函数非外部契约源 | 单元测试断言多视图行为 | false positive | 仅记录，不改功能 |
+| `tests/test_stale.py` / `test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records` | 同上 | 测试函数非外部契约源 | 单元测试断言 unknown 一致性 | false positive | 仅记录，不改功能 |
+
+### path migration relation review (Phase 2A-2D-B)
+- checked targets:
+  - `docs/harbor/project-structure.md`
+  - `docs/harbor/modules`
+  - `.harbor/l2_meta.json`
+  - `specs/diary`
+  - `<module>/README.md`
+  - `docs/harbor` canonical 描述
+- findings:
+  - `README.md` / `README.en.md` 中旧路径多为 legacy/export 说明，未再声明为 canonical source（合理保留）。
+  - `harbor/core/doctor.py` 与 `harbor/utils/i18n.py` 对 `.harbor/l2_meta.json` 的处理为 advisory/read-compatible（合理）。
+  - `harbor/cli/main.py` 的 `project structure --write` help 原文误写为“写 docs/harbor/project-structure.md”（不符合现行 canonical）；已最小修正为 canonical `.harbor/views/project-structure.md` + optional export。
+  - `docs/design/harbor-workspace-layout-v1*.md` 存在“Future canonical target”历史段落，当前判定为文档历史上下文（non-blocking, pre-existing），本阶段不做大范围文档重写。
+
+### true drift count
+- `0`（本轮 `POSSIBLE_SEMANTIC_DRIFT` 中未发现实现行为与已定义契约直接冲突）。
+
+### false positive count
+- `7`（全部来自测试 helper/测试函数被语义审计器按产品契约误判）。
+
+### stale docstring count
+- `7`（核心在 `harbor/core/doctor.py` 与 `harbor/core/stale.py` 的文档粒度不足）。
+
+### stale README / docs count
+- `1`
+  - `harbor/cli/main.py` 的 `project structure --write` 帮助文案（已修复）。
+
+### unrelated/pre-existing issue
+- `1`
+  - `harbor.cli.main.main` 在语义审计阶段返回 `ERROR`（LLM provider 输入字符上限 `24000`），属于外部模型约束，不是 workspace layout 迁移回归。
+
+### fixes made
+- code behavior:
+  - none（未改运行逻辑）。
+- docstring/contract text:
+  - `harbor/core/doctor.py`
+    - `run_derived_views_check`
+    - `_derived_view_detail_status`
+  - `harbor/core/stale.py`
+    - `ModuleStaleSummary.to_dict`
+    - `check_module_derived_views_stale`
+    - `format_stale_summary`
+    - `stale_report_to_dict`
+    - `_format_view_lines`
+- user-facing help text:
+  - `harbor/cli/main.py`
+    - `project structure --write` 帮助文案改为 canonical `.harbor/views/project-structure.md` + optional export 说明。
+
+### remaining non-blocking drift
+- 仍存在的 `POSSIBLE_SEMANTIC_DRIFT` 主要为：
+  - 测试函数/测试 helper 被契约审计器误判（false positive）。
+  - 个别核心函数在补充 docstring 后仍被模型以“说明不够形式化”标记（模型判定偏保守，不涉及行为变更）。
+- 均不构成 workspace layout 行为回归或路径写入错误。
+
+### working tree review (post-verification)
+- command:
+  - `git status --short --untracked-files=all`
+  - `git status --short --ignored`
+- code:
+  - `harbor/cli/main.py`
+  - `harbor/core/doctor.py`
+  - `harbor/core/stale.py`
+  - `harbor/utils/i18n.py`
+- tests:
+  - `tests/test_cli_json_output.py`
+  - `tests/test_cli_stale.py`
+  - `tests/test_doctor.py`
+  - `tests/test_stale.py`
+- docs:
+  - `README.md`
+  - `README.en.md`
+  - `RELEASE.md`
+  - `docs/design/harbor-workspace-layout-v1.md`
+  - `docs/design/harbor-workspace-layout-v1.en.md`
+  - module README exports (`harbor/**/README.md`, `tests/**/README.md`)
+- canonical views:
+  - `.harbor/views/l2/**`
+  - `.harbor/views/modules/harbor/core/module-card.md`
+  - `.harbor/views/modules/harbor/cli/*.md`（untracked）
+  - `.harbor/views/modules/tests/*.md`（untracked）
+- reports:
+  - `.harbor/reports/dogfooding/workspace-layout-phase-2d-verification.md`
+- skills:
+  - `.agents/skills/harbor-debug-harbor-core/SKILL.md`（存在，未改）
+- legacy artifacts:
+  - `.harbor/l2_meta.json`（存在，doctor advisory，未迁移/未删除）
+- cache/state:
+  - `.harbor/cache/*`（ignored）
+  - `__pycache__/`, `.pytest_cache/`, `harbor_spec.egg-info/`（ignored）
+- unexpected:
+  - none（均可由既有 Phase 2D 链路与本轮验证命令解释）
+
+### verification
+- `pytest`:
+  - command: `pytest`
+  - result: `244 passed`
+- `finish --sync-context`:
+  - command: `harbor finish --sync-context`
+  - result: exit `0`；完成 L2/capsule 刷新；无 workspace 外写入迹象
+- `stale`:
+  - command: `harbor stale --format json`
+  - result: exit `0`；`status=pass`；`modules_checked=3`
+- `doctor`:
+  - command: `harbor doctor --format json`
+  - result: exit `0`；`status=warn`（工作区有改动 + legacy metadata advisory）
+
+### Phase 2E readiness
+- recommendation: **Phase 2E / pause（可进入，但建议先清理语义审计噪音）**
+- rationale:
+  - workspace layout 相关 true drift 未发现；
+  - stale docstring 与一处 canonical help 文案已最小修复；
+  - 剩余主要为 false positive / provider 限制，不阻塞 Phase 2E；
+  - 若要提升 `finish --sync-context` 信噪比，后续可考虑（非本阶段）对语义审计目标做测试域过滤或长输入截断策略。

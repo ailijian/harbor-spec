@@ -42,6 +42,12 @@ def _sample_summary(module: str, *, stale: bool = False) -> ModuleStaleSummary:
     return ModuleStaleSummary(
         module=module,
         l2_readme=ViewStaleResult("L2 README", status, reason, suggest_docs),
+        l2_readme_export=ViewStaleResult(
+            "L2 README Export",
+            status,
+            ("module README export out of sync" if stale else "up to date"),
+            suggest_docs,
+        ),
         module_capsule=ViewStaleResult("Module Capsule", status, reason, suggest_capsule),
     )
 
@@ -153,4 +159,3 @@ def test_stale_reports_all_up_to_date_message(monkeypatch):
     monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _sample_summary(module, stale=False))
     out = run_cmd(["stale", "--all"])
     assert "All derived context views are up to date." in out
-

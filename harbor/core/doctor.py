@@ -197,6 +197,16 @@ def run_ddt_fast_check(
 
 
 def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
+    """检查模块派生视图状态并汇总为 Doctor 结果。
+
+    Args:
+        modules: 需要检查的模块列表（repo-relative module path）。
+
+    Returns:
+        DoctorCheckResult: 派生视图检查结果。
+            - 当存在 stale/unknown 或 legacy metadata 提示时，状态为 WARN。
+            - `disabled` 视图仅记录详情，不单独抬升为 WARN。
+    """
     if not modules:
         return DoctorCheckResult(
             name=t("cli.doctor.derived_views"),
@@ -212,9 +222,13 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
         summary: ModuleStaleSummary = check_module_derived_views_stale(module)
         for view_name, view_result in (
             (t("cli.stale.l2"), summary.l2_readme),
+            (t("cli.stale.l2_export"), summary.l2_readme_export),
             (t("cli.stale.capsule"), summary.module_capsule),
         ):
             if view_result.status == "up_to_date":
+                continue
+            if view_result.status == "disabled":
+                stale_details.append(f"{summary.module} {view_name} disabled: {view_result.reason or 'disabled'}")
                 continue
             status = WARN
             detail_status = _derived_view_detail_status(view_result.status)
@@ -223,7 +237,13 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
             if view_result.suggested_command:
                 suggestions.append(view_result.suggested_command)
 
-    if status == PASS:
+    legacy_meta = Path(".harbor") / "l2_meta.json"
+    if legacy_meta.exists():
+        status = WARN
+        stale_details.append(t("cli.doctor.derived_views.legacy_meta_detected"))
+        stale_details.append(t("cli.doctor.derived_views.legacy_meta_canonical"))
+
+    if status == PASS and not stale_details:
         return DoctorCheckResult(
             name=t("cli.doctor.derived_views"),
             status=PASS,
@@ -232,7 +252,7 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
         )
     return DoctorCheckResult(
         name=t("cli.doctor.derived_views"),
-        status=WARN,
+        status=(PASS if status == PASS else WARN),
         details=stale_details,
         suggestions=_unique(suggestions),
     )
@@ -369,6 +389,16 @@ def _status_to_json(status: str) -> str:
 
 
 def _derived_view_detail_status(status: str) -> str:
+    """将内部 view status 归一化为可展示文本。
+
+    Args:
+        status: 视图状态值，如 ``up_to_date``、``stale``、``unknown``、``disabled``。
+
+    Returns:
+        str: 面向文本输出的状态描述；未知值会执行 ``_`` 到空格的退化转换。
+    """
+    if status == "disabled":
+        return "disabled"
     if status == "unknown":
         return "unknown"
     if status == "stale":

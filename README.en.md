@@ -214,6 +214,9 @@ Key semantics:
 - `harbor doctor` does not write files, does not auto-lock, and does not auto-log.
 - `harbor stale` is a top-level read-only aggregate check for both L2 README and Module Capsule freshness.
 - `harbor stale` checks changed modules by default; use `--all` or `--module <module>` for other scopes.
+- canonical L2 freshness in `harbor stale` is determined only by `.harbor/views/l2/<module>/README.md`.
+- `harbor stale` reports `l2_readme_export` (`<module>/README.md`) as a separate advisory and does not mix it into canonical `l2_readme`.
+- when canonical L2 is unavailable, `l2_readme_export` is reported as unknown/skipped and no out-of-sync comparison is performed.
 - `harbor stale` does not fix stale views automatically; use `harbor docs --module <module> --write` and `harbor module seal <module> --write`.
 - Use `harbor stale` when you only need derived-view freshness; use `harbor doctor` for broader Harbor health.
 - MVP stale is advisory and returns success when the check completes (CI gating may be added later).
@@ -274,6 +277,7 @@ Notes:
 - `harbor stale` defaults to `harbor stale --changed`.
 - `harbor doctor` is a top-level read-only health aggregate check and defaults to `harbor doctor --changed`.
 - `harbor doctor` does not fix issues and never writes docs/capsule/skill files.
+- `harbor doctor` Derived Views include `l2_readme_export` advisory and legacy `.harbor/l2_meta.json` advisory (read-compatible note only; no auto-migration/deletion).
 - `harbor stale --format json` and `harbor doctor --format json` emit deterministic machine-readable JSON (stdout contains JSON only).
 - JSON output is advisory read-only output and does not trigger fix/write/lock/log actions.
 - This MVP does not change exit-code behavior; CI gate mode (for example, `--ci`) will be added in a later step.
@@ -467,7 +471,7 @@ exclude_paths:
 | `harbor docs --all --write` | Refresh L2 READMEs for all indexed modules. |
 | `harbor finish --sync-context` | Run `finish` checks, refresh changed L2 READMEs + Module Capsules, then run changed stale checks. |
 | `harbor doctor` | Top-level read-only aggregate health check; default scope is changed modules (Config/Index, Workspace, DDT Fast, Derived Views, Skill References). |
-| `harbor stale` | Top-level read-only aggregate check; default scope is changed modules (L2 README + Module Capsule). |
+| `harbor stale` | Top-level read-only aggregate check; default scope is changed modules (canonical L2 README + Module Capsule), with separate module README export advisory. |
 | `harbor accept` | Workflow confirmation: semantic alias of `harbor lock`. |
 | `harbor module inspect <module>` | Show indexed context summary for one module (read-only, no file writes). |
 | `harbor module seal <module>` | Preview module capsule output (three docs, no file writes). |

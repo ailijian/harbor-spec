@@ -41,6 +41,7 @@ def run_cmd_with_err(argv):
 
 def _sample_stale_summary(module: str, *, stale: bool = True) -> ModuleStaleSummary:
     l2_status = "stale" if stale else "up_to_date"
+    export_status = "stale" if stale else "up_to_date"
     capsule_status = "stale" if stale else "up_to_date"
     return ModuleStaleSummary(
         module=module,
@@ -48,6 +49,12 @@ def _sample_stale_summary(module: str, *, stale: bool = True) -> ModuleStaleSumm
             view="L2 README",
             status=l2_status,
             reason=("README content mismatch" if stale else "up to date"),
+            suggested_command=(f"harbor docs --module {module} --write" if stale else None),
+        ),
+        l2_readme_export=ViewStaleResult(
+            view="L2 README Export",
+            status=export_status,
+            reason=("module README export out of sync" if stale else "up to date"),
             suggested_command=(f"harbor docs --module {module} --write" if stale else None),
         ),
         module_capsule=ViewStaleResult(
@@ -81,6 +88,8 @@ def test_stale_json_output_has_required_fields_and_no_extra_text(monkeypatch):
     assert set(payload.keys()) == {"command", "scope", "status", "summary", "modules", "advisory", "writes_files"}
     assert payload["advisory"] is True
     assert payload["writes_files"] is False
+    view_names = [v["view"] for v in payload["modules"][0]["views"]]
+    assert "l2_readme_export" in view_names
     assert out.strip() == json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
 
 

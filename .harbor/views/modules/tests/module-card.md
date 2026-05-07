@@ -1,0 +1,857 @@
+---
+harbor_capsule_version: 1
+module: tests
+fingerprint: 6edee8a843addbfbc2fd635d126bfc7dab5bff04a37bb4dcc83eb2d88f4e760e
+source_files:
+- tests/__init__.py
+- tests/core/test_index_sync_sqlite.py
+- tests/core/test_storage_migration.py
+- tests/fixtures_sqlite/sample.py
+- tests/test_adapter_basic.py
+- tests/test_adopted_roots.py
+- tests/test_audit.py
+- tests/test_cache_isolation_hardening.py
+- tests/test_cli_config.py
+- tests/test_cli_decorate.py
+- tests/test_cli_docs_modes.py
+- tests/test_cli_doctor.py
+- tests/test_cli_finish_sync_context.py
+- tests/test_cli_help_and_ux.py
+- tests/test_cli_i18n.py
+- tests/test_cli_i18n_env.py
+- tests/test_cli_init_output.py
+- tests/test_cli_json_output.py
+- tests/test_cli_module_capsule.py
+- tests/test_cli_module_capsule_batch.py
+- tests/test_cli_module_capsule_stale.py
+- tests/test_cli_module_skill.py
+- tests/test_cli_project_structure.py
+- tests/test_cli_stale.py
+- tests/test_cli_v2.py
+- tests/test_config_update.py
+- tests/test_ddt_validate.py
+- tests/test_decorator_engine.py
+- tests/test_derive_adopted_roots.py
+- tests/test_doctor.py
+- tests/test_drafting.py
+- tests/test_drafting_json_parse.py
+- tests/test_gitignore_prune.py
+- tests/test_index_builder.py
+- tests/test_index_builder_bad_syntax.py
+- tests/test_index_progress.py
+- tests/test_init_detector.py
+- tests/test_initializer.py
+- tests/test_l2_paths.py
+- tests/test_lock_flags.py
+- tests/test_lock_register_adopted.py
+- tests/test_min_count_one.py
+- tests/test_module_capsule.py
+- tests/test_module_capsule_stale.py
+- tests/test_module_skill.py
+- tests/test_project_structure.py
+- tests/test_release_packaging.py
+- tests/test_stale.py
+- tests/test_sync_engine.py
+- tests/test_utils_format.py
+- tests/test_windows_abs_path_prefix.py
+- tests/test_workspace_gitignore_policy.py
+- tests/test_workspace_paths.py
+contracts:
+- tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift
+- tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite
+- tests.fixtures_sqlite.sample.func1
+- tests.test_adapter_basic.test_adapter_parses_itself
+- tests.test_adapter_basic.test_signature_hash_changes
+- tests.test_adopted_roots.test_adopted_roots_write_and_remove
+- tests.test_audit.test_semantic_guard_mismatch_parsing
+- tests.test_audit.test_semantic_guard_ok
+- tests.test_cache_isolation_hardening._fingerprint
+- tests.test_cache_isolation_hardening._run_cmd
+- tests.test_cache_isolation_hardening._snapshot_repo_cache
+- tests.test_cache_isolation_hardening.test_cli_status_writes_cache_in_tmp_workspace_only
+- tests.test_cache_isolation_hardening.test_docs_all_external_only_index_is_isolated
+- tests.test_cache_isolation_hardening.test_external_temp_paths_only_land_in_isolated_workspace_index
+- tests.test_cache_isolation_hardening.test_index_builder_uses_isolated_cache_dir_without_touching_repo_cache
+- tests.test_cli_config.test_config_add_list_remove
+- tests.test_cli_decorate.test_cli_dry_run_preview_counts
+- tests.test_cli_docs_modes._empty_status_report
+- tests.test_cli_docs_modes._force_en_locale
+- tests.test_cli_docs_modes.run_cmd
+- tests.test_cli_docs_modes.test_changed_modules_detect_and_generate_each
+- tests.test_cli_docs_modes.test_collect_all_indexed_modules_from_index_records
+- tests.test_cli_docs_modes.test_collect_all_indexed_modules_normalizes_repo_absolute_file_paths
+- tests.test_cli_docs_modes.test_docs_all_preview_does_not_write
+- tests.test_cli_docs_modes.test_docs_all_write_only_unsafe_modules_returns_zero_and_does_not_write
+- tests.test_cli_docs_modes.test_docs_all_write_skips_unsafe_indexed_modules_and_continues
+- tests.test_cli_docs_modes.test_docs_all_write_supports_repo_absolute_file_candidate
+- tests.test_cli_docs_modes.test_docs_all_write_updates_each_module
+- tests.test_cli_docs_modes.test_docs_changed_and_all_args_are_recognized
+- tests.test_cli_docs_modes.test_docs_changed_write_skips_external_changed_module_and_writes_safe
+- tests.test_cli_docs_modes.test_docs_mode_flags_are_mutually_exclusive
+- tests.test_cli_docs_modes.test_docs_module_mode_still_works
+- tests.test_cli_docs_modes.test_docs_module_write_canonical_first_and_filters_meta
+- tests.test_cli_docs_modes.test_docs_module_write_rejects_explicit_unsafe_module
+- tests.test_cli_docs_modes.test_infer_module_from_path_supports_windows_and_posix
+- tests.test_cli_docs_modes.test_no_changed_modules_prints_friendly_message
+- tests.test_cli_doctor._empty_status_report
+- tests.test_cli_doctor._force_en_locale
+- tests.test_cli_doctor._pass_report
+- tests.test_cli_doctor.run_cmd
+- tests.test_cli_doctor.run_cmd_with_err
+- tests.test_cli_doctor.test_doctor_changed_and_all_args_are_recognized
+- tests.test_cli_doctor.test_doctor_default_is_changed_scope
+- tests.test_cli_doctor.test_doctor_is_advisory_and_does_not_trigger_write_or_llm_paths
+- tests.test_cli_doctor.test_doctor_modes_are_mutually_exclusive
+- tests.test_cli_doctor.test_doctor_module_mode_runs
+- tests.test_cli_doctor.test_doctor_text_output_uses_unknown_for_no_indexed_records
+- tests.test_cli_finish_sync_context._empty_status_report
+- tests.test_cli_finish_sync_context._empty_validation_report
+- tests.test_cli_finish_sync_context._force_en_locale
+- tests.test_cli_finish_sync_context._patch_finish_basics
+- tests.test_cli_finish_sync_context._status_report_with_changed
+- tests.test_cli_finish_sync_context.run_cmd
+- tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow
+- tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace
+- tests.test_cli_finish_sync_context.test_finish_sync_context_no_changed_modules_friendly
+- tests.test_cli_finish_sync_context.test_finish_sync_context_runs_status_check_docs_seal_stale
+- tests.test_cli_finish_sync_context.test_finish_sync_context_write_boundary_only_allows_docs_and_capsules
+- tests.test_cli_help_and_ux._force_en_locale
+- tests.test_cli_help_and_ux.run_cmd
+- tests.test_cli_help_and_ux.run_help
+- tests.test_cli_help_and_ux.test_docs_help_lists_changed_all_and_write_flags
+- tests.test_cli_help_and_ux.test_docs_modes_error_message_is_friendly_and_clear
+- tests.test_cli_help_and_ux.test_doctor_help_lists_changed_all_and_module_flags
+- tests.test_cli_help_and_ux.test_module_help_lists_inspect_seal_stale_and_promote_skill
+- tests.test_cli_help_and_ux.test_module_seal_modes_error_message_is_friendly_and_clear
+- tests.test_cli_help_and_ux.test_module_stale_modes_error_message_is_friendly_and_clear
+- tests.test_cli_help_and_ux.test_project_help_lists_structure_and_structure_help_lists_write
+- tests.test_cli_help_and_ux.test_project_structure_preview_message_uses_resolved_canonical_path
+- tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases
+- tests.test_cli_help_and_ux.test_stale_help_lists_changed_all_module_and_format_flags
+- tests.test_cli_help_and_ux.test_workflow_help_exposes_start_checkpoint_finish_accept
+- tests.test_cli_i18n.run_cmd
+- tests.test_cli_i18n.test_config_list_zh
+- tests.test_cli_i18n_env.run_cmd
+- tests.test_cli_i18n_env.test_env_language_overrides_config
+- tests.test_cli_init_output.run_cmd
+- tests.test_cli_init_output.test_init_detects_django
+- tests.test_cli_init_output.test_init_detects_node
+- tests.test_cli_json_output._force_en_locale
+- tests.test_cli_json_output._sample_doctor_report
+- tests.test_cli_json_output._sample_stale_summary
+- tests.test_cli_json_output.run_cmd
+- tests.test_cli_json_output.run_cmd_with_err
+- tests.test_cli_json_output.test_default_text_output_for_stale_and_doctor_is_unchanged
+- tests.test_cli_json_output.test_doctor_json_derived_view_detail_keeps_unknown_semantics
+- tests.test_cli_json_output.test_doctor_json_output_has_required_fields_and_summary
+- tests.test_cli_json_output.test_doctor_json_scope_for_module
+- tests.test_cli_json_output.test_invalid_format_values_return_argparse_error
+- tests.test_cli_json_output.test_json_output_does_not_include_absolute_paths
+- tests.test_cli_json_output.test_stale_json_output_has_required_fields_and_no_extra_text
+- tests.test_cli_json_output.test_stale_json_scope_for_module_and_deterministic_content
+- tests.test_cli_module_capsule._force_en_locale
+- tests.test_cli_module_capsule._write_index
+- tests.test_cli_module_capsule.run_cmd
+- tests.test_cli_module_capsule.test_module_inspect_is_recognized
+- tests.test_cli_module_capsule.test_module_seal_preview_is_recognized_and_no_write
+- tests.test_cli_module_capsule.test_module_seal_windows_style_path_normalizes_to_nested_dir
+- tests.test_cli_module_capsule.test_module_seal_write_creates_three_files
+- tests.test_cli_module_capsule.test_unknown_module_does_not_crash_and_prints_friendly_message
+- tests.test_cli_module_capsule_batch._empty_status_report
+- tests.test_cli_module_capsule_batch._force_en_locale
+- tests.test_cli_module_capsule_batch._write_index
+- tests.test_cli_module_capsule_batch._write_workspace_config
+- tests.test_cli_module_capsule_batch.run_cmd
+- tests.test_cli_module_capsule_batch.test_module_inspect_and_single_seal_behavior_unchanged
+- tests.test_cli_module_capsule_batch.test_module_seal_all_discovers_indexed_modules_only_and_stable_order
+- tests.test_cli_module_capsule_batch.test_module_seal_all_none_friendly
+- tests.test_cli_module_capsule_batch.test_module_seal_all_write_creates_three_files_per_module
+- tests.test_cli_module_capsule_batch.test_module_seal_changed_and_all_args_are_recognized
+- tests.test_cli_module_capsule_batch.test_module_seal_changed_dedup_sort_and_windows_path_preview
+- tests.test_cli_module_capsule_batch.test_module_seal_changed_no_modules_friendly_and_no_write
+- tests.test_cli_module_capsule_batch.test_module_seal_changed_write_creates_three_files_per_module
+- tests.test_cli_module_capsule_batch.test_module_seal_modes_are_mutually_exclusive
+- tests.test_cli_module_capsule_batch.test_module_seal_single_write_dual_writes_when_export_enabled
+- tests.test_cli_module_capsule_stale._empty_status_report
+- tests.test_cli_module_capsule_stale._force_en_locale
+- tests.test_cli_module_capsule_stale._write_index
+- tests.test_cli_module_capsule_stale.run_cmd
+- tests.test_cli_module_capsule_stale.test_module_stale_all_checks_all_modules_stable_order
+- tests.test_cli_module_capsule_stale.test_module_stale_args_are_recognized
+- tests.test_cli_module_capsule_stale.test_module_stale_changed_checks_each_module_and_windows_path
+- tests.test_cli_module_capsule_stale.test_module_stale_does_not_accept_write
+- tests.test_cli_module_capsule_stale.test_module_stale_modes_are_mutually_exclusive
+- tests.test_cli_module_capsule_stale.test_module_stale_single_fingerprint_missing
+- tests.test_cli_module_capsule_stale.test_module_stale_single_mismatch
+- tests.test_cli_module_capsule_stale.test_module_stale_single_missing_module_card
+- tests.test_cli_module_capsule_stale.test_module_stale_single_up_to_date
+- tests.test_cli_module_capsule_stale.test_module_stale_treats_legacy_existing_but_canonical_missing_as_stale
+- tests.test_cli_module_capsule_stale.test_module_stale_unknown_module_friendly
+- tests.test_cli_module_skill._force_en_locale
+- tests.test_cli_module_skill._write_index
+- tests.test_cli_module_skill.run_cmd
+- tests.test_cli_module_skill.test_module_promote_skill_is_recognized
+- tests.test_cli_module_skill.test_module_promote_skill_legacy_exists_but_canonical_missing_fails
+- tests.test_cli_module_skill.test_module_promote_skill_missing_capsule
+- tests.test_cli_module_skill.test_module_promote_skill_stale_capsule
+- tests.test_cli_module_skill.test_module_promote_skill_up_to_date_generates_skill
+- tests.test_cli_project_structure._force_en_locale
+- tests.test_cli_project_structure._write_index
+- tests.test_cli_project_structure._write_workspace_config
+- tests.test_cli_project_structure.run_cmd
+- tests.test_cli_project_structure.test_project_structure_does_not_trigger_other_side_effect_paths
+- tests.test_cli_project_structure.test_project_structure_filesystem_fallback_generates_non_empty_key_areas_and_modules
+- tests.test_cli_project_structure.test_project_structure_no_index_is_friendly_and_not_crash_when_no_filesystem_fallback
+- tests.test_cli_project_structure.test_project_structure_preview_runs_and_does_not_write
+- tests.test_cli_project_structure.test_project_structure_write_does_not_overwrite_existing_legacy_docs_when_export_disabled
+- tests.test_cli_project_structure.test_project_structure_write_dual_writes_when_docs_export_enabled
+- tests.test_cli_project_structure.test_project_structure_write_updates_canonical_path_by_default
+- tests.test_cli_stale._empty_status_report
+- tests.test_cli_stale._force_en_locale
+- tests.test_cli_stale._sample_summary
+- tests.test_cli_stale.run_cmd
+- tests.test_cli_stale.test_stale_advisory_does_not_trigger_write_or_workflow_side_effects
+- tests.test_cli_stale.test_stale_all_scope_runs
+- tests.test_cli_stale.test_stale_changed_and_all_args_are_recognized
+- tests.test_cli_stale.test_stale_changed_checks_both_views
+- tests.test_cli_stale.test_stale_changed_windows_path_and_stable_order
+- tests.test_cli_stale.test_stale_default_is_changed_scope
+- tests.test_cli_stale.test_stale_modes_are_mutually_exclusive
+- tests.test_cli_stale.test_stale_module_mode_runs
+- tests.test_cli_stale.test_stale_reports_all_up_to_date_message
+- tests.test_cli_v2._clean_status_report
+- tests.test_cli_v2._empty_validation_report
+- tests.test_cli_v2._force_en_locale
+- tests.test_cli_v2._isolate_workspace
+- tests.test_cli_v2.run_cmd
+- tests.test_cli_v2.test_accept_maps_to_lock_logic
+- tests.test_cli_v2.test_checkpoint_command_recognized
+- tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit
+- tests.test_cli_v2.test_commit_alias_unchanged_maps_to_lock
+- tests.test_cli_v2.test_ddt_validate_maps_to_check_fast
+- tests.test_cli_v2.test_decorate_maps_to_adopt_dry_run
+- tests.test_cli_v2.test_diary_export_maps_to_log_export
+- tests.test_cli_v2.test_finish_command_recognized
+- tests.test_cli_v2.test_finish_does_not_auto_run_docs_log_lock
+- tests.test_cli_v2.test_gen_l2_maps_to_docs
+- tests.test_cli_v2.test_start_command_recognized
+- tests.test_cli_v2.test_status_alias_st
+- tests.test_config_update.test_write_config_and_update
+- tests.test_ddt_validate.test_ddt_validate_matrix
+- tests.test_ddt_validate.write_test_file
+- tests.test_decorator_engine.test_aggressive_inserts_todo_docstring
+- tests.test_decorator_engine.test_filters_out_internal_and_testlike_names
+- tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent
+- tests.test_decorator_engine.test_safe_does_not_duplicate_tag
+- tests.test_derive_adopted_roots.test_derive_adopted_roots_basic
+- tests.test_doctor._empty_status_report
+- tests.test_doctor._force_en_locale
+- tests.test_doctor._sample_summary
+- tests.test_doctor.test_build_doctor_report_is_read_only
+- tests.test_doctor.test_derived_views_check_marks_unknown_detail_as_unknown_not_stale
+- tests.test_doctor.test_derived_views_check_reuses_stale_results
+- tests.test_doctor.test_doctor_report_formats_pass_warn_fail_skip
+- tests.test_doctor.test_doctor_report_includes_suggestions
+- tests.test_doctor.test_skill_reference_check_legacy_existing_passes_when_export_enabled
+- tests.test_doctor.test_skill_reference_check_legacy_existing_warns_when_export_disabled
+- tests.test_doctor.test_skill_reference_check_passes_for_existing_canonical_reference
+- tests.test_doctor.test_skill_reference_check_skips_when_agents_skills_missing
+- tests.test_doctor.test_skill_reference_check_warns_when_capsule_missing
+- tests.test_drafting._EngStub.check_status
+- tests.test_drafting._OKProvider.infer
+- tests.test_drafting._rep_with
+- tests.test_drafting.test_generate_draft_parses_json
+- tests.test_drafting.test_generate_draft_returns_none_when_no_changes
+- tests.test_drafting.test_raise_when_llm_not_configured
+- tests.test_drafting_json_parse._parse
+- tests.test_drafting_json_parse.test_kv_fallback_lines_parse
+- tests.test_drafting_json_parse.test_nested_brace_with_code_fence
+- tests.test_drafting_json_parse.test_parse_single_quotes_fallback
+- tests.test_drafting_json_parse.test_parse_with_code_fence
+- tests.test_drafting_json_parse.test_parse_with_noise_prefix_suffix
+- tests.test_gitignore_prune.test_gitignore_prunes_node_modules
+- tests.test_index_builder.read_index
+- tests.test_index_builder.test_index_build_incremental_and_docstring_stability
+- tests.test_index_builder.write_module
+- tests.test_index_builder_bad_syntax.test_index_builder_skips_bad_syntax
+- tests.test_index_progress.test_iter_build_emits_progress_and_counts
+- tests.test_init_detector.test_django_detection
+- tests.test_init_detector.test_gitignore_mapping
+- tests.test_init_detector.test_mixed_stack_rules
+- tests.test_initializer.test_detect_fallback
+- tests.test_initializer.test_detect_package_layout
+- tests.test_initializer.test_detect_script_layout
+- tests.test_initializer.test_detect_src_layout
+- tests.test_l2_paths._write_yaml
+- tests.test_l2_paths.test_l2_absolute_module_path_outside_repo_still_rejected
+- tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root
+- tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical
+- tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only
+- tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled
+- tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled
+- tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default
+- tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path
+- tests.test_lock_flags._prepare_proj
+- tests.test_lock_flags.test_lock_no_register_adopted
+- tests.test_lock_flags.test_lock_register_scan
+- tests.test_lock_register_adopted.test_lock_register_adopted
+- tests.test_min_count_one.test_min_count_one_includes_single_file_dir
+- tests.test_module_capsule._write_index
+- tests.test_module_capsule.test_collect_module_context_matches_prefix_only
+- tests.test_module_capsule.test_generators_include_required_sections
+- tests.test_module_capsule.test_module_capsule_dir_keeps_nested_path
+- tests.test_module_capsule.test_no_records_is_friendly
+- tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix
+- tests.test_module_capsule.test_write_module_capsule_rejects_export_root_outside_repo
+- tests.test_module_capsule.test_write_module_capsule_rejects_nested_parent_traversal_module_path
+- tests.test_module_capsule.test_write_module_capsule_rejects_parent_traversal_module_path
+- tests.test_module_capsule.test_write_module_capsule_writes_three_files
+- tests.test_module_capsule_stale._write_index
+- tests.test_module_capsule_stale.test_compute_module_fingerprint_is_stable_and_normalized
+- tests.test_module_capsule_stale.test_legacy_exists_but_canonical_missing_is_stale
+- tests.test_module_capsule_stale.test_stale_when_fingerprint_mismatch
+- tests.test_module_capsule_stale.test_stale_when_fingerprint_missing
+- tests.test_module_capsule_stale.test_stale_when_module_card_missing
+- tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale
+- tests.test_module_capsule_stale.test_up_to_date_when_fingerprint_matches
+- tests.test_module_capsule_stale.test_write_module_card_contains_frontmatter_fingerprint
+- tests.test_module_skill._write_index
+- tests.test_module_skill.test_check_capsule_ready_legacy_exists_but_canonical_missing
+- tests.test_module_skill.test_check_capsule_ready_missing_capsule
+- tests.test_module_skill.test_check_capsule_ready_stale_capsule
+- tests.test_module_skill.test_check_capsule_ready_unknown_module
+- tests.test_module_skill.test_generate_module_skill_contains_thin_template
+- tests.test_module_skill.test_normalize_skill_slug_rules_are_stable
+- tests.test_module_skill.test_write_module_skill_only_writes_skill_file
+- tests.test_project_structure._write_index
+- tests.test_project_structure.test_classify_project_area_is_stable
+- tests.test_project_structure.test_collect_project_structure_context_builds_expected_flags_and_counts
+- tests.test_project_structure.test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing
+- tests.test_project_structure.test_collect_project_structure_reads_metadata_from_pyproject
+- tests.test_project_structure.test_generate_markdown_contains_required_sections_and_is_deterministic
+- tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files
+- tests.test_project_structure.test_write_project_structure_returns_canonical_first
+- tests.test_release_packaging._force_en_locale
+- tests.test_release_packaging._repo_root
+- tests.test_release_packaging._run_help
+- tests.test_release_packaging.test_help_recognizes_core_release_commands
+- tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready
+- tests.test_release_packaging.test_readme_contains_release_key_commands
+- tests.test_release_packaging.test_readme_en_contains_release_key_commands
+- tests.test_release_packaging.test_release_notes_include_unreleased_v130_track
+- tests.test_stale._write_index
+- tests.test_stale.test_check_module_derived_views_stale_returns_both_views
+- tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records
+- tests.test_stale.test_l2_readme_check_does_not_write_file
+- tests.test_stale.test_l2_readme_stale_when_content_differs
+- tests.test_stale.test_l2_readme_stale_when_missing
+- tests.test_stale.test_l2_readme_unknown_when_no_indexed_records
+- tests.test_stale.test_l2_readme_up_to_date_when_content_matches_except_timestamp
+- tests.test_sync_engine.test_sync_engine_drift_detection
+- tests.test_sync_engine.write_module
+- tests.test_utils_format.test_format_size_bytes
+- tests.test_utils_format.test_format_size_kb
+- tests.test_utils_format.test_format_size_mb
+- tests.test_utils_format.test_format_size_negative_raises
+- tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix
+- tests.test_workspace_gitignore_policy._gitignore_entries
+- tests.test_workspace_gitignore_policy._is_ignored
+- tests.test_workspace_gitignore_policy._repo_root
+- tests.test_workspace_gitignore_policy.test_docs_design_paths_are_trackable
+- tests.test_workspace_gitignore_policy.test_docs_harbor_project_structure_remains_non_canonical_export_target
+- tests.test_workspace_gitignore_policy.test_gitignore_does_not_use_broad_harbor_ignore
+- tests.test_workspace_gitignore_policy.test_gitignore_ignores_required_local_runtime_paths
+- tests.test_workspace_gitignore_policy.test_harbor_canonical_and_runtime_ignore_policy
+- tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views
+- tests.test_workspace_paths._write_yaml
+- tests.test_workspace_paths.test_default_paths
+- tests.test_workspace_paths.test_export_options_parsing
+- tests.test_workspace_paths.test_gitignore_does_not_ignore_harbor_views_modules_in_repo
+- tests.test_workspace_paths.test_legacy_config_read
+- tests.test_workspace_paths.test_new_config_read
+- tests.test_workspace_paths.test_project_structure_docs_export_root_cannot_escape_repo_root
+- tests.test_workspace_paths.test_single_write_new_config_target
+- tests.test_workspace_paths.test_windows_posix_path_normalization
+- tests.test_workspace_paths.test_write_path_cannot_escape_repo_root
+---
+
+# Module Card: tests
+
+> This file is generated by Harbor-spec.
+> It is a derived maintenance view, not a source of truth.
+
+## Responsibility
+
+This module appears to cover code under:
+
+```text
+tests
+```
+
+If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+
+## Key Files
+
+```text
+tests/__init__.py
+tests/core/test_index_sync_sqlite.py
+tests/core/test_storage_migration.py
+tests/fixtures_sqlite/sample.py
+tests/test_adapter_basic.py
+tests/test_adopted_roots.py
+tests/test_audit.py
+tests/test_cache_isolation_hardening.py
+tests/test_cli_config.py
+tests/test_cli_decorate.py
+tests/test_cli_docs_modes.py
+tests/test_cli_doctor.py
+tests/test_cli_finish_sync_context.py
+tests/test_cli_help_and_ux.py
+tests/test_cli_i18n.py
+tests/test_cli_i18n_env.py
+tests/test_cli_init_output.py
+tests/test_cli_json_output.py
+tests/test_cli_module_capsule.py
+tests/test_cli_module_capsule_batch.py
+tests/test_cli_module_capsule_stale.py
+tests/test_cli_module_skill.py
+tests/test_cli_project_structure.py
+tests/test_cli_stale.py
+tests/test_cli_v2.py
+tests/test_config_update.py
+tests/test_ddt_validate.py
+tests/test_decorator_engine.py
+tests/test_derive_adopted_roots.py
+tests/test_doctor.py
+tests/test_drafting.py
+tests/test_drafting_json_parse.py
+tests/test_gitignore_prune.py
+tests/test_index_builder.py
+tests/test_index_builder_bad_syntax.py
+tests/test_index_progress.py
+tests/test_init_detector.py
+tests/test_initializer.py
+tests/test_l2_paths.py
+tests/test_lock_flags.py
+tests/test_lock_register_adopted.py
+tests/test_min_count_one.py
+tests/test_module_capsule.py
+tests/test_module_capsule_stale.py
+tests/test_module_skill.py
+tests/test_project_structure.py
+tests/test_release_packaging.py
+tests/test_stale.py
+tests/test_sync_engine.py
+tests/test_utils_format.py
+tests/test_windows_abs_path_prefix.py
+tests/test_workspace_gitignore_policy.py
+tests/test_workspace_paths.py
+```
+
+## Public / Indexed Contracts
+
+| Symbol | File | Scope | Strictness |
+| ------ | ---- | ----- | ---------- |
+| tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | standard |
+| tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | standard |
+| tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict |
+| tests.test_adapter_basic.test_adapter_parses_itself | tests/test_adapter_basic.py | unknown | standard |
+| tests.test_adapter_basic.test_signature_hash_changes | tests/test_adapter_basic.py | unknown | standard |
+| tests.test_adopted_roots.test_adopted_roots_write_and_remove | tests/test_adopted_roots.py | unknown | standard |
+| tests.test_audit.test_semantic_guard_mismatch_parsing | tests/test_audit.py | unknown | standard |
+| tests.test_audit.test_semantic_guard_ok | tests/test_audit.py | unknown | standard |
+| tests.test_cache_isolation_hardening._fingerprint | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_cache_isolation_hardening._run_cmd | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_cache_isolation_hardening._snapshot_repo_cache | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_cache_isolation_hardening.test_cli_status_writes_cache_in_tmp_workspace_only | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_cache_isolation_hardening.test_docs_all_external_only_index_is_isolated | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_cache_isolation_hardening.test_external_temp_paths_only_land_in_isolated_workspace_index | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_cache_isolation_hardening.test_index_builder_uses_isolated_cache_dir_without_touching_repo_cache | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_cli_config.test_config_add_list_remove | tests/test_cli_config.py | unknown | standard |
+| tests.test_cli_decorate.test_cli_dry_run_preview_counts | tests/test_cli_decorate.py | unknown | standard |
+| tests.test_cli_docs_modes._empty_status_report | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes._force_en_locale | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.run_cmd | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_changed_modules_detect_and_generate_each | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_collect_all_indexed_modules_from_index_records | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_collect_all_indexed_modules_normalizes_repo_absolute_file_paths | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_all_preview_does_not_write | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_all_write_only_unsafe_modules_returns_zero_and_does_not_write | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_all_write_skips_unsafe_indexed_modules_and_continues | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_all_write_supports_repo_absolute_file_candidate | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_all_write_updates_each_module | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_changed_and_all_args_are_recognized | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_changed_write_skips_external_changed_module_and_writes_safe | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_mode_flags_are_mutually_exclusive | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_module_mode_still_works | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_module_write_canonical_first_and_filters_meta | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_module_write_rejects_explicit_unsafe_module | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_infer_module_from_path_supports_windows_and_posix | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_no_changed_modules_prints_friendly_message | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_doctor._empty_status_report | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor._force_en_locale | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor._pass_report | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.run_cmd | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.run_cmd_with_err | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.test_doctor_changed_and_all_args_are_recognized | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.test_doctor_default_is_changed_scope | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.test_doctor_is_advisory_and_does_not_trigger_write_or_llm_paths | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.test_doctor_modes_are_mutually_exclusive | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.test_doctor_module_mode_runs | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.test_doctor_text_output_uses_unknown_for_no_indexed_records | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_finish_sync_context._empty_status_report | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._empty_validation_report | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._force_en_locale | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._patch_finish_basics | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._status_report_with_changed | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.run_cmd | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_no_changed_modules_friendly | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_runs_status_check_docs_seal_stale | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_write_boundary_only_allows_docs_and_capsules | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_help_and_ux._force_en_locale | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.run_cmd | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.run_help | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_docs_help_lists_changed_all_and_write_flags | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_docs_modes_error_message_is_friendly_and_clear | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_doctor_help_lists_changed_all_and_module_flags | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_module_help_lists_inspect_seal_stale_and_promote_skill | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_module_seal_modes_error_message_is_friendly_and_clear | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_module_stale_modes_error_message_is_friendly_and_clear | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_project_help_lists_structure_and_structure_help_lists_write | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_project_structure_preview_message_uses_resolved_canonical_path | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_stale_help_lists_changed_all_module_and_format_flags | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_workflow_help_exposes_start_checkpoint_finish_accept | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_i18n.run_cmd | tests/test_cli_i18n.py | unknown | standard |
+| tests.test_cli_i18n.test_config_list_zh | tests/test_cli_i18n.py | unknown | standard |
+| tests.test_cli_i18n_env.run_cmd | tests/test_cli_i18n_env.py | unknown | standard |
+| tests.test_cli_i18n_env.test_env_language_overrides_config | tests/test_cli_i18n_env.py | unknown | standard |
+| tests.test_cli_init_output.run_cmd | tests/test_cli_init_output.py | unknown | standard |
+| tests.test_cli_init_output.test_init_detects_django | tests/test_cli_init_output.py | unknown | standard |
+| tests.test_cli_init_output.test_init_detects_node | tests/test_cli_init_output.py | unknown | standard |
+| tests.test_cli_json_output._force_en_locale | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output._sample_doctor_report | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output._sample_stale_summary | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.run_cmd | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.run_cmd_with_err | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_default_text_output_for_stale_and_doctor_is_unchanged | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_doctor_json_derived_view_detail_keeps_unknown_semantics | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_doctor_json_output_has_required_fields_and_summary | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_doctor_json_scope_for_module | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_json_output_does_not_include_absolute_paths | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_stale_json_output_has_required_fields_and_no_extra_text | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_stale_json_scope_for_module_and_deterministic_content | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_module_capsule._force_en_locale | tests/test_cli_module_capsule.py | unknown | standard |
+| tests.test_cli_module_capsule._write_index | tests/test_cli_module_capsule.py | unknown | standard |
+| tests.test_cli_module_capsule.run_cmd | tests/test_cli_module_capsule.py | unknown | standard |
+| tests.test_cli_module_capsule.test_module_inspect_is_recognized | tests/test_cli_module_capsule.py | unknown | standard |
+| tests.test_cli_module_capsule.test_module_seal_preview_is_recognized_and_no_write | tests/test_cli_module_capsule.py | unknown | standard |
+| tests.test_cli_module_capsule.test_module_seal_windows_style_path_normalizes_to_nested_dir | tests/test_cli_module_capsule.py | unknown | standard |
+| tests.test_cli_module_capsule.test_module_seal_write_creates_three_files | tests/test_cli_module_capsule.py | unknown | standard |
+| tests.test_cli_module_capsule.test_unknown_module_does_not_crash_and_prints_friendly_message | tests/test_cli_module_capsule.py | unknown | standard |
+| tests.test_cli_module_capsule_batch._empty_status_report | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch._force_en_locale | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch._write_index | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch._write_workspace_config | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.run_cmd | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_inspect_and_single_seal_behavior_unchanged | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_seal_all_discovers_indexed_modules_only_and_stable_order | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_seal_all_none_friendly | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_seal_all_write_creates_three_files_per_module | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_seal_changed_and_all_args_are_recognized | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_seal_changed_dedup_sort_and_windows_path_preview | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_seal_changed_no_modules_friendly_and_no_write | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_seal_changed_write_creates_three_files_per_module | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_seal_modes_are_mutually_exclusive | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_batch.test_module_seal_single_write_dual_writes_when_export_enabled | tests/test_cli_module_capsule_batch.py | unknown | standard |
+| tests.test_cli_module_capsule_stale._empty_status_report | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale._force_en_locale | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale._write_index | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.run_cmd | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_all_checks_all_modules_stable_order | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_args_are_recognized | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_changed_checks_each_module_and_windows_path | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_does_not_accept_write | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_modes_are_mutually_exclusive | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_single_fingerprint_missing | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_single_mismatch | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_single_missing_module_card | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_single_up_to_date | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_treats_legacy_existing_but_canonical_missing_as_stale | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_capsule_stale.test_module_stale_unknown_module_friendly | tests/test_cli_module_capsule_stale.py | unknown | standard |
+| tests.test_cli_module_skill._force_en_locale | tests/test_cli_module_skill.py | unknown | standard |
+| tests.test_cli_module_skill._write_index | tests/test_cli_module_skill.py | unknown | standard |
+| tests.test_cli_module_skill.run_cmd | tests/test_cli_module_skill.py | unknown | standard |
+| tests.test_cli_module_skill.test_module_promote_skill_is_recognized | tests/test_cli_module_skill.py | unknown | standard |
+| tests.test_cli_module_skill.test_module_promote_skill_legacy_exists_but_canonical_missing_fails | tests/test_cli_module_skill.py | unknown | standard |
+| tests.test_cli_module_skill.test_module_promote_skill_missing_capsule | tests/test_cli_module_skill.py | unknown | standard |
+| tests.test_cli_module_skill.test_module_promote_skill_stale_capsule | tests/test_cli_module_skill.py | unknown | standard |
+| tests.test_cli_module_skill.test_module_promote_skill_up_to_date_generates_skill | tests/test_cli_module_skill.py | unknown | standard |
+| tests.test_cli_project_structure._force_en_locale | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure._write_index | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure._write_workspace_config | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure.run_cmd | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure.test_project_structure_does_not_trigger_other_side_effect_paths | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure.test_project_structure_filesystem_fallback_generates_non_empty_key_areas_and_modules | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure.test_project_structure_no_index_is_friendly_and_not_crash_when_no_filesystem_fallback | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure.test_project_structure_preview_runs_and_does_not_write | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure.test_project_structure_write_does_not_overwrite_existing_legacy_docs_when_export_disabled | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure.test_project_structure_write_dual_writes_when_docs_export_enabled | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure.test_project_structure_write_updates_canonical_path_by_default | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_stale._empty_status_report | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale._force_en_locale | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale._sample_summary | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.run_cmd | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_advisory_does_not_trigger_write_or_workflow_side_effects | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_all_scope_runs | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_changed_and_all_args_are_recognized | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_changed_checks_both_views | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_changed_windows_path_and_stable_order | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_default_is_changed_scope | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_modes_are_mutually_exclusive | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_module_mode_runs | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_reports_all_up_to_date_message | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_v2._clean_status_report | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2._empty_validation_report | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2._force_en_locale | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2._isolate_workspace | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.run_cmd | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_accept_maps_to_lock_logic | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_checkpoint_command_recognized | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_commit_alias_unchanged_maps_to_lock | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_ddt_validate_maps_to_check_fast | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_decorate_maps_to_adopt_dry_run | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_diary_export_maps_to_log_export | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_finish_command_recognized | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_finish_does_not_auto_run_docs_log_lock | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_gen_l2_maps_to_docs | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_start_command_recognized | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_status_alias_st | tests/test_cli_v2.py | unknown | standard |
+| tests.test_config_update.test_write_config_and_update | tests/test_config_update.py | unknown | standard |
+| tests.test_ddt_validate.test_ddt_validate_matrix | tests/test_ddt_validate.py | unknown | standard |
+| tests.test_ddt_validate.write_test_file | tests/test_ddt_validate.py | unknown | standard |
+| tests.test_decorator_engine.test_aggressive_inserts_todo_docstring | tests/test_decorator_engine.py | unknown | standard |
+| tests.test_decorator_engine.test_filters_out_internal_and_testlike_names | tests/test_decorator_engine.py | unknown | standard |
+| tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | tests/test_decorator_engine.py | unknown | standard |
+| tests.test_decorator_engine.test_safe_does_not_duplicate_tag | tests/test_decorator_engine.py | unknown | standard |
+| tests.test_derive_adopted_roots.test_derive_adopted_roots_basic | tests/test_derive_adopted_roots.py | unknown | standard |
+| tests.test_doctor._empty_status_report | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor._force_en_locale | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor._sample_summary | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_build_doctor_report_is_read_only | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_derived_views_check_marks_unknown_detail_as_unknown_not_stale | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_derived_views_check_reuses_stale_results | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_doctor_report_formats_pass_warn_fail_skip | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_doctor_report_includes_suggestions | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_skill_reference_check_legacy_existing_passes_when_export_enabled | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_skill_reference_check_legacy_existing_warns_when_export_disabled | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_skill_reference_check_passes_for_existing_canonical_reference | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_skill_reference_check_skips_when_agents_skills_missing | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_skill_reference_check_warns_when_capsule_missing | tests/test_doctor.py | unknown | standard |
+| tests.test_drafting._EngStub.check_status | tests/test_drafting.py | unknown | standard |
+| tests.test_drafting._OKProvider.infer | tests/test_drafting.py | unknown | standard |
+| tests.test_drafting._rep_with | tests/test_drafting.py | unknown | standard |
+| tests.test_drafting.test_generate_draft_parses_json | tests/test_drafting.py | unknown | standard |
+| tests.test_drafting.test_generate_draft_returns_none_when_no_changes | tests/test_drafting.py | unknown | standard |
+| tests.test_drafting.test_raise_when_llm_not_configured | tests/test_drafting.py | unknown | standard |
+| tests.test_drafting_json_parse._parse | tests/test_drafting_json_parse.py | unknown | standard |
+| tests.test_drafting_json_parse.test_kv_fallback_lines_parse | tests/test_drafting_json_parse.py | unknown | standard |
+| tests.test_drafting_json_parse.test_nested_brace_with_code_fence | tests/test_drafting_json_parse.py | unknown | standard |
+| tests.test_drafting_json_parse.test_parse_single_quotes_fallback | tests/test_drafting_json_parse.py | unknown | standard |
+| tests.test_drafting_json_parse.test_parse_with_code_fence | tests/test_drafting_json_parse.py | unknown | standard |
+| tests.test_drafting_json_parse.test_parse_with_noise_prefix_suffix | tests/test_drafting_json_parse.py | unknown | standard |
+| tests.test_gitignore_prune.test_gitignore_prunes_node_modules | tests/test_gitignore_prune.py | unknown | standard |
+| tests.test_index_builder.read_index | tests/test_index_builder.py | unknown | standard |
+| tests.test_index_builder.test_index_build_incremental_and_docstring_stability | tests/test_index_builder.py | unknown | standard |
+| tests.test_index_builder.write_module | tests/test_index_builder.py | unknown | standard |
+| tests.test_index_builder_bad_syntax.test_index_builder_skips_bad_syntax | tests/test_index_builder_bad_syntax.py | unknown | standard |
+| tests.test_index_progress.test_iter_build_emits_progress_and_counts | tests/test_index_progress.py | unknown | standard |
+| tests.test_init_detector.test_django_detection | tests/test_init_detector.py | unknown | standard |
+| tests.test_init_detector.test_gitignore_mapping | tests/test_init_detector.py | unknown | standard |
+| tests.test_init_detector.test_mixed_stack_rules | tests/test_init_detector.py | unknown | standard |
+| tests.test_initializer.test_detect_fallback | tests/test_initializer.py | unknown | standard |
+| tests.test_initializer.test_detect_package_layout | tests/test_initializer.py | unknown | standard |
+| tests.test_initializer.test_detect_script_layout | tests/test_initializer.py | unknown | standard |
+| tests.test_initializer.test_detect_src_layout | tests/test_initializer.py | unknown | standard |
+| tests.test_l2_paths._write_yaml | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_absolute_module_path_outside_repo_still_rejected | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | tests/test_l2_paths.py | unknown | standard |
+| tests.test_lock_flags._prepare_proj | tests/test_lock_flags.py | unknown | standard |
+| tests.test_lock_flags.test_lock_no_register_adopted | tests/test_lock_flags.py | unknown | standard |
+| tests.test_lock_flags.test_lock_register_scan | tests/test_lock_flags.py | unknown | standard |
+| tests.test_lock_register_adopted.test_lock_register_adopted | tests/test_lock_register_adopted.py | unknown | standard |
+| tests.test_min_count_one.test_min_count_one_includes_single_file_dir | tests/test_min_count_one.py | unknown | standard |
+| tests.test_module_capsule._write_index | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_collect_module_context_matches_prefix_only | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_generators_include_required_sections | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_module_capsule_dir_keeps_nested_path | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_no_records_is_friendly | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_write_module_capsule_rejects_export_root_outside_repo | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_write_module_capsule_rejects_nested_parent_traversal_module_path | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_write_module_capsule_rejects_parent_traversal_module_path | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_write_module_capsule_writes_three_files | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule_stale._write_index | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_capsule_stale.test_compute_module_fingerprint_is_stable_and_normalized | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_capsule_stale.test_legacy_exists_but_canonical_missing_is_stale | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_capsule_stale.test_stale_when_fingerprint_mismatch | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_capsule_stale.test_stale_when_fingerprint_missing | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_capsule_stale.test_stale_when_module_card_missing | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_capsule_stale.test_up_to_date_when_fingerprint_matches | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_capsule_stale.test_write_module_card_contains_frontmatter_fingerprint | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_skill._write_index | tests/test_module_skill.py | unknown | standard |
+| tests.test_module_skill.test_check_capsule_ready_legacy_exists_but_canonical_missing | tests/test_module_skill.py | unknown | standard |
+| tests.test_module_skill.test_check_capsule_ready_missing_capsule | tests/test_module_skill.py | unknown | standard |
+| tests.test_module_skill.test_check_capsule_ready_stale_capsule | tests/test_module_skill.py | unknown | standard |
+| tests.test_module_skill.test_check_capsule_ready_unknown_module | tests/test_module_skill.py | unknown | standard |
+| tests.test_module_skill.test_generate_module_skill_contains_thin_template | tests/test_module_skill.py | unknown | standard |
+| tests.test_module_skill.test_normalize_skill_slug_rules_are_stable | tests/test_module_skill.py | unknown | standard |
+| tests.test_module_skill.test_write_module_skill_only_writes_skill_file | tests/test_module_skill.py | unknown | standard |
+| tests.test_project_structure._write_index | tests/test_project_structure.py | unknown | standard |
+| tests.test_project_structure.test_classify_project_area_is_stable | tests/test_project_structure.py | unknown | standard |
+| tests.test_project_structure.test_collect_project_structure_context_builds_expected_flags_and_counts | tests/test_project_structure.py | unknown | standard |
+| tests.test_project_structure.test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing | tests/test_project_structure.py | unknown | standard |
+| tests.test_project_structure.test_collect_project_structure_reads_metadata_from_pyproject | tests/test_project_structure.py | unknown | standard |
+| tests.test_project_structure.test_generate_markdown_contains_required_sections_and_is_deterministic | tests/test_project_structure.py | unknown | standard |
+| tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | tests/test_project_structure.py | unknown | standard |
+| tests.test_project_structure.test_write_project_structure_returns_canonical_first | tests/test_project_structure.py | unknown | standard |
+| tests.test_release_packaging._force_en_locale | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging._repo_root | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging._run_help | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_help_recognizes_core_release_commands | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_readme_contains_release_key_commands | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_readme_en_contains_release_key_commands | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | tests/test_release_packaging.py | unknown | standard |
+| tests.test_stale._write_index | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_check_module_derived_views_stale_returns_both_views | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_readme_check_does_not_write_file | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_readme_stale_when_content_differs | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_readme_stale_when_missing | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_readme_unknown_when_no_indexed_records | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_readme_up_to_date_when_content_matches_except_timestamp | tests/test_stale.py | unknown | standard |
+| tests.test_sync_engine.test_sync_engine_drift_detection | tests/test_sync_engine.py | unknown | standard |
+| tests.test_sync_engine.write_module | tests/test_sync_engine.py | unknown | standard |
+| tests.test_utils_format.test_format_size_bytes | tests/test_utils_format.py | unknown | standard |
+| tests.test_utils_format.test_format_size_kb | tests/test_utils_format.py | unknown | standard |
+| tests.test_utils_format.test_format_size_mb | tests/test_utils_format.py | unknown | standard |
+| tests.test_utils_format.test_format_size_negative_raises | tests/test_utils_format.py | unknown | standard |
+| tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix | tests/test_windows_abs_path_prefix.py | unknown | standard |
+| tests.test_workspace_gitignore_policy._gitignore_entries | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_gitignore_policy._is_ignored | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_gitignore_policy._repo_root | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_gitignore_policy.test_docs_design_paths_are_trackable | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_gitignore_policy.test_docs_harbor_project_structure_remains_non_canonical_export_target | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_gitignore_policy.test_gitignore_does_not_use_broad_harbor_ignore | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_gitignore_policy.test_gitignore_ignores_required_local_runtime_paths | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_gitignore_policy.test_harbor_canonical_and_runtime_ignore_policy | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_paths._write_yaml | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_default_paths | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_export_options_parsing | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_gitignore_does_not_ignore_harbor_views_modules_in_repo | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_legacy_config_read | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_new_config_read | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_project_structure_docs_export_root_cannot_escape_repo_root | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_single_write_new_config_target | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_windows_posix_path_normalization | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_write_path_cannot_escape_repo_root | tests/test_workspace_paths.py | unknown | standard |
+
+## Tests
+
+```text
+tests/core/test_index_sync_sqlite.py
+tests/core/test_storage_migration.py
+tests/test_adapter_basic.py
+tests/test_adopted_roots.py
+tests/test_audit.py
+tests/test_cache_isolation_hardening.py
+tests/test_cli_config.py
+tests/test_cli_decorate.py
+tests/test_cli_docs_modes.py
+tests/test_cli_doctor.py
+tests/test_cli_finish_sync_context.py
+tests/test_cli_help_and_ux.py
+tests/test_cli_i18n.py
+tests/test_cli_i18n_env.py
+tests/test_cli_init_output.py
+tests/test_cli_json_output.py
+tests/test_cli_module_capsule.py
+tests/test_cli_module_capsule_batch.py
+tests/test_cli_module_capsule_stale.py
+tests/test_cli_module_skill.py
+tests/test_cli_project_structure.py
+tests/test_cli_stale.py
+tests/test_cli_v2.py
+tests/test_config_update.py
+tests/test_ddt_validate.py
+tests/test_decorator_engine.py
+tests/test_derive_adopted_roots.py
+tests/test_doctor.py
+tests/test_drafting.py
+tests/test_drafting_json_parse.py
+tests/test_gitignore_prune.py
+tests/test_index_builder.py
+tests/test_index_builder_bad_syntax.py
+tests/test_index_progress.py
+tests/test_init_detector.py
+tests/test_initializer.py
+tests/test_l2_paths.py
+tests/test_lock_flags.py
+tests/test_lock_register_adopted.py
+tests/test_min_count_one.py
+tests/test_module_capsule.py
+tests/test_module_capsule_stale.py
+tests/test_module_skill.py
+tests/test_project_structure.py
+tests/test_release_packaging.py
+tests/test_stale.py
+tests/test_sync_engine.py
+tests/test_utils_format.py
+tests/test_windows_abs_path_prefix.py
+tests/test_workspace_gitignore_policy.py
+tests/test_workspace_paths.py
+```
+
+## Review Focus
+
+* Check Contract Impact before changing public behavior.
+* Check schema/type drift if this module exposes data structures.
+* Check DDT/test coverage for strict targets.
+* Check Runtime Safety if this module writes files, changes data, or touches external systems.
+
+## Debug Entry Points
+
+Start with:
+
+```text
+tests/__init__.py
+tests/core/test_index_sync_sqlite.py
+```
+
+## Related Views
+
+```text
+L2 README:
+  tests/README.md
+
+Capsule files:
+  .harbor/views/modules/tests/review-checklist.md
+  .harbor/views/modules/tests/debug-playbook.md
+
+Optional docs export (if enabled):
+  docs/harbor/modules/tests/review-checklist.md
+  docs/harbor/modules/tests/debug-playbook.md
+```

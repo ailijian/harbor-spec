@@ -1282,6 +1282,17 @@ stale 应优先检查 canonical views：
 
 如果开启 export，再检查 exported views。
 
+Phase 2D-B 落地状态：
+
+```text
+canonical L2 freshness 仅由 .harbor/views/l2/<module>/README.md 判定
+module README export 以独立 view 名 l2_readme_export 进行 advisory 报告
+canonical 不可用时，export 状态为 unknown/skipped，不执行 out-of-sync 比较
+export disabled 必须显式展示为 disabled 且不计入 warn
+legacy .harbor/l2_meta.json advisory 仅由 harbor doctor 提示（stale 不提示）
+doctor 可因 export mismatch / legacy metadata 给出 WARN，但不应 FAIL
+```
+
 ## 13.3 `harbor finish --sync-context`
 
 未来行为：

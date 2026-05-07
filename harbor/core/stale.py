@@ -11,6 +11,7 @@ from harbor.core.module_capsule import (
     collect_module_context,
     normalize_module_path,
 )
+from harbor.core.workspace import load_workspace_config, parse_workspace_export_options
 from harbor.utils.i18n import t
 
 
@@ -35,13 +36,16 @@ class ViewStaleResult:
 class ModuleStaleSummary:
     module: str
     l2_readme: ViewStaleResult
+    l2_readme_export: ViewStaleResult
     module_capsule: ViewStaleResult
 
     def to_dict(self) -> dict:
+        """将模块视图状态摘要序列化为稳定 JSON 结构。"""
         return {
             "module": _sanitize_module_for_json(self.module),
             "views": [
                 self.l2_readme.to_dict(view_name="l2_readme"),
+                self.l2_readme_export.to_dict(view_name="l2_readme_export"),
                 self.module_capsule.to_dict(view_name="module_capsule"),
             ],
         }
@@ -105,10 +109,92 @@ def check_l2_readme_stale(module: str, *, generator: Optional[L2Generator] = Non
     )
 
 
+def check_l2_readme_export_stale(
+    module: str,
+    *,
+    canonical_result: ViewStaleResult,
+    generator: Optional[L2Generator] = None,
+) -> ViewStaleResult:
+    normalized = normalize_module_path(module)
+    gen = generator or L2Generator()
+
+    loaded = load_workspace_config(Path.cwd())
+    cfg = loaded.get("config") or {}
+    export_options = parse_workspace_export_options(cfg)
+    module_readme_options = ((export_options.get("l2", {}) or {}).get("module_readme", {}) or {})
+    export_enabled = bool(module_readme_options.get("enabled", True))
+
+    if not export_enabled:
+        return ViewStaleResult(
+            view="L2 README Export",
+            status="disabled",
+            reason="module README export disabled by config",
+            suggested_command=None,
+        )
+
+    if canonical_result.status != "up_to_date":
+        return ViewStaleResult(
+            view="L2 README Export",
+            status="unknown",
+            reason="canonical L2 README unavailable",
+            suggested_command=None,
+        )
+
+    canonical_path = gen.canonical_readme_path(normalized)
+    export_path = (Path.cwd().resolve() / normalized / "README.md").resolve()
+    suggest = f"harbor docs --module {normalized} --write"
+
+    if not export_path.exists():
+        return ViewStaleResult(
+            view="L2 README Export",
+            status="stale",
+            reason="module README export missing",
+            suggested_command=suggest,
+        )
+
+    try:
+        canonical_text = canonical_path.read_text(encoding="utf-8")
+        export_text = export_path.read_text(encoding="utf-8")
+    except Exception:
+        return ViewStaleResult(
+            view="L2 README Export",
+            status="stale",
+            reason="module README export out of sync",
+            suggested_command=suggest,
+        )
+
+    if _normalize_l2_markdown_for_stale(export_text) != _normalize_l2_markdown_for_stale(canonical_text):
+        return ViewStaleResult(
+            view="L2 README Export",
+            status="stale",
+            reason="module README export out of sync",
+            suggested_command=suggest,
+        )
+
+    return ViewStaleResult(
+        view="L2 README Export",
+        status="up_to_date",
+        reason="up to date",
+        suggested_command=None,
+    )
+
+
 def check_module_derived_views_stale(module: str) -> ModuleStaleSummary:
+    """检查单模块的 L2 / L2 export / Capsule 三类视图状态。
+
+    Args:
+        module: 模块路径（例如 ``harbor/core``）。
+
+    Returns:
+        ModuleStaleSummary: 聚合后的三视图状态。
+            - `l2_readme` 由 canonical L2 判定。
+            - `l2_readme_export` 仅在 canonical 可用时比较。
+            - `module_capsule` 基于 capsule stale 结果映射。
+    """
     normalized = normalize_module_path(module)
     context = collect_module_context(normalized)
     l2_result = check_l2_readme_stale(normalized)
+    l2_export_result = check_l2_readme_export_stale(normalized, canonical_result=l2_result)
 
     capsule_raw = check_module_capsule_stale(context)
     capsule_reason = capsule_raw.get("reason") or ""
@@ -125,22 +211,41 @@ def check_module_derived_views_stale(module: str) -> ModuleStaleSummary:
         reason=capsule_reason or None,
         suggested_command=capsule_suggest,
     )
-    return ModuleStaleSummary(module=normalized, l2_readme=l2_result, module_capsule=capsule_result)
+    return ModuleStaleSummary(
+        module=normalized,
+        l2_readme=l2_result,
+        l2_readme_export=l2_export_result,
+        module_capsule=capsule_result,
+    )
 
 
 def format_stale_summary(results: List[ModuleStaleSummary], scope_text: str) -> str:
+    """将 stale 检查结果渲染为 CLI 文本摘要。
+
+    Args:
+        results: 模块 stale 汇总列表。
+        scope_text: 已解析的 scope 文本（changed/all/module）。
+
+    Returns:
+        str: 面向 CLI 的多行文本。
+    """
     lines: List[str] = []
     lines.append(t("cli.stale.title"))
     lines.append(f"Scope: {scope_text}")
 
     all_up_to_date = True
     for summary in results:
-        module_all_ok = summary.l2_readme.status == "up_to_date" and summary.module_capsule.status == "up_to_date"
+        module_all_ok = (
+            summary.l2_readme.status == "up_to_date"
+            and summary.module_capsule.status == "up_to_date"
+            and summary.l2_readme_export.status in ("up_to_date", "disabled")
+        )
         if not module_all_ok:
             all_up_to_date = False
         lines.append("")
         lines.append(summary.module)
         lines.extend(_format_view_lines(t("cli.stale.l2"), summary.l2_readme))
+        lines.extend(_format_view_lines(t("cli.stale.l2_export"), summary.l2_readme_export))
         lines.extend(_format_view_lines(t("cli.stale.capsule"), summary.module_capsule))
 
     if results:
@@ -152,14 +257,26 @@ def format_stale_summary(results: List[ModuleStaleSummary], scope_text: str) -> 
 
 
 def stale_report_to_dict(results: List[ModuleStaleSummary], scope: str) -> dict:
+    """将 stale 检查结果序列化为 machine-readable JSON 对象。
+
+    Args:
+        results: 模块 stale 汇总列表。
+        scope: 输出中的 scope 字段值。
+
+    Returns:
+        dict: 稳定的 stale JSON payload。
+    """
     normalized_results = sorted(results, key=lambda item: item.module)
     stale_views = 0
     up_to_date_views = 0
     unknown_views = 0
+    disabled_views = 0
     for module_summary in normalized_results:
-        for view in (module_summary.l2_readme, module_summary.module_capsule):
+        for view in (module_summary.l2_readme, module_summary.l2_readme_export, module_summary.module_capsule):
             if view.status == "up_to_date":
                 up_to_date_views += 1
+            elif view.status == "disabled":
+                disabled_views += 1
             elif view.status == "unknown":
                 unknown_views += 1
             else:
@@ -178,6 +295,7 @@ def stale_report_to_dict(results: List[ModuleStaleSummary], scope: str) -> dict:
             "stale_views": stale_views,
             "up_to_date_views": up_to_date_views,
             "unknown_views": unknown_views,
+            "disabled_views": disabled_views,
         },
         "modules": [item.to_dict() for item in normalized_results],
         "advisory": True,
@@ -186,11 +304,14 @@ def stale_report_to_dict(results: List[ModuleStaleSummary], scope: str) -> dict:
 
 
 def _format_view_lines(label: str, result: ViewStaleResult) -> List[str]:
+    """格式化单个视图状态的文本行。"""
     status = t("cli.stale.up_to_date")
     if result.status == "stale":
         status = t("cli.stale.stale")
     elif result.status == "unknown":
         status = t("cli.stale.unknown")
+    elif result.status == "disabled":
+        status = t("cli.stale.disabled")
 
     lines = [f"- {label}: {status}"]
     if result.reason and result.status != "up_to_date":
