@@ -477,8 +477,8 @@ exclude_paths:
 | `harbor lock` / `harbor commit` | 锁定当前 L3 契约快照为基线 |
 | `harbor check` | 统一语义审计与 DDT 验证 |
 | `harbor check --fast` | 仅运行 DDT 验证 |
-| `harbor log` | 上下文感知日志：无参 AI 草稿，`-m` 手动写入 |
-| `harbor log --export` | 导出 Diary Markdown |
+| `harbor log` | 上下文感知日志：无参 AI 草稿，`-m` 手动写入（canonical 写入 `.harbor/diary/YYYY-MM.jsonl`） |
+| `harbor log --export` | 导出 Diary Markdown（读取 `.harbor/diary` + `specs/diary`，legacy 只读兼容） |
 | `harbor adopt` | 交互式接管遗留代码进入治理体系 |
 | `harbor docs` | 生成模块级文档（L2） |
 | `harbor docs --changed --write` | 仅刷新变更模块的 L2 README |

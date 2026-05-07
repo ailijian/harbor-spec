@@ -1,7 +1,7 @@
 ---
 harbor_capsule_version: 1
 module: harbor/core
-fingerprint: b9f87e92f9b87430ca758bc3d8249976c9b86d36f1dcaa863235fcde8064aa2e
+fingerprint: b7ce703e3bb915ae6da0e95c1a7e9d2021ffc87e77b466abce632ebbcfe28b50
 source_files:
 - harbor/core/__init__.py
 - harbor/core/audit.py
@@ -488,6 +488,7 @@ tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_ddt_validate.py
 tests/test_decorator_engine.py
+tests/test_diary_workspace_paths.py
 tests/test_doctor.py
 tests/test_drafting.py
 tests/test_drafting_json_parse.py

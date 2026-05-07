@@ -471,9 +471,9 @@ views:
 
 ### Purpose
 
-Harbor evolution memory.
+Harbor evolution memory (canonical write path).
 
-This directory replaces the older location:
+Legacy read-compatible path:
 
 ```text
 specs/diary/
@@ -784,14 +784,18 @@ Harbor diary / evolution memory
 Future role:
 
 ```text
-deprecated
+legacy read-compatible path (not a canonical write target)
 ```
 
-Recommended migration:
+Recommended strategy:
 
 ```text
-specs/diary/YYYY-MM.jsonl
-  -> .harbor/diary/YYYY-MM.jsonl
+write:
+  .harbor/diary/YYYY-MM.jsonl
+
+read:
+  .harbor/diary/YYYY-MM.jsonl
+  + specs/diary/YYYY-MM.jsonl
 ```
 
 ## 6.3 `.agents/skills/`
@@ -1021,7 +1025,14 @@ Future:
 .harbor/diary/YYYY-MM.jsonl
 ```
 
-Migration should preserve old files and not delete them automatically.
+Migration policy:
+
+```text
+canonical single-write: write only to .harbor/diary/YYYY-MM.jsonl
+legacy dual-read: continue reading specs/diary/YYYY-MM.jsonl
+dedupe when merging canonical + legacy records
+no automatic migration or deletion of legacy diary files
+```
 
 ## 9.5 Skill Promotion
 

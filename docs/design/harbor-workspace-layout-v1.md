@@ -467,9 +467,9 @@ views:
 
 ### 作用
 
-Harbor 演进记忆。
+Harbor 演进记忆（canonical 写入路径）。
 
-该目录替代旧路径：
+legacy 兼容读取路径：
 
 ```text
 specs/diary/
@@ -780,14 +780,18 @@ Harbor diary / 演进记忆
 未来角色：
 
 ```text
-deprecated
+legacy read-compatible path（非 canonical 写入目标）
 ```
 
-推荐迁移：
+推荐策略：
 
 ```text
-specs/diary/YYYY-MM.jsonl
-  -> .harbor/diary/YYYY-MM.jsonl
+write:
+  .harbor/diary/YYYY-MM.jsonl
+
+read:
+  .harbor/diary/YYYY-MM.jsonl
+  + specs/diary/YYYY-MM.jsonl
 ```
 
 ## 6.3 `.agents/skills/`
@@ -1017,7 +1021,14 @@ specs/diary/YYYY-MM.jsonl
 .harbor/diary/YYYY-MM.jsonl
 ```
 
-迁移时应保留旧文件，不应自动删除。
+迁移策略：
+
+```text
+canonical 单写：仅写 .harbor/diary/YYYY-MM.jsonl
+legacy 双读：继续读取 specs/diary/YYYY-MM.jsonl
+合并读取时去重
+不自动迁移，不自动删除 legacy diary
+```
 
 ## 9.5 Skill Promotion
 

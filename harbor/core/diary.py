@@ -3,13 +3,13 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import hashlib
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set
 
-import yaml
-from harbor.core.workspace import resolve_workspace_config_path
+from harbor.core.workspace import load_workspace_config, load_workspace_paths, resolve_workspace_config_path
 
 
 VISIBILITY_ORDER = {"internal": 0, "repo": 1, "public": 2}
@@ -37,9 +37,12 @@ class DiaryEntry:
 
 
 class DiaryManager:
-    def __init__(self, config_path: Optional[Path] = None) -> None:
-        self.config_path = config_path or resolve_workspace_config_path(Path.cwd())
-        self.diary_dir = self._resolve_diary_dir(self.config_path)
+    def __init__(self, repo_root: Optional[Path] = None, config_path: Optional[Path] = None) -> None:
+        self.repo_root = self._resolve_repo_root(explicit_repo_root=repo_root, config_path=config_path)
+        self.config_path = config_path or resolve_workspace_config_path(self.repo_root)
+        workspace_paths = load_workspace_paths(self.repo_root, enforce_write_safety=True)
+        self.diary_dir = workspace_paths.diary_root
+        self.legacy_diary_dirs = self._resolve_legacy_diary_dirs()
 
     def log(
         self,
@@ -55,16 +58,17 @@ class DiaryManager:
         """写入一条 DiaryEntry 到当月 JSONL。
 
         功能:
-          - 构造 DiaryEntry 并追加写入 `specs/diary/{YYYY-MM}.jsonl`。
+          - 构造 DiaryEntry 并追加写入 canonical `.harbor/diary/{YYYY-MM}.jsonl`。
           - 自动处理月度轮转与文件创建。
           - 生成缺省元数据：`ts`（ISO8601 UTC）、`author`（读取 git user.name 或默认 "AI"）。
 
         使用场景:
-          - CLI `harbor diary log` 的核心实现。
+          - CLI `harbor log` 的核心实现。
           - 在 `harbor sync --pre-commit` 中写入重要事件草稿。
 
         依赖:
-          - 文件系统访问（`specs/diary` 目录）。
+          - 文件系统访问（canonical `.harbor/diary` 目录）。
+          - legacy `specs/diary` 仅用于读取兼容，不作为写入目标。
           - `harbor.core.diary.DiaryManager` 数据模型与校验。
 
         @harbor.scope: public
@@ -87,7 +91,7 @@ class DiaryManager:
         Raises:
           ValueError: 枚举值不合法或必填字段为空。
           OSError: 目录/文件不可写或创建失败。
-          ConfigError: 项目根路径无 `specs/diary` 配置或不可访问。
+          ConfigError: 配置不可访问或路径越界。
         """
         if not summary or not isinstance(summary, str):
             raise ValueError("summary is required")
@@ -122,19 +126,27 @@ class DiaryManager:
         prev_month = (now.replace(day=1) - timedelta(days=1)).replace(day=1)
         months = [now.strftime("%Y-%m"), prev_month.strftime("%Y-%m")]
         res: List[DiaryEntry] = []
+        seen: Set[str] = set()
         for m in months:
-            p = Path(self.diary_dir) / f"{m}.jsonl"
-            if not p.exists():
-                continue
-            for line in p.read_text(encoding="utf-8").splitlines():
-                try:
-                    obj = json.loads(line)
-                except Exception:
+            for base_dir in self._iter_read_dirs():
+                p = Path(base_dir) / f"{m}.jsonl"
+                if not p.exists():
                     continue
-                vis = str(obj.get("visibility", "internal"))
-                if VISIBILITY_ORDER.get(vis, 0) < VISIBILITY_ORDER.get(min_visibility, 0):
-                    continue
-                res.append(self._from_dict(obj))
+                for line in p.read_text(encoding="utf-8").splitlines():
+                    try:
+                        obj = json.loads(line)
+                    except Exception:
+                        continue
+                    if not isinstance(obj, dict):
+                        continue
+                    dedupe_key = self._entry_dedupe_key(obj)
+                    if dedupe_key in seen:
+                        continue
+                    seen.add(dedupe_key)
+                    vis = str(obj.get("visibility", "internal"))
+                    if VISIBILITY_ORDER.get(vis, 0) < VISIBILITY_ORDER.get(min_visibility, 0):
+                        continue
+                    res.append(self._from_dict(obj))
         return res
 
     def export_markdown(self, since: Optional[str] = None, min_visibility: str = "repo") -> str:
@@ -156,20 +168,69 @@ class DiaryManager:
                 lines.append(f"  - {e.details}")
         return "\n".join(lines)
 
-    def _resolve_diary_dir(self, path: Path) -> Path:
-        if not path.exists():
-            return Path("specs") / "diary"
+    def _resolve_repo_root(self, explicit_repo_root: Optional[Path], config_path: Optional[Path]) -> Path:
+        if explicit_repo_root is not None:
+            return Path(explicit_repo_root).resolve()
+        if config_path is not None:
+            cfg = Path(config_path).resolve()
+            if cfg.name == "harbor.yaml" and cfg.parent.name == "config" and cfg.parent.parent.name == ".harbor":
+                return cfg.parent.parent.parent.resolve()
+            if cfg.name == "config.yaml" and cfg.parent.name == ".harbor":
+                return cfg.parent.parent.resolve()
+        return Path.cwd().resolve()
+
+    def _ensure_within_repo(self, target: Path, *, field_name: str) -> Path:
+        resolved = Path(target).resolve()
         try:
-            cfg = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-        except Exception:
-            raise RuntimeError(f"ConfigError: failed to load {path.as_posix()}")
-        d = cfg.get("diary", {}).get("dir") or "specs/diary"
-        return Path(d)
+            resolved.relative_to(self.repo_root)
+        except ValueError as exc:
+            raise ValueError(
+                f"Invalid diary path for '{field_name}': '{resolved.as_posix()}' "
+                f"escapes repo root '{self.repo_root.as_posix()}'."
+            ) from exc
+        return resolved
+
+    def _resolve_legacy_diary_dirs(self) -> List[Path]:
+        dirs: List[Path] = []
+        fixed_legacy = self._ensure_within_repo(self.repo_root / "specs" / "diary", field_name="legacy.specs_diary")
+        dirs.append(fixed_legacy)
+
+        loaded = load_workspace_config(self.repo_root)
+        cfg = dict(loaded.get("config") or {})
+        legacy_dir_raw = (cfg.get("diary", {}) or {}).get("dir")
+        if legacy_dir_raw:
+            legacy_dir = self._ensure_within_repo(self.repo_root / str(legacy_dir_raw), field_name="diary.dir")
+            if legacy_dir != self.diary_dir and legacy_dir not in dirs:
+                dirs.append(legacy_dir)
+        return dirs
+
+    def _iter_read_dirs(self) -> List[Path]:
+        dirs: List[Path] = [self.diary_dir]
+        for p in self.legacy_diary_dirs:
+            if p not in dirs:
+                dirs.append(p)
+        return dirs
 
     def _current_file_path(self, ts_iso: str) -> Path:
         y = ts_iso[:4]
         m = ts_iso[5:7]
         return Path(self.diary_dir) / f"{y}-{m}.jsonl"
+
+    def _entry_dedupe_key(self, obj: Dict[str, Any]) -> str:
+        normalized = self._normalize_for_hash(obj)
+        payload = json.dumps(normalized, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+    def _normalize_for_hash(self, value: Any) -> Any:
+        if isinstance(value, dict):
+            return {str(k): self._normalize_for_hash(v) for k, v in sorted(value.items(), key=lambda kv: str(kv[0]))}
+        if isinstance(value, list):
+            return [self._normalize_for_hash(v) for v in value]
+        if isinstance(value, tuple):
+            return [self._normalize_for_hash(v) for v in value]
+        if isinstance(value, Path):
+            return value.as_posix()
+        return value
 
     def _resolve_author(self) -> str:
         env = os.getenv("HARBOR_AUTHOR")

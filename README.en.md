@@ -463,8 +463,8 @@ exclude_paths:
 | `harbor lock` / `harbor commit` | Lock current L3 snapshot into cache (baseline). |
 | `harbor check` | Unified semantic audit and DDT validation. |
 | `harbor check --fast` | Run DDT validation only. |
-| `harbor log` | Context-aware diary: AI Draft (no args) or manual `-m`. |
-| `harbor log --export` | Export diary Markdown. |
+| `harbor log` | Context-aware diary: AI Draft (no args) or manual `-m` (canonical write: `.harbor/diary/YYYY-MM.jsonl`). |
+| `harbor log --export` | Export diary Markdown (reads `.harbor/diary` + `specs/diary`; legacy path is read-compatible only). |
 | `harbor adopt` | Interactively adopt legacy code into Harbor governance. |
 | `harbor docs` | Generate module-level documentation (L2). |
 | `harbor docs --changed --write` | Refresh L2 READMEs for changed modules only. |

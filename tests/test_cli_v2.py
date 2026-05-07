@@ -2,10 +2,12 @@ import sys
 from io import StringIO
 from contextlib import redirect_stdout
 from types import SimpleNamespace
+from pathlib import Path
 import pytest
 
 import harbor.cli.main as cli_main
 from harbor.cli.main import main
+from harbor.core.diary import DiaryEntry
 
 
 @pytest.fixture(autouse=True)
@@ -65,6 +67,34 @@ def test_diary_export_maps_to_log_export():
     out2 = run_cmd(["log", "--export", "--visibility", "repo"])
     assert "# Harbor Diary Export" in out1
     assert "# Harbor Diary Export" in out2
+
+
+def test_log_message_keeps_json_first_line_and_prints_canonical_target(monkeypatch):
+    def _fake_log(self, **kwargs):
+        return DiaryEntry(
+            ver=1,
+            ts="2026-05-12T09:00:00Z",
+            author="tester",
+            type="feature",
+            importance="normal",
+            visibility="repo",
+            summary="hello",
+        )
+
+    monkeypatch.setattr(cli_main.DiaryManager, "log", _fake_log)
+    monkeypatch.setattr(
+        cli_main.DiaryManager,
+        "_current_file_path",
+        lambda self, ts_iso: Path(".harbor/diary/2026-05.jsonl"),
+    )
+
+    out = run_cmd(["log", "-m", "hello", "--visibility", "repo"])
+    lines = [line for line in out.splitlines() if line.strip()]
+
+    assert len(lines) >= 3
+    assert lines[0].startswith('{"ver": 1,')
+    assert lines[1] == "Diary write target: .harbor/diary/2026-05.jsonl"
+    assert "Canonical write: .harbor/diary/YYYY-MM.jsonl" in lines[2]
 
 
 def test_decorate_maps_to_adopt_dry_run():

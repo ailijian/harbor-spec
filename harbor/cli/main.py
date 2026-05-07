@@ -366,7 +366,16 @@ def main():
         help="Write canonical .harbor/views/project-structure.md (and optional docs export if enabled); default prints preview",
     )
 
-    p_log = sub.add_parser("log", help="Context-aware diary logging")
+    p_log = sub.add_parser(
+        "log",
+        help="Context-aware diary logging",
+        description=(
+            "Context-aware diary logging.\n\n"
+            "Write target: .harbor/diary/YYYY-MM.jsonl (canonical).\n"
+            "Legacy path specs/diary/YYYY-MM.jsonl is read-compatible only.\n"
+        ),
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
     p_log.add_argument("-m", "--message", type=str, required=False)
     p_log.add_argument("--summary", dest="message", type=str, required=False)
     p_log.add_argument("--type", type=str, default="feature")
@@ -646,6 +655,13 @@ def main():
             return out
         candidate = Path(str(result))
         return [] if _is_l2_meta(candidate) else [candidate]
+
+    def _print_log_write_result(entry, mgr: DiaryManager) -> None:
+        # Keep the first line as entry JSON for script compatibility.
+        print(entry.to_json())
+        target = mgr._current_file_path(entry.ts)
+        print(t("cli.log.write_target", path=_to_repo_relative_display(target)))
+        print(t("cli.log.path_policy"))
 
     def _sanitize_module_for_display(module: str, *, repo_root: Path) -> str:
         raw = str(module or "").strip()
@@ -1286,7 +1302,7 @@ def main():
             author=args.author,
             ts=args.ts,
         )
-        print(entry.to_json())
+        _print_log_write_result(entry, mgr)
     elif args.command == "log":
         console = Console()
         with console.status("[bold blue][Status] Analyzing code changes...", spinner="dots"):
@@ -1366,7 +1382,7 @@ def main():
             visibility=args.visibility or "repo",
             details=draft.get("details"),
         )
-        print(entry.to_json())
+        _print_log_write_result(entry, mgr)
     elif args.command == "adopt":
         console = Console()
         eng = DecoratorEngine()

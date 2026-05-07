@@ -16,6 +16,9 @@
 - `<module>/README.md` is now treated as an optional L2 export target (enabled by default via `l2.export.module_readme.enabled=true`).
 - L2 metadata canonical write target is now `.harbor/views/l2/_meta.json`.
 - Legacy `.harbor/l2_meta.json` remains read-compatible and is no longer a write target.
+- Diary canonical write target is now `.harbor/diary/YYYY-MM.jsonl`.
+- Legacy `specs/diary/YYYY-MM.jsonl` remains read-compatible and is no longer a write target.
+- Diary reads merge canonical + legacy records with dedupe; no automatic migration/deletion is performed.
 - `harbor stale` canonical freshness continues to be determined by `.harbor/views/l2/<module>/README.md` and is not affected by module README export drift.
 - `harbor stale` now reports `l2_readme_export` advisory separately (`<module>/README.md`: match/missing/out-of-sync/disabled).
 - If canonical L2 is unavailable, `l2_readme_export` is reported as unknown/skipped and out-of-sync comparison is skipped.
@@ -31,6 +34,7 @@
 ## Compatibility
 - Legacy `docs/harbor/project-structure.md` is not deleted or auto-migrated in this phase.
 - Legacy `.harbor/l2_meta.json` is not deleted or auto-migrated in this phase.
+- Legacy `specs/diary/*.jsonl` is not deleted or auto-migrated in this phase.
 - Legacy `tests/fixtures_sqlite/README.md` is kept as a legacy L2 export artifact in this phase.
 - Legacy `docs/harbor/modules/*` files are not deleted or auto-migrated in this phase.
 
@@ -43,8 +47,10 @@
 - `docs/harbor/modules/<module>/` is an optional docs export target and is disabled by default.
 - L2 README canonical path is `.harbor/views/l2/<module>/README.md`.
 - L2 metadata canonical path is `.harbor/views/l2/_meta.json`.
+- Diary canonical path is `.harbor/diary/YYYY-MM.jsonl`.
 - `<module>/README.md` remains an optional export target for compatibility and stays enabled by default.
 - Legacy `.harbor/l2_meta.json` remains read-compatible and is not auto-deleted.
+- Legacy `specs/diary/YYYY-MM.jsonl` remains read-compatible and is not auto-deleted.
 - `.harbor/` is the canonical Harbor workspace and should not be ignored as a whole in `.gitignore`.
 
 ---
