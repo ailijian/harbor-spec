@@ -96,7 +96,7 @@ def test_module_stale_single_missing_module_card(tmp_path: Path, monkeypatch):
 def test_module_stale_single_fingerprint_missing(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
-    out_dir = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    out_dir = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core"
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "module-card.md").write_text("# Module Card: harbor/core\n", encoding="utf-8")
     out = run_cmd(["module", "stale", "harbor/core"])
@@ -117,7 +117,7 @@ def test_module_stale_single_mismatch(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
     run_cmd(["module", "seal", "harbor/core", "--write"])
-    card = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md"
+    card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
     card.write_text(card.read_text(encoding="utf-8").replace("fingerprint:", "fingerprint: deadbeef"), encoding="utf-8")
     out = run_cmd(["module", "stale", "harbor/core"])
     assert "- Status: stale" in out
@@ -150,6 +150,17 @@ def test_module_stale_changed_checks_each_module_and_windows_path(tmp_path: Path
     assert "- harbor/cli: stale" in out
     assert "- harbor/core: up to date" in out
     assert out.index("- harbor/cli") < out.index("- harbor/core")
+
+
+def test_module_stale_treats_legacy_existing_but_canonical_missing_as_stale(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_index(tmp_path)
+    legacy = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    legacy.mkdir(parents=True, exist_ok=True)
+    (legacy / "module-card.md").write_text("legacy\n", encoding="utf-8")
+    out = run_cmd(["module", "stale", "harbor/core"])
+    assert "- Status: stale" in out
+    assert "- Reason: module-card.md not found" in out
 
 
 def test_module_stale_all_checks_all_modules_stable_order(tmp_path: Path, monkeypatch):

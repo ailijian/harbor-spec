@@ -9,6 +9,7 @@ from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.stale import ModuleStaleSummary, check_module_derived_views_stale
 from harbor.core.storage import HarborDB
 from harbor.core.sync import SyncEngine
+from harbor.core.workspace import load_workspace_config, parse_workspace_export_options
 from harbor.utils.i18n import t
 
 PASS = "PASS"
@@ -246,22 +247,40 @@ def run_skill_reference_check(skills_root: Path = Path(".agents") / "skills") ->
             suggestions=[],
         )
 
-    pattern = re.compile(r"docs/harbor/modules/([A-Za-z0-9_\-./]+)/((?:module-card|review-checklist|debug-playbook)\.md)")
+    canonical_pattern = re.compile(
+        r"\.harbor/views/modules/([A-Za-z0-9_\-./]+)/((?:module-card|review-checklist|debug-playbook)\.md)"
+    )
+    legacy_pattern = re.compile(r"docs/harbor/modules/([A-Za-z0-9_\-./]+)/((?:module-card|review-checklist|debug-playbook)\.md)")
     missing_details: List[str] = []
     suggestions: List[str] = []
+    config = (load_workspace_config(Path.cwd()).get("config") or {})
+    export_options = parse_workspace_export_options(config)
+    export_enabled = bool((((export_options.get("views", {}) or {}).get("docs", {}) or {}).get("enabled")))
 
     for skill_file in skills_root.glob("harbor-debug-*/SKILL.md"):
         try:
             text = skill_file.read_text(encoding="utf-8")
         except Exception:
             continue
-        for module, file_name in pattern.findall(text):
-            rel = Path("docs/harbor/modules") / module / file_name
+        for module, file_name in canonical_pattern.findall(text):
+            rel = Path(".harbor/views/modules") / module / file_name
             if not rel.exists():
                 missing_details.append(
                     f"{skill_file.as_posix()} references missing capsule file: {rel.as_posix()}"
                 )
                 suggestions.append(f"harbor module seal {module.strip('/')} --write")
+        for module, file_name in legacy_pattern.findall(text):
+            rel = Path("docs/harbor/modules") / module / file_name
+            if not rel.exists():
+                missing_details.append(
+                    f"{skill_file.as_posix()} references missing legacy capsule file: {rel.as_posix()}"
+                )
+                suggestions.append(f"harbor module seal {module.strip('/')} --write")
+                continue
+            if not export_enabled:
+                missing_details.append(
+                    f"{skill_file.as_posix()} references legacy capsule path (non-canonical): {rel.as_posix()}"
+                )
 
     if not missing_details:
         return DoctorCheckResult(

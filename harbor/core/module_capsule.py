@@ -2,12 +2,20 @@ from __future__ import annotations
 
 import hashlib
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import yaml
 
 from harbor.core.storage import HarborDB
+from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
+
+
+@dataclass
+class ModuleCapsuleWriteResult:
+    canonical_paths: List[Path]
+    exported_paths: List[Path]
 
 
 def normalize_module_path(module: str) -> str:
@@ -18,9 +26,101 @@ def normalize_module_path(module: str) -> str:
 
 
 def module_capsule_dir(module: str, output_root: Optional[Path] = None) -> Path:
-    root = output_root or (Path("docs") / "harbor" / "modules")
+    root = output_root or (Path(".harbor") / "views" / "modules")
     normalized = normalize_module_path(module)
     return root / normalized
+
+
+def _ensure_within_root(path: Path, *, root: Path, field_name: str, raw_value: str) -> None:
+    try:
+        path.resolve().relative_to(root.resolve())
+    except ValueError as exc:
+        raise ValueError(
+            f"Invalid workspace path for '{field_name}': '{raw_value}'. "
+            f"Resolved path '{path.resolve().as_posix()}' escapes repo root '{root.resolve().as_posix()}'."
+        ) from exc
+
+
+def _safe_module_subpath(module: str) -> str:
+    normalized = normalize_module_path(module)
+    if not normalized:
+        return normalized
+    parts = [part for part in normalized.split("/") if part not in ("", ".")]
+    if any(part == ".." for part in parts):
+        raise ValueError(f"Invalid module path: '{module}'. Relative parent segments are not allowed.")
+    return "/".join(parts)
+
+
+def _resolve_module_target_dir(base_dir: Path, module: str) -> Path:
+    safe_module = _safe_module_subpath(module)
+    candidate = (base_dir / safe_module).resolve()
+    _ensure_within_root(candidate, root=base_dir, field_name="module", raw_value=module)
+    return candidate
+
+
+def _resolve_docs_export_modules_root(root: Path, config: Optional[Dict[str, Any]]) -> Optional[Path]:
+    options = parse_workspace_export_options(config)
+    docs_options = (options.get("views", {}) or {}).get("docs", {}) or {}
+    if not bool(docs_options.get("enabled")):
+        return None
+
+    raw_root = str(docs_options.get("root") or "docs/harbor").strip()
+    export_root = Path(raw_root)
+    if not export_root.is_absolute():
+        export_root = root / export_root
+    export_root = export_root.resolve()
+    _ensure_within_root(
+        export_root,
+        root=root,
+        field_name="views.export.docs.root",
+        raw_value=raw_root,
+    )
+    return export_root / "modules"
+
+
+def resolve_module_capsule_paths(
+    module: str,
+    *,
+    root: Optional[Path] = None,
+    output_root: Optional[Path] = None,
+) -> Dict[str, Optional[Path]]:
+    repo_root = (root or Path.cwd()).resolve()
+    if output_root is not None:
+        canonical_root = output_root.resolve()
+        canonical_dir = _resolve_module_target_dir(canonical_root, module)
+        return {
+            "canonical_dir": canonical_dir,
+            "export_dir": None,
+        }
+
+    workspace_paths = load_workspace_paths(repo_root, enforce_write_safety=True)
+    canonical_root = workspace_paths.modules_view_root.resolve()
+    _ensure_within_root(
+        canonical_root,
+        root=repo_root,
+        field_name="modules.capsule_root",
+        raw_value=canonical_root.as_posix(),
+    )
+    canonical_dir = _resolve_module_target_dir(canonical_root, module)
+
+    loaded = load_workspace_config(repo_root)
+    config = loaded.get("config") or {}
+    export_modules_root = _resolve_docs_export_modules_root(repo_root, config)
+    export_dir: Optional[Path] = None
+    if export_modules_root is not None:
+        export_modules_root = export_modules_root.resolve()
+        _ensure_within_root(
+            export_modules_root,
+            root=repo_root,
+            field_name="views.export.docs.root",
+            raw_value=export_modules_root.as_posix(),
+        )
+        export_dir = _resolve_module_target_dir(export_modules_root, module)
+
+    return {
+        "canonical_dir": canonical_dir,
+        "export_dir": export_dir,
+    }
 
 
 def _sort_unique(values: List[str]) -> List[str]:
@@ -212,7 +312,11 @@ def read_capsule_fingerprint(module_card_path: Path) -> Optional[str]:
     return fp or None
 
 
-def check_module_capsule_stale(context: Dict[str, Any], output_root: Optional[Path] = None) -> Dict[str, str]:
+def check_module_capsule_stale(
+    context: Dict[str, Any],
+    output_root: Optional[Path] = None,
+    root: Optional[Path] = None,
+) -> Dict[str, str]:
     module = normalize_module_path(str(context.get("module") or ""))
     key_files = context.get("key_files") or []
     contracts = context.get("contracts") or []
@@ -228,7 +332,10 @@ def check_module_capsule_stale(context: Dict[str, Any], output_root: Optional[Pa
         result["reason"] = "no indexed records found for module"
         return result
 
-    module_card_path = module_capsule_dir(module, output_root=output_root) / "module-card.md"
+    paths = resolve_module_capsule_paths(module, root=root, output_root=output_root)
+    canonical_dir = paths["canonical_dir"]
+    assert canonical_dir is not None
+    module_card_path = canonical_dir / "module-card.md"
     if not module_card_path.exists():
         result["reason"] = "module-card.md not found"
         return result
@@ -341,6 +448,10 @@ def generate_module_card(context: Dict[str, Any]) -> str:
             f"  {module}/README.md",
             "",
             "Capsule files:",
+            f"  .harbor/views/modules/{module}/review-checklist.md",
+            f"  .harbor/views/modules/{module}/debug-playbook.md",
+            "",
+            "Optional docs export (if enabled):",
             f"  docs/harbor/modules/{module}/review-checklist.md",
             f"  docs/harbor/modules/{module}/debug-playbook.md",
             "```",
@@ -505,13 +616,34 @@ def preview_module_capsule(context: Dict[str, Any]) -> Dict[str, str]:
     }
 
 
-def write_module_capsule(context: Dict[str, Any], output_root: Optional[Path] = None) -> List[Path]:
-    target_dir = module_capsule_dir(context.get("module", ""), output_root=output_root)
-    target_dir.mkdir(parents=True, exist_ok=True)
+def write_module_capsule(
+    context: Dict[str, Any],
+    output_root: Optional[Path] = None,
+    root: Optional[Path] = None,
+) -> ModuleCapsuleWriteResult:
+    module_name = str(context.get("module", "") or "")
+    paths = resolve_module_capsule_paths(module_name, root=root, output_root=output_root)
+    canonical_dir = paths["canonical_dir"]
+    export_dir = paths["export_dir"]
+    assert canonical_dir is not None
+
+    canonical_dir.mkdir(parents=True, exist_ok=True)
     previews = preview_module_capsule(context)
-    written: List[Path] = []
+    canonical_paths: List[Path] = []
     for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
-        path = target_dir / name
+        path = canonical_dir / name
         path.write_text(previews[name], encoding="utf-8")
-        written.append(path)
-    return written
+        canonical_paths.append(path)
+
+    exported_paths: List[Path] = []
+    if export_dir is not None and export_dir.resolve() != canonical_dir.resolve():
+        export_dir.mkdir(parents=True, exist_ok=True)
+        for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
+            export_path = export_dir / name
+            export_path.write_text(previews[name], encoding="utf-8")
+            exported_paths.append(export_path)
+
+    return ModuleCapsuleWriteResult(
+        canonical_paths=canonical_paths,
+        exported_paths=exported_paths,
+    )

@@ -106,13 +106,53 @@ def test_skill_reference_check_warns_when_capsule_missing(tmp_path: Path, monkey
     skill = tmp_path / ".agents" / "skills" / "harbor-debug-harbor-core" / "SKILL.md"
     skill.parent.mkdir(parents=True, exist_ok=True)
     skill.write_text(
-        "Read docs/harbor/modules/harbor/core/module-card.md first.",
+        "Read .harbor/views/modules/harbor/core/module-card.md first.",
         encoding="utf-8",
     )
     result = doctor.run_skill_reference_check()
     assert result.status == doctor.WARN
     assert any("missing capsule file" in d for d in result.details)
     assert "harbor module seal harbor/core --write" in result.suggestions
+
+
+def test_skill_reference_check_passes_for_existing_canonical_reference(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    skill = tmp_path / ".agents" / "skills" / "harbor-debug-harbor-core" / "SKILL.md"
+    card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
+    skill.parent.mkdir(parents=True, exist_ok=True)
+    card.parent.mkdir(parents=True, exist_ok=True)
+    card.write_text("ok\n", encoding="utf-8")
+    skill.write_text("Read .harbor/views/modules/harbor/core/module-card.md first.", encoding="utf-8")
+    result = doctor.run_skill_reference_check()
+    assert result.status == doctor.PASS
+
+
+def test_skill_reference_check_legacy_existing_warns_when_export_disabled(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    skill = tmp_path / ".agents" / "skills" / "harbor-debug-harbor-core" / "SKILL.md"
+    legacy = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md"
+    skill.parent.mkdir(parents=True, exist_ok=True)
+    legacy.parent.mkdir(parents=True, exist_ok=True)
+    legacy.write_text("ok\n", encoding="utf-8")
+    skill.write_text("Read docs/harbor/modules/harbor/core/module-card.md first.", encoding="utf-8")
+    result = doctor.run_skill_reference_check()
+    assert result.status == doctor.WARN
+    assert any("non-canonical" in d for d in result.details)
+
+
+def test_skill_reference_check_legacy_existing_passes_when_export_enabled(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text("views:\n  export:\n    docs:\n      enabled: true\n      root: docs/harbor\n", encoding="utf-8")
+    skill = tmp_path / ".agents" / "skills" / "harbor-debug-harbor-core" / "SKILL.md"
+    legacy = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md"
+    skill.parent.mkdir(parents=True, exist_ok=True)
+    legacy.parent.mkdir(parents=True, exist_ok=True)
+    legacy.write_text("ok\n", encoding="utf-8")
+    skill.write_text("Read docs/harbor/modules/harbor/core/module-card.md first.", encoding="utf-8")
+    result = doctor.run_skill_reference_check()
+    assert result.status == doctor.PASS
 
 
 def test_doctor_report_includes_suggestions():

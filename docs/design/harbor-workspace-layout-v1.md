@@ -1313,6 +1313,16 @@ preview 仍为只读（不写文件）
 导出 docs/harbor/modules/<module>/
 ```
 
+Phase 2C 当前落地状态：
+
+```text
+canonical 写入默认已启用（.harbor/views/modules/<module>/）
+docs export 默认关闭（需 views.export.docs.enabled=true 显式开启）
+stale 判定默认仅基于 canonical module-card
+promote-skill 默认引用 canonical capsule 路径
+legacy docs capsule 不自动删除或覆盖
+```
+
 ---
 
 ## 14. 事实源规则

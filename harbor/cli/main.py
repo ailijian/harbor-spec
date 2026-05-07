@@ -18,6 +18,7 @@ from harbor.core.module_capsule import (
     check_module_capsule_stale,
     collect_module_context,
     preview_module_capsule,
+    resolve_module_capsule_paths,
     write_module_capsule,
 )
 from harbor.core.module_skill import (
@@ -319,7 +320,7 @@ def main():
     p_module_seal.add_argument(
         "--write",
         action="store_true",
-        help="Write capsule files under docs/harbor/modules/<module>/",
+        help="Write capsule files under .harbor/views/modules/<module>/ (and optional docs export if enabled)",
     )
     p_module_stale = p_module_sub.add_parser(
         "stale",
@@ -607,6 +608,12 @@ def main():
         rep = SyncEngine().check_status()
         return _collect_changed_modules_from_status(rep)
 
+    def _to_repo_relative_display(path: Path) -> str:
+        try:
+            return path.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except Exception:
+            return path.as_posix()
+
     def _run_docs_changed(*, write=False, force=False, modules=None):
         gen = L2Generator()
         target_modules = modules if modules is not None else _collect_changed_modules()
@@ -660,7 +667,9 @@ def main():
 
         if not write:
             print("")
-            print(t("cli.module.seal.batch.preview_only"))
+            first_target = resolve_module_capsule_paths(valid_contexts[0].get("module", ""), root=Path.cwd()).get("canonical_dir")
+            preview_path = _to_repo_relative_display(first_target) if first_target is not None else ".harbor/views/modules/<module>"
+            print(t("cli.module.seal.batch.preview_only", path=preview_path))
             for context in valid_contexts:
                 module_name = context.get("module", "")
                 previews = preview_module_capsule(context)
@@ -674,10 +683,12 @@ def main():
 
         updated = []
         for context in valid_contexts:
-            updated.extend(write_module_capsule(context))
+            result = write_module_capsule(context)
+            updated.extend(result.canonical_paths)
+            updated.extend(result.exported_paths)
         print(t("cli.module.seal.batch.updated"))
         for path in updated:
-            print(f"- {path.as_posix()}")
+            print(f"- {_to_repo_relative_display(path)}")
         return target_modules
 
     def _run_module_stale_changed(*, modules=None):
@@ -980,16 +991,19 @@ def main():
             print(t("cli.module.seal.title", module=module_name))
             previews = preview_module_capsule(context)
             if not args.write:
-                print(t("cli.module.seal.preview_only"))
+                resolved = resolve_module_capsule_paths(module_name, root=Path.cwd()).get("canonical_dir")
+                preview_path = _to_repo_relative_display(resolved) if resolved is not None else ".harbor/views/modules/<module>"
+                print(t("cli.module.seal.preview_only", path=preview_path))
                 for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
                     print("")
                     print(f"--- {name} ---")
                     print(previews[name])
             else:
-                updated = write_module_capsule(context)
+                result = write_module_capsule(context)
+                updated = list(result.canonical_paths) + list(result.exported_paths)
                 print(t("cli.module.seal.updated"))
                 for path in updated:
-                    print(f"- {path.as_posix()}")
+                    print(f"- {_to_repo_relative_display(path)}")
             return
 
         if args.changed:
@@ -1020,7 +1034,9 @@ def main():
 
         if not args.write:
             print("")
-            print(t("cli.module.seal.batch.preview_only"))
+            first_target = resolve_module_capsule_paths(valid_contexts[0].get("module", ""), root=Path.cwd()).get("canonical_dir")
+            preview_path = _to_repo_relative_display(first_target) if first_target is not None else ".harbor/views/modules/<module>"
+            print(t("cli.module.seal.batch.preview_only", path=preview_path))
             for context in valid_contexts:
                 module_name = context.get("module", "")
                 previews = preview_module_capsule(context)
@@ -1034,10 +1050,12 @@ def main():
 
         updated = []
         for context in valid_contexts:
-            updated.extend(write_module_capsule(context))
+            result = write_module_capsule(context)
+            updated.extend(result.canonical_paths)
+            updated.extend(result.exported_paths)
         print(t("cli.module.seal.batch.updated"))
         for path in updated:
-            print(f"- {path.as_posix()}")
+            print(f"- {_to_repo_relative_display(path)}")
     elif args.command == "module" and args.module_cmd == "stale":
         mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
         if mode_count != 1:
@@ -1100,9 +1118,9 @@ def main():
         print(f"- {target.as_posix()}")
         print("")
         print(t("cli.module.promote_skill.references", module=module_name))
-        print(f"- docs/harbor/modules/{module_name}/module-card.md")
-        print(f"- docs/harbor/modules/{module_name}/review-checklist.md")
-        print(f"- docs/harbor/modules/{module_name}/debug-playbook.md")
+        print(f"- .harbor/views/modules/{module_name}/module-card.md")
+        print(f"- .harbor/views/modules/{module_name}/review-checklist.md")
+        print(f"- .harbor/views/modules/{module_name}/debug-playbook.md")
     elif args.command == "project" and args.project_cmd == "structure":
         context = collect_project_structure_context(Path.cwd())
         markdown = generate_project_structure_markdown(context)

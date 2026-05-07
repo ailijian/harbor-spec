@@ -66,16 +66,17 @@ def test_module_seal_preview_is_recognized_and_no_write(tmp_path: Path, monkeypa
     _write_index(tmp_path)
     out = run_cmd(["module", "seal", "harbor/core"])
     assert "Module seal: harbor/core" in out
-    assert "Preview only. Use --write to update module capsule files." in out
-    out_dir = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    assert "Preview only. Use --write to update module capsule files under .harbor/views/modules/harbor/core." in out
+    out_dir = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core"
     assert not out_dir.exists()
+    assert not (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core").exists()
 
 
 def test_module_seal_write_creates_three_files(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
     out = run_cmd(["module", "seal", "harbor/core", "--write"])
-    out_dir = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    out_dir = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core"
     assert "Updated:" in out
     assert (out_dir / "module-card.md").exists()
     assert (out_dir / "review-checklist.md").exists()
@@ -89,13 +90,14 @@ def test_module_seal_write_creates_three_files(tmp_path: Path, monkeypatch):
     assert "# Module Card: harbor/core" in card
     assert "## Contract Checks" in checklist
     assert "## First Files to Inspect" in playbook
+    assert not (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md").exists()
 
 
 def test_module_seal_windows_style_path_normalizes_to_nested_dir(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
     run_cmd(["module", "seal", r"harbor\core", "--write"])
-    out_dir = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    out_dir = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core"
     assert out_dir.exists()
     assert (out_dir / "module-card.md").exists()
 

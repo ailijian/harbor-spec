@@ -63,7 +63,7 @@ def test_normalize_module_path_supports_windows_and_posix():
 
 def test_module_capsule_dir_keeps_nested_path():
     p = module_capsule_dir(r"harbor\core")
-    assert p.as_posix() == "docs/harbor/modules/harbor/core"
+    assert p.as_posix() == ".harbor/views/modules/harbor/core"
 
 
 def test_collect_module_context_matches_prefix_only(tmp_path: Path):
@@ -131,13 +131,64 @@ def test_write_module_capsule_writes_three_files(tmp_path: Path):
         "tests": ["tests/test_sync_engine.py"],
         "strictness": "standard",
     }
-    written = write_module_capsule(ctx, output_root=tmp_path / "docs" / "harbor" / "modules")
+    result = write_module_capsule(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
+    written = result.canonical_paths
     names = [p.name for p in written]
     assert names == ["module-card.md", "review-checklist.md", "debug-playbook.md"]
     for p in written:
         assert p.exists()
-    card = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md"
+    assert result.exported_paths == []
+    card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
     card_text = card.read_text(encoding="utf-8")
     assert card_text.startswith("---\n")
     assert "fingerprint:" in card_text
     assert read_capsule_fingerprint(card) == compute_module_fingerprint(ctx)
+
+
+def test_write_module_capsule_rejects_parent_traversal_module_path(tmp_path: Path):
+    ctx = {
+        "module": "../outside",
+        "key_files": ["harbor/core/sync.py"],
+        "contracts": [],
+        "tests": [],
+        "strictness": "standard",
+    }
+    try:
+        write_module_capsule(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
+        assert False, "expected traversal path validation to fail"
+    except ValueError as ex:
+        assert "Invalid module path" in str(ex)
+
+
+def test_write_module_capsule_rejects_nested_parent_traversal_module_path(tmp_path: Path):
+    ctx = {
+        "module": "harbor/../../outside",
+        "key_files": ["harbor/core/sync.py"],
+        "contracts": [],
+        "tests": [],
+        "strictness": "standard",
+    }
+    try:
+        write_module_capsule(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
+        assert False, "expected traversal path validation to fail"
+    except ValueError as ex:
+        assert "Invalid module path" in str(ex)
+
+
+def test_write_module_capsule_rejects_export_root_outside_repo(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text("views:\n  export:\n    docs:\n      enabled: true\n      root: ../outside\n", encoding="utf-8")
+    ctx = {
+        "module": "harbor/core",
+        "key_files": ["harbor/core/sync.py"],
+        "contracts": [],
+        "tests": [],
+        "strictness": "standard",
+    }
+    try:
+        write_module_capsule(ctx, root=tmp_path)
+        assert False, "expected export root validation to fail"
+    except ValueError as ex:
+        assert "views.export.docs.root" in str(ex)

@@ -136,3 +136,10 @@ def test_project_structure_docs_export_root_cannot_escape_repo_root(tmp_path: Pa
 
     with pytest.raises(ValueError, match="views.export.docs.root"):
         write_project_structure(context, tmp_path)
+
+
+def test_gitignore_does_not_ignore_harbor_views_modules_in_repo() -> None:
+    gitignore = (Path(__file__).resolve().parents[1] / ".gitignore").read_text(encoding="utf-8")
+    lowered = gitignore.replace("\\", "/")
+    assert ".harbor/views/modules/" not in lowered
+    assert ".harbor/views/" not in lowered

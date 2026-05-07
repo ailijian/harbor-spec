@@ -410,10 +410,13 @@ harbor module promote-skill harbor/core
 - `stale --all`：检查全部已索引模块的 capsule 是否过时。
 - 默认是 preview 模式，不写文件。
 - 仅 `--write` 才会更新 capsule 文件。
+- `module seal --write` 默认写 canonical：`.harbor/views/modules/<module>/`。
+- 仅当 `views.export.docs.enabled=true` 时，才会额外导出到 `docs/harbor/modules/<module>/`。
+- 对 harbor-spec 仓库，`.harbor/views/modules/` 默认保持可追踪；用户项目可按需在 `.gitignore` 忽略该目录。
 - stale 命令只做检查，不写文件；若过时请执行 `seal --write` 刷新。
 - 目标是帮助 AI agent 更快进入 debug/review/refactor 上下文。
 - `promote-skill <module>` 会生成一个薄 Skill 入口，路径为 `.agents/skills/harbor-debug-<slug>/SKILL.md`。
-- Skill 只引用 capsule（三件套）路径，不复制 capsule 全文。
+- Skill 默认引用 canonical capsule（三件套）路径，不复制 capsule 全文。
 - Skill promotion 是可选能力，多数模块只需要 Module Capsule。
 - 仅当模块复杂、维护频繁或反复 debug 时，才建议晋升为 Skill。
 - promote-skill 要求 capsule 已存在且为最新状态。
@@ -473,7 +476,7 @@ exclude_paths:
 | `harbor docs --all --write` | 刷新全部已索引模块的 L2 README |
 | `harbor module inspect <module>` | 查看指定模块的索引上下文摘要（只读，不写文件） |
 | `harbor module seal <module>` | 预览模块 Capsule（三份文档，不写文件） |
-| `harbor module seal <module> --write` | 写入模块 Capsule 到 `docs/harbor/modules/<module>/` |
+| `harbor module seal <module> --write` | 默认写入模块 Capsule 到 `.harbor/views/modules/<module>/`；仅在 docs export enabled 时额外写 `docs/harbor/modules/<module>/` |
 | `harbor module stale <module>` | 检查指定模块 Capsule 是否过时（只读，不写文件） |
 | `harbor module stale --changed` | 批量检查变更模块 Capsule 是否过时 |
 | `harbor module stale --all` | 批量检查全部已索引模块 Capsule 是否过时 |

@@ -83,8 +83,8 @@ def test_write_module_card_contains_frontmatter_fingerprint(tmp_path: Path):
         "tests": ["tests/test_sync_engine.py"],
         "strictness": "standard",
     }
-    write_module_capsule(ctx, output_root=tmp_path / "docs" / "harbor" / "modules")
-    card = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md"
+    write_module_capsule(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
+    card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
     text = card.read_text(encoding="utf-8")
     assert text.startswith("---\n")
     assert "fingerprint:" in text
@@ -99,13 +99,13 @@ def test_stale_when_module_card_missing(tmp_path: Path):
         "tests": [],
         "strictness": "standard",
     }
-    result = check_module_capsule_stale(ctx, output_root=tmp_path / "docs" / "harbor" / "modules")
+    result = check_module_capsule_stale(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
     assert result["status"] == "stale"
     assert result["reason"] == "module-card.md not found"
 
 
 def test_stale_when_fingerprint_missing(tmp_path: Path):
-    out = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    out = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core"
     out.mkdir(parents=True, exist_ok=True)
     (out / "module-card.md").write_text("# Module Card: harbor/core\n", encoding="utf-8")
     ctx = {
@@ -115,7 +115,7 @@ def test_stale_when_fingerprint_missing(tmp_path: Path):
         "tests": [],
         "strictness": "standard",
     }
-    result = check_module_capsule_stale(ctx, output_root=tmp_path / "docs" / "harbor" / "modules")
+    result = check_module_capsule_stale(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
     assert result["status"] == "stale"
     assert result["reason"] == "fingerprint missing"
 
@@ -124,8 +124,8 @@ def test_up_to_date_when_fingerprint_matches(tmp_path: Path, monkeypatch):
     idx = _write_index(tmp_path)
     monkeypatch.chdir(tmp_path)
     ctx = collect_module_context("harbor/core", index_path=idx)
-    write_module_capsule(ctx, output_root=tmp_path / "docs" / "harbor" / "modules")
-    result = check_module_capsule_stale(ctx, output_root=tmp_path / "docs" / "harbor" / "modules")
+    write_module_capsule(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
+    result = check_module_capsule_stale(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
     assert result["status"] == "up_to_date"
     assert result["reason"] == "up to date"
 
@@ -134,11 +134,11 @@ def test_stale_when_fingerprint_mismatch(tmp_path: Path, monkeypatch):
     idx = _write_index(tmp_path)
     monkeypatch.chdir(tmp_path)
     ctx = collect_module_context("harbor/core", index_path=idx)
-    write_module_capsule(ctx, output_root=tmp_path / "docs" / "harbor" / "modules")
-    card = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md"
+    write_module_capsule(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
+    card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
     text = card.read_text(encoding="utf-8").replace(read_capsule_fingerprint(card), "deadbeef")
     card.write_text(text, encoding="utf-8")
-    result = check_module_capsule_stale(ctx, output_root=tmp_path / "docs" / "harbor" / "modules")
+    result = check_module_capsule_stale(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
     assert result["status"] == "stale"
     assert result["reason"] == "fingerprint mismatch"
 
@@ -151,6 +151,18 @@ def test_unknown_module_is_friendly_stale(tmp_path: Path):
         "tests": [],
         "strictness": "standard",
     }
-    result = check_module_capsule_stale(ctx, output_root=tmp_path / "docs" / "harbor" / "modules")
+    result = check_module_capsule_stale(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
     assert result["status"] == "stale"
     assert result["reason"] == "no indexed records found for module"
+
+
+def test_legacy_exists_but_canonical_missing_is_stale(tmp_path: Path, monkeypatch):
+    idx = _write_index(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    ctx = collect_module_context("harbor/core", index_path=idx)
+    legacy = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    legacy.mkdir(parents=True, exist_ok=True)
+    (legacy / "module-card.md").write_text("legacy\n", encoding="utf-8")
+    result = check_module_capsule_stale(ctx)
+    assert result["status"] == "stale"
+    assert result["reason"] == "module-card.md not found"

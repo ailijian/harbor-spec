@@ -1317,6 +1317,16 @@ Optional:
 export docs/harbor/modules/<module>/
 ```
 
+Phase 2C implementation status:
+
+```text
+canonical write default: enabled (.harbor/views/modules/<module>/)
+docs export default: disabled (opt-in via views.export.docs.enabled=true)
+stale checks use canonical module-card by default
+promote-skill references canonical capsule paths by default
+legacy docs capsule files are not auto-deleted or overwritten
+```
+
 ---
 
 ## 14. Source of Truth Rules

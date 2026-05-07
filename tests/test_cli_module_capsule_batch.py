@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import yaml
 
 import harbor.cli.main as cli_main
 from harbor.cli.main import main
@@ -75,6 +76,12 @@ def run_cmd(argv):
     return buf.getvalue()
 
 
+def _write_workspace_config(tmp_path: Path, payload: dict) -> None:
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text(yaml.safe_dump(payload, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+
 def test_module_seal_changed_and_all_args_are_recognized(monkeypatch):
     monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _empty_status_report())
     monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda: [])
@@ -104,7 +111,7 @@ def test_module_inspect_and_single_seal_behavior_unchanged(tmp_path: Path, monke
 
     assert "Module inspect: harbor/core" in out_inspect
     assert "Module seal: harbor/core" in out_single
-    assert "Preview only. Use --write to update module capsule files." in out_single
+    assert "Preview only. Use --write to update module capsule files under .harbor/views/modules/harbor/core." in out_single
 
 
 def test_module_seal_changed_dedup_sort_and_windows_path_preview(tmp_path: Path, monkeypatch):
@@ -124,9 +131,9 @@ def test_module_seal_changed_dedup_sort_and_windows_path_preview(tmp_path: Path,
     assert "- harbor/cli" in out
     assert "- harbor/core" in out
     assert out.index("- harbor/cli") < out.index("- harbor/core")
-    assert "Preview only. Use --write to update module capsule files." in out
+    assert "Preview only. Use --write to update module capsule files under .harbor/views/modules/harbor/cli." in out
 
-    out_dir = tmp_path / "docs" / "harbor" / "modules"
+    out_dir = tmp_path / ".harbor" / "views" / "modules"
     assert not out_dir.exists()
 
 
@@ -150,8 +157,8 @@ def test_module_seal_all_discovers_indexed_modules_only_and_stable_order(tmp_pat
     assert "- harbor/core" in out
     assert "- harbor/empty" not in out
     assert out.index("- harbor/cli") < out.index("- harbor/core")
-    assert "Preview only. Use --write to update module capsule files." in out
-    assert not (tmp_path / "docs").exists()
+    assert "Preview only. Use --write to update module capsule files under .harbor/views/modules/harbor/cli." in out
+    assert not (tmp_path / ".harbor" / "views" / "modules").exists()
 
 
 def test_module_seal_all_none_friendly(monkeypatch):
@@ -176,19 +183,20 @@ def test_module_seal_changed_write_creates_three_files_per_module(tmp_path: Path
     assert "Updated:" in out
 
     expected = [
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "review-checklist.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "debug-playbook.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "cli" / "module-card.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "cli" / "review-checklist.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "cli" / "debug-playbook.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "review-checklist.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "debug-playbook.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "cli" / "module-card.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "cli" / "review-checklist.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "cli" / "debug-playbook.md",
     ]
     for p in expected:
         assert p.exists()
         assert p.as_posix().replace(str(tmp_path).replace("\\", "/") + "/", "") in out
-    assert "fingerprint:" in (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md").read_text(
+    assert "fingerprint:" in (tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md").read_text(
         encoding="utf-8"
     )
+    assert not (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md").exists()
 
 
 def test_module_seal_all_write_creates_three_files_per_module(tmp_path: Path, monkeypatch):
@@ -199,16 +207,32 @@ def test_module_seal_all_write_creates_three_files_per_module(tmp_path: Path, mo
     assert "Updated:" in out
 
     expected = [
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "review-checklist.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "debug-playbook.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "cli" / "module-card.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "cli" / "review-checklist.md",
-        tmp_path / "docs" / "harbor" / "modules" / "harbor" / "cli" / "debug-playbook.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "review-checklist.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "debug-playbook.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "cli" / "module-card.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "cli" / "review-checklist.md",
+        tmp_path / ".harbor" / "views" / "modules" / "harbor" / "cli" / "debug-playbook.md",
     ]
     for p in expected:
         assert p.exists()
         assert p.as_posix().replace(str(tmp_path).replace("\\", "/") + "/", "") in out
-    assert "fingerprint:" in (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "cli" / "module-card.md").read_text(
+    assert "fingerprint:" in (tmp_path / ".harbor" / "views" / "modules" / "harbor" / "cli" / "module-card.md").read_text(
         encoding="utf-8"
     )
+    assert not (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "cli" / "module-card.md").exists()
+
+
+def test_module_seal_single_write_dual_writes_when_export_enabled(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_index(tmp_path)
+    _write_workspace_config(
+        tmp_path,
+        {"views": {"export": {"docs": {"enabled": True, "root": "docs/harbor"}}}},
+    )
+
+    out = run_cmd(["module", "seal", "harbor/core", "--write"])
+    assert ".harbor/views/modules/harbor/core/module-card.md" in out
+    assert "docs/harbor/modules/harbor/core/module-card.md" in out
+    assert (tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md").exists()
+    assert (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md").exists()

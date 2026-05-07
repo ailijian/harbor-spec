@@ -73,7 +73,7 @@ def test_module_promote_skill_stale_capsule(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
     run_cmd(["module", "seal", "harbor/core", "--write"])
-    card = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md"
+    card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
     card.write_text(card.read_text(encoding="utf-8").replace("fingerprint:", "fingerprint: deadbeef"), encoding="utf-8")
     out = run_cmd(["module", "promote-skill", "harbor/core"])
     assert "Module capsule is stale for harbor/core." in out
@@ -89,9 +89,21 @@ def test_module_promote_skill_up_to_date_generates_skill(tmp_path: Path, monkeyp
     skill = tmp_path / ".agents" / "skills" / "harbor-debug-harbor-core" / "SKILL.md"
     assert "Generated Skill:" in out
     assert "- .agents/skills/harbor-debug-harbor-core/SKILL.md" in out
-    assert "This skill is a thin entrypoint. It references:" in out
-    assert "docs/harbor/modules/harbor/core/module-card.md" in out
-    assert "docs/harbor/modules/harbor/core/review-checklist.md" in out
-    assert "docs/harbor/modules/harbor/core/debug-playbook.md" in out
+    assert "This skill is a thin entrypoint. It references canonical capsule files:" in out
+    assert ".harbor/views/modules/harbor/core/module-card.md" in out
+    assert ".harbor/views/modules/harbor/core/review-checklist.md" in out
+    assert ".harbor/views/modules/harbor/core/debug-playbook.md" in out
     assert skill.exists()
     assert not (tmp_path / ".harbor" / "module-map.yaml").exists()
+
+
+def test_module_promote_skill_legacy_exists_but_canonical_missing_fails(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_index(tmp_path)
+    legacy = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    legacy.mkdir(parents=True, exist_ok=True)
+    (legacy / "module-card.md").write_text("legacy\n", encoding="utf-8")
+    (legacy / "review-checklist.md").write_text("legacy\n", encoding="utf-8")
+    (legacy / "debug-playbook.md").write_text("legacy\n", encoding="utf-8")
+    out = run_cmd(["module", "promote-skill", "harbor/core"])
+    assert "Module capsule not found for harbor/core." in out

@@ -405,10 +405,13 @@ Notes:
 - `stale --all`: check stale status for all indexed module capsules.
 - Default preview mode does not write files.
 - `--write` is required to update capsule files.
+- `module seal --write` writes canonical files under `.harbor/views/modules/<module>/` by default.
+- Docs export to `docs/harbor/modules/<module>/` happens only when `views.export.docs.enabled=true`.
+- In harbor-spec itself, `.harbor/views/modules/` remains trackable by default; user projects may ignore it if preferred.
 - `stale` is read-only and never writes files; run `seal --write` to refresh stale capsules.
 - It helps AI agents load debug/review/refactor context faster.
 - `promote-skill <module>` creates a thin skill entrypoint at `.agents/skills/harbor-debug-<slug>/SKILL.md`.
-- The skill references capsule paths only and does not copy capsule content.
+- The skill references canonical capsule paths by default and does not copy capsule content.
 - Skill promotion is optional; most modules only need Module Capsules.
 - Promote a module only when it is complex, frequently maintained, or repeatedly debugged.
 - `promote-skill` requires an existing and up-to-date module capsule.
@@ -463,7 +466,7 @@ exclude_paths:
 | `harbor accept` | Workflow confirmation: semantic alias of `harbor lock`. |
 | `harbor module inspect <module>` | Show indexed context summary for one module (read-only, no file writes). |
 | `harbor module seal <module>` | Preview module capsule output (three docs, no file writes). |
-| `harbor module seal <module> --write` | Write module capsule files to `docs/harbor/modules/<module>/`. |
+| `harbor module seal <module> --write` | Write canonical capsule files to `.harbor/views/modules/<module>/`; export to `docs/harbor/modules/<module>/` only when docs export is enabled. |
 | `harbor module stale <module>` | Check whether one module capsule is stale (read-only, no file writes). |
 | `harbor module stale --changed` | Batch check stale module capsules for changed modules. |
 | `harbor module stale --all` | Batch check stale module capsules for all indexed modules. |

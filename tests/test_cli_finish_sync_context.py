@@ -129,7 +129,10 @@ def test_finish_sync_context_runs_status_check_docs_seal_stale(monkeypatch):
     def _write_capsule(context):
         module = context.get("module", "")
         capsule_written.append(module)
-        return [Path(f"docs/harbor/modules/{module}/module-card.md")]
+        return SimpleNamespace(
+            canonical_paths=[Path(f".harbor/views/modules/{module}/module-card.md")],
+            exported_paths=[],
+        )
 
     monkeypatch.setattr(cli_main, "write_module_capsule", _write_capsule)
 
@@ -207,7 +210,7 @@ def test_finish_sync_context_write_boundary_only_allows_docs_and_capsules(monkey
     monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _status_report_with_changed())
 
     written_paths = []
-    forbidden_markers = [".env", ".harbor", "migrations", ".github/workflows", ".agents/skills"]
+    forbidden_markers = [".env", "migrations", ".github/workflows", ".agents/skills"]
 
     monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# {module}")
 
@@ -225,9 +228,9 @@ def test_finish_sync_context_write_boundary_only_allows_docs_and_capsules(monkey
 
     def _write_capsule(context):
         module = context.get("module", "")
-        p = Path(f"docs/harbor/modules/{module}/module-card.md")
+        p = Path(f".harbor/views/modules/{module}/module-card.md")
         written_paths.append(p.as_posix())
-        return [p]
+        return SimpleNamespace(canonical_paths=[p], exported_paths=[])
 
     monkeypatch.setattr(cli_main, "write_module_capsule", _write_capsule)
     monkeypatch.setattr(cli_main, "check_module_capsule_stale", lambda context: {"status": "up_to_date"})
@@ -236,7 +239,7 @@ def test_finish_sync_context_write_boundary_only_allows_docs_and_capsules(monkey
     assert "Context Sync:" in out
     assert written_paths
     assert any(path.endswith("/README.md") for path in written_paths)
-    assert any(path.startswith("docs/harbor/modules/") for path in written_paths)
+    assert any(path.startswith(".harbor/views/modules/") for path in written_paths)
     for path in written_paths:
         assert all(marker not in path for marker in forbidden_markers)
 
@@ -273,21 +276,21 @@ def test_finish_sync_context_ignores_changed_modules_outside_workspace(monkeypat
 
     def _write_capsule(context):
         module = context.get("module", "")
-        rel_base = Path("docs/harbor/modules") / module
-        paths = [
+        rel_base = Path(".harbor/views/modules") / module
+        canonical_paths = [
             rel_base / "module-card.md",
             rel_base / "review-checklist.md",
             rel_base / "debug-playbook.md",
         ]
-        written_paths.extend([p.as_posix() for p in paths])
-        return paths
+        written_paths.extend([p.as_posix() for p in canonical_paths])
+        return SimpleNamespace(canonical_paths=canonical_paths, exported_paths=[])
 
     monkeypatch.setattr(cli_main, "write_module_capsule", _write_capsule)
     monkeypatch.setattr(cli_main, "check_module_capsule_stale", lambda context: {"status": "up_to_date"})
 
     _ = run_cmd(["finish", "--sync-context"])
     assert "harbor/core/README.md" in written_paths
-    assert "docs/harbor/modules/harbor/core/module-card.md" in written_paths
-    assert "docs/harbor/modules/harbor/core/review-checklist.md" in written_paths
-    assert "docs/harbor/modules/harbor/core/debug-playbook.md" in written_paths
+    assert ".harbor/views/modules/harbor/core/module-card.md" in written_paths
+    assert ".harbor/views/modules/harbor/core/review-checklist.md" in written_paths
+    assert ".harbor/views/modules/harbor/core/debug-playbook.md" in written_paths
     assert all("C:/Users/GM/AppData/Local/Temp" not in path for path in written_paths)

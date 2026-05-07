@@ -61,14 +61,14 @@ def test_generate_module_skill_contains_thin_template():
     assert "## Load order" in text
     assert "## Required checks" in text
     assert "harbor module stale harbor/core" in text
-    assert "docs/harbor/modules/harbor/core/module-card.md" in text
-    assert "docs/harbor/modules/harbor/core/review-checklist.md" in text
-    assert "docs/harbor/modules/harbor/core/debug-playbook.md" in text
+    assert ".harbor/views/modules/harbor/core/module-card.md" in text
+    assert ".harbor/views/modules/harbor/core/review-checklist.md" in text
+    assert ".harbor/views/modules/harbor/core/debug-playbook.md" in text
     assert "## Responsibility" not in text
 
 
 def test_check_capsule_ready_unknown_module(tmp_path: Path):
-    result = check_capsule_ready_for_skill("harbor/unknown", output_root=tmp_path / "docs" / "harbor" / "modules", context={})
+    result = check_capsule_ready_for_skill("harbor/unknown", output_root=tmp_path / ".harbor" / "views" / "modules", context={})
     assert result["status"] == "unknown_module"
     assert result["reason"] == "no indexed records found for module"
 
@@ -81,7 +81,7 @@ def test_check_capsule_ready_missing_capsule(tmp_path: Path):
         "tests": [],
         "strictness": "standard",
     }
-    result = check_capsule_ready_for_skill("harbor/core", output_root=tmp_path / "docs" / "harbor" / "modules", context=context)
+    result = check_capsule_ready_for_skill("harbor/core", output_root=tmp_path / ".harbor" / "views" / "modules", context=context)
     assert result["status"] == "missing_capsule"
 
 
@@ -89,10 +89,10 @@ def test_check_capsule_ready_stale_capsule(tmp_path: Path, monkeypatch):
     idx = _write_index(tmp_path)
     monkeypatch.chdir(tmp_path)
     context = collect_module_context("harbor/core", index_path=idx)
-    write_module_capsule(context, output_root=tmp_path / "docs" / "harbor" / "modules")
-    module_card = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md"
+    write_module_capsule(context, output_root=tmp_path / ".harbor" / "views" / "modules")
+    module_card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
     module_card.write_text(module_card.read_text(encoding="utf-8").replace("fingerprint:", "fingerprint: deadbeef"), encoding="utf-8")
-    result = check_capsule_ready_for_skill("harbor/core", output_root=tmp_path / "docs" / "harbor" / "modules", context=context)
+    result = check_capsule_ready_for_skill("harbor/core", output_root=tmp_path / ".harbor" / "views" / "modules", context=context)
     assert result["status"] == "stale_capsule"
     assert result["reason"] == "fingerprint mismatch"
 
@@ -103,3 +103,16 @@ def test_write_module_skill_only_writes_skill_file(tmp_path: Path):
     assert target.exists()
     assert skill_dir_for_module("harbor/core", root=tmp_path / ".agents" / "skills").exists()
     assert not (tmp_path / "docs" / "harbor" / "modules").exists()
+
+
+def test_check_capsule_ready_legacy_exists_but_canonical_missing(tmp_path: Path, monkeypatch):
+    idx = _write_index(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    context = collect_module_context("harbor/core", index_path=idx)
+    legacy = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    legacy.mkdir(parents=True, exist_ok=True)
+    (legacy / "module-card.md").write_text("legacy\n", encoding="utf-8")
+    (legacy / "review-checklist.md").write_text("legacy\n", encoding="utf-8")
+    (legacy / "debug-playbook.md").write_text("legacy\n", encoding="utf-8")
+    result = check_capsule_ready_for_skill("harbor/core", context=context)
+    assert result["status"] == "missing_capsule"

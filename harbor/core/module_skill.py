@@ -6,8 +6,8 @@ from typing import Any, Dict, Optional
 
 from harbor.core.module_capsule import (
     check_module_capsule_stale,
-    module_capsule_dir,
     normalize_module_path,
+    resolve_module_capsule_paths,
 )
 
 
@@ -28,6 +28,7 @@ def check_capsule_ready_for_skill(
     module: str,
     output_root: Optional[Path] = None,
     context: Optional[Dict[str, Any]] = None,
+    root: Optional[Path] = None,
 ) -> Dict[str, str]:
     module_name = normalize_module_path(module)
     ctx = context or {}
@@ -40,7 +41,9 @@ def check_capsule_ready_for_skill(
             "reason": "no indexed records found for module",
         }
 
-    cap_dir = module_capsule_dir(module_name, output_root=output_root)
+    cap_paths = resolve_module_capsule_paths(module_name, root=root, output_root=output_root)
+    cap_dir = cap_paths["canonical_dir"]
+    assert cap_dir is not None
     required = ["module-card.md", "review-checklist.md", "debug-playbook.md"]
     missing = [name for name in required if not (cap_dir / name).exists()]
     if missing:
@@ -50,7 +53,7 @@ def check_capsule_ready_for_skill(
             "reason": "missing capsule files",
         }
 
-    stale = check_module_capsule_stale(ctx, output_root=output_root)
+    stale = check_module_capsule_stale(ctx, output_root=output_root, root=root)
     if stale.get("status") != "up_to_date":
         return {
             "status": "stale_capsule",
@@ -95,10 +98,12 @@ def generate_module_skill(module: str) -> str:
             "",
             "## Load order",
             "",
-            f"1. Read `docs/harbor/modules/{module_name}/module-card.md`",
-            f"2. If reviewing code, read `docs/harbor/modules/{module_name}/review-checklist.md`",
-            f"3. If debugging failure, read `docs/harbor/modules/{module_name}/debug-playbook.md`",
+            f"1. Read `.harbor/views/modules/{module_name}/module-card.md`",
+            f"2. If reviewing code, read `.harbor/views/modules/{module_name}/review-checklist.md`",
+            f"3. If debugging failure, read `.harbor/views/modules/{module_name}/debug-playbook.md`",
             "4. Then inspect only the relevant source files listed in the module card.",
+            "",
+            "Optional docs export may also exist under `docs/harbor/modules/<module>/` when enabled.",
             "",
             "## Required checks",
             "",
