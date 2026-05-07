@@ -216,3 +216,101 @@ Classification:
   - JSON contract smoke is stable.
   - documentation wording is aligned for canonical/export/legacy semantics.
   - active working tree still contains advisory WARN/stale items; freeze is possible only if the team accepts current advisory state as baseline.
+
+## Phase 2F-D Advisory WARN Baseline Triage
+
+### WARN inventory
+
+- Source: `harbor doctor --format json`
+  - Overall status: `warn`
+  - WARN checks:
+    - `工作区状态`（`warn`）：Changed records detected（`drift=11`、`modified=7`、`contract_changed=1`、`untracked=92`、`missing=1`）
+    - `派生视图`（`warn`）：legacy metadata `.harbor/l2_meta.json` + legacy diary `specs/diary` advisory（canonical 分别为 `.harbor/views/l2/_meta.json`、`.harbor/diary`）
+- Source: `harbor stale --format json`
+  - Overall status: `pass`
+  - `stale_views=0`、`unknown_views=0`
+  - Advisory flag: `true`（命令级 advisory 模式，非 blocker）
+
+### Classification table
+
+| source command | check / module / view | status | reason | suggested_command | category | decision |
+| --- | --- | --- | --- | --- | --- | --- |
+| `harbor doctor --format json` | `工作区状态` | `warn` | workspace 存在未提交变更与差异计数（活跃开发态） | `harbor checkpoint`; `harbor finish` | `expected_workspace_state` | `accept` |
+| `harbor doctor --format json` | `派生视图`（legacy metadata） | `warn` | 检测到 `.harbor/l2_meta.json` legacy 只读兼容路径 | none | `expected_legacy_advisory` | `accept` |
+| `harbor doctor --format json` | `派生视图`（legacy diary） | `warn` | 检测到 `specs/diary` legacy 存储；当前版本不自动迁移/清理 | none | `expected_legacy_advisory` | `accept` |
+| `harbor stale --format json` | overall (`stale_views=0`, `unknown_views=0`) | `pass` | 无 stale/unknown；advisory flag 为命令输出语义 | none | `expected_workspace_state` | `document_only` |
+| `harbor workspace migrate --dry-run --format json` | `docs_export` plan item | `detected` | `docs/harbor` 为 optional export，非 canonical | none | `optional_export_advisory` | `accept` |
+| `harbor workspace migrate --dry-run --format json` | `module_readme_export:*` plan items | `detected` | module README 为 export target，非 canonical | none | `optional_export_advisory` | `accept` |
+| `harbor workspace migrate --dry-run --format json` | `legacy_config` / `legacy_l2_metadata` / `legacy_diary` plan items | `detected` | dry-run 仅提供审阅计划，未执行写入迁移 | none | `expected_legacy_advisory` | `document_only` |
+
+### Refreshed items
+
+- `fixable_generated_view` 命中：`0`
+- 本轮未触发刷新命令（未执行 `project structure/docs/module seal/finish --sync-context`）
+- 复检结论：`harbor stale --format json` 已为 `pass`，无 stale/unknown 需要刷新
+
+### Accepted baseline warnings
+
+- 已接受（本轮已观测）：
+  - legacy `.harbor/l2_meta.json` detected
+  - legacy `specs/diary` detected
+  - workspace has uncommitted changes
+  - `docs/harbor` optional export detected
+  - module README export exists as non-canonical copy
+- 可接受清单中但本轮未报 WARN（仅记录策略）：
+  - `.agents/skills` optional export exists（若后续命令报该 advisory，按 `accept` 处理）
+
+Accepted rationale:
+
+- 属于 workspace layout 过渡期、legacy read-compatible、optional export 状态。
+- 本版本不执行 cleanup/migration/deletion。
+- `workspace migrate --dry-run` 仅给出计划，不执行写入。
+
+### Blocker checks
+
+- `pytest fails`: **NO**（`280 passed`）
+- `doctor/stale has FAIL`: **NO**
+- `JSON 输出不是单一对象`: **NO**
+- `JSON 输出绝对路径或用户名泄漏`: **NO**
+- `migrate dry-run 写文件`: **NO**
+- `workspace 外写入`: **NO**
+- `.harbor/views 被 gitignore`: **NO**（`git check-ignore .harbor/views/project-structure.md => NOT_IGNORED`）
+- `.harbor/cache 未被 gitignore`: **NO**（`git check-ignore .harbor/cache/harbor.db => IGNORED`）
+- canonical `.harbor/config/harbor.yaml` 缺失: **NO**
+- canonical project structure/L2/capsule 缺失且不可刷新: **NO**
+
+结论：`blocker = 0`
+
+### No-write verification
+
+- Commands:
+  - `harbor workspace migrate --dry-run`
+  - `harbor workspace migrate --dry-run --format json`
+- Fingerprint scope:
+  - `.harbor/config/harbor.yaml`
+  - `.harbor/views/project-structure.md`
+  - `.harbor/views/l2/_meta.json`
+  - `.harbor/diary/*.jsonl`
+  - `specs/diary/*.jsonl`
+  - `.harbor/l2_meta.json`
+  - `docs/harbor/**`
+  - module README exports (`harbor/**/README.md`, `tests/**/README.md`)
+- Result:
+  - `no_write_pass=true`
+  - `added_count=0`
+  - `removed_count=0`
+  - `changed_count=0`
+
+### Tests
+
+- `pytest`: `280 passed in 25.08s`（exit code `0`）
+
+### Final freeze recommendation
+
+- Recommendation: **freeze**
+- Reason:
+  - blocker 条件全部未命中；
+  - `doctor` 剩余 WARN 均可归类为 expected advisory baseline；
+  - `stale` 为 `pass` 且无 stale/unknown；
+  - dry-run no-write 契约持续成立；
+  - 当前阶段约束（不新增功能、不实现 `--write`、不清理 legacy）均满足。

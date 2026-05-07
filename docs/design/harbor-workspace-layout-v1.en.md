@@ -1148,6 +1148,18 @@ harbor workspace inspect is read-only
 harbor workspace migrate --dry-run is read-only
 ```
 
+Phase 2F-E (Release Freeze Pack) constraints:
+
+```text
+This phase only performs final pre-freeze review, documentation close-out, file classification, test verification, and release checklist packaging.
+Do not implement harbor workspace migrate --write
+Do not change existing CLI behavior
+Do not delete legacy files
+harbor workspace inspect is read-only
+harbor workspace migrate --dry-run is read-only
+legacy files are not auto-deleted or auto-migrated
+```
+
 ## 10.4 v2.0 possible behavior
 
 Make `.harbor/views/` the default canonical location.

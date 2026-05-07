@@ -191,7 +191,7 @@ harbor log
 harbor accept
 ```
 
-Release track note: current packaging alignment targets `Unreleased / v1.3.0` in `RELEASE.md`.
+Release track note: current packaging alignment targets `Unreleased / v1.3.1` in `RELEASE.md`.
 
 ### Workflow Facade Commands
 

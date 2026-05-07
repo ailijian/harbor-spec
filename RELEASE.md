@@ -1,14 +1,20 @@
 # Unreleased / v1.3.1 - Workspace Layout Migration (Phase 2A-2D-A)
 
-## Phase 2F-C Release Hardening
-- Release hardening scope is verification-only: dogfooding, JSON contract smoke, dry-run no-write checks, documentation consistency review, and working tree classification.
+## Phase 2F-E Release Freeze Pack
+- Release freeze scope remains verification-only: final tests, JSON contract smoke, dry-run no-write checks, documentation consistency close-out, and working tree classification.
+- Final validation snapshot:
+  - `pytest`: 280 passed
+  - `harbor workspace inspect --format json`: single JSON object, `writes_files=false`
+  - `harbor workspace migrate --dry-run --format json`: single JSON object, `writes_files=false`
+  - `harbor doctor --format json`: single JSON object, advisory WARN baseline accepted
+  - `harbor stale --format json`: single JSON object, status `pass`
 - `.harbor/` remains the canonical Harbor workspace; `docs/design/` remains human-authored design docs.
 - `docs/harbor/` remains an optional docs export target and is not canonical storage.
 - `.agents/skills/` remains an external integration export target.
 - `specs/diary/` and `.harbor/l2_meta.json` remain legacy read-compatible paths and are not canonical write targets.
 - module README files remain export targets (not canonical storage).
 - `harbor workspace inspect` and `harbor workspace migrate --dry-run` remain read-only.
-- `harbor workspace migrate --write` is not implemented in this release hardening phase.
+- `harbor workspace migrate --write` remains not implemented in this release freeze phase.
 
 ## Changed
 - Workspace config canonical write target is `.harbor/config/harbor.yaml`.

@@ -186,7 +186,7 @@ harbor log
 harbor accept
 ```
 
-发布轨道说明：当前发布收口以 `RELEASE.md` 中 `Unreleased / v1.3.0` 为准。
+发布轨道说明：当前发布收口以 `RELEASE.md` 中 `Unreleased / v1.3.1` 为准。
 
 ### Workflow Facade Commands
 

@@ -1144,6 +1144,18 @@ harbor workspace inspect 是只读
 harbor workspace migrate --dry-run 是只读
 ```
 
+Phase 2F-E（Release Freeze Pack）补充约束：
+
+```text
+本阶段仅做 release freeze 前最终审查、文档收口、文件归类、测试验证与 release checklist
+不实现 harbor workspace migrate --write
+不修改现有 CLI 行为
+不删除 legacy 文件
+harbor workspace inspect 是只读
+harbor workspace migrate --dry-run 是只读
+legacy 文件不会自动删除或迁移
+```
+
 ## 10.4 v2.0 可能行为
 
 将 `.harbor/views/` 作为默认 canonical 位置。
