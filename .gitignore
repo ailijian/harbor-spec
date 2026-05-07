@@ -198,9 +198,6 @@ cython_debug/
 #  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
 #  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
 #  refer to https://docs.cursor.com/context/ignore-files
-.harbor/cache/harbor.db
-.harbor/cache/harbor.db-wal
-.harbor/cache/harbor.db-shm
 .cursorignore
 .cursorindexingignore
 
@@ -209,9 +206,21 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
  
-# Trae IDE rules and Harbor internals
+# Trae IDE rules
 .trae/
-.harbor/
+
+# Harbor local runtime state
+.harbor/state/
+.harbor/cache/
+
+# Harbor export staging
+.harbor/exports/
+
+# Harbor local-only reports
+.harbor/reports/tmp/
+.harbor/reports/local/
 
 node_modules/
-docs/
+docs/*
+!docs/design/
+!docs/design/**

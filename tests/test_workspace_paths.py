@@ -11,6 +11,11 @@ from harbor.core.workspace import (
     parse_workspace_export_options,
     write_workspace_config,
 )
+from harbor.core.project_structure import (
+    ProjectMetadata,
+    ProjectStructureContext,
+    write_project_structure,
+)
 
 
 def _write_yaml(path: Path, payload: dict) -> None:
@@ -103,3 +108,31 @@ def test_windows_posix_path_normalization(tmp_path: Path) -> None:
     assert paths.views_root == (tmp_path / ".harbor" / "views").resolve()
     assert paths.reports_root == (tmp_path / ".harbor" / "reports-posix").resolve()
     assert paths.state_root == (tmp_path / ".harbor" / "state-posix").resolve()
+
+
+def test_project_structure_docs_export_root_cannot_escape_repo_root(tmp_path: Path) -> None:
+    cfg = {
+        "views": {
+            "export": {
+                "docs": {
+                    "enabled": True,
+                    "root": "../outside-docs",
+                }
+            }
+        }
+    }
+    write_workspace_config(tmp_path, cfg)
+
+    context = ProjectStructureContext(
+        metadata=ProjectMetadata(name="harbor-spec", version="1.3.0", description="desc", entrypoint="harbor.cli.main:main"),
+        modules=[],
+        supporting_areas=[],
+        key_areas=[],
+        has_indexed_modules=False,
+        discovery_mode="filesystem fallback",
+        contract_aware="no",
+        has_real_index_records=False,
+    )
+
+    with pytest.raises(ValueError, match="views.export.docs.root"):
+        write_project_structure(context, tmp_path)

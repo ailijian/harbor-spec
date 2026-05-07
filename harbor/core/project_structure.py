@@ -10,6 +10,7 @@ from harbor.core.l2 import collect_all_indexed_modules, infer_module_from_path
 from harbor.core.module_capsule import normalize_module_path
 from harbor.core.module_skill import normalize_skill_slug
 from harbor.core.storage import HarborDB
+from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
 
 
 @dataclass
@@ -56,6 +57,12 @@ class ProjectSupportingSummary:
     area: str
     purpose: str
     key_files: List[str]
+
+
+@dataclass
+class ProjectStructureWriteResult:
+    canonical_path: Path
+    exported_paths: List[Path]
 
 
 def _normalize_rel_path(value: str) -> str:
@@ -633,8 +640,47 @@ def generate_project_structure_markdown(context: ProjectStructureContext) -> str
     return "\n".join(lines)
 
 
-def write_project_structure(context: ProjectStructureContext, root: Path) -> Path:
-    target = root / "docs" / "harbor" / "project-structure.md"
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(generate_project_structure_markdown(context), encoding="utf-8")
-    return target
+def _resolve_docs_export_project_structure_path(root: Path, config: Optional[Dict[str, Any]]) -> Optional[Path]:
+    options = parse_workspace_export_options(config)
+    docs_options = (options.get("views", {}) or {}).get("docs", {}) or {}
+    if not bool(docs_options.get("enabled")):
+        return None
+
+    raw_root = str(docs_options.get("root") or "docs/harbor").strip()
+    export_root = Path(raw_root)
+    if not export_root.is_absolute():
+        export_root = root / export_root
+    export_root = export_root.resolve()
+    try:
+        export_root.relative_to(root.resolve())
+    except ValueError as exc:
+        raise ValueError(
+            f"Invalid workspace path for 'views.export.docs.root': '{raw_root}'. "
+            f"Resolved path '{export_root.as_posix()}' escapes repo root '{root.resolve().as_posix()}'."
+        ) from exc
+    return export_root / "project-structure.md"
+
+
+def write_project_structure(context: ProjectStructureContext, root: Path) -> ProjectStructureWriteResult:
+    root = Path(root).resolve()
+    markdown = generate_project_structure_markdown(context)
+
+    workspace_paths = load_workspace_paths(root, enforce_write_safety=True)
+    canonical_path = workspace_paths.project_structure_path
+    canonical_path.parent.mkdir(parents=True, exist_ok=True)
+    canonical_path.write_text(markdown, encoding="utf-8")
+
+    loaded = load_workspace_config(root)
+    config = loaded.get("config") or {}
+    export_path = _resolve_docs_export_project_structure_path(root, config)
+    exported_paths: List[Path] = []
+    if export_path is not None:
+        if export_path.resolve() != canonical_path.resolve():
+            export_path.parent.mkdir(parents=True, exist_ok=True)
+            export_path.write_text(markdown, encoding="utf-8")
+            exported_paths.append(export_path)
+
+    return ProjectStructureWriteResult(
+        canonical_path=canonical_path,
+        exported_paths=exported_paths,
+    )

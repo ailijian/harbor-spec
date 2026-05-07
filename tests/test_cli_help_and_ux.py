@@ -82,6 +82,14 @@ def test_project_help_lists_structure_and_structure_help_lists_write():
     assert "--write" in out_structure
 
 
+def test_project_structure_preview_message_uses_resolved_canonical_path(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    code, out, err = run_cmd(["project", "structure"])
+    assert code == 0
+    assert err == ""
+    assert "Preview only. Use --write to update .harbor/views/project-structure.md." in out
+
+
 def test_docs_modes_error_message_is_friendly_and_clear():
     code, _, err = run_cmd(["docs", "--module", "harbor/core", "--changed"])
     assert code == 2

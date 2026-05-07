@@ -1,3 +1,30 @@
+# Unreleased / v1.3.1 - Workspace Layout Migration (Phase 2A-2B)
+
+## Changed
+- Workspace config canonical write target is `.harbor/config/harbor.yaml`.
+- Legacy `.harbor/config.yaml` remains readable for compatibility.
+- `harbor project structure --write` now writes canonical `.harbor/views/project-structure.md` by default.
+- `docs/harbor/project-structure.md` is now an optional export target, enabled only when:
+  - `views.export.docs.enabled=true`
+  - `views.export.docs.root` is configured (default `docs/harbor`)
+- `harbor project structure` (without `--write`) remains preview-only and writes nothing.
+- `.gitignore` no longer uses broad `.harbor/` ignore; Harbor tracking now uses subdirectory-level policies.
+- Default tracked Harbor workspace assets include `.harbor/config/`, `.harbor/policy/`, `.harbor/views/project-structure.md`, `.harbor/diary/`, and selected `.harbor/reports/`.
+- Default ignored Harbor runtime paths include `.harbor/state/`, `.harbor/cache/`, `.harbor/exports/`, `.harbor/reports/tmp/`, and `.harbor/reports/local/`.
+
+## Compatibility
+- Legacy `docs/harbor/project-structure.md` is not deleted or auto-migrated in this phase.
+- Module capsule / L2 README / diary / stale / doctor / skill behavior is unchanged in this phase.
+
+## Migration Notes / 升级说明
+- v1.3.1+ uses `.harbor/config/harbor.yaml` as the canonical config write target.
+- Legacy `.harbor/config.yaml` is still readable for compatibility.
+- Project Structure canonical path is `.harbor/views/project-structure.md`.
+- `docs/harbor/project-structure.md` is an optional export target and is disabled by default.
+- `.harbor/` is the canonical Harbor workspace and should not be ignored as a whole in `.gitignore`.
+
+---
+
 # Unreleased / v1.3.0 - Workflow & Module Capsule Update
 
 ## Added

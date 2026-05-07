@@ -72,6 +72,14 @@ def test_readme_en_contains_release_key_commands():
 
 def test_release_notes_include_unreleased_v130_track():
     release_text = (_repo_root() / "RELEASE.md").read_text(encoding="utf-8")
+    assert "Unreleased / v1.3.1 - Workspace Layout Migration (Phase 2A-2B)" in release_text
+    assert ".harbor/config/harbor.yaml" in release_text
+    assert "Legacy `.harbor/config.yaml` is still readable for compatibility." in release_text
+    assert ".harbor/views/project-structure.md" in release_text
+    assert ".gitignore` no longer uses broad `.harbor/` ignore" in release_text
+    assert ".harbor/state/" in release_text
+    assert ".harbor/cache/" in release_text
+    assert ".harbor/exports/" in release_text
     assert "Unreleased / v1.3.0 - Workflow & Module Capsule Update" in release_text
     assert "harbor project structure" in release_text
     assert "derived and does not replace Project Rules" in release_text

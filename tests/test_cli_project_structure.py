@@ -5,6 +5,7 @@ from io import StringIO
 from pathlib import Path
 
 import pytest
+import yaml
 
 import harbor.cli.main as cli_main
 from harbor.cli.main import main
@@ -31,6 +32,12 @@ def _write_index(tmp_path: Path) -> None:
     )
 
 
+def _write_workspace_config(tmp_path: Path, payload: dict) -> None:
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text(yaml.safe_dump(payload, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+
 def run_cmd(argv):
     buf = StringIO()
     with redirect_stdout(buf):
@@ -49,19 +56,66 @@ def test_project_structure_preview_runs_and_does_not_write(tmp_path: Path, monke
     assert "## Supporting Areas" in out
     assert "## Module Index" not in out
     assert "| Mode | Harbor index |" in out
-    assert "Preview only. Use --write to update docs/harbor/project-structure.md." in out
+    assert "Preview only. Use --write to update .harbor/views/project-structure.md." in out
+    assert not (tmp_path / ".harbor" / "views" / "project-structure.md").exists()
     assert not (tmp_path / "docs" / "harbor" / "project-structure.md").exists()
 
 
-def test_project_structure_write_updates_fixed_path(tmp_path: Path, monkeypatch):
+def test_project_structure_write_updates_canonical_path_by_default(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
     out = run_cmd(["project", "structure", "--write"])
-    target = tmp_path / "docs" / "harbor" / "project-structure.md"
+    target = tmp_path / ".harbor" / "views" / "project-structure.md"
     assert "Updated:" in out
-    assert "- docs/harbor/project-structure.md" in out
+    assert "- .harbor/views/project-structure.md" in out
     assert target.exists()
+    assert not (tmp_path / "docs" / "harbor" / "project-structure.md").exists()
     assert "# Project Structure" in target.read_text(encoding="utf-8")
+
+
+def test_project_structure_write_dual_writes_when_docs_export_enabled(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_index(tmp_path)
+    _write_workspace_config(
+        tmp_path,
+        {
+            "views": {
+                "export": {
+                    "docs": {
+                        "enabled": True,
+                        "root": "docs/harbor",
+                    }
+                }
+            }
+        },
+    )
+    out = run_cmd(["project", "structure", "--write"])
+    canonical_target = tmp_path / ".harbor" / "views" / "project-structure.md"
+    docs_target = tmp_path / "docs" / "harbor" / "project-structure.md"
+
+    assert canonical_target.exists()
+    assert docs_target.exists()
+    assert "- .harbor/views/project-structure.md" in out
+    assert "- docs/harbor/project-structure.md" in out
+    assert out.index("- .harbor/views/project-structure.md") < out.index("- docs/harbor/project-structure.md")
+
+
+def test_project_structure_write_does_not_overwrite_existing_legacy_docs_when_export_disabled(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_index(tmp_path)
+    legacy_target = tmp_path / "docs" / "harbor" / "project-structure.md"
+    legacy_target.parent.mkdir(parents=True, exist_ok=True)
+    legacy_target.write_text("legacy-content\n", encoding="utf-8")
+    before = legacy_target.read_text(encoding="utf-8")
+
+    out = run_cmd(["project", "structure", "--write"])
+    canonical_target = tmp_path / ".harbor" / "views" / "project-structure.md"
+
+    assert canonical_target.exists()
+    assert "- .harbor/views/project-structure.md" in out
+    assert "- docs/harbor/project-structure.md" not in out
+    assert legacy_target.exists()
+    assert legacy_target.read_text(encoding="utf-8") == before
 
 
 def test_project_structure_no_index_is_friendly_and_not_crash_when_no_filesystem_fallback(tmp_path: Path, monkeypatch):

@@ -7,6 +7,7 @@ from harbor.core.project_structure import (
     collect_project_structure_context,
     generate_project_structure_markdown,
     rank_key_file,
+    write_project_structure,
 )
 
 
@@ -195,3 +196,13 @@ def test_rank_key_file_prioritizes_entrypoints_and_impl_files():
     assert ranked[0] == "harbor/cli/main.py"
     assert ranked.index("harbor/core/README.md") > ranked.index("harbor/core/index.py")
     assert ranked[-1] == "harbor/cli/__init__.py"
+
+
+def test_write_project_structure_returns_canonical_first(tmp_path: Path):
+    idx = _write_index(tmp_path)
+    context = collect_project_structure_context(tmp_path, index_path=idx)
+    result = write_project_structure(context, tmp_path)
+
+    assert result.canonical_path == (tmp_path / ".harbor" / "views" / "project-structure.md").resolve()
+    assert result.exported_paths == []
+    assert result.canonical_path.exists()

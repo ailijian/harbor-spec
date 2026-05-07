@@ -43,7 +43,7 @@ from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
 from harbor.core.init import Initializer
 from harbor.core.decorator import DecoratorEngine
-from harbor.core.workspace import load_workspace_config, write_workspace_config
+from harbor.core.workspace import load_workspace_config, load_workspace_paths, write_workspace_config
 
 
 def main():
@@ -1106,21 +1106,29 @@ def main():
     elif args.command == "project" and args.project_cmd == "structure":
         context = collect_project_structure_context(Path.cwd())
         markdown = generate_project_structure_markdown(context)
+        workspace_paths = load_workspace_paths(Path.cwd(), enforce_write_safety=True)
+        canonical_display = workspace_paths.project_structure_path.as_posix()
+        try:
+            canonical_display = workspace_paths.project_structure_path.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except Exception:
+            canonical_display = workspace_paths.project_structure_path.as_posix()
         if not args.write:
             print(markdown)
             print("")
-            print(t("cli.project.structure.preview_only"))
+            print(t("cli.project.structure.preview_only", path=canonical_display))
             if not context.has_indexed_modules:
                 print(t("cli.project.structure.no_index"))
             return
-        updated = write_project_structure(context, Path.cwd())
-        updated_display = updated.as_posix()
-        try:
-            updated_display = updated.resolve().relative_to(Path.cwd().resolve()).as_posix()
-        except Exception:
-            updated_display = updated.as_posix()
+        write_result = write_project_structure(context, Path.cwd())
+        updated_paths = [write_result.canonical_path] + list(write_result.exported_paths)
         print(t("cli.project.structure.updated"))
-        print(f"- {updated_display}")
+        for updated in updated_paths:
+            updated_display = updated.as_posix()
+            try:
+                updated_display = updated.resolve().relative_to(Path.cwd().resolve()).as_posix()
+            except Exception:
+                updated_display = updated.as_posix()
+            print(f"- {updated_display}")
         if not context.has_indexed_modules:
             print(t("cli.project.structure.no_index"))
     elif args.command == "log" and args.export:

@@ -1,0 +1,34 @@
+strictness:
+  default: standard
+
+  rules:
+    - match: "app/api/**"
+      strictness: strict
+    - match: "app/schemas/**"
+      strictness: strict
+    - match: "app/services/review/**"
+      strictness: strict
+    - match: "app/services/export/**"
+      strictness: strict
+    - match: "app/services/parser/**"
+      strictness: strict
+    - match: "app/workflows/**"
+      strictness: strict
+    - match: "app/utils/**"
+      strictness: light
+
+gates:
+  strict:
+    require_contract: true
+    require_ddt: true
+    forbid_latest: true
+    semantic_audit: required
+  standard:
+    require_contract: true
+    require_ddt: recommended
+    allow_latest: true
+    semantic_audit: warning
+  light:
+    require_summary: true
+    require_ddt: false
+    semantic_audit: off

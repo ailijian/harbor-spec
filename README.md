@@ -292,7 +292,12 @@ harbor project structure --write
 ```
 
 说明：
-- 该命令生成项目级派生视图 `docs/harbor/project-structure.md`。
+- 该命令的 canonical 写入目标为 `.harbor/views/project-structure.md`。
+- `docs/harbor/project-structure.md` 是可选 export 目标（默认关闭）。
+- `.harbor/` 是 Harbor canonical workspace，不应在 `.gitignore` 中被整目录忽略。
+- 推荐仅忽略本地运行态目录（如 `.harbor/state/`、`.harbor/cache/`、`.harbor/exports/` 与本地临时 reports）。
+- `.harbor/views/project-structure.md` 是 canonical project structure view；`docs/harbor` 仅是可选导出位，不是 canonical storage。
+- `docs/design/` 用于人类编写的设计文档，应该保持可追踪（trackable）。
 - Project Structure View 是 derived view，不是 Project Rules。
 - 它不替代 `AGENTS.md`、L2 README、Module Capsule 或源代码本身。
 - 它用于帮助 AI coding agent 在 debug、review、refactor 前快速理解项目结构。
@@ -300,7 +305,7 @@ harbor project structure --write
 - 输出包含 `Discovery Mode` 区块，用于说明当前结构来源。
 - 当处于 filesystem fallback 模式时，`Indexed Contracts` 可能为 0，因为没有可用的 Harbor index records。
 - 默认模式仅预览，不写文件。
-- 仅 `--write` 会更新 `docs/harbor/project-structure.md`。
+- 仅 `--write` 会更新 canonical 路径；仅在 `views.export.docs.enabled=true` 时才会额外更新 `docs/harbor/project-structure.md`。
 - `harbor finish --sync-context` 不会自动刷新 Project Structure View。
 - 推荐在任务起始阶段手动执行：
 
@@ -430,7 +435,7 @@ harbor accept
 - 并行构建：`harbor lock` 默认多核并行解析与哈希，吞吐显著提升
 - 增量查询：`harbor status` 通过数据库增量对比，加速变更检测
 
-此外，**排除无关目录**非常关键。`.harbor/config.yaml` 默认支持 Git 感知，但建议显式排除：
+此外，**排除无关目录**非常关键。canonical 配置写入目标为 `.harbor/config/harbor.yaml`（legacy `.harbor/config.yaml` 仍可读），建议显式配置排除：
 
 ```yaml
 exclude_paths:
@@ -482,7 +487,7 @@ exclude_paths:
 | `harbor module seal --all --write` | 批量写入全部已索引模块的 Capsule |
 | `harbor module promote-skill <module>` | 手动晋升模块为薄 Skill 入口（可选，写入 `.agents/skills/.../SKILL.md`） |
 | `harbor project structure` | 预览项目级派生结构视图（默认不写文件） |
-| `harbor project structure --write` | 写入 `docs/harbor/project-structure.md` |
+| `harbor project structure --write` | 默认写入 `.harbor/views/project-structure.md`；可选导出到 `docs/harbor/project-structure.md` |
 | `harbor config` / `harbor conf` | 管理扫描路径配置 |
 
 -----

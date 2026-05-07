@@ -297,7 +297,12 @@ harbor project structure --write
 ```
 
 Notes:
-- This command generates `docs/harbor/project-structure.md`.
+- Canonical write target is `.harbor/views/project-structure.md`.
+- `docs/harbor/project-structure.md` is an optional export target (disabled by default).
+- `.harbor/` is the canonical Harbor workspace and should not be ignored as a whole in `.gitignore`.
+- Prefer ignoring only local runtime paths (for example: `.harbor/state/`, `.harbor/cache/`, `.harbor/exports/`, and local-only reports).
+- `.harbor/views/project-structure.md` is the canonical project structure view; `docs/harbor` is an optional export destination, not canonical storage.
+- `docs/design/` is for human-authored design documents and should remain trackable.
 - Project Structure View is a derived project-level view, not Project Rules.
 - It does not replace `AGENTS.md`, L2 README, Module Capsule, or source code.
 - It helps AI coding agents understand the project quickly before debugging, reviewing, or refactoring.
@@ -305,7 +310,7 @@ Notes:
 - The output includes a `Discovery Mode` section to explain how the structure was discovered.
 - In filesystem fallback mode, `Indexed Contracts` may be 0 because no Harbor index records are available.
 - Default mode is preview-only and does not write files.
-- Only `--write` updates `docs/harbor/project-structure.md`.
+- `--write` always updates the canonical path; it updates `docs/harbor/project-structure.md` only when `views.export.docs.enabled=true`.
 - `harbor finish --sync-context` does not auto-update Project Structure View.
 - Suggested startup flow:
 
@@ -420,7 +425,7 @@ harbor accept
 <details>
 <summary><strong>🚀 Performance Tuning (Monorepo)</strong></summary>
 
-For large projects, **excluding irrelevant directories** is vital. While `.harbor/config.yaml` supports Git-aware filtering, explicit exclusion is recommended:
+For large projects, **excluding irrelevant directories** is vital. The canonical config write target is `.harbor/config/harbor.yaml` (legacy `.harbor/config.yaml` remains readable), and explicit exclusion is recommended:
 
 ```yaml
 exclude_paths:
@@ -472,7 +477,7 @@ exclude_paths:
 | `harbor module seal --all --write` | Batch write module capsules for all indexed modules. |
 | `harbor module promote-skill <module>` | Manually promote one module to an optional thin skill entrypoint (`.agents/skills/.../SKILL.md`). |
 | `harbor project structure` | Preview a derived project-level structure view (no file write by default). |
-| `harbor project structure --write` | Write `docs/harbor/project-structure.md`. |
+| `harbor project structure --write` | Write `.harbor/views/project-structure.md` by default; optionally export to `docs/harbor/project-structure.md`. |
 | `harbor config` / `harbor conf` | Manage code roots and paths. |
 
 -----
