@@ -57,11 +57,62 @@ def test_generated_view_modules_hit_generated_view_format():
 
 def test_tests_helper_change_is_not_confirmed():
     level, _, _ = classify_contract_impact_for_file_path("tests/helpers/test_string_utils.py")
-    assert level in (
-        ContractImpactLevel.NO_CONTRACT_IMPACT,
-        ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT,
-    )
+    assert level == ContractImpactLevel.NO_CONTRACT_IMPACT
     assert level != ContractImpactLevel.CONFIRMED_CONTRACT_IMPACT
+
+
+def test_tests_helper_keyword_noise_stays_no_contract_impact():
+    finding = classify_contract_impact_for_function_change(
+        func_id="tests.helpers.parse_json_output_for_command",
+        file_path="tests/helpers/test_parser_helpers.py",
+        change_type="Modified",
+        details="helper only",
+    )
+    assert finding.level == ContractImpactLevel.NO_CONTRACT_IMPACT
+    assert finding.level != ContractImpactLevel.CONFIRMED_CONTRACT_IMPACT
+
+
+def test_tests_ddt_binding_signal_remains_possible():
+    finding = classify_contract_impact_for_function_change(
+        func_id="tests.test_ddt_validate.test_ddt_binding_v1",
+        file_path="tests/test_ddt_validate.py",
+        change_type="Modified",
+        details="ddt binding assertion updated",
+    )
+    values = [item.value for item in finding.categories]
+    assert finding.level == ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT
+    assert "ddt_binding" in values
+
+
+def test_tests_cli_snapshot_signal_remains_possible():
+    finding = classify_contract_impact_for_function_change(
+        func_id="tests.test_cli_output_snapshot.test_cli_output_snapshot",
+        file_path="tests/test_cli_output_snapshot.py",
+        change_type="Modified",
+        details="snapshot golden expected_output updated",
+    )
+    values = [item.value for item in finding.categories]
+    assert finding.level == ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT
+    assert ("cli_text_output" in values) or ("cli_json_output" in values)
+
+
+def test_tests_generated_view_frontmatter_signal_remains_possible():
+    finding = classify_contract_impact_for_function_change(
+        func_id="tests.test_generated_view_frontmatter.test_generated_view_frontmatter_contract",
+        file_path="tests/test_generated_view_frontmatter.py",
+        change_type="Modified",
+        details="generated_view frontmatter contract assertion updated",
+    )
+    values = [item.value for item in finding.categories]
+    assert finding.level == ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT
+    assert "generated_view_format" in values
+
+
+def test_production_cli_path_remains_possible():
+    level, categories, _ = classify_contract_impact_for_file_path("harbor/cli/main.py")
+    values = [item.value for item in categories]
+    assert level == ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT
+    assert "cli_args" in values
 
 
 def test_report_to_dict_is_deterministic_and_sanitized():
@@ -93,4 +144,3 @@ def test_report_to_dict_is_deterministic_and_sanitized():
     text = str(payload_1)
     assert "C:/" not in text
     assert "\\repo\\" not in text
-

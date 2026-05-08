@@ -58,6 +58,7 @@ _TO_DICT_RE = re.compile(r"(^|[_\.])(to_dict|report_to_dict|stale_report_to_dict
 _WRITE_FUNC_RE = re.compile(r"(^|[_\.])write[_a-z0-9]*$", re.IGNORECASE)
 _DOCSTRING_RETURNS_RE = re.compile(r"\breturns?\b", re.IGNORECASE)
 _DOCSTRING_RAISES_RE = re.compile(r"\braises?\b", re.IGNORECASE)
+_TEST_PATH_RE = re.compile(r"(^|/)tests?/", re.IGNORECASE)
 
 
 def classify_contract_impact_from_status_record(record: Any) -> ContractImpactFinding:
@@ -80,31 +81,48 @@ def classify_contract_impact_for_function_change(
     categories: Set[ContractImpactCategory] = set(file_categories)
     level = file_level
 
-    normalized_func = _normalize_symbol(func_id).lower()
+    normalized_path = _normalize_path(file_path).lower()
+    in_test_path = _is_test_path(normalized_path)
+    normalized_func = _normalize_symbol_for_classification(func_id).lower()
     details_lower = str(details or "").lower()
     change_type_lower = str(change_type or "").lower()
 
-    if _is_to_dict_like(normalized_func):
-        categories.add(ContractImpactCategory.CLI_JSON_OUTPUT)
-        level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
-
-    if _is_write_like(normalized_func):
-        categories.add(ContractImpactCategory.FILE_WRITE_TARGET)
-        categories.add(ContractImpactCategory.WRITES_FILES)
-        level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
-
-    if "argparse" in normalized_func or "parser" in normalized_func:
-        categories.add(ContractImpactCategory.CLI_ARGS)
-        level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
-
-    if "exit" in normalized_func:
-        categories.add(ContractImpactCategory.EXIT_CODE)
-        level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
-
-    if "format_" in normalized_func and "json" not in normalized_func:
-        if "doctor" in normalized_func or "stale" in normalized_func or "report" in normalized_func:
-            categories.add(ContractImpactCategory.CLI_TEXT_OUTPUT)
+    if in_test_path:
+        hit, test_categories, test_reason = _is_contract_asserting_test(
+            func_id=normalized_func,
+            file_path=normalized_path,
+            evidence=f"{change_type_lower} {details_lower}",
+        )
+        categories.update(test_categories)
+        if hit:
             level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
+            file_reason = test_reason
+        else:
+            level = ContractImpactLevel.NO_CONTRACT_IMPACT
+            categories = set()
+            file_reason = "tests path changed without explicit contract-test signal"
+    else:
+        if _is_to_dict_like(normalized_func):
+            categories.add(ContractImpactCategory.CLI_JSON_OUTPUT)
+            level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
+
+        if _is_write_like(normalized_func):
+            categories.add(ContractImpactCategory.FILE_WRITE_TARGET)
+            categories.add(ContractImpactCategory.WRITES_FILES)
+            level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
+
+        if "argparse" in normalized_func or "parser" in normalized_func:
+            categories.add(ContractImpactCategory.CLI_ARGS)
+            level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
+
+        if "exit" in normalized_func:
+            categories.add(ContractImpactCategory.EXIT_CODE)
+            level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
+
+        if "format_" in normalized_func and "json" not in normalized_func:
+            if "doctor" in normalized_func or "stale" in normalized_func or "report" in normalized_func:
+                categories.add(ContractImpactCategory.CLI_TEXT_OUTPUT)
+                level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
 
     if "contract updated" in details_lower or "contract changed" in change_type_lower:
         # confirmed_contract_impact 表示确认 contract surface 变化，不表示 bug/breaking。
@@ -163,7 +181,7 @@ def classify_contract_impact_for_file_path(file_path: str) -> Tuple[ContractImpa
         level = _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT)
         reason = "safety policy path changed"
 
-    if rel_lower.startswith("tests/"):
+    if _is_test_path(rel_lower):
         categories, level, reason = _classify_tests_path(rel_lower, categories, level)
 
     return level, sorted(categories, key=lambda item: item.value), reason
@@ -307,7 +325,11 @@ def _sorted_findings(items: Iterable[ContractImpactFinding]) -> List[ContractImp
 
 
 def _normalize_symbol(value: str) -> str:
-    return str(value or "").strip()
+    return _normalize_symbol_for_classification(value)
+
+
+def _normalize_symbol_for_classification(value: str) -> str:
+    return str(value or "").strip().replace("\\", "/")
 
 
 def _normalize_path(value: str) -> str:
@@ -365,21 +387,74 @@ def _classify_tests_path(
     categories: Set[ContractImpactCategory],
     level: ContractImpactLevel,
 ) -> Tuple[Set[ContractImpactCategory], ContractImpactLevel, str]:
-    reason = "test-only helper change"
-    if any(token in rel_lower for token in ("snapshot", "golden")):
-        return categories, _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT), "snapshot/golden test path changed"
-    if "ddt" in rel_lower:
+    matched, test_categories, reason = _is_contract_asserting_test(
+        func_id="",
+        file_path=rel_lower,
+        evidence="",
+    )
+    if matched:
+        categories.update(test_categories)
+        return categories, _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT), reason
+    return categories, ContractImpactLevel.NO_CONTRACT_IMPACT, "test-only helper change"
+
+
+def _is_test_path(rel_lower: str) -> bool:
+    if not rel_lower:
+        return False
+    return bool(_TEST_PATH_RE.search(rel_lower))
+
+
+def _is_contract_asserting_test(
+    *,
+    func_id: str,
+    file_path: str,
+    evidence: str,
+) -> Tuple[bool, Set[ContractImpactCategory], str]:
+    haystack = " ".join([func_id or "", file_path or "", evidence or ""]).lower()
+    categories: Set[ContractImpactCategory] = set()
+
+    if "ddt" in haystack:
         categories.add(ContractImpactCategory.DDT_BINDING)
-        return categories, _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT), "DDT binding test path changed"
-    if "cli" in rel_lower:
+        return True, categories, "DDT binding test signal matched"
+
+    generated_view_tokens = ("generated_view", "frontmatter")
+    if any(token in haystack for token in generated_view_tokens):
+        categories.add(ContractImpactCategory.GENERATED_VIEW_FORMAT)
+        return True, categories, "generated view/frontmatter test signal matched"
+
+    snapshot_tokens = ("snapshot", "golden")
+    output_tokens = ("cli_output", "output_contract", "expected_output")
+    json_output_tokens = ("json_output", "cli_json_output")
+    contract_context_tokens = ("contract", "assert", "expected", "snapshot", "golden", "schema")
+
+    has_snapshot = any(token in haystack for token in snapshot_tokens)
+    has_output = any(token in haystack for token in output_tokens)
+    has_json_output = any(token in haystack for token in json_output_tokens)
+    if has_snapshot or has_output or (has_json_output and any(token in haystack for token in contract_context_tokens)):
+        if has_json_output and any(token in haystack for token in contract_context_tokens):
+            categories.add(ContractImpactCategory.CLI_JSON_OUTPUT)
+            return True, categories, "CLI JSON output contract test signal matched"
         categories.add(ContractImpactCategory.CLI_TEXT_OUTPUT)
-        return categories, _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT), "CLI expected output test path changed"
-    if "json" in rel_lower:
-        categories.add(ContractImpactCategory.CLI_JSON_OUTPUT)
-        return categories, _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT), "JSON output test path changed"
-    if "fixture" in rel_lower and "public" in rel_lower:
-        return categories, _max_level(level, ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT), "public fixture path changed"
-    return categories, level, reason
+        return True, categories, "CLI text output contract test signal matched"
+
+    if "write_target" in haystack:
+        categories.add(ContractImpactCategory.FILE_WRITE_TARGET)
+        return True, categories, "file write target contract test signal matched"
+
+    if "exit_code" in haystack:
+        categories.add(ContractImpactCategory.EXIT_CODE)
+        return True, categories, "exit code contract test signal matched"
+
+    schema_tokens = ("fixture_schema", "public_fixture", "schema")
+    if any(token in haystack for token in schema_tokens):
+        categories.add(ContractImpactCategory.SOURCE_OF_TRUTH_RULE)
+        return True, categories, "schema/public fixture contract test signal matched"
+
+    if "contract" in haystack:
+        categories.add(ContractImpactCategory.SOURCE_OF_TRUTH_RULE)
+        return True, categories, "explicit contract test signal matched"
+
+    return False, categories, "no explicit contract-test signal matched"
 
 
 def _is_to_dict_like(symbol: str) -> bool:
@@ -420,4 +495,3 @@ def _sanitize_single_path(path_text: str) -> str:
         except Exception:
             return candidate.name or path_text.replace("\\", "/")
     return path_text.replace("\\", "/")
-
