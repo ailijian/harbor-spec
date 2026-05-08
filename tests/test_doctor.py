@@ -271,6 +271,22 @@ def test_doctor_report_includes_suggestions():
     assert "harbor docs --module harbor/core --write" in out
 
 
+def test_collect_next_steps_filters_high_impact_commands():
+    checks = [
+        doctor.DoctorCheckResult(
+            "Workspace Status",
+            doctor.WARN,
+            ["changed"],
+            ["harbor log", "harbor accept", "harbor lock", "harbor stale"],
+        )
+    ]
+    steps = doctor._collect_next_steps(checks)
+    assert all(not step.startswith("harbor log") for step in steps)
+    assert all(not step.startswith("harbor accept") for step in steps)
+    assert all(not step.startswith("harbor lock") for step in steps)
+    assert "harbor stale" in steps
+
+
 def test_build_doctor_report_is_read_only(monkeypatch):
     monkeypatch.setattr(doctor, "run_config_index_check", lambda: doctor.DoctorCheckResult("a", doctor.PASS, [], []))
     monkeypatch.setattr(doctor, "run_workspace_status_check", lambda sync_engine=None: doctor.DoctorCheckResult("b", doctor.PASS, [], []))

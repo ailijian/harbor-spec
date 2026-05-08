@@ -3,14 +3,17 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-08T13:04:29Z"
+generated_at: "2026-05-08T17:13:59Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 22
+source_path_count: 25
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
   - "harbor/core/audit.py"
+  - "harbor/core/ci.py"
+  - "harbor/core/context_integrity.py"
+  - "harbor/core/contract_impact.py"
   - "harbor/core/ddt.py"
   - "harbor/core/decorator.py"
   - "harbor/core/diary.py"
@@ -31,11 +34,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:f83ad8e9248fe50ea9c289b37bfac95b9afc7721558636811cd71565e8d829ca"
-contract_fingerprint: "sha256:6c94e19b48f5bb57511e4c75d5a1262870eb3e9f0f4d49b27e85f170c688b301"
+source_fingerprint: "sha256:232280c55924b13b0b163e7fa4d6e9f71c1861c617728bdfebb14ff858209c5d"
+contract_fingerprint: "sha256:7cc2b652a2f7fc9c802716db86bb9b80989bf06ae935cf949c5b22370ef00ec0"
 generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "982ecbfc13bf93ad9e2423de583693047acf82af7f0e3d133429e6947f1eb177"
-fingerprint: "982ecbfc13bf93ad9e2423de583693047acf82af7f0e3d133429e6947f1eb177"
+view_fingerprint: "a5186a749f925e03e5462a64b9e5339942fe48aecfadb9cf79305fc5a2902ea1"
+fingerprint: "a5186a749f925e03e5462a64b9e5339942fe48aecfadb9cf79305fc5a2902ea1"
 ---
 
 # Module Card: harbor/core
@@ -58,6 +61,9 @@ If this summary is too generic, update the underlying contracts or module docume
 ```text
 harbor/core/__init__.py
 harbor/core/audit.py
+harbor/core/ci.py
+harbor/core/context_integrity.py
+harbor/core/contract_impact.py
 harbor/core/ddt.py
 harbor/core/decorator.py
 harbor/core/diary.py
@@ -91,6 +97,68 @@ harbor/core/workspace_migrate.py
 | harbor.core.audit.SemanticGuard.audit | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.SemanticGuard.build_prompt | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.resolve_provider | harbor/core/audit.py | unknown | standard |
+| harbor.core.ci.CIFailure.to_dict | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.CheckpointCIItem.dedupe_key | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.CheckpointCIItem.to_dict | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._collect_checkpoint_next_steps | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._collect_next_steps | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._dedupe_checkpoint_items | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._push_status_failures | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._sanitize_checkpoint_contract_impact | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._sanitize_json_text | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._sanitize_single_path | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._sanitize_summary | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.build_checkpoint_ci_result | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.build_doctor_ci_result | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.build_stale_ci_result | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.checkpoint_ci_result_to_dict | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.ci_result_to_dict | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.format_checkpoint_ci_result | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.format_ci_result | harbor/core/ci.py | unknown | standard |
+| harbor.core.context_integrity._as_repo_relative | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._decode_scalar | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._json_stable_hash | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._normalize_body_for_compare | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._normalize_rel_path | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._now_iso | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._render_scalar | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._yaml_quote | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.build_context_integrity_metadata | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.compose_markdown_with_frontmatter | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.compute_contract_fingerprint | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.compute_generator_fingerprint | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.compute_source_fingerprint | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.content_without_generated_at_for_compare | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.extract_integrity_fingerprints | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.merge_generated_at | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.parse_frontmatter | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.render_frontmatter | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.split_frontmatter | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity.strip_frontmatter | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.contract_impact._classify_tests_path | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._confidence_for_level | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._finding_to_dict | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._is_contract_asserting_test | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._is_docs_or_rules_path | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._is_generated_view_module | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._is_public_cli_path | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._is_test_path | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._is_to_dict_like | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._is_write_like | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._max_level | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._normalize_path | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._normalize_symbol | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._normalize_symbol_for_classification | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._sanitize_json_text | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._sanitize_single_path | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact._sorted_findings | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact.build_contract_impact_report | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact.classify_contract_impact_for_docstring_diff | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact.classify_contract_impact_for_file_path | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact.classify_contract_impact_for_function_change | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact.classify_contract_impact_from_status_record | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact.contract_impact_report_to_dict | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact.format_contract_impact_report | harbor/core/contract_impact.py | unknown | standard |
 | harbor.core.ddt.DDTScanner.__init__ | harbor/core/ddt.py | unknown | standard |
 | harbor.core.ddt.DDTScanner._iter_py_files | harbor/core/ddt.py | unknown | standard |
 | harbor.core.ddt.DDTScanner._load_config | harbor/core/ddt.py | unknown | standard |
@@ -131,6 +199,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.doctor._collect_next_steps | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._derived_view_detail_status | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._merge_status | harbor/core/doctor.py | unknown | standard |
+| harbor.core.doctor._parse_generated_frontmatter_safely | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._sanitize_json_text | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._sanitize_single_path | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._status_text | harbor/core/doctor.py | unknown | standard |
@@ -179,6 +248,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.init.ProjectDetector._parse_gitignore | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector.detect | harbor/core/init.py | public | strict |
 | harbor.core.l2.L2Generator.__init__ | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._collect_integrity_inputs | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._ensure_within_root | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_index | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_meta | harbor/core/l2.py | unknown | standard |
@@ -193,6 +263,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.write | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._to_repo_relative | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.collect_all_indexed_modules | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.collect_modules_from_paths | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.infer_module_from_path | harbor/core/l2.py | unknown | standard |
@@ -253,6 +324,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.stale.ModuleStaleSummary.to_dict | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale.ViewStaleResult.to_dict | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale._format_view_lines | harbor/core/stale.py | unknown | standard |
+| harbor.core.stale._normalize_l2_body_for_export_compare | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale._normalize_l2_markdown_for_stale | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale._sanitize_json_text | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale._sanitize_module_for_json | harbor/core/stale.py | unknown | standard |
@@ -321,6 +393,8 @@ harbor/core/workspace_migrate.py
 tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 tests/test_audit.py
+tests/test_checkpoint_ci.py
+tests/test_ci_mode.py
 tests/test_cli_doctor.py
 tests/test_cli_finish_sync_context.py
 tests/test_cli_init_output.py
@@ -332,6 +406,8 @@ tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_cli_workspace_inspect.py
 tests/test_cli_workspace_migrate.py
+tests/test_context_integrity.py
+tests/test_contract_impact.py
 tests/test_ddt_validate.py
 tests/test_decorator_engine.py
 tests/test_diary_workspace_paths.py

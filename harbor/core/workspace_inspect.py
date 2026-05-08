@@ -354,6 +354,21 @@ def _check_git_ignored(repo_root: Path, rel_path: str) -> GitIgnored:
             text=True,
             check=False,
         )
+        # For directory rules (e.g. ".harbor/state/"), probing one nested path
+        # avoids false negatives when the directory itself is not materialized.
+        if result.returncode == 1:
+            probe = rel_path.rstrip("/\\") + "/.harbor_ignore_probe"
+            nested = subprocess.run(
+                ["git", "check-ignore", probe],
+                cwd=repo_root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if nested.returncode == 0:
+                return True
+            if nested.returncode not in (0, 1):
+                return "unknown"
     except Exception:
         return "unknown"
     if result.returncode == 0:

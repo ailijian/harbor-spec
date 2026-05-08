@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-08T13:45:02Z"
+generated_at: "2026-05-08T17:13:59Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 58
+source_path_count: 62
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -17,6 +17,8 @@ source_paths:
   - "tests/test_adopted_roots.py"
   - "tests/test_audit.py"
   - "tests/test_cache_isolation_hardening.py"
+  - "tests/test_checkpoint_ci.py"
+  - "tests/test_ci_mode.py"
   - "tests/test_cli_config.py"
   - "tests/test_cli_decorate.py"
   - "tests/test_cli_docs_modes.py"
@@ -37,6 +39,8 @@ source_paths:
   - "tests/test_cli_workspace_inspect.py"
   - "tests/test_cli_workspace_migrate.py"
   - "tests/test_config_update.py"
+  - "tests/test_context_integrity.py"
+  - "tests/test_contract_impact.py"
   - "tests/test_ddt_validate.py"
   - "tests/test_decorator_engine.py"
   - "tests/test_derive_adopted_roots.py"
@@ -67,11 +71,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:94e92b60ec144d898c4be5dfcc52c14a8a9e259c6764f19a0b8664d0f15da66a"
-contract_fingerprint: "sha256:e1d07301c79b1954802279bbc9c1b83ebc60b387d25575590f8adb474d17a0e0"
+source_fingerprint: "sha256:3ae2221d9cf7986c740b4907461a589bcdb4bfef7452f7fea2889a8da5f3a671"
+contract_fingerprint: "sha256:f2221711e93de512055a14eac359c328ac7e60e7e32a781063e31c5bccde1ac1"
 generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "1b471ad0698438d0ac3afcf9408432efcc32b6d607950edfe4de8fc291c7c9eb"
-fingerprint: "1b471ad0698438d0ac3afcf9408432efcc32b6d607950edfe4de8fc291c7c9eb"
+view_fingerprint: "5708b2db552df368dbba68a15472ddfd15fbdcdfd8b31ad8cc0ac8a2bb0d42b3"
+fingerprint: "5708b2db552df368dbba68a15472ddfd15fbdcdfd8b31ad8cc0ac8a2bb0d42b3"
 ---
 
 # Module Card: tests
@@ -100,6 +104,8 @@ tests/test_adapter_basic.py
 tests/test_adopted_roots.py
 tests/test_audit.py
 tests/test_cache_isolation_hardening.py
+tests/test_checkpoint_ci.py
+tests/test_ci_mode.py
 tests/test_cli_config.py
 tests/test_cli_decorate.py
 tests/test_cli_docs_modes.py
@@ -120,6 +126,8 @@ tests/test_cli_v2.py
 tests/test_cli_workspace_inspect.py
 tests/test_cli_workspace_migrate.py
 tests/test_config_update.py
+tests/test_context_integrity.py
+tests/test_contract_impact.py
 tests/test_ddt_validate.py
 tests/test_decorator_engine.py
 tests/test_derive_adopted_roots.py
@@ -171,6 +179,38 @@ tests/test_workspace_paths.py
 | tests.test_cache_isolation_hardening.test_docs_all_external_only_index_is_isolated | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening.test_external_temp_paths_only_land_in_isolated_workspace_index | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening.test_index_builder_uses_isolated_cache_dir_without_touching_repo_cache | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_checkpoint_ci._contract_report | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci._ddt_report | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci._force_en_locale | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci._patch_checkpoint_inputs | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci._status_entry | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci._status_report | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.run_cmd | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_does_not_fail_on_possible_contract_impact_alone | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_body_changed_contract_static | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_confirmed_contract_impact | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_contract_changed | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_missing_function | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_untracked_function | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_failure_dedupe_keeps_readable_ci_failures | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_no_write_regression | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_pass_when_clean | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_ci_mode._force_en_locale | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode._stale_summary | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.run_cmd | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_ci_mode_no_write_regression | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_ci_next_steps_excludes_accept_log_lock | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_doctor_ci_fail_on_fail_check | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_doctor_ci_json_single_object_and_no_abs_path | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_doctor_ci_warn_only_is_pass | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_stale_ci_export_stale_is_advisory_only | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_stale_ci_fail_on_canonical_l2_stale | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_stale_ci_fail_on_module_capsule_stale | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_stale_ci_json_single_object_and_no_abs_path | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_stale_ci_pass_no_canonical_stale | tests/test_ci_mode.py | unknown | standard |
 | tests.test_cli_config.test_config_add_list_remove | tests/test_cli_config.py | unknown | standard |
 | tests.test_cli_decorate.test_cli_dry_run_preview_counts | tests/test_cli_decorate.py | unknown | standard |
 | tests.test_cli_docs_modes._empty_status_report | tests/test_cli_docs_modes.py | unknown | standard |
@@ -189,6 +229,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_docs_modes.test_docs_mode_flags_are_mutually_exclusive | tests/test_cli_docs_modes.py | unknown | standard |
 | tests.test_cli_docs_modes.test_docs_module_mode_still_works | tests/test_cli_docs_modes.py | unknown | standard |
 | tests.test_cli_docs_modes.test_docs_module_write_canonical_first_and_filters_meta | tests/test_cli_docs_modes.py | unknown | standard |
+| tests.test_cli_docs_modes.test_docs_module_write_canonical_has_frontmatter_export_plain | tests/test_cli_docs_modes.py | unknown | standard |
 | tests.test_cli_docs_modes.test_docs_module_write_rejects_explicit_unsafe_module | tests/test_cli_docs_modes.py | unknown | standard |
 | tests.test_cli_docs_modes.test_infer_module_from_path_supports_windows_and_posix | tests/test_cli_docs_modes.py | unknown | standard |
 | tests.test_cli_docs_modes.test_no_changed_modules_prints_friendly_message | tests/test_cli_docs_modes.py | unknown | standard |
@@ -198,6 +239,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_doctor.run_cmd | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.run_cmd_with_err | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_changed_and_all_args_are_recognized | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.test_doctor_ci_arg_is_recognized | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_default_is_changed_scope | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_is_advisory_and_does_not_trigger_write_or_llm_paths | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_modes_are_mutually_exclusive | tests/test_cli_doctor.py | unknown | standard |
@@ -241,6 +283,8 @@ tests/test_workspace_paths.py
 | tests.test_cli_json_output._sample_stale_summary | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.run_cmd | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.run_cmd_with_err | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_ci_json_fields_use_ci_failures_and_advisory | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_ci_json_stdout_is_single_object | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.test_default_text_output_for_stale_and_doctor_is_unchanged | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.test_doctor_json_derived_view_detail_keeps_unknown_semantics | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.test_doctor_json_includes_legacy_diary_advisory | tests/test_cli_json_output.py | unknown | standard |
@@ -304,6 +348,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_project_structure.test_project_structure_filesystem_fallback_generates_non_empty_key_areas_and_modules | tests/test_cli_project_structure.py | unknown | standard |
 | tests.test_cli_project_structure.test_project_structure_no_index_is_friendly_and_not_crash_when_no_filesystem_fallback | tests/test_cli_project_structure.py | unknown | standard |
 | tests.test_cli_project_structure.test_project_structure_preview_runs_and_does_not_write | tests/test_cli_project_structure.py | unknown | standard |
+| tests.test_cli_project_structure.test_project_structure_repeat_write_keeps_generated_at_when_no_change | tests/test_cli_project_structure.py | unknown | standard |
 | tests.test_cli_project_structure.test_project_structure_write_does_not_overwrite_existing_legacy_docs_when_export_disabled | tests/test_cli_project_structure.py | unknown | standard |
 | tests.test_cli_project_structure.test_project_structure_write_dual_writes_when_docs_export_enabled | tests/test_cli_project_structure.py | unknown | standard |
 | tests.test_cli_project_structure.test_project_structure_write_updates_canonical_path_by_default | tests/test_cli_project_structure.py | unknown | standard |
@@ -316,6 +361,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_stale.test_stale_changed_and_all_args_are_recognized | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_changed_checks_both_views | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_changed_windows_path_and_stable_order | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_ci_arg_is_recognized | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_default_is_changed_scope | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_modes_are_mutually_exclusive | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_module_mode_runs | tests/test_cli_stale.py | unknown | standard |
@@ -326,8 +372,10 @@ tests/test_workspace_paths.py
 | tests.test_cli_v2._isolate_workspace | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.run_cmd | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_accept_maps_to_lock_logic | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_checkpoint_ci_json_recognized | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_checkpoint_command_recognized | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_checkpoint_prints_contract_impact_summary_when_dirty | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_commit_alias_unchanged_maps_to_lock | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_ddt_validate_maps_to_check_fast | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_decorate_maps_to_adopt_dry_run | tests/test_cli_v2.py | unknown | standard |
@@ -356,6 +404,24 @@ tests/test_workspace_paths.py
 | tests.test_cli_workspace_migrate.test_cli_workspace_migrate_text_exit_0_and_contains_required_lines | tests/test_cli_workspace_migrate.py | unknown | standard |
 | tests.test_cli_workspace_migrate.test_cli_workspace_migrate_without_dry_run_fails | tests/test_cli_workspace_migrate.py | unknown | standard |
 | tests.test_config_update.test_write_config_and_update | tests/test_config_update.py | unknown | standard |
+| tests.test_context_integrity.test_content_without_generated_at_for_compare_ignores_only_timestamp | tests/test_context_integrity.py | unknown | standard |
+| tests.test_context_integrity.test_frontmatter_render_parse_roundtrip | tests/test_context_integrity.py | unknown | standard |
+| tests.test_context_integrity.test_merge_generated_at_keeps_old_when_fingerprints_and_body_same | tests/test_context_integrity.py | unknown | standard |
+| tests.test_context_integrity.test_metadata_has_no_absolute_paths | tests/test_context_integrity.py | unknown | standard |
+| tests.test_context_integrity.test_missing_file_handling_is_deterministic | tests/test_context_integrity.py | unknown | standard |
+| tests.test_context_integrity.test_parser_rejects_complex_yaml | tests/test_context_integrity.py | unknown | standard |
+| tests.test_context_integrity.test_source_fingerprint_is_deterministic | tests/test_context_integrity.py | unknown | standard |
+| tests.test_contract_impact.test_cli_main_change_is_possible_with_cli_categories | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_generated_view_modules_hit_generated_view_format | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_production_cli_path_remains_possible | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_report_to_dict_is_deterministic_and_sanitized | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_tests_cli_snapshot_signal_remains_possible | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_tests_ddt_binding_signal_remains_possible | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_tests_generated_view_frontmatter_signal_remains_possible | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_tests_helper_change_is_not_confirmed | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_tests_helper_keyword_noise_stays_no_contract_impact | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_to_dict_symbol_hits_cli_json_output | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_impact.test_write_function_hits_file_write_target_and_writes_files | tests/test_contract_impact.py | unknown | standard |
 | tests.test_ddt_validate.test_ddt_validate_matrix | tests/test_ddt_validate.py | unknown | standard |
 | tests.test_ddt_validate.write_test_file | tests/test_ddt_validate.py | unknown | standard |
 | tests.test_decorator_engine.test_aggressive_inserts_todo_docstring | tests/test_decorator_engine.py | unknown | standard |
@@ -383,6 +449,7 @@ tests/test_workspace_paths.py
 | tests.test_doctor.test_derived_views_check_shows_disabled_without_counting_warn | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_derived_views_check_warns_for_legacy_diary_jsonl | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_derived_views_check_warns_for_legacy_metadata_but_never_fail | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_derived_views_check_warns_when_frontmatter_missing | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_doctor_report_formats_pass_warn_fail_skip | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_doctor_report_includes_suggestions | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_merge_status_never_downgrades_fail | tests/test_doctor.py | unknown | standard |
@@ -423,6 +490,7 @@ tests/test_workspace_paths.py
 | tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_repeat_write_keeps_canonical_content_when_body_unchanged | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | tests/test_l2_paths.py | unknown | standard |
 | tests.test_lock_flags._prepare_proj | tests/test_lock_flags.py | unknown | standard |
@@ -441,6 +509,7 @@ tests/test_workspace_paths.py
 | tests.test_module_capsule.test_write_module_capsule_rejects_parent_traversal_module_path | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_write_module_capsule_writes_three_files | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule_stale._write_index | tests/test_module_capsule_stale.py | unknown | standard |
+| tests.test_module_capsule_stale.test_capsule_stale_uses_view_fingerprint_not_source_fingerprint | tests/test_module_capsule_stale.py | unknown | standard |
 | tests.test_module_capsule_stale.test_compute_module_fingerprint_is_stable_and_normalized | tests/test_module_capsule_stale.py | unknown | standard |
 | tests.test_module_capsule_stale.test_legacy_exists_but_canonical_missing_is_stale | tests/test_module_capsule_stale.py | unknown | standard |
 | tests.test_module_capsule_stale.test_stale_when_fingerprint_mismatch | tests/test_module_capsule_stale.py | unknown | standard |
@@ -473,11 +542,14 @@ tests/test_workspace_paths.py
 | tests.test_release_packaging.test_readme_contains_release_key_commands | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_release_notes_include_v130_release_track | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_source_of_truth_priority_and_conflict_docs_are_present | tests/test_release_packaging.py | unknown | standard |
 | tests.test_stale._write_index | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_l2_export_config | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_disabled_is_explicit_and_not_warn_counter | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_export_ok_when_canonical_has_frontmatter_and_export_is_plain_body | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_ok_when_canonical_up_to_date_and_export_matches | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_skips_compare_when_canonical_unavailable | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_mismatch | tests/test_stale.py | unknown | standard |
@@ -544,6 +616,8 @@ tests/test_adapter_basic.py
 tests/test_adopted_roots.py
 tests/test_audit.py
 tests/test_cache_isolation_hardening.py
+tests/test_checkpoint_ci.py
+tests/test_ci_mode.py
 tests/test_cli_config.py
 tests/test_cli_decorate.py
 tests/test_cli_docs_modes.py
@@ -564,6 +638,8 @@ tests/test_cli_v2.py
 tests/test_cli_workspace_inspect.py
 tests/test_cli_workspace_migrate.py
 tests/test_config_update.py
+tests/test_context_integrity.py
+tests/test_contract_impact.py
 tests/test_ddt_validate.py
 tests/test_decorator_engine.py
 tests/test_derive_adopted_roots.py

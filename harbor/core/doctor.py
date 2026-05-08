@@ -403,16 +403,29 @@ def _status_text(status: str) -> str:
 
 def _collect_next_steps(checks: List[DoctorCheckResult]) -> List[str]:
     base = [
+        "harbor checkpoint",
         "harbor finish --sync-context",
         "harbor stale",
-        "harbor log (if this task involved an important decision or Contract Change)",
-        "harbor accept (when you are ready to accept the new baseline)",
+        "harbor doctor",
     ]
     dynamic: List[str] = []
     for check in checks:
         if check.status in (WARN, FAIL):
             dynamic.extend(check.suggestions)
-    return _unique(dynamic + base) if dynamic else []
+    return _filter_safe_next_steps(_unique(dynamic + base)) if dynamic else []
+
+
+def _filter_safe_next_steps(steps: List[str]) -> List[str]:
+    out: List[str] = []
+    blocked_prefixes = ("harbor accept", "harbor log", "harbor lock")
+    for step in steps:
+        normalized = str(step or "").strip()
+        if not normalized:
+            continue
+        if normalized.startswith(blocked_prefixes):
+            continue
+        out.append(normalized)
+    return out
 
 
 def _status_to_json(status: str) -> str:

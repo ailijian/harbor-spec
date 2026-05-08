@@ -135,3 +135,25 @@ def test_workspace_inspect_is_read_only_no_writes(tmp_path: Path, monkeypatch):
     payload = workspace_inspect.workspace_inspect_report_to_dict(report)
     assert payload["writes_files"] is False
     assert payload["advisory"] is True
+
+
+def test_check_git_ignored_directory_rule_uses_nested_probe(monkeypatch, tmp_path: Path):
+    calls = {"count": 0}
+
+    class _Result:
+        def __init__(self, code: int):
+            self.returncode = code
+
+    def _fake_run(args, cwd, capture_output, text, check):
+        calls["count"] += 1
+        queried = args[-1]
+        if queried == ".harbor/state":
+            return _Result(1)
+        if queried == ".harbor/state/.harbor_ignore_probe":
+            return _Result(0)
+        return _Result(1)
+
+    monkeypatch.setattr(workspace_inspect.subprocess, "run", _fake_run)
+    result = workspace_inspect._check_git_ignored(tmp_path, ".harbor/state")
+    assert result is True
+    assert calls["count"] == 2

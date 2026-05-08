@@ -3,14 +3,17 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-08T13:04:12Z"
+generated_at: "2026-05-08T17:13:58Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 22
+source_path_count: 25
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
   - "harbor/core/audit.py"
+  - "harbor/core/ci.py"
+  - "harbor/core/context_integrity.py"
+  - "harbor/core/contract_impact.py"
   - "harbor/core/ddt.py"
   - "harbor/core/decorator.py"
   - "harbor/core/diary.py"
@@ -31,8 +34,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:f83ad8e9248fe50ea9c289b37bfac95b9afc7721558636811cd71565e8d829ca"
-contract_fingerprint: "sha256:3b13897a652799b8872bdb3ae3694c597b63d60a5d5619d33292d7fe96e235be"
+source_fingerprint: "sha256:232280c55924b13b0b163e7fa4d6e9f71c1861c617728bdfebb14ff858209c5d"
+contract_fingerprint: "sha256:2e686c0cb580df4cec5e9cc2cd05f81140977b97665f82fbfa6f4d7a783c26ee"
 generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0a1e1823ea26ed51"
 ---
 
@@ -84,6 +87,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.l2.L2Generator.__init__ | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._apply_pragmas | — | standard | ⚪ Missing |
 | harbor.core.project_structure._area_purpose | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._as_repo_relative | — | standard | ⚪ Missing |
 | harbor.core.project_structure._belongs_to_module | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._belongs_to_module | — | standard | ⚪ Missing |
 | harbor.core.workspace._build_path | — | standard | ⚪ Missing |
@@ -92,15 +96,22 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.project_structure._capsule_exists | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._check_git_ignored | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._classify_git_tracking | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._classify_tests_path | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._collect_advisory | — | standard | ⚪ Missing |
+| harbor.core.ci._collect_checkpoint_next_steps | — | standard | ⚪ Missing |
 | harbor.core.project_structure._collect_fallback_files | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._collect_generated_views | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._collect_git_tracking | — | standard | ⚪ Missing |
+| harbor.core.l2.L2Generator._collect_integrity_inputs | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._collect_legacy_paths | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate._collect_module_readme_exports | — | standard | ⚪ Missing |
 | harbor.core.doctor._collect_next_steps | — | standard | ⚪ Missing |
+| harbor.core.ci._collect_next_steps | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._confidence_for_level | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._current_file_path | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._decode_scalar | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._dedup | — | standard | ⚪ Missing |
+| harbor.core.ci._dedupe_checkpoint_items | — | standard | ⚪ Missing |
 | harbor.core.doctor._derived_view_detail_status | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_django | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_go | — | standard | ⚪ Missing |
@@ -117,17 +128,26 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.decorator.DecoratorEngine._extract_functions | — | standard | ⚪ Missing |
 | harbor.core.project_structure._extract_toml_string_block | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._file_hash | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._finding_to_dict | — | standard | ⚪ Missing |
 | harbor.core.stale._format_view_lines | 格式化单个视图状态的文本行。 | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._from_dict | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._get_default_excludes | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._has_scope_tag | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._index_entry | — | standard | ⚪ Missing |
 | harbor.core.project_structure._infer_area | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._is_contract_asserting_test | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._is_docs_or_rules_path | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._is_filtered_name | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._is_generated_view_module | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._is_public_cli_path | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._is_test_path | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._is_to_dict_like | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._is_write_like | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._iter_function_nodes | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTScanner._iter_py_files | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._iter_py_files | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._iter_read_dirs | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._json_stable_hash | — | standard | ⚪ Missing |
 | harbor.core.project_structure._key_files_display | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._kv_fallback_parse | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._leading_whitespace | — | standard | ⚪ Missing |
@@ -141,19 +161,30 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.l2.L2Generator._load_index | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTValidator._load_map | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._load_meta | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._max_level | — | standard | ⚪ Missing |
 | harbor.core.doctor._merge_status | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate._module_dir_has_python_files | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._module_qual_from_path | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
+| harbor.core.stale._normalize_l2_body_for_export_compare | — | standard | ⚪ Missing |
 | harbor.core.stale._normalize_l2_markdown_for_stale | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._normalize_path | — | standard | ⚪ Missing |
 | harbor.core.workspace._normalize_path_like | — | standard | ⚪ Missing |
 | harbor.core.project_structure._normalize_rel_path | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._normalize_rel_path | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._normalize_rel_path | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._normalize_symbol | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._normalize_symbol_for_classification | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._now_iso | — | standard | ⚪ Missing |
+| harbor.core.doctor._parse_generated_frontmatter_safely | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._parse_gitignore | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._parse_ts | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._posix_rel | — | standard | ⚪ Missing |
+| harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._read_meta_file | — | standard | ⚪ Missing |
 | harbor.core.project_structure._read_project_metadata | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._render_scalar | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_author | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_diary_dir | — | standard | ⚪ Missing |
@@ -167,16 +198,23 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.drafting.DiaryDrafter._safe_json_parse | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._safe_module_subpath | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._safe_module_subpath | — | standard | ⚪ Missing |
+| harbor.core.ci._sanitize_checkpoint_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.doctor._sanitize_json_text | — | standard | ⚪ Missing |
 | harbor.core.stale._sanitize_json_text | — | standard | ⚪ Missing |
+| harbor.core.ci._sanitize_json_text | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._sanitize_json_text | — | standard | ⚪ Missing |
 | harbor.core.project_structure._sanitize_module | — | standard | ⚪ Missing |
 | harbor.core.stale._sanitize_module_for_json | — | standard | ⚪ Missing |
 | harbor.core.doctor._sanitize_single_path | — | standard | ⚪ Missing |
 | harbor.core.stale._sanitize_single_path | — | standard | ⚪ Missing |
+| harbor.core.ci._sanitize_single_path | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._sanitize_single_path | — | standard | ⚪ Missing |
+| harbor.core.ci._sanitize_summary | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._save_cache | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._save_meta | — | standard | ⚪ Missing |
 | harbor.core.project_structure._skill_exists | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._sort_unique | — | standard | ⚪ Missing |
+| harbor.core.contract_impact._sorted_findings | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._stable_contract_rows | — | standard | ⚪ Missing |
 | harbor.core.doctor._status_text | — | standard | ⚪ Missing |
 | harbor.core.doctor._status_to_json | — | standard | ⚪ Missing |
@@ -188,16 +226,23 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.workspace_migrate._to_display_path | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._to_display_path | — | standard | ⚪ Missing |
 | harbor.core.project_structure._to_project_relative_path | — | standard | ⚪ Missing |
+| harbor.core.l2._to_repo_relative | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._trim_segment | — | standard | ⚪ Missing |
 | harbor.core.doctor._unique | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._utc_now_iso | — | standard | ⚪ Missing |
 | harbor.core.workspace._validate_within_repo | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._yaml_quote | — | standard | ⚪ Missing |
 | harbor.core.project_structure._yes_no | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine.apply | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.audit | — | standard | ⚪ Missing |
+| harbor.core.ci.build_checkpoint_ci_result | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.build_context_integrity_metadata | — | standard | ⚪ Missing |
+| harbor.core.contract_impact.build_contract_impact_report | — | standard | ⚪ Missing |
+| harbor.core.ci.build_doctor_ci_result | — | standard | ⚪ Missing |
 | harbor.core.doctor.build_doctor_report | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.build_module_card_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.build_prompt | — | standard | ⚪ Missing |
+| harbor.core.ci.build_stale_ci_result | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.build_workspace_inspect_report | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.build_workspace_migrate_dry_run_report | — | standard | ⚪ Missing |
 | harbor.core.workspace.build_workspace_paths | — | standard | ⚪ Missing |
@@ -207,19 +252,36 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.stale.check_l2_readme_stale | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.check_module_capsule_stale | — | standard | ⚪ Missing |
 | harbor.core.stale.check_module_derived_views_stale | 检查单模块的 L2 / L2 export / Capsule 三类视图状态。 | standard | ⚪ Missing |
+| harbor.core.ci.checkpoint_ci_result_to_dict | — | standard | ⚪ Missing |
+| harbor.core.ci.ci_result_to_dict | — | standard | ⚪ Missing |
+| harbor.core.contract_impact.classify_contract_impact_for_docstring_diff | — | standard | ⚪ Missing |
+| harbor.core.contract_impact.classify_contract_impact_for_file_path | — | standard | ⚪ Missing |
+| harbor.core.contract_impact.classify_contract_impact_for_function_change | — | standard | ⚪ Missing |
+| harbor.core.contract_impact.classify_contract_impact_from_status_record | — | standard | ⚪ Missing |
 | harbor.core.project_structure.classify_project_area | — | standard | ⚪ Missing |
 | harbor.core.l2.collect_all_indexed_modules | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.collect_module_context | — | standard | ⚪ Missing |
 | harbor.core.l2.collect_modules_from_paths | — | standard | ⚪ Missing |
 | harbor.core.project_structure.collect_project_structure_context | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.compose_markdown_with_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.utils.compute_body_hash | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.compute_contract_fingerprint | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.compute_generator_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.compute_meta_hash | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.compute_module_fingerprint | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.compute_source_fingerprint | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.content_without_generated_at_for_compare | — | standard | ⚪ Missing |
+| harbor.core.contract_impact.contract_impact_report_to_dict | — | standard | ⚪ Missing |
+| harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
 | harbor.core.utils.derive_adopted_roots | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager.export_markdown | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.extract_integrity_fingerprints | — | standard | ⚪ Missing |
 | harbor.core.utils.find_function_node | — | standard | ⚪ Missing |
+| harbor.core.ci.format_checkpoint_ci_result | — | standard | ⚪ Missing |
+| harbor.core.ci.format_ci_result | — | standard | ⚪ Missing |
+| harbor.core.contract_impact.format_contract_impact_report | — | standard | ⚪ Missing |
 | harbor.core.doctor.format_doctor_report | — | standard | ⚪ Missing |
 | harbor.core.stale.format_stale_summary | 将 stale 检查结果渲染为 CLI 文本摘要。 | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.format_workspace_inspect_report | — | standard | ⚪ Missing |
@@ -238,21 +300,24 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.diary.DiaryManager.load_active | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_config | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_paths | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.merge_generated_at | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.module_capsule_dir | — | standard | ⚪ Missing |
 | harbor.core.l2.normalize_indexed_module_candidate | 将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。 | standard | ⚪ Missing |
 | harbor.core.module_capsule.normalize_module_path | — | standard | ⚪ Missing |
 | harbor.core.module_skill.normalize_skill_slug | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.parse_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.workspace.parse_workspace_export_options | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine.preview | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.preview_module_capsule | — | standard | ⚪ Missing |
 | harbor.core.project_structure.rank_key_file | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.read_capsule_fingerprint | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.render_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.resolve_module_capsule_paths | — | standard | ⚪ Missing |
 | harbor.core.audit.resolve_provider | — | standard | ⚪ Missing |
 | harbor.core.workspace.resolve_workspace_config_path | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_config_index_check | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_ddt_fast_check | — | standard | ⚪ Missing |
-| harbor.core.doctor.run_derived_views_check | — | standard | ⚪ Missing |
+| harbor.core.doctor.run_derived_views_check | 检查模块派生视图状态并汇总为 Doctor 结果。 | standard | ⚪ Missing |
 | harbor.core.doctor.run_skill_reference_check | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_workspace_status_check | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.sanitize_text | — | standard | ⚪ Missing |
@@ -260,15 +325,19 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.decorator.DecoratorEngine.scan | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTScanner.scan_tests | — | standard | ⚪ Missing |
 | harbor.core.module_skill.skill_dir_for_module | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.split_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.stale.stale_report_to_dict | 将 stale 检查结果序列化为 machine-readable JSON 对象。 | standard | ⚪ Missing |
+| harbor.core.context_integrity.strip_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.doctor.DoctorCheckResult.to_dict | — | standard | ⚪ Missing |
 | harbor.core.doctor.DoctorReport.to_dict | — | standard | ⚪ Missing |
 | harbor.core.stale.ViewStaleResult.to_dict | — | standard | ⚪ Missing |
-| harbor.core.stale.ModuleStaleSummary.to_dict | — | standard | ⚪ Missing |
+| harbor.core.stale.ModuleStaleSummary.to_dict | 将模块视图状态摘要序列化为稳定 JSON 结构。 | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.WorkspaceMigrationPlanItem.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceLegacyPathStatus.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceGitTrackingStatus.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceGeneratedViewsStatus.to_dict | — | standard | ⚪ Missing |
+| harbor.core.ci.CIFailure.to_dict | — | standard | ⚪ Missing |
+| harbor.core.ci.CheckpointCIItem.to_dict | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryEntry.to_json | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTValidator.validate | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.workspace_inspect_report_to_dict | — | standard | ⚪ Missing |
