@@ -16,9 +16,9 @@
 
 | Field | Value |
 |---|---|
-| Mode | filesystem fallback |
-| Contract-aware | no |
-| Notes | No Harbor index records were found, so this view was generated from filesystem discovery. |
+| Mode | Harbor index |
+| Contract-aware | yes |
+| Notes | This view was generated from Harbor indexed records. |
 
 When Discovery Mode is `filesystem fallback`, contract counts may be 0 because no Harbor index records were available.
 Run `harbor lock` or `harbor adopt <path>` to build richer contract-aware structure.
@@ -35,31 +35,29 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 
 | Area | Purpose | Discovered Files | Indexed Contracts |
 |---|---|---:|---:|
-| harbor/cli | CLI command parsing and workflow facade | 2 | 0 |
-| harbor/core | Core Harbor logic | 21 | 0 |
-| harbor/utils | Shared utilities | 4 | 0 |
-| tests | Test suite | 52 | 0 |
-| docs | Documentation | 19 | 0 |
+| harbor/cli | CLI command parsing and workflow facade | 2 | 1 |
+| harbor/core | Core Harbor logic | 22 | 230 |
+| harbor/utils | Shared utilities | 3 | 3 |
+| tests | Test suite | 58 | 378 |
+| harbor | Derived from indexed files under harbor. | 5 | 9 |
 
 ## Code Modules
 
 | Module | Key Files | L2 README | Module Capsule | Skill |
 |---|---|---|---|---|
-| harbor/cli | harbor/cli/main.py, harbor/cli/__init__.py | no | no | no |
-| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+18 more) | yes | no | no |
-| harbor/utils | harbor/utils/formatting.py, harbor/utils/i18n.py, harbor/utils/README.md, ... (+1 more) | yes | no | no |
+| harbor | harbor/cli/main.py, harbor/core/audit.py, harbor/core/ddt.py, ... (+29 more) | yes | no | no |
+| harbor/adapters/python | harbor/adapters/python/parser.py, harbor/adapters/python/__init__.py | yes | no | no |
+| harbor/cli | harbor/cli/main.py, harbor/cli/__init__.py | yes | no | no |
+| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+19 more) | yes | no | yes |
+| harbor/utils | harbor/utils/formatting.py, harbor/utils/i18n.py, harbor/utils/__init__.py | yes | no | no |
 
 ## Supporting Areas
 
 | Area | Purpose | Key Files |
 |---|---|---|
-| docs | Documentation | docs/design/harbor-workspace-layout-v1.en.md, docs/design/harbor-workspace-layout-v1.md, docs/harbor-spec分阶段实施计划 v1.0.2.md, ... (+16 more) |
-| docs/design | Derived from discovered files under docs/design. | docs/design/harbor-workspace-layout-v1.en.md, docs/design/harbor-workspace-layout-v1.md |
-| docs/harbor | Harbor rule and guide documents | docs/harbor/agent-policy.md, docs/harbor/contract-rules.md, docs/harbor/ddt-rules.md, ... (+9 more) |
-| docs/harbor/dogfooding | Derived from discovered files under docs/harbor/dogfooding. | docs/harbor/dogfooding/v1.3.0-rc-command-log.md, docs/harbor/dogfooding/v1.3.0-rc-issues.md, docs/harbor/dogfooding/v1.3.0-rc-validation.md, ... (+1 more) |
-| tests | Test suite | tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, tests/core/test_storage_migration.py, ... (+49 more) |
+| tests | Test suite | tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, tests/core/test_storage_migration.py, ... (+55 more) |
 | tests/core | Core test suite | tests/core/test_index_sync_sqlite.py, tests/core/test_storage_migration.py |
-| tests/fixtures_sqlite | Test fixtures | tests/fixtures_sqlite/sample.py, tests/fixtures_sqlite/README.md |
+| tests/fixtures_sqlite | Test fixtures | tests/fixtures_sqlite/sample.py |
 
 ## Main Harbor Workflows
 
@@ -73,8 +71,6 @@ AI coding
 harbor finish --sync-context
 harbor stale
 harbor doctor
-harbor log
-harbor accept
 ```
 
 ### L2 README Workflow
@@ -121,7 +117,7 @@ For most coding tasks, load context in this order:
 
 1. `AGENTS.md`
 2. Project Rules, if present
-3. `docs/harbor/project-structure.md`
+3. `.harbor/views/project-structure.md`
 4. Relevant L2 README
 5. Relevant Module Capsule
 6. Relevant source files

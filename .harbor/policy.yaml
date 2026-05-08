@@ -2,19 +2,37 @@ strictness:
   default: standard
 
   rules:
-    - match: "app/api/**"
+    - match: "harbor/cli/**"
       strictness: strict
-    - match: "app/schemas/**"
+    - match: "harbor/core/**"
       strictness: strict
-    - match: "app/services/review/**"
+    - match: "harbor/adapters/python/**"
       strictness: strict
-    - match: "app/services/export/**"
+    - match: "tests/**/test_*cli*.py"
       strictness: strict
-    - match: "app/services/parser/**"
+    - match: "tests/**/test_*json*.py"
       strictness: strict
-    - match: "app/workflows/**"
+    - match: "tests/**/test_*workspace*.py"
       strictness: strict
-    - match: "app/utils/**"
+    - match: "tests/**/test_*stale*.py"
+      strictness: strict
+    - match: "tests/**/test_*doctor*.py"
+      strictness: strict
+    - match: "tests/**/test_*ddt*.py"
+      strictness: strict
+    - match: "tests/**/test_*diary*.py"
+      strictness: strict
+    - match: "AGENTS.md"
+      strictness: strict
+    - match: ".harbor/policy.yaml"
+      strictness: strict
+    - match: ".harbor/safety.yaml"
+      strictness: strict
+    - match: ".harbor/rules/**"
+      strictness: strict
+    - match: ".agents/skills/**"
+      strictness: strict
+    - match: "harbor/utils/**"
       strictness: light
 
 gates:

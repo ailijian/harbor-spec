@@ -336,7 +336,8 @@ harbor start
 harbor checkpoint
 harbor finish
 harbor finish --sync-context
-harbor accept
+harbor stale
+harbor doctor
 ```
 
 其中：
@@ -346,6 +347,8 @@ harbor finish --sync-context
 ```
 
 用于在任务收尾时显式同步 changed L2 README 与 Module Capsule。
+
+`harbor accept` 仍保留为 `harbor lock` 的语义化别名，但不属于默认 facade 工作流，只有在用户明确要接受新基线时才运行。
 
 ---
 

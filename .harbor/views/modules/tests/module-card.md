@@ -1,7 +1,7 @@
 ---
 harbor_capsule_version: 1
 module: tests
-fingerprint: 6edee8a843addbfbc2fd635d126bfc7dab5bff04a37bb4dcc83eb2d88f4e760e
+fingerprint: 1b471ad0698438d0ac3afcf9408432efcc32b6d607950edfe4de8fc291c7c9eb
 source_files:
 - tests/__init__.py
 - tests/core/test_index_sync_sqlite.py
@@ -28,10 +28,13 @@ source_files:
 - tests/test_cli_project_structure.py
 - tests/test_cli_stale.py
 - tests/test_cli_v2.py
+- tests/test_cli_workspace_inspect.py
+- tests/test_cli_workspace_migrate.py
 - tests/test_config_update.py
 - tests/test_ddt_validate.py
 - tests/test_decorator_engine.py
 - tests/test_derive_adopted_roots.py
+- tests/test_diary_workspace_paths.py
 - tests/test_doctor.py
 - tests/test_drafting.py
 - tests/test_drafting_json_parse.py
@@ -55,6 +58,8 @@ source_files:
 - tests/test_utils_format.py
 - tests/test_windows_abs_path_prefix.py
 - tests/test_workspace_gitignore_policy.py
+- tests/test_workspace_inspect.py
+- tests/test_workspace_migrate.py
 - tests/test_workspace_paths.py
 contracts:
 - tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift
@@ -103,6 +108,7 @@ contracts:
 - tests.test_cli_doctor.test_doctor_is_advisory_and_does_not_trigger_write_or_llm_paths
 - tests.test_cli_doctor.test_doctor_modes_are_mutually_exclusive
 - tests.test_cli_doctor.test_doctor_module_mode_runs
+- tests.test_cli_doctor.test_doctor_text_output_includes_legacy_diary_advisory
 - tests.test_cli_doctor.test_doctor_text_output_uses_unknown_for_no_indexed_records
 - tests.test_cli_finish_sync_context._empty_status_report
 - tests.test_cli_finish_sync_context._empty_validation_report
@@ -143,6 +149,7 @@ contracts:
 - tests.test_cli_json_output.run_cmd_with_err
 - tests.test_cli_json_output.test_default_text_output_for_stale_and_doctor_is_unchanged
 - tests.test_cli_json_output.test_doctor_json_derived_view_detail_keeps_unknown_semantics
+- tests.test_cli_json_output.test_doctor_json_includes_legacy_diary_advisory
 - tests.test_cli_json_output.test_doctor_json_output_has_required_fields_and_summary
 - tests.test_cli_json_output.test_doctor_json_scope_for_module
 - tests.test_cli_json_output.test_invalid_format_values_return_argparse_error
@@ -234,8 +241,26 @@ contracts:
 - tests.test_cli_v2.test_finish_command_recognized
 - tests.test_cli_v2.test_finish_does_not_auto_run_docs_log_lock
 - tests.test_cli_v2.test_gen_l2_maps_to_docs
+- tests.test_cli_v2.test_log_message_keeps_json_first_line_and_prints_canonical_target
 - tests.test_cli_v2.test_start_command_recognized
 - tests.test_cli_v2.test_status_alias_st
+- tests.test_cli_workspace_inspect._force_en_locale
+- tests.test_cli_workspace_inspect._write_workspace_fixture
+- tests.test_cli_workspace_inspect.run_cmd
+- tests.test_cli_workspace_inspect.run_cmd_with_err
+- tests.test_cli_workspace_inspect.test_cli_workspace_inspect_invalid_format_returns_argparse_error
+- tests.test_cli_workspace_inspect.test_cli_workspace_inspect_json_single_object_and_expected_keys
+- tests.test_cli_workspace_inspect.test_cli_workspace_inspect_no_write_regression
+- tests.test_cli_workspace_inspect.test_cli_workspace_inspect_text_exits_0_and_contains_sections
+- tests.test_cli_workspace_migrate._force_en_locale
+- tests.test_cli_workspace_migrate._write_workspace_fixture
+- tests.test_cli_workspace_migrate.run_cmd
+- tests.test_cli_workspace_migrate.run_cmd_with_err
+- tests.test_cli_workspace_migrate.test_cli_workspace_migrate_invalid_format_argparse_error
+- tests.test_cli_workspace_migrate.test_cli_workspace_migrate_json_single_object
+- tests.test_cli_workspace_migrate.test_cli_workspace_migrate_no_write_regression
+- tests.test_cli_workspace_migrate.test_cli_workspace_migrate_text_exit_0_and_contains_required_lines
+- tests.test_cli_workspace_migrate.test_cli_workspace_migrate_without_dry_run_fails
 - tests.test_config_update.test_write_config_and_update
 - tests.test_ddt_validate.test_ddt_validate_matrix
 - tests.test_ddt_validate.write_test_file
@@ -244,14 +269,29 @@ contracts:
 - tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent
 - tests.test_decorator_engine.test_safe_does_not_duplicate_tag
 - tests.test_derive_adopted_roots.test_derive_adopted_roots_basic
+- tests.test_diary_workspace_paths._month_pair
+- tests.test_diary_workspace_paths._write_workspace_config
+- tests.test_diary_workspace_paths.test_configured_diary_root_within_repo_is_used
+- tests.test_diary_workspace_paths.test_dual_read_merge_with_stable_normalized_hash_dedupe
+- tests.test_diary_workspace_paths.test_load_active_keeps_recent_two_month_window
+- tests.test_diary_workspace_paths.test_load_active_reads_legacy_only_without_mutation
+- tests.test_diary_workspace_paths.test_log_writes_only_canonical_path
+- tests.test_diary_workspace_paths.test_monthly_rotation_writes_canonical_month_file
+- tests.test_diary_workspace_paths.test_workspace_outside_diary_paths_are_rejected
 - tests.test_doctor._empty_status_report
 - tests.test_doctor._force_en_locale
 - tests.test_doctor._sample_summary
 - tests.test_doctor.test_build_doctor_report_is_read_only
+- tests.test_doctor.test_derived_views_check_legacy_diary_coexistence_single_advisory_and_no_mutation
+- tests.test_doctor.test_derived_views_check_legacy_diary_empty_dir_no_warning
 - tests.test_doctor.test_derived_views_check_marks_unknown_detail_as_unknown_not_stale
 - tests.test_doctor.test_derived_views_check_reuses_stale_results
+- tests.test_doctor.test_derived_views_check_shows_disabled_without_counting_warn
+- tests.test_doctor.test_derived_views_check_warns_for_legacy_diary_jsonl
+- tests.test_doctor.test_derived_views_check_warns_for_legacy_metadata_but_never_fail
 - tests.test_doctor.test_doctor_report_formats_pass_warn_fail_skip
 - tests.test_doctor.test_doctor_report_includes_suggestions
+- tests.test_doctor.test_merge_status_never_downgrades_fail
 - tests.test_doctor.test_skill_reference_check_legacy_existing_passes_when_export_enabled
 - tests.test_doctor.test_skill_reference_check_legacy_existing_warns_when_export_disabled
 - tests.test_doctor.test_skill_reference_check_passes_for_existing_canonical_reference
@@ -340,13 +380,20 @@ contracts:
 - tests.test_release_packaging.test_readme_en_contains_release_key_commands
 - tests.test_release_packaging.test_release_notes_include_unreleased_v130_track
 - tests.test_stale._write_index
+- tests.test_stale._write_l2_export_config
 - tests.test_stale.test_check_module_derived_views_stale_returns_both_views
 - tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records
+- tests.test_stale.test_l2_export_disabled_is_explicit_and_not_warn_counter
+- tests.test_stale.test_l2_export_ok_when_canonical_up_to_date_and_export_matches
+- tests.test_stale.test_l2_export_skips_compare_when_canonical_unavailable
+- tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_mismatch
+- tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_missing
 - tests.test_stale.test_l2_readme_check_does_not_write_file
 - tests.test_stale.test_l2_readme_stale_when_content_differs
 - tests.test_stale.test_l2_readme_stale_when_missing
 - tests.test_stale.test_l2_readme_unknown_when_no_indexed_records
 - tests.test_stale.test_l2_readme_up_to_date_when_content_matches_except_timestamp
+- tests.test_stale.test_stale_json_contains_l2_readme_export_view_name
 - tests.test_sync_engine.test_sync_engine_drift_detection
 - tests.test_sync_engine.write_module
 - tests.test_utils_format.test_format_size_bytes
@@ -363,6 +410,26 @@ contracts:
 - tests.test_workspace_gitignore_policy.test_gitignore_ignores_required_local_runtime_paths
 - tests.test_workspace_gitignore_policy.test_harbor_canonical_and_runtime_ignore_policy
 - tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views
+- tests.test_workspace_inspect._force_en_locale
+- tests.test_workspace_inspect._touch
+- tests.test_workspace_inspect._write_workspace_config
+- tests.test_workspace_inspect.test_workspace_inspect_generated_views_count
+- tests.test_workspace_inspect.test_workspace_inspect_git_tracking_policy
+- tests.test_workspace_inspect.test_workspace_inspect_is_read_only_no_writes
+- tests.test_workspace_inspect.test_workspace_inspect_json_and_text_do_not_leak_absolute_paths
+- tests.test_workspace_inspect.test_workspace_inspect_legacy_detection_roles_and_severity
+- tests.test_workspace_inspect.test_workspace_inspect_reports_canonical_paths_repo_relative
+- tests.test_workspace_migrate._fingerprint_tree
+- tests.test_workspace_migrate._force_en_locale
+- tests.test_workspace_migrate._touch
+- tests.test_workspace_migrate._write_workspace_config
+- tests.test_workspace_migrate.test_workspace_migrate_docs_export_plan_item_no_action
+- tests.test_workspace_migrate.test_workspace_migrate_dry_run_no_writes
+- tests.test_workspace_migrate.test_workspace_migrate_json_has_no_absolute_paths
+- tests.test_workspace_migrate.test_workspace_migrate_legacy_config_plan_item
+- tests.test_workspace_migrate.test_workspace_migrate_legacy_diary_plan_item_high_risk
+- tests.test_workspace_migrate.test_workspace_migrate_legacy_l2_metadata_plan_item
+- tests.test_workspace_migrate.test_workspace_migrate_module_readme_export_items
 - tests.test_workspace_paths._write_yaml
 - tests.test_workspace_paths.test_default_paths
 - tests.test_workspace_paths.test_export_options_parsing
@@ -418,10 +485,13 @@ tests/test_cli_module_skill.py
 tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_cli_v2.py
+tests/test_cli_workspace_inspect.py
+tests/test_cli_workspace_migrate.py
 tests/test_config_update.py
 tests/test_ddt_validate.py
 tests/test_decorator_engine.py
 tests/test_derive_adopted_roots.py
+tests/test_diary_workspace_paths.py
 tests/test_doctor.py
 tests/test_drafting.py
 tests/test_drafting_json_parse.py
@@ -445,6 +515,8 @@ tests/test_sync_engine.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_workspace_gitignore_policy.py
+tests/test_workspace_inspect.py
+tests/test_workspace_migrate.py
 tests/test_workspace_paths.py
 ```
 
@@ -498,6 +570,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_doctor.test_doctor_is_advisory_and_does_not_trigger_write_or_llm_paths | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_modes_are_mutually_exclusive | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_module_mode_runs | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_doctor.test_doctor_text_output_includes_legacy_diary_advisory | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_text_output_uses_unknown_for_no_indexed_records | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_status_report | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_validation_report | tests/test_cli_finish_sync_context.py | unknown | standard |
@@ -538,6 +611,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_json_output.run_cmd_with_err | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.test_default_text_output_for_stale_and_doctor_is_unchanged | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.test_doctor_json_derived_view_detail_keeps_unknown_semantics | tests/test_cli_json_output.py | unknown | standard |
+| tests.test_cli_json_output.test_doctor_json_includes_legacy_diary_advisory | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.test_doctor_json_output_has_required_fields_and_summary | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.test_doctor_json_scope_for_module | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | tests/test_cli_json_output.py | unknown | standard |
@@ -629,8 +703,26 @@ tests/test_workspace_paths.py
 | tests.test_cli_v2.test_finish_command_recognized | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_finish_does_not_auto_run_docs_log_lock | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_gen_l2_maps_to_docs | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_log_message_keeps_json_first_line_and_prints_canonical_target | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_start_command_recognized | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_status_alias_st | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_workspace_inspect._force_en_locale | tests/test_cli_workspace_inspect.py | unknown | standard |
+| tests.test_cli_workspace_inspect._write_workspace_fixture | tests/test_cli_workspace_inspect.py | unknown | standard |
+| tests.test_cli_workspace_inspect.run_cmd | tests/test_cli_workspace_inspect.py | unknown | standard |
+| tests.test_cli_workspace_inspect.run_cmd_with_err | tests/test_cli_workspace_inspect.py | unknown | standard |
+| tests.test_cli_workspace_inspect.test_cli_workspace_inspect_invalid_format_returns_argparse_error | tests/test_cli_workspace_inspect.py | unknown | standard |
+| tests.test_cli_workspace_inspect.test_cli_workspace_inspect_json_single_object_and_expected_keys | tests/test_cli_workspace_inspect.py | unknown | standard |
+| tests.test_cli_workspace_inspect.test_cli_workspace_inspect_no_write_regression | tests/test_cli_workspace_inspect.py | unknown | standard |
+| tests.test_cli_workspace_inspect.test_cli_workspace_inspect_text_exits_0_and_contains_sections | tests/test_cli_workspace_inspect.py | unknown | standard |
+| tests.test_cli_workspace_migrate._force_en_locale | tests/test_cli_workspace_migrate.py | unknown | standard |
+| tests.test_cli_workspace_migrate._write_workspace_fixture | tests/test_cli_workspace_migrate.py | unknown | standard |
+| tests.test_cli_workspace_migrate.run_cmd | tests/test_cli_workspace_migrate.py | unknown | standard |
+| tests.test_cli_workspace_migrate.run_cmd_with_err | tests/test_cli_workspace_migrate.py | unknown | standard |
+| tests.test_cli_workspace_migrate.test_cli_workspace_migrate_invalid_format_argparse_error | tests/test_cli_workspace_migrate.py | unknown | standard |
+| tests.test_cli_workspace_migrate.test_cli_workspace_migrate_json_single_object | tests/test_cli_workspace_migrate.py | unknown | standard |
+| tests.test_cli_workspace_migrate.test_cli_workspace_migrate_no_write_regression | tests/test_cli_workspace_migrate.py | unknown | standard |
+| tests.test_cli_workspace_migrate.test_cli_workspace_migrate_text_exit_0_and_contains_required_lines | tests/test_cli_workspace_migrate.py | unknown | standard |
+| tests.test_cli_workspace_migrate.test_cli_workspace_migrate_without_dry_run_fails | tests/test_cli_workspace_migrate.py | unknown | standard |
 | tests.test_config_update.test_write_config_and_update | tests/test_config_update.py | unknown | standard |
 | tests.test_ddt_validate.test_ddt_validate_matrix | tests/test_ddt_validate.py | unknown | standard |
 | tests.test_ddt_validate.write_test_file | tests/test_ddt_validate.py | unknown | standard |
@@ -639,14 +731,29 @@ tests/test_workspace_paths.py
 | tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | tests/test_decorator_engine.py | unknown | standard |
 | tests.test_decorator_engine.test_safe_does_not_duplicate_tag | tests/test_decorator_engine.py | unknown | standard |
 | tests.test_derive_adopted_roots.test_derive_adopted_roots_basic | tests/test_derive_adopted_roots.py | unknown | standard |
+| tests.test_diary_workspace_paths._month_pair | tests/test_diary_workspace_paths.py | unknown | standard |
+| tests.test_diary_workspace_paths._write_workspace_config | tests/test_diary_workspace_paths.py | unknown | standard |
+| tests.test_diary_workspace_paths.test_configured_diary_root_within_repo_is_used | tests/test_diary_workspace_paths.py | unknown | standard |
+| tests.test_diary_workspace_paths.test_dual_read_merge_with_stable_normalized_hash_dedupe | tests/test_diary_workspace_paths.py | unknown | standard |
+| tests.test_diary_workspace_paths.test_load_active_keeps_recent_two_month_window | tests/test_diary_workspace_paths.py | unknown | standard |
+| tests.test_diary_workspace_paths.test_load_active_reads_legacy_only_without_mutation | tests/test_diary_workspace_paths.py | unknown | standard |
+| tests.test_diary_workspace_paths.test_log_writes_only_canonical_path | tests/test_diary_workspace_paths.py | unknown | standard |
+| tests.test_diary_workspace_paths.test_monthly_rotation_writes_canonical_month_file | tests/test_diary_workspace_paths.py | unknown | standard |
+| tests.test_diary_workspace_paths.test_workspace_outside_diary_paths_are_rejected | tests/test_diary_workspace_paths.py | unknown | standard |
 | tests.test_doctor._empty_status_report | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor._force_en_locale | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor._sample_summary | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_build_doctor_report_is_read_only | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_derived_views_check_legacy_diary_coexistence_single_advisory_and_no_mutation | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_derived_views_check_legacy_diary_empty_dir_no_warning | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_derived_views_check_marks_unknown_detail_as_unknown_not_stale | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_derived_views_check_reuses_stale_results | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_derived_views_check_shows_disabled_without_counting_warn | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_derived_views_check_warns_for_legacy_diary_jsonl | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_derived_views_check_warns_for_legacy_metadata_but_never_fail | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_doctor_report_formats_pass_warn_fail_skip | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_doctor_report_includes_suggestions | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_merge_status_never_downgrades_fail | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_skill_reference_check_legacy_existing_passes_when_export_enabled | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_skill_reference_check_legacy_existing_warns_when_export_disabled | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_skill_reference_check_passes_for_existing_canonical_reference | tests/test_doctor.py | unknown | standard |
@@ -735,13 +842,20 @@ tests/test_workspace_paths.py
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | tests/test_release_packaging.py | unknown | standard |
 | tests.test_stale._write_index | tests/test_stale.py | unknown | standard |
+| tests.test_stale._write_l2_export_config | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_export_disabled_is_explicit_and_not_warn_counter | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_export_ok_when_canonical_up_to_date_and_export_matches | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_export_skips_compare_when_canonical_unavailable | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_mismatch | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_missing | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_check_does_not_write_file | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_stale_when_content_differs | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_stale_when_missing | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_unknown_when_no_indexed_records | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_up_to_date_when_content_matches_except_timestamp | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_stale_json_contains_l2_readme_export_view_name | tests/test_stale.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_drift_detection | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.write_module | tests/test_sync_engine.py | unknown | standard |
 | tests.test_utils_format.test_format_size_bytes | tests/test_utils_format.py | unknown | standard |
@@ -758,6 +872,26 @@ tests/test_workspace_paths.py
 | tests.test_workspace_gitignore_policy.test_gitignore_ignores_required_local_runtime_paths | tests/test_workspace_gitignore_policy.py | unknown | standard |
 | tests.test_workspace_gitignore_policy.test_harbor_canonical_and_runtime_ignore_policy | tests/test_workspace_gitignore_policy.py | unknown | standard |
 | tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_inspect._force_en_locale | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_inspect._touch | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_inspect._write_workspace_config | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_inspect.test_workspace_inspect_generated_views_count | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_inspect.test_workspace_inspect_git_tracking_policy | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_inspect.test_workspace_inspect_is_read_only_no_writes | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_inspect.test_workspace_inspect_json_and_text_do_not_leak_absolute_paths | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_inspect.test_workspace_inspect_legacy_detection_roles_and_severity | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_inspect.test_workspace_inspect_reports_canonical_paths_repo_relative | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_migrate._fingerprint_tree | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate._force_en_locale | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate._touch | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate._write_workspace_config | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate.test_workspace_migrate_docs_export_plan_item_no_action | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate.test_workspace_migrate_dry_run_no_writes | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate.test_workspace_migrate_json_has_no_absolute_paths | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate.test_workspace_migrate_legacy_config_plan_item | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate.test_workspace_migrate_legacy_diary_plan_item_high_risk | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate.test_workspace_migrate_legacy_l2_metadata_plan_item | tests/test_workspace_migrate.py | unknown | standard |
+| tests.test_workspace_migrate.test_workspace_migrate_module_readme_export_items | tests/test_workspace_migrate.py | unknown | standard |
 | tests.test_workspace_paths._write_yaml | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_default_paths | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_export_options_parsing | tests/test_workspace_paths.py | unknown | standard |
@@ -795,10 +929,13 @@ tests/test_cli_module_skill.py
 tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_cli_v2.py
+tests/test_cli_workspace_inspect.py
+tests/test_cli_workspace_migrate.py
 tests/test_config_update.py
 tests/test_ddt_validate.py
 tests/test_decorator_engine.py
 tests/test_derive_adopted_roots.py
+tests/test_diary_workspace_paths.py
 tests/test_doctor.py
 tests/test_drafting.py
 tests/test_drafting_json_parse.py
@@ -822,6 +959,8 @@ tests/test_sync_engine.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_workspace_gitignore_policy.py
+tests/test_workspace_inspect.py
+tests/test_workspace_migrate.py
 tests/test_workspace_paths.py
 ```
 

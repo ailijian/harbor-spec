@@ -379,7 +379,12 @@ def _status_text(status: str) -> str:
 
 
 def _collect_next_steps(checks: List[DoctorCheckResult]) -> List[str]:
-    base = ["harbor finish --sync-context", "harbor stale", "harbor log", "harbor accept"]
+    base = [
+        "harbor finish --sync-context",
+        "harbor stale",
+        "harbor log (if this task involved an important decision or Contract Change)",
+        "harbor accept (when you are ready to accept the new baseline)",
+    ]
     dynamic: List[str] = []
     for check in checks:
         if check.status in (WARN, FAIL):

@@ -137,6 +137,10 @@ def test_generate_markdown_contains_required_sections_and_is_deterministic(tmp_p
     assert "## AI Context Loading Guidance" in markdown
     assert "## Regeneration" in markdown
     assert "| Mode | Harbor index |" in markdown
+    assert "3. `.harbor/views/project-structure.md`" in markdown
+    assert "3. `docs/harbor/project-structure.md`" not in markdown
+    assert "harbor log" not in markdown
+    assert "harbor accept" not in markdown
 
     root_text = str(tmp_path).replace("\\", "/")
     assert root_text not in markdown

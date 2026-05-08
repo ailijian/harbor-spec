@@ -70,20 +70,19 @@ def test_readme_en_contains_release_key_commands():
         assert phrase in readme_en
 
 
-def test_release_notes_include_unreleased_v130_track():
+def test_release_notes_include_v130_release_track():
     release_text = (_repo_root() / "RELEASE.md").read_text(encoding="utf-8")
-    assert "Unreleased / v1.3.1 - Workspace Layout Migration (Phase 2A-2D-A)" in release_text
+    assert "# Harbor-spec v1.3.0 — Canonical Workspace 与 Agentic Context Governance" in release_text
     assert ".harbor/config/harbor.yaml" in release_text
-    assert "Legacy `.harbor/config.yaml` is still readable for compatibility." in release_text
     assert ".harbor/views/project-structure.md" in release_text
     assert ".harbor/views/modules/<module>/" in release_text
-    assert ".gitignore` no longer uses broad `.harbor/` ignore" in release_text
     assert ".harbor/state/" in release_text
     assert ".harbor/cache/" in release_text
     assert ".harbor/exports/" in release_text
-    assert "Unreleased / v1.3.0 - Workflow & Module Capsule Update" in release_text
+    assert "### 1.2 Workflow Facade" in release_text
+    assert "以下命令不属于默认任务流，必须由用户显式请求后再运行：" in release_text
     assert "harbor project structure" in release_text
-    assert "derived and does not replace Project Rules" in release_text
+    assert "canonical generated context views" in release_text
 
 
 def test_help_recognizes_core_release_commands():

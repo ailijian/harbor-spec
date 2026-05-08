@@ -2,11 +2,11 @@
   "C:/Users/GM/AppData/Local/Temp/pytest-of-GM/pytest-48/test_sync_engine_drift_detecti0/src": "01ac3bf9dbe196bd7f37ce523cddfe627fa055f855147fe351bce80ef4966bea",
   "E:/project/harbor-spec/tests/fixtures_sqlite": "e8bc31ebd1afe0ad82b5cbe1bf307f354fe7c40bf57120a2867a64d86f0ef909",
   "tests/fixtures_sqlite": "f3aaeceeea2027b1ac6a5cba95c8ab93c6734848d0fe324aaf1efcc10c5f0fcc",
-  "harbor/core": "492bd5c1984337707df93bc10534d7ae267c5f8f1b66e57adcf7ccc5081f068f",
+  "harbor/core": "2f645b8ceaf6b230f986be6026e6576cf4728b1038e9375c12b7d2a5749c8071",
   "harbor": "ca07ca503aaebd4b32d959f0ae0f54e67b5f4fbe0e83ad46ed0512bd605b04db",
   "harbor/adapters/python": "a1e71a48aae68d00bc5918ee754b9694478c0fab9255cb1a02671d22cf5f9a2a",
   "harbor/cli": "485391bc3c9ac23a1368e81dc1fbd80c625f53200bc0ad19ea4edb6b6b214b88",
   "harbor/utils": "f9dd70a30ee0f0403ddf236edfb04365d62b1dc01d76be62b8b4b79ae62e1fa4",
-  "tests": "65a849065671810a4e00d398d9b4f47e22601191ac6b7f2ec94d8b41eb36f3cc",
+  "tests": "62267882ce8deeb633e43ec55155d57f285c7100387a84c9a7baa809229a9a83",
   "tests/core": "bbe2c01866a7808f194664705e1669433f5dfaeee76134e89c5b917273565922"
 }

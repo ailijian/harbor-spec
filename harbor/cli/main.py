@@ -63,10 +63,12 @@ def main():
     """Harbor CLI 入口。
 
     功能:
-      - 提供 `harbor` 命令的子命令入口：`init/status/lock/check/log/adopt/unadopt/docs/config`。
+      - 提供 `harbor` 命令的工作流门面、治理检查、派生视图与兼容子命令入口。
+      - 主要工作流命令包括：`start/checkpoint/finish/stale/doctor/workspace/module/project`。
+      - 同时保留 `init/status/lock/check/log/adopt/unadopt/docs/config` 等兼容与辅助命令。
       - 解析参数并委派到对应子系统。
-      - adopt：在应用装饰变更后，将接管目录注册到 `.harbor/config.yaml` 的 `code_roots`。
-      - unadopt：从 `.harbor/config.yaml` 的 `code_roots` 中移除接管目录。
+      - adopt：在应用装饰变更后，将接管目录注册到 `.harbor/config/harbor.yaml` 的 `code_roots`。
+      - unadopt：从 `.harbor/config/harbor.yaml` 的 `code_roots` 中移除接管目录。
 
     使用场景:
       - 开发者在本地与 CI 中调用 Harbor 管理上下文。

@@ -15,7 +15,7 @@
 
 </div>
 
-语言: [中文](README.md) | [English](README.en.md)
+语言: [中文](README.md) | [English](README_en.md)
 
 ---
 
@@ -169,65 +169,40 @@ harbor lock
 
 -----
 
-## 🔄 Vibe Coding Workflow
+## 🔄 The Vibe Coding Workflow
 
-推荐工作流（Facade CLI）：
+推荐工作流：
 
 ```powershell
 harbor start
 # AI coding
 harbor checkpoint
 # more AI coding
-harbor finish
-# or, when ready to sync derived context:
 harbor finish --sync-context
+harbor stale
 harbor doctor
-harbor log
-harbor accept
 ```
 
-发布轨道说明：当前发布收口以 `RELEASE.md` 中 `Unreleased / v1.3.1` 为准。
+说明：
+- `harbor start`：开始任务前查看上下文状态。
+- `harbor checkpoint`：开发中执行 `status + check --fast`。
+- `harbor finish --sync-context`：收尾时同步 changed L2 README 与 changed Module Capsule。
+- `harbor stale`：检查派生视图是否仍然新鲜。
+- `harbor doctor`：检查 Harbor workspace、技能引用、派生视图与配置健康。
+- `harbor log`：仅在你明确要写 Diary / decision memory 时手动运行。
+- `harbor accept`：仅在你明确要接受新基线时手动运行；它是 `harbor lock` 的语义化 alias。
 
-### Workflow Facade Commands
+-----
 
-```powershell
-harbor start
-harbor checkpoint
-harbor finish
-harbor finish --sync-context
-harbor doctor
-harbor accept
-```
+## 🚀 What's New in v1.3.0
 
-关键语义：
-- `harbor finish` 不会自动 `lock`。
-- `harbor finish` 不会自动 `log`。
-- `harbor finish` 默认不会写 README 或 Module Capsule。
-- `harbor finish --sync-context` 会写 changed L2 README 和 changed Module Capsule，并检查 changed capsule stale 状态。
-- `harbor doctor` 是顶层只读健康检查聚合命令（advisory，不自动修复）。
-- `harbor doctor` 聚合检查 Config/Index、Workspace Status、DDT Fast、Derived Views、Skill References。
-- `harbor doctor` 不写文件、不自动 lock、不自动 log。
-- `harbor workspace inspect` 是只读 workspace layout 体检命令：报告 canonical paths、legacy paths、Git tracking、generated views 与 advisory。
-- `harbor workspace inspect` 不执行迁移、不删除 legacy 文件、不修改任何写入行为（`workspace migrate` 仍为后续阶段）。
-- `harbor workspace migrate --dry-run` 是只读迁移计划命令：仅生成 migration plan，不执行真实迁移。
-- `harbor workspace migrate --dry-run` 不复制/移动/删除文件，不修改 config，不修改 `.gitignore`，不迁移 diary。
-- 当前版本 `harbor workspace migrate` 必须显式传 `--dry-run`，否则会报错提示仅支持 dry-run。
-- 当前版本 `harbor workspace migrate --write` **未实现**（不可用）；release hardening 阶段仅支持 dry-run 验证。
-- 若存在 `specs/diary/*.jsonl`，`harbor doctor` 会给出 legacy diary advisory（workspace layout / project memory 提示，不属于 derived view freshness）。
-- `harbor doctor` 的 legacy diary advisory 仅在存在 `*.jsonl` 时出现；`specs/diary` 空目录不提示。
-- diary advisory 为 WARN 提示，不是 FAIL；不会自动迁移或删除 `specs/diary`。
-- `harbor stale` 是只读聚合检查：同时检查 L2 README 与 Module Capsule 的新鲜度。
-- `harbor stale` 默认检查 changed modules；可用 `--all` 或 `--module <module>` 切换范围。
-- `harbor stale` 的 canonical L2 freshness 仅由 `.harbor/views/l2/<module>/README.md` 判定。
-- `harbor stale` 会单独报告 `l2_readme_export`（`<module>/README.md`）advisory，不会混淆 canonical `l2_readme`。
-- 若 canonical L2 不可用，`l2_readme_export` 只会标记 unknown/skipped，不做 out-of-sync 比较。
-- `harbor stale` 不会自动修复；请用 `harbor docs --module <module> --write` 与 `harbor module seal <module> --write` 刷新。
-- 想只看派生视图是否过期，请用 `harbor stale`；想看整体 Harbor 健康，请用 `harbor doctor`。
-- MVP 阶段 `harbor stale` 为 advisory，检查完成后返回成功（未来可扩展 CI gate）。
-- `harbor stale --format json` 与 `harbor doctor --format json` 提供机器可读输出（只读、advisory）。
-- JSON 输出用于脚本集成、CI 准备、IDE 面板展示与后续自动化能力接入。
-- MVP 的 JSON 输出不改变现有 exit-code 行为；`--ci` 将在后续阶段单独引入。
-- `harbor accept` 是 `harbor lock` 的语义化 alias。
+- Workflow Facade：提供 `harbor start`、`harbor checkpoint`、`harbor finish`、`harbor finish --sync-context` 与 `harbor accept`
+- Stale / Doctor：把派生视图 freshness 与 Harbor workspace 健康检查拆成两个只读入口
+- Project Structure View：引入 `.harbor/views/project-structure.md` 作为 canonical 项目结构视图
+- L2 README / Module Capsule：统一沉淀到 `.harbor/views/l2/**` 与 `.harbor/views/modules/**`
+- Workspace Diagnostics：提供 `harbor workspace inspect` 与 `harbor workspace migrate --dry-run`
+- JSON 输出：`harbor stale --format json` 与 `harbor doctor --format json` 提供机器可读结果
+- Legacy Advisory：对 `specs/diary`、旧 config 与旧 project structure export 提供 advisory，而不是 silent drift
 
 ### L2 README Generation
 
@@ -336,8 +311,9 @@ harbor start
 harbor finish --sync-context
 harbor stale
 harbor doctor
-harbor accept
 ```
+
+如需写 Diary 或接受新基线，请在确认无剩余 drift 后显式手动执行 `harbor log` 或 `harbor accept`。
 
 -----
 
@@ -445,8 +421,9 @@ harbor module promote-skill harbor/core
 ```bash
 harbor finish --sync-context
 harbor doctor
-harbor accept
 ```
+
+若你明确要写 Diary 或接受新基线，再手动执行 `harbor log` 或 `harbor accept`。
 
 </details>
 
@@ -482,41 +459,3 @@ exclude_paths:
 | `harbor finish` | 工作流收尾：等价 `status + check` 并提示下一步 |
 | `harbor finish --sync-context` | 工作流收尾增强：执行 `finish` 检查并同步 changed L2 README + Module Capsule，再执行 changed stale 检查 |
 | `harbor doctor` | 顶层只读健康检查聚合：默认检查 changed modules 的 Config/Index、Workspace、DDT、Derived Views、Skill References |
-| `harbor workspace inspect` | 顶层只读 workspace layout 检查：展示 canonical/legacy 路径、Git tracking、generated views 与 advisory（不迁移、不删除） |
-| `harbor workspace migrate --dry-run` | 顶层只读迁移计划：输出 migration plan（text/json），不执行迁移、不修改任何文件 |
-| `harbor stale` | 顶层只读聚合检查：默认检查 changed modules 的 canonical L2 README + Module Capsule，并单独报告 module README export advisory |
-| `harbor accept` | 工作流确认：语义化别名，等价 `harbor lock` |
-| `harbor status` / `harbor st` | 查看上下文状态（Drift/Modified） |
-| `harbor lock` / `harbor commit` | 锁定当前 L3 契约快照为基线 |
-| `harbor check` | 统一语义审计与 DDT 验证 |
-| `harbor check --fast` | 仅运行 DDT 验证 |
-| `harbor log` | 上下文感知日志：无参 AI 草稿，`-m` 手动写入（canonical 写入 `.harbor/diary/YYYY-MM.jsonl`） |
-| `harbor log --export` | 导出 Diary Markdown（读取 `.harbor/diary` + `specs/diary`，legacy 只读兼容） |
-| `harbor adopt` | 交互式接管遗留代码进入治理体系 |
-| `harbor docs` | 生成模块级文档（L2） |
-| `harbor docs --changed --write` | 仅刷新变更模块的 L2 README |
-| `harbor docs --all --write` | 刷新全部已索引模块的 L2 README |
-| `harbor module inspect <module>` | 查看指定模块的索引上下文摘要（只读，不写文件） |
-| `harbor module seal <module>` | 预览模块 Capsule（三份文档，不写文件） |
-| `harbor module seal <module> --write` | 默认写入模块 Capsule 到 `.harbor/views/modules/<module>/`；仅在 docs export enabled 时额外写 `docs/harbor/modules/<module>/` |
-| `harbor module stale <module>` | 检查指定模块 Capsule 是否过时（只读，不写文件） |
-| `harbor module stale --changed` | 批量检查变更模块 Capsule 是否过时 |
-| `harbor module stale --all` | 批量检查全部已索引模块 Capsule 是否过时 |
-| `harbor stale --changed` | 顶层批量检查变更模块的派生视图（L2 README + Module Capsule）是否过时 |
-| `harbor stale --all` | 顶层批量检查全部已索引模块的派生视图是否过时 |
-| `harbor stale --module <module>` | 顶层检查单模块派生视图是否过时（只读，不写文件） |
-| `harbor doctor --changed` | 顶层批量健康检查（变更模块范围，默认模式） |
-| `harbor doctor --all` | 顶层批量健康检查（全部已索引模块范围） |
-| `harbor doctor --module <module>` | 顶层健康检查（单模块范围） |
-| `harbor module seal --changed --write` | 批量写入变更模块的 Capsule |
-| `harbor module seal --all --write` | 批量写入全部已索引模块的 Capsule |
-| `harbor module promote-skill <module>` | 手动晋升模块为薄 Skill 入口（可选，写入 `.agents/skills/.../SKILL.md`） |
-| `harbor project structure` | 预览项目级派生结构视图（默认不写文件） |
-| `harbor project structure --write` | 默认写入 `.harbor/views/project-structure.md`；可选导出到 `docs/harbor/project-structure.md` |
-| `harbor config` / `harbor conf` | 管理扫描路径配置 |
-
------
-
-## 📄 License
-
-MIT © 2025 Harbor-spec Authors.

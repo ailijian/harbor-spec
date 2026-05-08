@@ -1,7 +1,7 @@
 ---
 harbor_capsule_version: 1
 module: harbor/core
-fingerprint: 168c75f9df87ad556bb08a958af4ef985f8129a33cf1aa18f096589ce1421e55
+fingerprint: 982ecbfc13bf93ad9e2423de583693047acf82af7f0e3d133429e6947f1eb177
 source_files:
 - harbor/core/__init__.py
 - harbor/core/audit.py
@@ -23,6 +23,8 @@ source_files:
 - harbor/core/t_decorate.py
 - harbor/core/utils.py
 - harbor/core/workspace.py
+- harbor/core/workspace_inspect.py
+- harbor/core/workspace_migrate.py
 contracts:
 - harbor.core.audit.LLMProvider.infer
 - harbor.core.audit.MockProvider.infer
@@ -52,10 +54,16 @@ contracts:
 - harbor.core.diary.DiaryEntry.to_json
 - harbor.core.diary.DiaryManager.__init__
 - harbor.core.diary.DiaryManager._current_file_path
+- harbor.core.diary.DiaryManager._ensure_within_repo
+- harbor.core.diary.DiaryManager._entry_dedupe_key
 - harbor.core.diary.DiaryManager._from_dict
+- harbor.core.diary.DiaryManager._iter_read_dirs
+- harbor.core.diary.DiaryManager._normalize_for_hash
 - harbor.core.diary.DiaryManager._parse_ts
 - harbor.core.diary.DiaryManager._resolve_author
 - harbor.core.diary.DiaryManager._resolve_diary_dir
+- harbor.core.diary.DiaryManager._resolve_legacy_diary_dirs
+- harbor.core.diary.DiaryManager._resolve_repo_root
 - harbor.core.diary.DiaryManager._utc_now_iso
 - harbor.core.diary.DiaryManager.export_markdown
 - harbor.core.diary.DiaryManager.load_active
@@ -64,6 +72,7 @@ contracts:
 - harbor.core.doctor.DoctorReport.to_dict
 - harbor.core.doctor._collect_next_steps
 - harbor.core.doctor._derived_view_detail_status
+- harbor.core.doctor._merge_status
 - harbor.core.doctor._sanitize_json_text
 - harbor.core.doctor._sanitize_single_path
 - harbor.core.doctor._status_text
@@ -190,6 +199,7 @@ contracts:
 - harbor.core.stale._sanitize_json_text
 - harbor.core.stale._sanitize_module_for_json
 - harbor.core.stale._sanitize_single_path
+- harbor.core.stale.check_l2_readme_export_stale
 - harbor.core.stale.check_l2_readme_stale
 - harbor.core.stale.check_module_derived_views_stale
 - harbor.core.stale.format_stale_summary
@@ -224,6 +234,28 @@ contracts:
 - harbor.core.workspace.parse_workspace_export_options
 - harbor.core.workspace.resolve_workspace_config_path
 - harbor.core.workspace.write_workspace_config
+- harbor.core.workspace_inspect.WorkspaceGeneratedViewsStatus.to_dict
+- harbor.core.workspace_inspect.WorkspaceGitTrackingStatus.to_dict
+- harbor.core.workspace_inspect.WorkspaceLegacyPathStatus.to_dict
+- harbor.core.workspace_inspect._check_git_ignored
+- harbor.core.workspace_inspect._classify_git_tracking
+- harbor.core.workspace_inspect._collect_advisory
+- harbor.core.workspace_inspect._collect_generated_views
+- harbor.core.workspace_inspect._collect_git_tracking
+- harbor.core.workspace_inspect._collect_legacy_paths
+- harbor.core.workspace_inspect._to_display_path
+- harbor.core.workspace_inspect.build_workspace_inspect_report
+- harbor.core.workspace_inspect.format_workspace_inspect_report
+- harbor.core.workspace_inspect.sanitize_text
+- harbor.core.workspace_inspect.workspace_inspect_report_to_dict
+- harbor.core.workspace_migrate.WorkspaceMigrationPlanItem.to_dict
+- harbor.core.workspace_migrate._collect_module_readme_exports
+- harbor.core.workspace_migrate._module_dir_has_python_files
+- harbor.core.workspace_migrate._to_display_path
+- harbor.core.workspace_migrate.build_workspace_migrate_dry_run_report
+- harbor.core.workspace_migrate.format_workspace_migrate_report
+- harbor.core.workspace_migrate.sanitize_text
+- harbor.core.workspace_migrate.workspace_migrate_report_to_dict
 ---
 
 # Module Card: harbor/core
@@ -264,6 +296,8 @@ harbor/core/sync.py
 harbor/core/t_decorate.py
 harbor/core/utils.py
 harbor/core/workspace.py
+harbor/core/workspace_inspect.py
+harbor/core/workspace_migrate.py
 ```
 
 ## Public / Indexed Contracts
@@ -298,10 +332,16 @@ harbor/core/workspace.py
 | harbor.core.diary.DiaryEntry.to_json | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager.__init__ | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._current_file_path | harbor/core/diary.py | unknown | standard |
+| harbor.core.diary.DiaryManager._ensure_within_repo | harbor/core/diary.py | unknown | standard |
+| harbor.core.diary.DiaryManager._entry_dedupe_key | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._from_dict | harbor/core/diary.py | unknown | standard |
+| harbor.core.diary.DiaryManager._iter_read_dirs | harbor/core/diary.py | unknown | standard |
+| harbor.core.diary.DiaryManager._normalize_for_hash | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._parse_ts | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_author | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_diary_dir | harbor/core/diary.py | unknown | standard |
+| harbor.core.diary.DiaryManager._resolve_legacy_diary_dirs | harbor/core/diary.py | unknown | standard |
+| harbor.core.diary.DiaryManager._resolve_repo_root | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._utc_now_iso | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager.export_markdown | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager.load_active | harbor/core/diary.py | unknown | standard |
@@ -310,6 +350,7 @@ harbor/core/workspace.py
 | harbor.core.doctor.DoctorReport.to_dict | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._collect_next_steps | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._derived_view_detail_status | harbor/core/doctor.py | unknown | standard |
+| harbor.core.doctor._merge_status | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._sanitize_json_text | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._sanitize_single_path | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._status_text | harbor/core/doctor.py | unknown | standard |
@@ -436,6 +477,7 @@ harbor/core/workspace.py
 | harbor.core.stale._sanitize_json_text | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale._sanitize_module_for_json | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale._sanitize_single_path | harbor/core/stale.py | unknown | standard |
+| harbor.core.stale.check_l2_readme_export_stale | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale.check_l2_readme_stale | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale.check_module_derived_views_stale | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale.format_stale_summary | harbor/core/stale.py | unknown | standard |
@@ -470,6 +512,28 @@ harbor/core/workspace.py
 | harbor.core.workspace.parse_workspace_export_options | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace.resolve_workspace_config_path | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace.write_workspace_config | harbor/core/workspace.py | unknown | standard |
+| harbor.core.workspace_inspect.WorkspaceGeneratedViewsStatus.to_dict | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect.WorkspaceGitTrackingStatus.to_dict | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect.WorkspaceLegacyPathStatus.to_dict | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect._check_git_ignored | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect._classify_git_tracking | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect._collect_advisory | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect._collect_generated_views | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect._collect_git_tracking | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect._collect_legacy_paths | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect._to_display_path | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect.build_workspace_inspect_report | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect.format_workspace_inspect_report | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect.sanitize_text | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_inspect.workspace_inspect_report_to_dict | harbor/core/workspace_inspect.py | unknown | standard |
+| harbor.core.workspace_migrate.WorkspaceMigrationPlanItem.to_dict | harbor/core/workspace_migrate.py | unknown | standard |
+| harbor.core.workspace_migrate._collect_module_readme_exports | harbor/core/workspace_migrate.py | unknown | standard |
+| harbor.core.workspace_migrate._module_dir_has_python_files | harbor/core/workspace_migrate.py | unknown | standard |
+| harbor.core.workspace_migrate._to_display_path | harbor/core/workspace_migrate.py | unknown | standard |
+| harbor.core.workspace_migrate.build_workspace_migrate_dry_run_report | harbor/core/workspace_migrate.py | unknown | standard |
+| harbor.core.workspace_migrate.format_workspace_migrate_report | harbor/core/workspace_migrate.py | unknown | standard |
+| harbor.core.workspace_migrate.sanitize_text | harbor/core/workspace_migrate.py | unknown | standard |
+| harbor.core.workspace_migrate.workspace_migrate_report_to_dict | harbor/core/workspace_migrate.py | unknown | standard |
 
 ## Tests
 

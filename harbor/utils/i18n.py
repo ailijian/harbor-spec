@@ -79,7 +79,12 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.start.dirty": "Existing Harbor changes detected. Resolve drift or finish the current task before starting a new one.",
         "cli.checkpoint.title": "Harbor Checkpoint:",
         "cli.finish.title": "Harbor Finish:",
-        "cli.finish.next_steps": "Next steps:\n  - harbor docs --module <module> --write\n  - harbor log\n  - harbor accept",
+        "cli.finish.next_steps": (
+            "Next steps:\n"
+            "  - harbor docs --module <module> --write\n"
+            "  - Run `harbor log` only if this task involved an important decision or Contract Change.\n"
+            "  - Run `harbor accept` only when you are ready to accept the new baseline."
+        ),
         "cli.finish.sync_context.title": "Context Sync:",
         "cli.finish.sync_context.docs": "- Refreshing L2 README for changed modules...",
         "cli.finish.sync_context.capsules": "- Refreshing Module Capsules for changed modules...",
@@ -311,7 +316,12 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.start.dirty": "检测到现有 Harbor 变更。请先解决漂移或完成当前任务，再开启新任务。",
         "cli.checkpoint.title": "Harbor 检查点：",
         "cli.finish.title": "Harbor 收尾检查：",
-        "cli.finish.next_steps": "建议下一步：\n  - harbor docs --module <module> --write\n  - harbor log\n  - harbor accept",
+        "cli.finish.next_steps": (
+            "建议下一步：\n"
+            "  - harbor docs --module <module> --write\n"
+            "  - 若本次任务包含重要决策或 Contract Change，请执行 `harbor log`。\n"
+            "  - 准备接受新基线时，请执行 `harbor accept`。"
+        ),
         "cli.finish.sync_context.title": "上下文同步：",
         "cli.finish.sync_context.docs": "- 刷新变更模块的 L2 README...",
         "cli.finish.sync_context.capsules": "- 刷新变更模块的 Module Capsule...",

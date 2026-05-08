@@ -9,6 +9,10 @@ protected_paths:
     - "secrets/**"
     - "prod/**"
   ask_write:
+    - "AGENTS.md"
+    - ".harbor/*.yaml"
+    - ".harbor/rules/**"
+    - ".agents/skills/**"
     - ".github/workflows/**"
     - "migrations/**"
     - "alembic/versions/**"

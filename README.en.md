@@ -183,15 +183,16 @@ harbor start
 # AI coding
 harbor checkpoint
 # more AI coding
-harbor finish
-# or, when ready to sync derived context:
 harbor finish --sync-context
+harbor stale
 harbor doctor
-harbor log
-harbor accept
 ```
 
-Release track note: current packaging alignment targets `Unreleased / v1.3.1` in `RELEASE.md`.
+Release track note: current packaging alignment targets the released `v1.3.0` track in `RELEASE.md`.
+
+Manual follow-ups:
+- Run `harbor log` only when you explicitly want to write Diary / decision memory.
+- Run `harbor accept` only when you explicitly want to accept the new baseline.
 
 ### Workflow Facade Commands
 
@@ -200,8 +201,8 @@ harbor start
 harbor checkpoint
 harbor finish
 harbor finish --sync-context
+harbor stale
 harbor doctor
-harbor accept
 ```
 
 Key semantics:
@@ -209,6 +210,7 @@ Key semantics:
 - `harbor finish` does not auto-log.
 - `harbor finish` does not write README or Module Capsule by default.
 - `harbor finish --sync-context` writes changed L2 READMEs and changed Module Capsules, then checks stale status for changed capsules.
+- `harbor stale` is the read-only freshness check for generated context.
 - `harbor doctor` is a top-level read-only aggregate health check command (advisory, no auto-fix).
 - `harbor doctor` aggregates Config/Index, Workspace Status, DDT Fast, Derived Views, and Skill References checks.
 - `harbor doctor` does not write files, does not auto-lock, and does not auto-log.
@@ -232,7 +234,7 @@ Key semantics:
 - `harbor stale --format json` and `harbor doctor --format json` provide machine-readable output (read-only and advisory).
 - JSON output is intended for scripts, CI preparation, IDE panels, and future automation integrations.
 - MVP JSON output does not change current exit-code behavior; `--ci` will be introduced separately.
-- `harbor accept` is a semantic alias of `harbor lock`.
+- `harbor accept` is a semantic alias of `harbor lock`, but it is not part of the default facade flow.
 
 ### L2 README Generation
 
@@ -341,8 +343,9 @@ harbor start
 harbor finish --sync-context
 harbor stale
 harbor doctor
-harbor accept
 ```
+
+If you explicitly want to write Diary or accept a new baseline, run `harbor log` or `harbor accept` manually after review.
 
 -----
 
@@ -440,8 +443,9 @@ Notes:
 ```bash
 harbor finish --sync-context
 harbor doctor
-harbor accept
 ```
+
+If you explicitly want to write Diary or accept the new baseline, run `harbor log` or `harbor accept` manually afterward.
 
 </details>
 
