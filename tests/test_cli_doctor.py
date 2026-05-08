@@ -96,6 +96,12 @@ def test_doctor_changed_and_all_args_are_recognized(monkeypatch):
     assert "Scope: all indexed modules" in out_all
 
 
+def test_doctor_ci_arg_is_recognized(monkeypatch):
+    monkeypatch.setattr(cli_main, "build_doctor_report", lambda scope, modules: _pass_report(scope))
+    out = run_cmd(["doctor", "--changed", "--ci"])
+    assert "CI mode enabled" in out
+
+
 def test_doctor_module_mode_runs(monkeypatch):
     monkeypatch.setattr(cli_main, "build_doctor_report", lambda scope, modules: _pass_report(scope))
     monkeypatch.setattr(cli_main, "format_doctor_report", lambda report: f"Scope: {report.scope}")

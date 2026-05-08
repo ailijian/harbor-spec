@@ -81,6 +81,12 @@ def test_stale_changed_and_all_args_are_recognized(monkeypatch):
     assert "No indexed modules found" in out_all
 
 
+def test_stale_ci_arg_is_recognized(monkeypatch):
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _empty_status_report())
+    out = run_cmd(["stale", "--changed", "--ci"])
+    assert "CI mode enabled" in out
+
+
 def test_stale_module_mode_runs(monkeypatch):
     monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _sample_summary(module, stale=True))
     out = run_cmd(["stale", "--module", "harbor/core"])

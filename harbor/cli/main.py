@@ -41,6 +41,12 @@ from harbor.core.doctor import (
     build_doctor_report,
     format_doctor_report,
 )
+from harbor.core.ci import (
+    build_doctor_ci_result,
+    build_stale_ci_result,
+    ci_result_to_dict,
+    format_ci_result,
+)
 from harbor.core.workspace_inspect import (
     build_workspace_inspect_report,
     format_workspace_inspect_report,
@@ -277,6 +283,11 @@ def main():
         default="text",
         help="Output format: text (default) or json",
     )
+    p_stale.add_argument(
+        "--ci",
+        action="store_true",
+        help="Enable CI gate mode with deterministic exit code semantics",
+    )
     p_doctor = sub.add_parser(
         "doctor",
         help="Run read-only aggregated Harbor health checks",
@@ -303,6 +314,11 @@ def main():
         choices=["text", "json"],
         default="text",
         help="Output format: text (default) or json",
+    )
+    p_doctor.add_argument(
+        "--ci",
+        action="store_true",
+        help="Enable CI gate mode with deterministic exit code semantics",
     )
     p_workspace = sub.add_parser(
         "workspace",
@@ -1097,7 +1113,13 @@ def main():
             scope_text = t("cli.stale.scope.all")
             scope_value = "all"
             if not modules:
-                if args.format == "json":
+                if args.ci:
+                    ci_result = build_stale_ci_result([], scope=scope_value)
+                    if args.format == "json":
+                        print(json.dumps(ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
+                    else:
+                        print(format_ci_result(ci_result))
+                elif args.format == "json":
                     print(json.dumps(stale_report_to_dict([], scope=scope_value), ensure_ascii=False, sort_keys=True, indent=2))
                 else:
                     print(t("cli.stale.none_all"))
@@ -1105,14 +1127,29 @@ def main():
         else:
             modules = _collect_changed_modules()
             if not modules:
-                if args.format == "json":
+                if args.ci:
+                    ci_result = build_stale_ci_result([], scope=scope_value)
+                    if args.format == "json":
+                        print(json.dumps(ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
+                    else:
+                        print(format_ci_result(ci_result))
+                elif args.format == "json":
                     print(json.dumps(stale_report_to_dict([], scope=scope_value), ensure_ascii=False, sort_keys=True, indent=2))
                 else:
                     print(t("cli.stale.none_changed"))
                 return
 
         results = [check_module_derived_views_stale(module) for module in modules]
-        if args.format == "json":
+        if args.ci:
+            ci_result = build_stale_ci_result(results, scope=scope_value)
+            payload = ci_result_to_dict(ci_result)
+            if args.format == "json":
+                print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+            else:
+                print(format_ci_result(ci_result))
+            if ci_result.exit_code != 0:
+                raise SystemExit(ci_result.exit_code)
+        elif args.format == "json":
             payload = stale_report_to_dict(results, scope=scope_value)
             print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
         else:
@@ -1139,7 +1176,16 @@ def main():
             scope=scope_text,
             modules=sorted(modules) if args.format == "json" else modules,
         )
-        if args.format == "json":
+        if args.ci:
+            ci_result = build_doctor_ci_result(report)
+            payload = ci_result_to_dict(ci_result)
+            if args.format == "json":
+                print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+            else:
+                print(format_ci_result(ci_result))
+            if ci_result.exit_code != 0:
+                raise SystemExit(ci_result.exit_code)
+        elif args.format == "json":
             payload = report.to_dict(command="doctor")
             payload["scope"] = scope_value
             print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))

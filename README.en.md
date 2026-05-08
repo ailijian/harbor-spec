@@ -297,11 +297,15 @@ harbor stale --changed
 harbor stale --all
 harbor stale --module harbor/core
 harbor stale --format json
+harbor stale --ci
+harbor stale --ci --format json
 harbor doctor
 harbor doctor --changed
 harbor doctor --all
 harbor doctor --module harbor/core
 harbor doctor --format json
+harbor doctor --ci
+harbor doctor --ci --format json
 ```
 
 Notes:
@@ -318,8 +322,12 @@ Notes:
 - `harbor doctor` also shows a legacy diary advisory when `specs/diary/*.jsonl` exists: `specs/diary` stays legacy read-compatible, canonical path is `.harbor/diary`, new entries write to `.harbor/diary`, and no auto-migration/deletion is performed.
 - `harbor stale` (text and JSON) does not include diary advisory.
 - `harbor stale --format json` and `harbor doctor --format json` emit deterministic machine-readable JSON (stdout contains JSON only).
+- `harbor stale --ci --format json` and `harbor doctor --ci --format json` always print a single JSON object for both pass and fail gates.
 - JSON output is advisory read-only output and does not trigger fix/write/lock/log actions.
-- This MVP does not change exit-code behavior; CI gate mode (for example, `--ci`) will be added in a later step.
+- `--ci` changes exit-code semantics only when explicitly enabled: `0=pass`, `1=fail`, `2=argparse error`.
+- `stale --ci` blocks only on canonical `l2_readme` / `module_capsule` states `stale|unknown`; `l2_readme_export` remains advisory.
+- `doctor --ci` blocks only when `DoctorCheckResult.status == FAIL`; WARN/SKIP remain advisory.
+- CI mode is a gate/check/report surface and is not an auto-fix, auto-refresh, or auto-migration mechanism.
 - Single-module / `--changed` / `--all` modes are mutually exclusive.
 
 ### Optional Skill Promotion

@@ -234,9 +234,13 @@ v1.3.0 正式稳定顶层 advisory checks：
 ```powershell
 harbor stale
 harbor stale --format json
+harbor stale --ci
+harbor stale --ci --format json
 
 harbor doctor
 harbor doctor --format json
+harbor doctor --ci
+harbor doctor --ci --format json
 ```
 
 含义：
@@ -250,6 +254,28 @@ harbor doctor
 ```
 
 二者均保持 advisory + read-only 语义。
+
+补充（CI Mode MVP）：
+
+```text
+--ci 仅在显式启用时改变 exit code 语义：
+  0 = pass
+  1 = fail
+  2 = 参数错误（argparse）
+
+stale --ci
+  仅对 canonical l2_readme / module_capsule 的 stale|unknown 执行阻断。
+  l2_readme_export 与 legacy/export 相关项保留 advisory。
+
+doctor --ci
+  默认仅对 DoctorCheckResult.status == FAIL 执行阻断。
+  WARN / SKIP 保持 advisory（不默认阻断）。
+
+--format json + --ci
+  stdout 始终输出单一 JSON 对象（pass/fail 都不混入人类文本）。
+
+CI Mode 是 gate/check/report，不是 auto-fix / auto-refresh / auto-migrate。
+```
 
 ---
 
@@ -942,7 +968,6 @@ automatic workspace cleanup
 automatic deletion of non-canonical artifacts
 automatic diary migration
 automatic skill promotion
-CI hard gate mode
 backup / rollback write migration
 full migration conflict resolver
 ```
@@ -957,7 +982,6 @@ full migration conflict resolver
 
 ```text
 workspace migrate --write with backup / rollback / per-item confirmation
-CI mode for stale / doctor
 policy-driven governance via .harbor/policy.yaml and .harbor/safety.yaml
 improved semantic audit noise control
 skill stale detection

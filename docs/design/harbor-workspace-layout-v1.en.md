@@ -1377,11 +1377,27 @@ when canonical is unavailable, export is unknown/skipped and out-of-sync compari
 disabled export must be explicitly represented as disabled and must not count as warn
 legacy .harbor/l2_meta.json advisory appears only in harbor doctor (not in stale)
 doctor may WARN on export mismatch / legacy metadata, but should not FAIL because of them
+doctor --ci blocks by default only on check.status=FAIL (canonical freshness gate is primarily handled by stale --ci to avoid duplicated/inconsistent gates)
 legacy diary advisory (`specs/diary/*.jsonl`) appears only in harbor doctor (not in stale text/json)
 this diary advisory is workspace layout / project memory guidance, not derived-view freshness
 advisory appears only when `*.jsonl` exists under `specs/diary`; empty directory does not trigger it; multiple files still emit one advisory set
 doctor remains read-only for legacy diary: canonical path is `.harbor/diary`, new writes go only to `.harbor/diary`
 no automatic migration, deletion, or writes to `specs/diary`
+```
+
+Phase P1-1A (CI Mode MVP) addendum:
+
+```text
+harbor stale --ci / harbor stale --ci --format json
+  CI gate blocks on canonical l2_readme and module_capsule stale|unknown.
+  l2_readme_export and legacy/export items remain advisory.
+
+harbor doctor --ci / harbor doctor --ci --format json
+  CI gate blocks by default only on DoctorCheckResult.status=FAIL.
+  WARN/SKIP remain non-blocking advisory signals.
+
+with --format json + --ci, stdout is always a single JSON object (both pass/fail, no mixed human text).
+CI mode is gate/check/report only; it is not auto-fix, auto-refresh, or auto-migrate.
 ```
 
 ## 13.3 `harbor finish --sync-context`

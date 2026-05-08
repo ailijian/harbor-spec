@@ -1373,11 +1373,27 @@ canonical 不可用时，export 状态为 unknown/skipped，不执行 out-of-syn
 export disabled 必须显式展示为 disabled 且不计入 warn
 legacy .harbor/l2_meta.json advisory 仅由 harbor doctor 提示（stale 不提示）
 doctor 可因 export mismatch / legacy metadata 给出 WARN，但不应 FAIL
+doctor --ci 默认仅对 check.status=FAIL 执行阻断（canonical freshness gate 主要由 stale --ci 承担，避免双重且不一致 gate）
 legacy diary advisory（specs/diary/*.jsonl）仅由 harbor doctor 提示（stale 文本/JSON 不提示）
 该 diary advisory 属于 workspace layout / project memory 提示，不属于 derived view freshness
 specs/diary 仅在存在 *.jsonl 时提示；空目录不提示；多个 legacy 文件只提示一条
 doctor 对 legacy diary 只做 read-compatible advisory：canonical 为 .harbor/diary，新写入仅 .harbor/diary
 不自动迁移、不自动删除、不写 specs/diary
+```
+
+Phase P1-1A（CI Mode MVP）补充：
+
+```text
+harbor stale --ci / harbor stale --ci --format json
+  CI gate 针对 canonical l2_readme 与 module_capsule 的 stale|unknown。
+  l2_readme_export 与 legacy/export 相关项只做 advisory。
+
+harbor doctor --ci / harbor doctor --ci --format json
+  CI gate 默认仅阻断 DoctorCheckResult.status=FAIL。
+  WARN / SKIP 默认不阻断。
+
+--format json 与 --ci 组合时，stdout 始终是单一 JSON 对象（pass/fail 均不混入人类文本）。
+CI mode 为 gate/check/report，不提供 auto-fix、auto-refresh、auto-migrate。
 ```
 
 ## 13.3 `harbor finish --sync-context`

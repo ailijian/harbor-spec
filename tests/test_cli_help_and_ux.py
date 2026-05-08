@@ -50,6 +50,7 @@ def test_doctor_help_lists_changed_all_and_module_flags():
     assert "--all" in out_doctor
     assert "--module" in out_doctor
     assert "--format" in out_doctor
+    assert "--ci" in out_doctor
 
 
 def test_stale_help_lists_changed_all_module_and_format_flags():
@@ -58,6 +59,7 @@ def test_stale_help_lists_changed_all_module_and_format_flags():
     assert "--all" in out_stale
     assert "--module" in out_stale
     assert "--format" in out_stale
+    assert "--ci" in out_stale
 
 
 def test_docs_help_lists_changed_all_and_write_flags():

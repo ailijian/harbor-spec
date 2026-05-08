@@ -230,3 +230,20 @@ def test_doctor_json_includes_legacy_diary_advisory(monkeypatch):
     assert any(".harbor/diary" in item for item in details)
     assert re.search(r"(?i)[a-z]:[\\/]", out) is None
     assert out.strip() == json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
+
+
+def test_ci_json_fields_use_ci_failures_and_advisory(monkeypatch):
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _sample_stale_summary(module, stale=False))
+    out = run_cmd(["stale", "--module", "harbor/core", "--ci", "--format", "json"])
+    payload = json.loads(out)
+    assert payload["ci"] is True
+    assert "ci_failures" in payload
+    assert "advisory" in payload
+    assert "failures" not in payload
+
+
+def test_ci_json_stdout_is_single_object(monkeypatch):
+    monkeypatch.setattr(cli_main, "build_doctor_report", lambda scope, modules: _sample_doctor_report(scope))
+    out = run_cmd(["doctor", "--ci", "--format", "json"])
+    payload = json.loads(out)
+    assert out.strip() == json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)

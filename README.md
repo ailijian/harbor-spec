@@ -266,11 +266,15 @@ harbor stale --changed
 harbor stale --all
 harbor stale --module harbor/core
 harbor stale --format json
+harbor stale --ci
+harbor stale --ci --format json
 harbor doctor
 harbor doctor --changed
 harbor doctor --all
 harbor doctor --module harbor/core
 harbor doctor --format json
+harbor doctor --ci
+harbor doctor --ci --format json
 ```
 
 说明：
@@ -287,8 +291,12 @@ harbor doctor --format json
 - `harbor doctor` 还会在检测到 `specs/diary/*.jsonl` 时显示 legacy diary advisory：`specs/diary` 为 legacy read-compatible，canonical 路径是 `.harbor/diary`，新条目写入 `.harbor/diary`，不自动迁移/删除。
 - `harbor stale`（文本与 JSON）不会显示 diary advisory。
 - `harbor stale --format json` 与 `harbor doctor --format json` 输出稳定机器可读 JSON（stdout 仅 JSON）。
+- `harbor stale --ci --format json` 与 `harbor doctor --ci --format json` 在 pass/fail 下均只输出单一 JSON 对象（不混入人类文本）。
 - JSON 输出是 advisory read-only 视图，不会触发修复、写入或 lock/log。
-- 当前 MVP 不改变 exit-code 行为；CI gate（如 `--ci`）将在后续版本提供。
+- `--ci` 仅在显式启用时改变 exit code 语义：`0=pass`、`1=fail`、`2=参数错误（argparse）`。
+- `stale --ci` 默认只阻断 canonical `l2_readme` / `module_capsule` 的 `stale|unknown`；`l2_readme_export` 仅 advisory。
+- `doctor --ci` 默认只阻断 `DoctorCheckResult.status == FAIL`；WARN/SKIP 作为 advisory 报告。
+- CI Mode 定位为 gate/check/report，不提供 auto-fix、auto-refresh、auto-migrate。
 - `module` 的单模块 / `--changed` / `--all` 三种模式互斥。
 
 ### Optional Skill Promotion
