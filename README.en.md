@@ -199,6 +199,8 @@ Manual follow-ups:
 ```powershell
 harbor start
 harbor checkpoint
+harbor checkpoint --ci
+harbor checkpoint --ci --format json
 harbor finish
 harbor finish --sync-context
 harbor stale
@@ -213,6 +215,7 @@ Key semantics:
 - `harbor stale` is the read-only freshness check for generated context.
 - `harbor doctor` is a top-level read-only aggregate health check command (advisory, no auto-fix).
 - `harbor doctor` aggregates Config/Index, Workspace Status, DDT Fast, Derived Views, and Skill References checks.
+- `harbor checkpoint --ci` is a strict read-only baseline gate for release/automation, and it does not auto-accept baseline.
 - `harbor doctor` does not write files, does not auto-lock, and does not auto-log.
 - `harbor workspace inspect` is a read-only workspace layout inspection command that reports canonical paths, legacy paths, Git tracking, generated views, and advisory.
 - `harbor workspace inspect` does not migrate, does not delete legacy files, and does not change write behavior (`workspace migrate` remains a future phase).
@@ -323,8 +326,17 @@ Notes:
 - `harbor stale` (text and JSON) does not include diary advisory.
 - `harbor stale --format json` and `harbor doctor --format json` emit deterministic machine-readable JSON (stdout contains JSON only).
 - `harbor stale --ci --format json` and `harbor doctor --ci --format json` always print a single JSON object for both pass and fail gates.
+- `harbor checkpoint --ci --format json` also always prints a single JSON object for both pass and fail gates.
 - JSON output is advisory read-only output and does not trigger fix/write/lock/log actions.
 - `--ci` changes exit-code semantics only when explicitly enabled: `0=pass`, `1=fail`, `2=argparse error`.
+- `checkpoint --ci` is a strict baseline gate (stricter than `stale/doctor --ci`) and blocks by default on:
+  - DDT failures
+  - missing/untracked functions
+  - drift (`Body changed, Contract static`)
+  - `contract_changed` / `body+contract_changed` when baseline is not accepted
+  - `confirmed_contract_impact`
+- in `checkpoint --ci`, `possible_contract_impact` remains advisory and is non-blocking.
+- `checkpoint --ci` is read-only: no file writes, no auto-refresh, and no auto-accept.
 - `stale --ci` blocks only on canonical `l2_readme` / `module_capsule` states `stale|unknown`; `l2_readme_export` remains advisory.
 - `doctor --ci` blocks only when `DoctorCheckResult.status == FAIL`; WARN/SKIP remain advisory.
 - CI mode is a gate/check/report surface and is not an auto-fix, auto-refresh, or auto-migration mechanism.

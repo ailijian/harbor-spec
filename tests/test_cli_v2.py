@@ -1,3 +1,4 @@
+import json
 import sys
 from io import StringIO
 from contextlib import redirect_stdout
@@ -126,6 +127,18 @@ def test_checkpoint_command_recognized(monkeypatch):
     assert "Harbor Checkpoint:" in out
     assert "Harbor Check Report:" in out
     assert "Contract Impact 分类：" not in out
+
+
+def test_checkpoint_ci_json_recognized(monkeypatch):
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
+    monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
+    out = run_cmd(["checkpoint", "--ci", "--format", "json"])
+    payload = json.loads(out)
+    assert payload["command"] == "checkpoint"
+    assert payload["ci"] is True
+    assert payload["status"] == "pass"
+    assert payload["writes_files"] is False
 
 
 def test_finish_command_recognized(monkeypatch):

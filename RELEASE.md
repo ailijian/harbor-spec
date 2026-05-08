@@ -241,6 +241,9 @@ harbor doctor
 harbor doctor --format json
 harbor doctor --ci
 harbor doctor --ci --format json
+
+harbor checkpoint --ci
+harbor checkpoint --ci --format json
 ```
 
 含义：
@@ -271,10 +274,20 @@ doctor --ci
   默认仅对 DoctorCheckResult.status == FAIL 执行阻断。
   WARN / SKIP 保持 advisory（不默认阻断）。
 
+checkpoint --ci
+  作为 strict baseline gate，默认阻断：
+  - DDT failure
+  - missing / untracked
+  - drift（Body changed, Contract static）
+  - contract_changed / body+contract_changed（baseline 未 accept）
+  - confirmed_contract_impact
+  possible_contract_impact 保持 advisory，不直接阻断。
+
 --format json + --ci
   stdout 始终输出单一 JSON 对象（pass/fail 都不混入人类文本）。
 
 CI Mode 是 gate/check/report，不是 auto-fix / auto-refresh / auto-migrate。
+checkpoint --ci 为只读 gate：不写文件，不自动刷新，不自动 accept。
 ```
 
 ---

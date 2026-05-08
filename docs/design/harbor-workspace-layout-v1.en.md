@@ -1396,6 +1396,20 @@ harbor doctor --ci / harbor doctor --ci --format json
   CI gate blocks by default only on DoctorCheckResult.status=FAIL.
   WARN/SKIP remain non-blocking advisory signals.
 
+Phase P1-1B (Checkpoint CI Mode MVP) addendum:
+
+harbor checkpoint --ci / harbor checkpoint --ci --format json
+  checkpoint --ci is a strict baseline gate (stricter than stale/doctor --ci).
+  it blocks by default on:
+    - DDT failures
+    - missing / untracked functions
+    - drift (Body changed, Contract static)
+    - contract_changed / body+contract_changed (baseline not accepted)
+    - confirmed_contract_impact
+  possible_contract_impact remains advisory and non-blocking.
+  decisions are based only on current StatusReport + current classifier report (no historical report dependency).
+  checkpoint --ci is read-only: no file writes, no auto-refresh, no auto-accept.
+
 with --format json + --ci, stdout is always a single JSON object (both pass/fail, no mixed human text).
 CI mode is gate/check/report only; it is not auto-fix, auto-refresh, or auto-migrate.
 ```

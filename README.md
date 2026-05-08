@@ -186,6 +186,7 @@ harbor doctor
 说明：
 - `harbor start`：开始任务前查看上下文状态。
 - `harbor checkpoint`：开发中执行 `status + check --fast`。
+- `harbor checkpoint --ci`：发布门禁/自动化场景下执行 strict baseline gate（只读，不自动 accept）。
 - `harbor finish --sync-context`：收尾时同步 changed L2 README 与 changed Module Capsule。
 - `harbor stale`：检查派生视图是否仍然新鲜。
 - `harbor doctor`：检查 Harbor workspace、技能引用、派生视图与配置健康。
@@ -202,6 +203,7 @@ harbor doctor
 - L2 README / Module Capsule：统一沉淀到 `.harbor/views/l2/**` 与 `.harbor/views/modules/**`
 - Workspace Diagnostics：提供 `harbor workspace inspect` 与 `harbor workspace migrate --dry-run`
 - JSON 输出：`harbor stale --format json` 与 `harbor doctor --format json` 提供机器可读结果
+- Checkpoint CI Mode MVP：新增 `harbor checkpoint --ci` 与 `harbor checkpoint --ci --format json`
 - Legacy Advisory：对 `specs/diary`、旧 config 与旧 project structure export 提供 advisory，而不是 silent drift
 - Contract Impact Classifier MVP：在 `harbor checkpoint` 中对变更做 Contract Impact 分类摘要（advisory / conservative / explainable）
 
@@ -292,8 +294,17 @@ harbor doctor --ci --format json
 - `harbor stale`（文本与 JSON）不会显示 diary advisory。
 - `harbor stale --format json` 与 `harbor doctor --format json` 输出稳定机器可读 JSON（stdout 仅 JSON）。
 - `harbor stale --ci --format json` 与 `harbor doctor --ci --format json` 在 pass/fail 下均只输出单一 JSON 对象（不混入人类文本）。
+- `harbor checkpoint --ci --format json` 在 pass/fail 下也只输出单一 JSON 对象（不混入人类文本）。
 - JSON 输出是 advisory read-only 视图，不会触发修复、写入或 lock/log。
 - `--ci` 仅在显式启用时改变 exit code 语义：`0=pass`、`1=fail`、`2=参数错误（argparse）`。
+- `checkpoint --ci` 是 strict baseline gate（比 `stale/doctor --ci` 更严格），默认阻断：
+  - DDT failure
+  - missing/untracked
+  - drift（Body changed, Contract static）
+  - contract_changed / body+contract_changed（baseline 未 accept）
+  - confirmed_contract_impact
+- `checkpoint --ci` 中 `possible_contract_impact` 保持 advisory，不直接阻断。
+- `checkpoint --ci` 只读，不会写文件，不会自动刷新派生视图，不会自动 accept baseline。
 - `stale --ci` 默认只阻断 canonical `l2_readme` / `module_capsule` 的 `stale|unknown`；`l2_readme_export` 仅 advisory。
 - `doctor --ci` 默认只阻断 `DoctorCheckResult.status == FAIL`；WARN/SKIP 作为 advisory 报告。
 - CI Mode 定位为 gate/check/report，不提供 auto-fix、auto-refresh、auto-migrate。

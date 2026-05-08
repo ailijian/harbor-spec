@@ -43,8 +43,11 @@ from harbor.core.doctor import (
 )
 from harbor.core.ci import (
     build_doctor_ci_result,
+    build_checkpoint_ci_result,
     build_stale_ci_result,
     ci_result_to_dict,
+    checkpoint_ci_result_to_dict,
+    format_checkpoint_ci_result,
     format_ci_result,
 )
 from harbor.core.workspace_inspect import (
@@ -184,6 +187,18 @@ def main():
         "checkpoint",
         help="Workflow facade: status + check --fast",
         description="Workflow facade command: run status + check --fast.",
+    )
+    p_checkpoint.add_argument(
+        "--ci",
+        action="store_true",
+        help="Enable CI gate mode with deterministic exit code semantics",
+    )
+    p_checkpoint.add_argument(
+        "--format",
+        type=str,
+        choices=["text", "json"],
+        default="text",
+        help="Output format for CI mode only: text (default) or json",
     )
     p_finish = sub.add_parser(
         "finish",
@@ -675,6 +690,38 @@ def main():
                     for ln in out_lines:
                         print(ln)
 
+    def _run_fast_ddt_for_ci():
+        scanner = DDTScanner()
+        bindings = scanner.scan_tests()
+        validator = DDTValidator()
+        return validator.validate(bindings)
+
+    def _empty_status_report():
+        return type(
+            "CheckpointStatusReport",
+            (),
+            {
+                "drift": [],
+                "modified": [],
+                "contract_changed": [],
+                "untracked": [],
+                "missing": [],
+                "counts": {"drift": 0, "modified": 0, "contract_changed": 0, "untracked": 0, "missing": 0},
+            },
+        )()
+
+    def _empty_ddt_report():
+        return type("CheckpointDDTReport", (), {"valid": [], "violations": [], "counts": {"valid": 0, "violations": 0}})()
+
+    def _collect_status_records_for_checkpoint_ci(rep):
+        records = []
+        records.extend(getattr(rep, "drift", []))
+        records.extend(getattr(rep, "modified", []))
+        records.extend(getattr(rep, "contract_changed", []))
+        records.extend(getattr(rep, "untracked", []))
+        records.extend(getattr(rep, "missing", []))
+        return records
+
     def _collect_changed_paths_from_status(rep):
         changed_paths = []
         changed_paths.extend([e.file_path for e in rep.drift])
@@ -934,11 +981,45 @@ def main():
         else:
             print(t("cli.start.dirty"))
     elif args.command == "checkpoint":
-        print(t("cli.checkpoint.title"))
-        rep, clean = _run_status()
-        if not clean:
-            _print_checkpoint_contract_impact(rep)
-        _run_check(fast=True)
+        if not getattr(args, "ci", False) and getattr(args, "format", "text") != "text":
+            parser.error("--format applies to CI mode only.")
+        if not getattr(args, "ci", False):
+            print(t("cli.checkpoint.title"))
+            rep, clean = _run_status()
+            if not clean:
+                _print_checkpoint_contract_impact(rep)
+            _run_check(fast=True)
+        else:
+            check_errors = []
+            status_report = _empty_status_report()
+            ddt_report = _empty_ddt_report()
+            records = []
+            try:
+                status_report = SyncEngine().check_status()
+                records = _collect_status_records_for_checkpoint_ci(status_report)
+            except Exception as ex:
+                check_errors.append(f"status_check_failed: {str(ex)}")
+            try:
+                ddt_report = _run_fast_ddt_for_ci()
+            except Exception as ex:
+                check_errors.append(f"ddt_check_failed: {str(ex)}")
+            try:
+                contract_impact_report = build_contract_impact_report(records)
+            except Exception as ex:
+                check_errors.append(f"contract_impact_failed: {str(ex)}")
+                contract_impact_report = build_contract_impact_report([])
+            ci_result = build_checkpoint_ci_result(
+                status_report=status_report,
+                ddt_report=ddt_report,
+                contract_impact_report=contract_impact_report,
+                check_errors=check_errors,
+            )
+            if args.format == "json":
+                print(json.dumps(checkpoint_ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
+            else:
+                print(format_checkpoint_ci_result(ci_result))
+            if ci_result.exit_code != 0:
+                raise SystemExit(ci_result.exit_code)
     elif args.command == "finish":
         print(t("cli.finish.title"))
         _run_status()

@@ -1392,6 +1392,20 @@ harbor doctor --ci / harbor doctor --ci --format json
   CI gate 默认仅阻断 DoctorCheckResult.status=FAIL。
   WARN / SKIP 默认不阻断。
 
+Phase P1-1B（Checkpoint CI Mode MVP）补充：
+
+harbor checkpoint --ci / harbor checkpoint --ci --format json
+  checkpoint --ci 是 strict baseline gate（比 stale/doctor --ci 更严格）。
+  默认阻断：
+    - DDT failure
+    - missing / untracked
+    - drift（Body changed, Contract static）
+    - contract_changed / body+contract_changed（baseline 未 accept）
+    - confirmed_contract_impact
+  possible_contract_impact 保持 advisory，不直接阻断。
+  仅基于当前 StatusReport + 当前 classifier report 判定，不读取历史报告。
+  checkpoint --ci 只读：不写文件，不自动 refresh，不自动 accept。
+
 --format json 与 --ci 组合时，stdout 始终是单一 JSON 对象（pass/fail 均不混入人类文本）。
 CI mode 为 gate/check/report，不提供 auto-fix、auto-refresh、auto-migrate。
 ```

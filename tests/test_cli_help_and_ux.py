@@ -40,6 +40,9 @@ def test_workflow_help_exposes_start_checkpoint_finish_accept():
 
     assert "Workflow facade" in out_start
     assert "Workflow facade" in out_checkpoint
+    assert "--ci" in out_checkpoint
+    assert "--format" in out_checkpoint
+    assert "CI mode only" in out_checkpoint
     assert "--sync-context" in out_finish
     assert "semantic alias of harbor lock" in out_accept
 
