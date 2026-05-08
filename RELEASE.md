@@ -584,11 +584,31 @@ harbor stale
 
 现在评估 canonical generated views，不把 optional exports 当成 canonical storage。
 
+canonical generated markdown views 现在统一带有 integrity frontmatter，包含：
+
+```text
+generated_by
+harbor_version
+view_type
+module
+generated_at
+generation_command
+stale_policy
+source_paths
+source_fingerprint
+contract_fingerprint
+generator_fingerprint
+```
+
+其中 `generated_at` 仅用于信息展示；stale 比较会忽略该字段，且在输入与生成内容不变时会复用旧值，避免每次重生成产生无意义 Git diff。
+
 ---
 
 ### 3.3 Module Capsule Behavior
 
-`module-card.md` 包含 deterministic fingerprint frontmatter。
+`module-card.md` 保留 deterministic capsule fingerprint 语义（`view_fingerprint`/`fingerprint`），作为 module capsule stale 主判定依据。
+
+`source_fingerprint` 属于 integrity metadata，不替代 capsule fingerprint 主语义。
 
 ```powershell
 harbor module stale

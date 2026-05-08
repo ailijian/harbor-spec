@@ -284,3 +284,17 @@ def test_build_doctor_report_is_read_only(monkeypatch):
     monkeypatch.setattr(Path, "write_text", _write_forbidden, raising=False)
     report = doctor.build_doctor_report(scope="changed modules", modules=["harbor/core"])
     assert len(report.checks) == 5
+
+
+def test_derived_views_check_warns_when_frontmatter_missing(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    l2 = tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md"
+    card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
+    l2.parent.mkdir(parents=True, exist_ok=True)
+    card.parent.mkdir(parents=True, exist_ok=True)
+    l2.write_text("# plain body\n", encoding="utf-8")
+    card.write_text("# plain body\n", encoding="utf-8")
+    monkeypatch.setattr(doctor, "check_module_derived_views_stale", lambda module: _sample_summary(module, stale=False))
+    result = doctor.run_derived_views_check(["harbor/core"])
+    assert result.status == doctor.WARN
+    assert any("frontmatter unknown" in d for d in result.details)

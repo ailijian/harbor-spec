@@ -6,8 +6,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import yaml
-
+from harbor.core.context_integrity import (
+    build_context_integrity_metadata,
+    compose_markdown_with_frontmatter,
+    extract_integrity_fingerprints,
+)
 from harbor.core.storage import HarborDB
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
 
@@ -273,20 +276,6 @@ def compute_module_fingerprint(context: Dict[str, Any]) -> str:
     return hashlib.sha256(stable.encode("utf-8")).hexdigest()
 
 
-def build_module_card_frontmatter(context: Dict[str, Any]) -> str:
-    contracts = _stable_contract_rows(context.get("contracts") or [])
-    symbols = _sort_unique([row["symbol"] for row in contracts])
-    data = {
-        "harbor_capsule_version": 1,
-        "module": normalize_module_path(str(context.get("module") or "")),
-        "fingerprint": compute_module_fingerprint(context),
-        "source_files": _sort_unique([_normalize_rel_path(str(p)) for p in (context.get("key_files") or [])]),
-        "contracts": symbols,
-    }
-    frontmatter = yaml.safe_dump(data, allow_unicode=True, sort_keys=False).strip()
-    return f"---\n{frontmatter}\n---\n\n"
-
-
 def read_capsule_fingerprint(module_card_path: Path) -> Optional[str]:
     if not module_card_path.exists():
         return None
@@ -294,21 +283,8 @@ def read_capsule_fingerprint(module_card_path: Path) -> Optional[str]:
         text = module_card_path.read_text(encoding="utf-8")
     except Exception:
         return None
-    lines = text.splitlines()
-    if len(lines) < 3 or lines[0].strip() != "---":
-        return None
-    end_idx = -1
-    for i in range(1, len(lines)):
-        if lines[i].strip() == "---":
-            end_idx = i
-            break
-    if end_idx < 0:
-        return None
-    try:
-        payload = yaml.safe_load("\n".join(lines[1:end_idx])) or {}
-    except Exception:
-        return None
-    fp = str(payload.get("fingerprint") or "").strip()
+    fp_payload = extract_integrity_fingerprints(text)
+    fp = str(fp_payload.get("view_fingerprint") or fp_payload.get("fingerprint") or "").strip()
     return fp or None
 
 
@@ -458,8 +434,7 @@ def generate_module_card(context: Dict[str, Any]) -> str:
             "",
         ]
     )
-    body = "\n".join(lines)
-    return build_module_card_frontmatter(context) + body
+    return "\n".join(lines)
 
 
 def generate_review_checklist(context: Dict[str, Any]) -> str:
@@ -630,9 +605,38 @@ def write_module_capsule(
     canonical_dir.mkdir(parents=True, exist_ok=True)
     previews = preview_module_capsule(context)
     canonical_paths: List[Path] = []
+    module_norm = normalize_module_path(str(context.get("module") or ""))
+    source_paths = _sort_unique([_normalize_rel_path(str(p)) for p in (context.get("key_files") or [])])
+    contract_records = context.get("contracts") or []
+    generation_command = f"harbor module seal {module_norm} --write"
+    module_fp = compute_module_fingerprint(context)
+
     for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
         path = canonical_dir / name
-        path.write_text(previews[name], encoding="utf-8")
+        view_type = {
+            "module-card.md": "module_card",
+            "review-checklist.md": "review_checklist",
+            "debug-playbook.md": "debug_playbook",
+        }[name]
+        metadata = build_context_integrity_metadata(
+            view_type=view_type,
+            module=module_norm,
+            generation_command=generation_command,
+            source_paths=source_paths,
+            contract_records=contract_records,
+            repo_root=(root or Path.cwd()).resolve(),
+        )
+        if name == "module-card.md":
+            metadata["view_fingerprint"] = module_fp
+            metadata["fingerprint"] = module_fp
+        previous = ""
+        if path.exists():
+            try:
+                previous = path.read_text(encoding="utf-8")
+            except Exception:
+                previous = ""
+        rendered = compose_markdown_with_frontmatter(previous, metadata, previews[name])
+        path.write_text(rendered, encoding="utf-8")
         canonical_paths.append(path)
 
     exported_paths: List[Path] = []
@@ -640,7 +644,30 @@ def write_module_capsule(
         export_dir.mkdir(parents=True, exist_ok=True)
         for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
             export_path = export_dir / name
-            export_path.write_text(previews[name], encoding="utf-8")
+            view_type = {
+                "module-card.md": "module_card",
+                "review-checklist.md": "review_checklist",
+                "debug-playbook.md": "debug_playbook",
+            }[name]
+            metadata = build_context_integrity_metadata(
+                view_type=view_type,
+                module=module_norm,
+                generation_command=generation_command,
+                source_paths=source_paths,
+                contract_records=contract_records,
+                repo_root=(root or Path.cwd()).resolve(),
+            )
+            if name == "module-card.md":
+                metadata["view_fingerprint"] = module_fp
+                metadata["fingerprint"] = module_fp
+            previous = ""
+            if export_path.exists():
+                try:
+                    previous = export_path.read_text(encoding="utf-8")
+                except Exception:
+                    previous = ""
+            rendered = compose_markdown_with_frontmatter(previous, metadata, previews[name])
+            export_path.write_text(rendered, encoding="utf-8")
             exported_paths.append(export_path)
 
     return ModuleCapsuleWriteResult(

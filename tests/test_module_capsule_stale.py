@@ -143,6 +143,19 @@ def test_stale_when_fingerprint_mismatch(tmp_path: Path, monkeypatch):
     assert result["reason"] == "fingerprint mismatch"
 
 
+def test_capsule_stale_uses_view_fingerprint_not_source_fingerprint(tmp_path: Path, monkeypatch):
+    idx = _write_index(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    ctx = collect_module_context("harbor/core", index_path=idx)
+    write_module_capsule(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
+    card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
+    text = card.read_text(encoding="utf-8")
+    text = text.replace('source_fingerprint: "sha256:', 'source_fingerprint: "sha256:deadbeef')
+    card.write_text(text, encoding="utf-8")
+    result = check_module_capsule_stale(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
+    assert result["status"] == "up_to_date"
+
+
 def test_unknown_module_is_friendly_stale(tmp_path: Path):
     ctx = {
         "module": "harbor/unknown",

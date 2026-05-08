@@ -5,11 +5,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Set
 
+from harbor.core.context_integrity import parse_frontmatter
 from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.stale import ModuleStaleSummary, check_module_derived_views_stale
 from harbor.core.storage import HarborDB
 from harbor.core.sync import SyncEngine
-from harbor.core.workspace import load_workspace_config, parse_workspace_export_options
+from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
 from harbor.utils.i18n import t
 
 PASS = "PASS"
@@ -218,6 +219,7 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
     stale_details: List[str] = []
     suggestions: List[str] = []
     status = PASS
+    workspace_paths = load_workspace_paths(Path.cwd(), enforce_write_safety=True)
     for module in modules:
         summary: ModuleStaleSummary = check_module_derived_views_stale(module)
         for view_name, view_result in (
@@ -236,6 +238,27 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
             stale_details.append(f"{summary.module} {view_name} {detail_status}: {reason}")
             if view_result.suggested_command:
                 suggestions.append(view_result.suggested_command)
+
+        module_rel = summary.module.strip("/")
+        l2_path = workspace_paths.l2_view_root / module_rel / "README.md"
+        capsule_dir = workspace_paths.modules_view_root / module_rel
+        frontmatter_checks = [
+            (l2_path, f"{summary.module} {t('cli.stale.l2')}"),
+            (capsule_dir / "module-card.md", f"{summary.module} module-card.md"),
+            (capsule_dir / "review-checklist.md", f"{summary.module} review-checklist.md"),
+            (capsule_dir / "debug-playbook.md", f"{summary.module} debug-playbook.md"),
+        ]
+        for check_path, label in frontmatter_checks:
+            if not check_path.exists():
+                continue
+            parsed = _parse_generated_frontmatter_safely(check_path)
+            if parsed is None:
+                status = _merge_status(status, WARN)
+                stale_details.append(f"{label} frontmatter unknown: missing or parse failed")
+                continue
+            if not parsed:
+                status = _merge_status(status, WARN)
+                stale_details.append(f"{label} frontmatter unknown: empty metadata")
 
     legacy_meta = Path(".harbor") / "l2_meta.json"
     if legacy_meta.exists():
@@ -461,3 +484,12 @@ def _unique(values: List[str]) -> List[str]:
         seen.add(value)
         result.append(value)
     return result
+
+
+def _parse_generated_frontmatter_safely(path: Path) -> Optional[dict]:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except Exception:
+        return None
+    parsed = parse_frontmatter(text)
+    return parsed

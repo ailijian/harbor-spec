@@ -353,3 +353,16 @@ def test_docs_module_write_rejects_explicit_unsafe_module(monkeypatch, unsafe_mo
     with pytest.raises(ValueError, match="Unsafe module is not allowed"):
         run_cmd(["docs", "--module", unsafe_module, "--write"])
     assert calls["write"] == 0
+
+
+def test_docs_module_write_canonical_has_frontmatter_export_plain(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# Module: {module}\n")
+    out = run_cmd(["docs", "--module", "harbor/core", "--write"])
+    canonical = tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md"
+    exported = tmp_path / "harbor" / "core" / "README.md"
+    assert "Updated:" in out
+    assert canonical.exists()
+    assert exported.exists()
+    assert canonical.read_text(encoding="utf-8").startswith("---\n")
+    assert not exported.read_text(encoding="utf-8").startswith("---\n")

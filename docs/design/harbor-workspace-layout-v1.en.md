@@ -1,7 +1,7 @@
 # Harbor Workspace Layout V1
 
 > Status: Draft  
-> Target version: v1.3.1+  
+> Target version: v1.3.0  
 > Design goal: unify all Harbor-owned files under a clear, structured, maintainable workspace layout.
 
 ---
@@ -110,6 +110,10 @@ debug-playbook.md
 are generated or derived views.
 
 They are useful for humans and AI agents, but they are not the source of truth.
+
+Starting from v1.3.0, canonical markdown generated views under `.harbor/views/**` include context integrity frontmatter (source paths, fingerprints, generation command, Harbor version, and stale policy).
+
+`generated_at` is informational only; stale comparison ignores it, and unchanged inputs should retain the previous value to avoid meaningless Git diffs.
 
 The source of truth remains:
 

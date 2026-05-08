@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from harbor.core.l2 import collect_all_indexed_modules, infer_module_from_path
+from harbor.core.context_integrity import build_context_integrity_metadata, compose_markdown_with_frontmatter
 from harbor.core.module_capsule import normalize_module_path
 from harbor.core.module_skill import normalize_skill_slug
 from harbor.core.storage import HarborDB
@@ -661,11 +662,46 @@ def _resolve_docs_export_project_structure_path(root: Path, config: Optional[Dic
 
 def write_project_structure(context: ProjectStructureContext, root: Path) -> ProjectStructureWriteResult:
     root = Path(root).resolve()
-    markdown = generate_project_structure_markdown(context)
+    body = generate_project_structure_markdown(context)
+
+    idx = _load_index(root / ".harbor" / "cache" / "l3_index.json")
+    source_paths: List[str] = []
+    for fp in (idx.get("files") or {}).keys():
+        rel = _to_project_relative_path(str(fp), root)
+        if rel:
+            source_paths.append(rel)
+    if not source_paths:
+        source_paths = _collect_fallback_files(root)
+
+    contract_records: List[Dict[str, Any]] = []
+    for area in context.key_areas:
+        contract_records.append(
+            {
+                "symbol": f"area:{area.area}",
+                "file": area.area,
+                "scope": "project",
+                "strictness": str(area.indexed_contracts_count),
+            }
+        )
+    metadata = build_context_integrity_metadata(
+        view_type="project_structure",
+        module=None,
+        generation_command="harbor project structure --write",
+        source_paths=source_paths,
+        contract_records=contract_records,
+        repo_root=root,
+    )
 
     workspace_paths = load_workspace_paths(root, enforce_write_safety=True)
     canonical_path = workspace_paths.project_structure_path
     canonical_path.parent.mkdir(parents=True, exist_ok=True)
+    previous = ""
+    if canonical_path.exists():
+        try:
+            previous = canonical_path.read_text(encoding="utf-8")
+        except Exception:
+            previous = ""
+    markdown = compose_markdown_with_frontmatter(previous, metadata, body)
     canonical_path.write_text(markdown, encoding="utf-8")
 
     loaded = load_workspace_config(root)

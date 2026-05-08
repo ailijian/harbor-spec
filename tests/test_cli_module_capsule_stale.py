@@ -9,6 +9,7 @@ import pytest
 
 import harbor.cli.main as cli_main
 from harbor.cli.main import main
+from harbor.core.module_capsule import read_capsule_fingerprint
 
 
 @pytest.fixture(autouse=True)
@@ -118,7 +119,9 @@ def test_module_stale_single_mismatch(tmp_path: Path, monkeypatch):
     _write_index(tmp_path)
     run_cmd(["module", "seal", "harbor/core", "--write"])
     card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
-    card.write_text(card.read_text(encoding="utf-8").replace("fingerprint:", "fingerprint: deadbeef"), encoding="utf-8")
+    old_fp = read_capsule_fingerprint(card)
+    assert old_fp
+    card.write_text(card.read_text(encoding="utf-8").replace(old_fp, "deadbeef"), encoding="utf-8")
     out = run_cmd(["module", "stale", "harbor/core"])
     assert "- Status: stale" in out
     assert "- Reason: fingerprint mismatch" in out

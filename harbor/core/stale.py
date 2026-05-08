@@ -5,6 +5,7 @@ from pathlib import Path
 import re
 from typing import List, Optional
 
+from harbor.core.context_integrity import content_without_generated_at_for_compare, strip_frontmatter
 from harbor.core.l2 import L2Generator
 from harbor.core.module_capsule import (
     check_module_capsule_stale,
@@ -52,12 +53,11 @@ class ModuleStaleSummary:
 
 
 def _normalize_l2_markdown_for_stale(text: str) -> str:
-    lines = []
-    for raw in (text or "").replace("\r\n", "\n").replace("\r", "\n").split("\n"):
-        if raw.startswith("Generated At: "):
-            continue
-        lines.append(raw)
-    return "\n".join(lines).strip()
+    return content_without_generated_at_for_compare(text)
+
+
+def _normalize_l2_body_for_export_compare(text: str) -> str:
+    return _normalize_l2_markdown_for_stale(strip_frontmatter(text))
 
 
 def check_l2_readme_stale(module: str, *, generator: Optional[L2Generator] = None) -> ViewStaleResult:
@@ -93,7 +93,7 @@ def check_l2_readme_stale(module: str, *, generator: Optional[L2Generator] = Non
             suggested_command=suggest,
         )
 
-    if _normalize_l2_markdown_for_stale(current) != _normalize_l2_markdown_for_stale(expected):
+    if _normalize_l2_body_for_export_compare(current) != _normalize_l2_body_for_export_compare(expected):
         return ViewStaleResult(
             view="L2 README",
             status="stale",
@@ -163,7 +163,7 @@ def check_l2_readme_export_stale(
             suggested_command=suggest,
         )
 
-    if _normalize_l2_markdown_for_stale(export_text) != _normalize_l2_markdown_for_stale(canonical_text):
+    if _normalize_l2_body_for_export_compare(export_text) != _normalize_l2_body_for_export_compare(canonical_text):
         return ViewStaleResult(
             view="L2 README Export",
             status="stale",

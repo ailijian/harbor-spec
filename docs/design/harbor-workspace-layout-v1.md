@@ -1,7 +1,7 @@
 # Harbor Workspace Layout V1｜中文设计版
 
 > 状态：Draft  
-> 目标版本：v1.3.1+  
+> 目标版本：v1.3.0  
 > 设计目标：统一管理 Harbor 产生和维护的所有文件，让配置、策略、状态、派生视图、Diary、报告、导出物和外部工具集成边界清晰、结构稳定、易于维护。
 
 ---
@@ -108,6 +108,10 @@ debug-playbook.md
 ```
 
 它们对人类和 AI agent 很有帮助，但不是事实源。
+
+v1.3.0 起，`.harbor/views/**` 下 canonical markdown generated views 统一带有 context integrity frontmatter（包含 source paths、fingerprints、generation command、harbor version、stale policy）。
+
+其中 `generated_at` 仅为信息字段；stale 比较应忽略该字段，且输入不变时应复用旧值以避免无意义 Git diff。
 
 事实源仍然是：
 

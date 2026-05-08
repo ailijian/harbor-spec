@@ -70,7 +70,21 @@ def test_project_structure_write_updates_canonical_path_by_default(tmp_path: Pat
     assert "- .harbor/views/project-structure.md" in out
     assert target.exists()
     assert not (tmp_path / "docs" / "harbor" / "project-structure.md").exists()
-    assert "# Project Structure" in target.read_text(encoding="utf-8")
+    content = target.read_text(encoding="utf-8")
+    assert content.startswith("---\n")
+    assert 'view_type: "project_structure"' in content
+    assert "# Project Structure" in content
+
+
+def test_project_structure_repeat_write_keeps_generated_at_when_no_change(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_index(tmp_path)
+    _ = run_cmd(["project", "structure", "--write"])
+    target = tmp_path / ".harbor" / "views" / "project-structure.md"
+    first = target.read_text(encoding="utf-8")
+    _ = run_cmd(["project", "structure", "--write"])
+    second = target.read_text(encoding="utf-8")
+    assert first == second
 
 
 def test_project_structure_write_dual_writes_when_docs_export_enabled(tmp_path: Path, monkeypatch):

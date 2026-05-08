@@ -221,6 +221,8 @@ harbor docs --all --write
 - canonical L2 README 路径为 `.harbor/views/l2/<module>/README.md`。
 - 默认会额外导出 `<module>/README.md`（`l2.export.module_readme.enabled=true`）。
 - `l2.export.module_readme.enabled=false` 时仅写 canonical L2 README。
+- canonical L2 README 现在带有 integrity frontmatter（含 `source_paths`/fingerprints/生成命令等元数据）。
+- export `<module>/README.md` 默认保持人类可读正文，不附加 integrity frontmatter（仅 advisory export，不是 canonical source）。
 - L2 metadata canonical 路径为 `.harbor/views/l2/_meta.json`。
 - legacy `.harbor/l2_meta.json` 仅读取兼容，不再作为写入目标。
 - `--module`、`--changed`、`--all` 三种模式互斥。
@@ -251,6 +253,8 @@ harbor doctor --format json
 说明：
 - Module Capsule 是 derived maintenance view，不是 source of truth。
 - `module seal` 默认 preview，不写文件；仅 `--write` 会写 capsule。
+- `.harbor/views/modules/<module>/module-card.md`、`review-checklist.md`、`debug-playbook.md` 现在都包含 integrity frontmatter。
+- Module Capsule stale 主判定仍使用 capsule fingerprint（`view_fingerprint`/`fingerprint`），`source_fingerprint` 仅用于 integrity metadata。
 - `module stale` 只读检查，不写文件。
 - `harbor stale` 是顶层只读聚合检查，同时检查 L2 README 与 Module Capsule。
 - `harbor stale` 默认等价 `harbor stale --changed`。
@@ -292,6 +296,7 @@ harbor project structure --write
 - `.harbor/` 是 Harbor canonical workspace，不应在 `.gitignore` 中被整目录忽略。
 - 推荐仅忽略本地运行态目录（如 `.harbor/state/`、`.harbor/cache/`、`.harbor/exports/` 与本地临时 reports）。
 - `.harbor/views/project-structure.md` 是 canonical project structure view；`docs/harbor` 仅是可选导出位，不是 canonical storage。
+- canonical generated views frontmatter 中 `generated_at` 仅信息用途；stale 比较会忽略该字段，且输入不变时会复用旧值避免无意义 Git diff。
 - `docs/design/` 用于人类编写的设计文档，应该保持可追踪（trackable）。
 - Project Structure View 是 derived view，不是 Project Rules。
 - 它不替代 `AGENTS.md`、L2 README、Module Capsule 或源代码本身。

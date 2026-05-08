@@ -3,6 +3,7 @@ from pathlib import Path
 
 from harbor.core.module_capsule import (
     collect_module_context,
+    read_capsule_fingerprint,
     write_module_capsule,
 )
 from harbor.core.module_skill import (
@@ -91,7 +92,9 @@ def test_check_capsule_ready_stale_capsule(tmp_path: Path, monkeypatch):
     context = collect_module_context("harbor/core", index_path=idx)
     write_module_capsule(context, output_root=tmp_path / ".harbor" / "views" / "modules")
     module_card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
-    module_card.write_text(module_card.read_text(encoding="utf-8").replace("fingerprint:", "fingerprint: deadbeef"), encoding="utf-8")
+    old_fp = read_capsule_fingerprint(module_card)
+    assert old_fp
+    module_card.write_text(module_card.read_text(encoding="utf-8").replace(old_fp, "deadbeef"), encoding="utf-8")
     result = check_capsule_ready_for_skill("harbor/core", output_root=tmp_path / ".harbor" / "views" / "modules", context=context)
     assert result["status"] == "stale_capsule"
     assert result["reason"] == "fingerprint mismatch"

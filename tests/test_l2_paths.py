@@ -25,6 +25,11 @@ def test_l2_write_writes_canonical_and_module_readme_export_by_default(tmp_path:
     assert (tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md").exists()
     assert (tmp_path / "harbor" / "core" / "README.md").exists()
     assert (tmp_path / ".harbor" / "views" / "l2" / "_meta.json").exists()
+    canonical = (tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md").read_text(encoding="utf-8")
+    exported = (tmp_path / "harbor" / "core" / "README.md").read_text(encoding="utf-8")
+    assert canonical.startswith("---\n")
+    assert 'view_type: "l2_readme"' in canonical
+    assert not exported.startswith("---\n")
 
 
 def test_l2_export_module_readme_disabled_writes_only_canonical(tmp_path: Path, monkeypatch):
@@ -40,6 +45,8 @@ def test_l2_export_module_readme_disabled_writes_only_canonical(tmp_path: Path, 
         (tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md").as_posix(),
     ]
     assert (tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md").exists()
+    canonical = (tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md").read_text(encoding="utf-8")
+    assert canonical.startswith("---\n")
     assert not (tmp_path / "harbor" / "core" / "README.md").exists()
 
 
@@ -109,3 +116,14 @@ def test_normalize_indexed_module_candidate_maps_repo_absolute_file_path(tmp_pat
     abs_file = (tmp_path / "harbor" / "core" / "l2.py").resolve()
     module = normalize_indexed_module_candidate(str(abs_file), repo_root=tmp_path.resolve())
     assert module == "harbor/core"
+
+
+def test_l2_repeat_write_keeps_canonical_content_when_body_unchanged(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    gen = L2Generator()
+    _ = gen.write("harbor/core", "# Module: harbor/core\n", force=True)
+    canonical = tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md"
+    first = canonical.read_text(encoding="utf-8")
+    _ = gen.write("harbor/core", "# Module: harbor/core\n", force=True)
+    second = canonical.read_text(encoding="utf-8")
+    assert first == second

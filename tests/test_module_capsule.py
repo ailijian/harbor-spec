@@ -137,11 +137,12 @@ def test_write_module_capsule_writes_three_files(tmp_path: Path):
     assert names == ["module-card.md", "review-checklist.md", "debug-playbook.md"]
     for p in written:
         assert p.exists()
+        assert p.read_text(encoding="utf-8").startswith("---\n")
     assert result.exported_paths == []
     card = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core" / "module-card.md"
     card_text = card.read_text(encoding="utf-8")
-    assert card_text.startswith("---\n")
     assert "fingerprint:" in card_text
+    assert "view_fingerprint:" in card_text
     assert read_capsule_fingerprint(card) == compute_module_fingerprint(ctx)
 
 

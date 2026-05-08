@@ -211,3 +211,8 @@ def test_write_project_structure_returns_canonical_first(tmp_path: Path):
     assert result.canonical_path == (tmp_path / ".harbor" / "views" / "project-structure.md").resolve()
     assert result.exported_paths == []
     assert result.canonical_path.exists()
+    text = result.canonical_path.read_text(encoding="utf-8")
+    assert text.startswith("---\n")
+    assert 'harbor_version: "1.3.0"' in text
+    assert 'view_type: "project_structure"' in text
+    assert "source_path_count:" in text

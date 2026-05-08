@@ -146,6 +146,25 @@ def test_l2_export_ok_when_canonical_up_to_date_and_export_matches(tmp_path: Pat
     assert summary.l2_readme_export.status == "up_to_date"
 
 
+def test_l2_export_ok_when_canonical_has_frontmatter_and_export_is_plain_body(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_index(tmp_path)
+    _write_l2_export_config(tmp_path, enabled=True)
+    canonical = tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md"
+    exported = tmp_path / "harbor" / "core" / "README.md"
+    canonical.parent.mkdir(parents=True, exist_ok=True)
+    exported.parent.mkdir(parents=True, exist_ok=True)
+    canonical.write_text(
+        '---\nview_type: "l2_readme"\nsource_fingerprint: "sha256:x"\ncontract_fingerprint: "sha256:y"\ngenerator_fingerprint: "sha256:z"\ngenerated_at: "2026-01-01T00:00:00Z"\n---\n\n# Module: harbor/core\n',
+        encoding="utf-8",
+    )
+    exported.write_text("# Module: harbor/core\n", encoding="utf-8")
+    monkeypatch.setattr("harbor.core.stale.L2Generator.generate", lambda self, module: "# Module: harbor/core\n")
+    summary = check_module_derived_views_stale("harbor/core")
+    assert summary.l2_readme.status == "up_to_date"
+    assert summary.l2_readme_export.status == "up_to_date"
+
+
 def test_l2_export_warn_when_canonical_up_to_date_but_export_missing(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)

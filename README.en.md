@@ -253,6 +253,8 @@ Notes:
 - Canonical L2 README path is `.harbor/views/l2/<module>/README.md`.
 - `<module>/README.md` remains an optional export target by default (`l2.export.module_readme.enabled=true`).
 - When `l2.export.module_readme.enabled=false`, only canonical L2 README is written.
+- Canonical L2 README now includes integrity frontmatter (`source_paths`, fingerprints, generation command, and related metadata).
+- Export `<module>/README.md` stays plain human-readable body by default without integrity frontmatter (advisory export, not canonical source).
 - L2 metadata canonical path is `.harbor/views/l2/_meta.json`.
 - Legacy `.harbor/l2_meta.json` remains read-compatible but is no longer a write target.
 - `--module`, `--changed`, and `--all` are mutually exclusive modes.
@@ -283,6 +285,8 @@ harbor doctor --format json
 Notes:
 - Module Capsule is a derived maintenance view, not a source of truth.
 - `module seal` defaults to preview; only `--write` writes capsule files.
+- `.harbor/views/modules/<module>/module-card.md`, `review-checklist.md`, and `debug-playbook.md` now include integrity frontmatter.
+- Module Capsule stale keeps capsule fingerprint semantics (`view_fingerprint` / `fingerprint`) as the primary decision signal; `source_fingerprint` is metadata only.
 - `module stale` is read-only and never writes files.
 - `harbor stale` is a top-level read-only aggregate check for L2 README + Module Capsule.
 - `harbor stale` defaults to `harbor stale --changed`.
@@ -324,6 +328,7 @@ Notes:
 - `.harbor/` is the canonical Harbor workspace and should not be ignored as a whole in `.gitignore`.
 - Prefer ignoring only local runtime paths (for example: `.harbor/state/`, `.harbor/cache/`, `.harbor/exports/`, and local-only reports).
 - `.harbor/views/project-structure.md` is the canonical project structure view; `docs/harbor` is an optional export destination, not canonical storage.
+- In canonical generated views, `generated_at` is informational; stale comparison ignores it, and unchanged inputs keep the previous value to avoid meaningless Git diffs.
 - `docs/design/` is for human-authored design documents and should remain trackable.
 - Project Structure View is a derived project-level view, not Project Rules.
 - It does not replace `AGENTS.md`, L2 README, Module Capsule, or source code.
