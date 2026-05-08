@@ -157,7 +157,6 @@ Source: .harbor/cache/l3_index.json
 | harbor.core.decorator.DecoratorEngine.apply | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.audit | — | standard | ⚪ Missing |
 | harbor.core.doctor.build_doctor_report | — | standard | ⚪ Missing |
-| harbor.core.module_capsule.build_module_card_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.build_prompt | — | standard | ⚪ Missing |
 | harbor.core.workspace.build_workspace_paths | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.canonical_readme_path | — | standard | ⚪ Missing |

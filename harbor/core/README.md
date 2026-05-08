@@ -158,7 +158,6 @@
 | harbor.core.decorator.DecoratorEngine.apply | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.audit | — | standard | ⚪ Missing |
 | harbor.core.doctor.build_doctor_report | — | standard | ⚪ Missing |
-| harbor.core.module_capsule.build_module_card_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.build_prompt | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.build_workspace_inspect_report | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.build_workspace_migrate_dry_run_report | — | standard | ⚪ Missing |
