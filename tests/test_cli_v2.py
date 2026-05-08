@@ -125,6 +125,7 @@ def test_checkpoint_command_recognized(monkeypatch):
     out = run_cmd(["checkpoint"])
     assert "Harbor Checkpoint:" in out
     assert "Harbor Check Report:" in out
+    assert "Contract Impact 分类：" not in out
 
 
 def test_finish_command_recognized(monkeypatch):
@@ -201,6 +202,31 @@ def test_checkpoint_does_not_trigger_semantic_audit(monkeypatch):
     out = run_cmd(["checkpoint"])
     assert "Harbor Checkpoint:" in out
     assert "Harbor Check Report:" in out
+
+
+def test_checkpoint_prints_contract_impact_summary_when_dirty(monkeypatch):
+    dirty = SimpleNamespace(
+        counts={"drift": 0, "contract_changed": 1, "modified": 0, "untracked": 0, "missing": 0},
+        drift=[],
+        contract_changed=[
+            SimpleNamespace(
+                id="harbor.core.stale.stale_report_to_dict",
+                name="stale_report_to_dict",
+                file_path="harbor/core/stale.py",
+                change_type="Contract Changed",
+                details="Contract updated",
+            )
+        ],
+        modified=[],
+        untracked=[],
+        missing=[],
+    )
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: dirty)
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
+    monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
+    out = run_cmd(["checkpoint"])
+    assert "Contract Impact 分类：" in out
+    assert "cli_json_output" in out
 
 
 def test_finish_does_not_auto_run_docs_log_lock(monkeypatch):

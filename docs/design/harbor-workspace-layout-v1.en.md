@@ -1481,6 +1481,20 @@ External tool files are export targets, not canonical Harbor storage.
 Human design docs live under docs/design, not .harbor.
 ```
 
+### Invariant 7
+
+```text
+Contract Impact Classifier in checkpoint is advisory, conservative, and explainable.
+```
+
+Contract Impact Classifier (P0-3) helps identify likely contract-surface changes and does not enforce blocking behavior.
+
+Boundaries:
+
+- `confirmed_contract_impact` means a contract-surface change is confirmed; it does not mean a bug or a breaking change.
+- `possible_contract_impact` is the default conservative level; public CLI, JSON output, write-target, generated-view-format, and source-of-truth rule changes should not be easily downgraded to no impact.
+- Clean checkpoint output (no drift/modified/contract_changed/untracked/missing) should stay low-noise and avoid verbose classifier blocks.
+
 ---
 
 ## 15. Recommended Initial `.gitignore`

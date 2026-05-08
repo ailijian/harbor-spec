@@ -337,6 +337,16 @@ v1.3.0 文档规则补充明确：
 - `Canonical wins` 仅用于 canonical artifact 与 legacy/export copy 冲突，不用于 generated views 覆盖 contracts、DDT/tests 或 implementation。
 - 冲突必须按 `semantic drift` / `contract gap` 标记并通过测试/DDT/人工确认裁决，不做静默自动裁决。
 
+### 1.10 Contract Impact Classifier MVP (P0-3)
+
+v1.3.0 新增 Contract Impact Classifier MVP（checkpoint advisory）：
+
+- 在 `harbor checkpoint` 输出中新增 Contract Impact 分类摘要。
+- 分类级别：`no_contract_impact` / `possible_contract_impact` / `confirmed_contract_impact` / `unknown`。
+- `confirmed_contract_impact` 表示确认存在 contract surface 变化，不表示 bug 或 breaking change。
+- `possible_contract_impact` 作为默认保守分类；对 public CLI、JSON output、write target、generated view format、source-of-truth rules 相关变化不会轻易归入 no impact。
+- classifier 语义为 advisory / conservative / explainable，不替代人工评审、DDT 或语义审计。
+
 ---
 
 ## 2. 新增能力

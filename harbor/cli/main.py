@@ -51,6 +51,10 @@ from harbor.core.workspace_migrate import (
     format_workspace_migrate_report,
     workspace_migrate_report_to_dict,
 )
+from harbor.core.contract_impact import (
+    build_contract_impact_report,
+    format_contract_impact_report,
+)
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -547,6 +551,20 @@ def main():
                 print(f"  ! {e.id}")
         return rep, False
 
+    def _print_checkpoint_contract_impact(rep):
+        records = []
+        records.extend(getattr(rep, "drift", []))
+        records.extend(getattr(rep, "modified", []))
+        records.extend(getattr(rep, "contract_changed", []))
+        records.extend(getattr(rep, "untracked", []))
+        records.extend(getattr(rep, "missing", []))
+        if not records:
+            return
+        report = build_contract_impact_report(records)
+        print("")
+        print(format_contract_impact_report(report))
+        print(t("cli.contract_impact.advisory_note"))
+
     def _run_check(*, fast=False, module=None, func=None, diff_only=True, debug=False, output_format="jsonl"):
         scanner = DDTScanner()
         bindings = scanner.scan_tests()
@@ -901,7 +919,9 @@ def main():
             print(t("cli.start.dirty"))
     elif args.command == "checkpoint":
         print(t("cli.checkpoint.title"))
-        _run_status()
+        rep, clean = _run_status()
+        if not clean:
+            _print_checkpoint_contract_impact(rep)
         _run_check(fast=True)
     elif args.command == "finish":
         print(t("cli.finish.title"))

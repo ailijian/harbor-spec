@@ -235,6 +235,7 @@ Key semantics:
 - JSON output is intended for scripts, CI preparation, IDE panels, and future automation integrations.
 - MVP JSON output does not change current exit-code behavior; `--ci` will be introduced separately.
 - `harbor accept` is a semantic alias of `harbor lock`, but it is not part of the default facade flow.
+- Contract Impact Classifier MVP: `harbor checkpoint` includes a Contract Impact classification summary (advisory / conservative / explainable).
 
 ### Source of Truth Priority and Conflict Handling
 
@@ -249,6 +250,13 @@ Key boundaries:
 - `.harbor/views/**` must not override contracts, DDT/tests, or source implementation; generated context remains advisory, not truth override.
 - Handle conflicts as semantic drift / contract gap and confirm with tests, DDT, or human review instead of silent auto-resolution.
 - `harbor workspace migrate --write` is not implemented in v1.3.0.
+
+### Contract Impact Classifier MVP (P0-3)
+
+- Levels: `no_contract_impact` / `possible_contract_impact` / `confirmed_contract_impact` / `unknown`.
+- `confirmed_contract_impact` means a contract-surface change is confirmed; it does not imply a bug or a breaking change.
+- `possible_contract_impact` is the default conservative classification for public CLI/JSON/write-target/generated-view/source-of-truth related changes.
+- The classifier is advisory and does not replace human review, DDT validation, or semantic audit.
 
 ### L2 README Generation
 

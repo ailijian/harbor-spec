@@ -203,6 +203,7 @@ harbor doctor
 - Workspace Diagnostics：提供 `harbor workspace inspect` 与 `harbor workspace migrate --dry-run`
 - JSON 输出：`harbor stale --format json` 与 `harbor doctor --format json` 提供机器可读结果
 - Legacy Advisory：对 `specs/diary`、旧 config 与旧 project structure export 提供 advisory，而不是 silent drift
+- Contract Impact Classifier MVP：在 `harbor checkpoint` 中对变更做 Contract Impact 分类摘要（advisory / conservative / explainable）
 
 ### Source of Truth Priority 与冲突裁决
 
@@ -218,6 +219,13 @@ harbor doctor
 - 发生冲突时应标记 `semantic drift` / `contract gap`，并通过测试、DDT 或人工确认处理，不得静默裁决。
 - `harbor workspace migrate --write` is not implemented in v1.3.0。
 - canonical `.harbor/views/**` 是生成上下文的标准路径。
+
+### Contract Impact Classifier MVP（P0-3）
+
+- 分类级别：`no_contract_impact` / `possible_contract_impact` / `confirmed_contract_impact` / `unknown`。
+- `confirmed_contract_impact` 表示“确认存在 contract surface 变化”，不等价于 bug 或 breaking change。
+- `possible_contract_impact` 为默认保守层级；对 public CLI、JSON output、write target、generated view format、source-of-truth rules 变更不会轻易降为 no impact。
+- 该分类器是 advisory 工具，不替代人工评审、DDT 绑定校验或语义审计。
 
 ### L2 README Generation
 

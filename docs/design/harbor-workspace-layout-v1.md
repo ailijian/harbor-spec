@@ -1489,6 +1489,20 @@ Human design docs live under docs/design, not .harbor.
 
 人类设计文档放在 `docs/design`，不放在 `.harbor`。
 
+### Invariant 7
+
+```text
+Contract Impact Classifier in checkpoint is advisory, conservative, and explainable.
+```
+
+Contract Impact Classifier（P0-3）用于帮助识别可能的 contract surface 变化，不做强制阻断。
+
+边界说明：
+
+- `confirmed_contract_impact` 表示“确认存在 contract surface 变化”，不表示 bug 或 breaking change。
+- `possible_contract_impact` 是默认保守分类；对 public CLI、JSON output、write target、generated view format、source-of-truth rules 等变化，不应轻易归类为 no impact。
+- clean checkpoint（无 drift/modified/contract_changed/untracked/missing）应保持低噪音，不输出冗长分类报告。
+
 ---
 
 ## 15. 推荐初始 `.gitignore`
