@@ -124,6 +124,21 @@ Harbor policy
 Harbor diary
 ```
 
+补充规则（P0-2）：
+
+```text
+Instruction Hierarchy 与 Source of Truth Priority 必须分离：
+- Instruction Hierarchy 处理规则/指令冲突。
+- Source of Truth Priority 处理 contract/tests/implementation/generated/export 的事实冲突。
+
+Canonical wins 仅用于 canonical artifact 与 legacy/export copy 冲突：
+- 例如 .harbor/views/l2/<module>/README.md 优先于 <module>/README.md。
+- 该规则不允许 .harbor/views/** 覆盖 contracts / DDT / source implementation。
+
+Generated views remain advisory context, not truth override.
+发现冲突时应标记 semantic drift / contract gap，并通过测试、DDT 或人工确认裁决。
+```
+
 ---
 
 ### 2.3 人类设计文档应保持可读性

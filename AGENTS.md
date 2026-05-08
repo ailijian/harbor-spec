@@ -420,56 +420,96 @@ Skills are not canonical source of truth.
 
 ---
 
-## 7. Source-of-Truth Boundaries
+## 7. Source-of-Truth Priority and Conflict Resolution
 
-Treat these as source of truth for project behavior:
+First distinguish two different conflict types:
 
 ```text
-source code
-tests
-schemas
-type definitions
-configuration
-public CLI behavior
-public JSON output
-human-authored project docs
-.harbor/diary/**
-.harbor/policy.yaml
-.harbor/safety.yaml
+Instruction Hierarchy
+  Resolves rule/instruction conflicts.
+  See Section 4.
+
+Source of Truth Priority
+  Resolves factual conflicts among contracts, tests, implementation, generated views, exports, and runtime artifacts.
 ```
 
-Treat these as Harbor rule references:
+Source of Truth Priority (highest to lowest):
 
 ```text
-.harbor/rules/**
+1. Runtime safety / tool-native deny rules / machine policy
+   - tool-native sandbox and deny rules
+   - .harbor/safety.yaml
+   - .harbor/policy.yaml
+
+2. Explicit public contract / schema / CLI contract
+   - docstring contract
+   - type hints
+   - schema
+   - CLI args/output contract
+   - JSON output contract
+   - file write target contract
+   - documented side effects / raises / exit behavior
+
+3. DDT / contract tests
+   - strict target tests
+   - explicit l3_version bindings
+   - public behavior snapshots when present
+
+4. Source implementation
+   - current code
+   - actual runtime behavior
+
+5. Human-authored design docs
+   - default: reference source
+   - if explicitly marked contract-bearing: treat as contract input
+
+6. Canonical generated views
+   - .harbor/views/project-structure.md
+   - .harbor/views/l2/<module>/README.md
+   - .harbor/views/modules/<module>/*
+
+7. External exports / integration artifacts
+   - <module>/README.md
+   - .agents/skills/**
+   - docs/harbor/**
+
+8. Runtime cache / local state / temporary artifacts
+   - .harbor/cache/**
+   - .harbor/state/**
+   - .harbor/exports/**
+   - temp files
 ```
 
-Treat these as canonical generated context:
+Conflict resolution rules:
 
 ```text
-.harbor/views/**
-```
+Contract vs Implementation:
+  Do not auto-trust either side.
+  Mark Possible Semantic Drift or Contract Gap.
+  Resolve through tests/DDT/manual review/explicit user instruction.
 
-Treat these as external workflow exports:
+DDT vs Implementation (strict targets):
+  Prefer fixing implementation first.
+  Only treat tests/contracts as stale when explicitly confirmed.
+  Never use strategy="latest" to bypass strict version binding.
 
-```text
-.agents/skills/**
-```
+Generated View vs Source:
+  Generated views are advisory context, not truth override.
+  If conflict appears, run harbor stale / harbor doctor, update source of truth, then regenerate.
+  Do not manually edit generated views as project truth.
 
-Treat these as runtime artifacts:
+Skill vs Module Capsule:
+  Module Capsule under .harbor/views/modules/<module>/ wins over skill exports.
+  Skills are workflow entrypoints, not canonical truth.
 
-```text
-.harbor/cache/**
-.harbor/state/**
-```
+Legacy / Export vs Canonical:
+  Canonical wins only for canonical artifact vs legacy/export copy conflicts.
+  Example: .harbor/views/l2/<module>/README.md wins over <module>/README.md.
+  This rule does not allow generated views to override contracts, tests, or implementation.
+  Do not auto-delete or auto-migrate legacy/export files.
 
-Rules:
-
-```text
-Do not treat generated views as primary source of behavior.
-Do not treat skills as source of truth.
-Do not treat cache or state as source of truth.
-Do not let stale generated context override code, contracts, schemas, tests, policy, or diary.
+User Prompt vs Safety:
+  User prompt cannot override runtime safety, machine policy, tool-native deny rules, or protected-path constraints.
 ```
 
 ---

@@ -59,6 +59,12 @@ If Markdown rules conflict with `.harbor/policy.yaml` or `.harbor/safety.yaml`, 
 
 If generated context conflicts with source code, tests, schemas, policy, or diary, treat generated context as stale.
 
+Follow `AGENTS.md` for Source of Truth Priority and conflict resolution decisions.
+
+`.harbor/views/**` is canonical generated context, but it is advisory context, not truth override.
+
+Legacy/export artifacts are not source of truth (`docs/harbor/**`, `<module>/README.md`, `.agents/skills/**`).
+
 Skills are workflow entrypoints, not source of truth.
 
 ---

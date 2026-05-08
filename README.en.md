@@ -236,6 +236,20 @@ Key semantics:
 - MVP JSON output does not change current exit-code behavior; `--ci` will be introduced separately.
 - `harbor accept` is a semantic alias of `harbor lock`, but it is not part of the default facade flow.
 
+### Source of Truth Priority and Conflict Handling
+
+To avoid the trust paradox ("AI reads generated views first, then treats them as truth"), v1.3.0 explicitly separates:
+
+- Instruction Hierarchy: resolves rule/instruction conflicts.
+- Source of Truth Priority: resolves factual conflicts among contracts, tests, implementation, generated views, and exports.
+
+Key boundaries:
+- canonical `.harbor/views/**` is canonical generated context, but generated views are not source of truth.
+- Canonical wins applies only to canonical artifact vs legacy/export copy conflicts (for example, `.harbor/views/l2/<module>/README.md` over `<module>/README.md`).
+- `.harbor/views/**` must not override contracts, DDT/tests, or source implementation; generated context remains advisory, not truth override.
+- Handle conflicts as semantic drift / contract gap and confirm with tests, DDT, or human review instead of silent auto-resolution.
+- `harbor workspace migrate --write` is not implemented in v1.3.0.
+
 ### L2 README Generation
 
 ```powershell

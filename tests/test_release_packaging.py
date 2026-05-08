@@ -85,6 +85,38 @@ def test_release_notes_include_v130_release_track():
     assert "canonical generated context views" in release_text
 
 
+def test_source_of_truth_priority_and_conflict_docs_are_present():
+    repo = _repo_root()
+
+    readme_zh = (repo / "README.md").read_text(encoding="utf-8")
+    assert "source of truth" in readme_zh.lower()
+    assert "generated views are not source of truth" in readme_zh
+    assert "canonical `.harbor/views/**`" in readme_zh
+    assert "harbor workspace migrate --write" in readme_zh
+    assert "not implemented" in readme_zh
+
+    readme_en = (repo / "README.en.md").read_text(encoding="utf-8")
+    assert "source of truth priority" in readme_en.lower()
+    assert "generated views are not source of truth" in readme_en
+    assert "canonical `.harbor/views/**`" in readme_en
+    assert "harbor workspace migrate --write" in readme_en
+    assert "not implemented" in readme_en.lower()
+
+    agents_text = (repo / "AGENTS.md").read_text(encoding="utf-8")
+    assert "Instruction Hierarchy" in agents_text
+    assert "Source of Truth Priority (highest to lowest)" in agents_text
+    assert "Contract vs Implementation" in agents_text
+    assert "Generated View vs Source" in agents_text
+    assert "Skill vs Module Capsule" in agents_text
+    assert "Legacy / Export vs Canonical" in agents_text
+
+    role_rules = (repo / ".harbor/rules/role-rules.md").read_text(encoding="utf-8")
+    assert "Follow `AGENTS.md`" in role_rules
+    assert ".harbor/views/**` is canonical generated context" in role_rules
+    assert "Legacy/export artifacts are not source of truth" in role_rules
+    assert "1. Runtime safety / tool-native deny rules / machine policy" not in role_rules
+
+
 def test_help_recognizes_core_release_commands():
     help_targets = [
         [],

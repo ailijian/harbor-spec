@@ -117,6 +117,9 @@ Rules:
 - If this file conflicts with source code, tests, schemas, or actual CLI behavior, inspect the conflict and update the stale side.
 - Skills are workflow entrypoints, not source of truth.
 - Generated context is orientation, not source of truth.
+- Follow AGENTS.md for Instruction Hierarchy vs Source of Truth Priority distinction.
+- Do not treat docs/harbor/**, <module>/README.md, or .agents/skills/** as canonical truth.
+- Do not manually edit .harbor/views/** as project truth; update source of truth first, then regenerate views.
 ```
 
 ---
@@ -471,6 +474,9 @@ Workspace rules:
 - .harbor/diary/** contains decision memory.
 - .harbor/cache/** and .harbor/state/** are runtime artifacts, not source of truth.
 - .agents/skills/** contains external AI-tool workflow exports, not source of truth.
+- docs/harbor/** and <module>/README.md are export/integration copies, not canonical truth.
+- Canonical wins only for canonical artifact vs legacy/export copy conflicts.
+- .harbor/views/** does not override contracts, DDT/tests, or source implementation.
 ```
 
 ---

@@ -325,6 +325,20 @@ harbor-workspace-migration-plan
 
 ---
 
+### 1.9 Source of Truth Priority Clarification (P0-2)
+
+v1.3.0 文档规则补充明确：
+
+- Source of Truth Priority 与 Instruction Hierarchy 是两个不同层级：
+  - Instruction Hierarchy 处理规则/指令冲突；
+  - Source of Truth Priority 处理 contract/tests/implementation/generated/export 的事实冲突。
+- generated context integrity metadata 是 advisory integrity signal，不是 truth override。
+- `.harbor/views/**` 是 canonical generated context，但 generated views 不是 source of truth。
+- `Canonical wins` 仅用于 canonical artifact 与 legacy/export copy 冲突，不用于 generated views 覆盖 contracts、DDT/tests 或 implementation。
+- 冲突必须按 `semantic drift` / `contract gap` 标记并通过测试/DDT/人工确认裁决，不做静默自动裁决。
+
+---
+
 ## 2. 新增能力
 
 ### 2.1 Workflow Facade Commands

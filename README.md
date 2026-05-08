@@ -204,6 +204,21 @@ harbor doctor
 - JSON 输出：`harbor stale --format json` 与 `harbor doctor --format json` 提供机器可读结果
 - Legacy Advisory：对 `specs/diary`、旧 config 与旧 project structure export 提供 advisory，而不是 silent drift
 
+### Source of Truth Priority 与冲突裁决
+
+为避免“先读 generated views 却误当真源”的悖论，v1.3.0 明确区分：
+
+- Instruction Hierarchy：用于规则/指令冲突；
+- Source of Truth Priority：用于 contract、tests、implementation、generated views、exports 的事实冲突。
+
+关键边界：
+- `.harbor/views/**` 是 canonical generated context，但 generated views are not source of truth。
+- Canonical wins 仅用于 canonical artifact 与 legacy/export copy 冲突（例如 `.harbor/views/l2/<module>/README.md` 优先于 `<module>/README.md`）。
+- `.harbor/views/**` 不能覆盖 contracts / DDT / source implementation；generated views remain advisory context, not truth override。
+- 发生冲突时应标记 `semantic drift` / `contract gap`，并通过测试、DDT 或人工确认处理，不得静默裁决。
+- `harbor workspace migrate --write` is not implemented in v1.3.0。
+- canonical `.harbor/views/**` 是生成上下文的标准路径。
+
 ### L2 README Generation
 
 ```powershell

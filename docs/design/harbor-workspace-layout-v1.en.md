@@ -126,6 +126,21 @@ Harbor policy
 Harbor diary
 ```
 
+Additional clarification (P0-2):
+
+```text
+Instruction Hierarchy and Source of Truth Priority must be separated:
+- Instruction Hierarchy resolves rule/instruction conflicts.
+- Source of Truth Priority resolves factual conflicts among contracts/tests/implementation/generated/export artifacts.
+
+Canonical wins applies only to canonical artifact vs legacy/export copy conflicts:
+- Example: .harbor/views/l2/<module>/README.md over <module>/README.md.
+- This rule does not allow .harbor/views/** to override contracts / DDT / source implementation.
+
+Generated views remain advisory context, not truth override.
+When conflicts appear, mark semantic drift / contract gap and resolve via tests, DDT, or human confirmation.
+```
+
 ---
 
 ### 2.3 Human design documents should stay human-readable
