@@ -27,8 +27,7 @@ jobs:
 
       - name: Install package and tools
         run: |
-          python -m pip install -e .
-          python -m pip install pytest openai python-dotenv
+          python -m pip install -e ".[dev]"
 
       - name: Run unit tests
         run: pytest
@@ -51,4 +50,3 @@ jobs:
       - name: Harbor semantic audit (non-blocking)
         run: harbor audit --semantic
         continue-on-error: true
-

@@ -45,6 +45,17 @@ def test_pyproject_version_and_description_are_release_ready():
     assert "v1.0.2 reference implementation" not in description
 
 
+def test_pyproject_declares_cli_runtime_dependencies():
+    pyproject_text = (_repo_root() / "pyproject.toml").read_text(encoding="utf-8")
+    deps_block_match = re.search(
+        r"(?ms)^\s*dependencies\s*=\s*\[(.*?)\]",
+        pyproject_text,
+    )
+    assert deps_block_match is not None
+    deps_block = deps_block_match.group(1)
+    assert '"rich' in deps_block
+
+
 def test_readme_contains_release_key_commands():
     readme_zh = (_repo_root() / "README.md").read_text(encoding="utf-8")
     required = [
