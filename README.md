@@ -453,7 +453,9 @@ generated_at: 2026-05-09T10:00:00Z
 * `generated_at` 仅用于信息展示。
 * stale 比较会忽略 `generated_at`。
 * 输入不变时，Harbor 会尽量复用旧 `generated_at`，避免无意义 Git diff。
+* canonical `.harbor/views/**` is generated context.
 * generated views 是 advisory context，不是 source of truth。
+* generated views are not source of truth.
 
 ---
 

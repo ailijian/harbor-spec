@@ -449,10 +449,13 @@ generated_at: 2026-05-09T10:00:00Z
 
 Notes:
 
+* source of truth priority applies when contracts, tests, and generated views disagree.
 * `generated_at` is informational only.
 * stale comparison ignores `generated_at`.
 * If inputs do not change, Harbor tries to reuse the old `generated_at` to avoid meaningless Git diffs.
+* canonical `.harbor/views/**` is generated context.
 * generated views are advisory context, not source of truth.
+* generated views are not source of truth.
 
 ---
 

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-08T17:13:59Z"
+generated_at: "2026-05-09T09:16:12Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 62
@@ -71,8 +71,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:3ae2221d9cf7986c740b4907461a589bcdb4bfef7452f7fea2889a8da5f3a671"
-contract_fingerprint: "sha256:2a1405eb54c22fd5cea11c1f716a7820e1ac0f071ba3df29dc8c98ebf21472ee"
+source_fingerprint: "sha256:4b6c7ae3f7fa79e436c7525d5acba0883232457bf88a1da955b3dcc21275d9f3"
+contract_fingerprint: "sha256:f68e9a99f91dbd92cd56d7ab77a58f2d69a1fa9d4be34c70832e801cbddeab79"
 generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0a1e1823ea26ed51"
 ---
 
@@ -206,6 +206,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_module_skill.test_check_capsule_ready_missing_capsule | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_check_capsule_ready_stale_capsule | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_check_capsule_ready_unknown_module | — | standard | ⚪ Missing |
+| tests.test_workspace_inspect.test_check_git_ignored_directory_rule_uses_nested_probe | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_does_not_fail_on_possible_contract_impact_alone | — | standard | ⚪ Missing |
@@ -244,6 +245,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_docs_modes.test_collect_all_indexed_modules_from_index_records | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_collect_all_indexed_modules_normalizes_repo_absolute_file_paths | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | — | standard | ⚪ Missing |
+| tests.test_doctor.test_collect_next_steps_filters_high_impact_commands | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_builds_expected_flags_and_counts | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_reads_metadata_from_pyproject | — | standard | ⚪ Missing |
@@ -443,7 +445,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_project_structure.test_project_structure_write_does_not_overwrite_existing_legacy_docs_when_export_disabled | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_write_dual_writes_when_docs_export_enabled | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_write_updates_canonical_path_by_default | — | standard | ⚪ Missing |
-| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | — | standard | ⚪ Missing |
+| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows stable and pre-release (a/b/rc) ... | standard | ⚪ Missing |
 | tests.test_drafting.test_raise_when_llm_not_configured | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases | — | standard | ⚪ Missing |

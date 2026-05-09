@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-08T17:13:59Z"
+generated_at: "2026-05-09T09:16:12Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 62
@@ -71,11 +71,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:3ae2221d9cf7986c740b4907461a589bcdb4bfef7452f7fea2889a8da5f3a671"
-contract_fingerprint: "sha256:f2221711e93de512055a14eac359c328ac7e60e7e32a781063e31c5bccde1ac1"
+source_fingerprint: "sha256:4b6c7ae3f7fa79e436c7525d5acba0883232457bf88a1da955b3dcc21275d9f3"
+contract_fingerprint: "sha256:8842ad443a3172a401b7eecc4a5908833fb95a7a90d550c551b654accbe269e0"
 generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "5708b2db552df368dbba68a15472ddfd15fbdcdfd8b31ad8cc0ac8a2bb0d42b3"
-fingerprint: "5708b2db552df368dbba68a15472ddfd15fbdcdfd8b31ad8cc0ac8a2bb0d42b3"
+view_fingerprint: "0505fdb1c6e68ef10d22e9417aa13b4058b943b4e5f9ca7ca3e39dbf2e8463a4"
+fingerprint: "0505fdb1c6e68ef10d22e9417aa13b4058b943b4e5f9ca7ca3e39dbf2e8463a4"
 ---
 
 # Module Card: tests
@@ -442,6 +442,7 @@ tests/test_workspace_paths.py
 | tests.test_doctor._force_en_locale | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor._sample_summary | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_build_doctor_report_is_read_only | tests/test_doctor.py | unknown | standard |
+| tests.test_doctor.test_collect_next_steps_filters_high_impact_commands | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_derived_views_check_legacy_diary_coexistence_single_advisory_and_no_mutation | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_derived_views_check_legacy_diary_empty_dir_no_warning | tests/test_doctor.py | unknown | standard |
 | tests.test_doctor.test_derived_views_check_marks_unknown_detail_as_unknown_not_stale | tests/test_doctor.py | unknown | standard |
@@ -579,6 +580,7 @@ tests/test_workspace_paths.py
 | tests.test_workspace_inspect._force_en_locale | tests/test_workspace_inspect.py | unknown | standard |
 | tests.test_workspace_inspect._touch | tests/test_workspace_inspect.py | unknown | standard |
 | tests.test_workspace_inspect._write_workspace_config | tests/test_workspace_inspect.py | unknown | standard |
+| tests.test_workspace_inspect.test_check_git_ignored_directory_rule_uses_nested_probe | tests/test_workspace_inspect.py | unknown | standard |
 | tests.test_workspace_inspect.test_workspace_inspect_generated_views_count | tests/test_workspace_inspect.py | unknown | standard |
 | tests.test_workspace_inspect.test_workspace_inspect_git_tracking_policy | tests/test_workspace_inspect.py | unknown | standard |
 | tests.test_workspace_inspect.test_workspace_inspect_is_read_only_no_writes | tests/test_workspace_inspect.py | unknown | standard |

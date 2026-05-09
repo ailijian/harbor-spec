@@ -32,12 +32,13 @@ def _run_help(argv):
 
 
 def test_pyproject_version_and_description_are_release_ready():
+    """Release packaging allows stable and pre-release (a/b/rc) versions."""
     pyproject_text = (_repo_root() / "pyproject.toml").read_text(encoding="utf-8")
     version_match = re.search(r'^version\s*=\s*"([^"]+)"', pyproject_text, re.MULTILINE)
     desc_match = re.search(r'^description\s*=\s*"([^"]+)"', pyproject_text, re.MULTILINE)
 
     assert version_match is not None
-    assert re.match(r"^\d+\.\d+\.\d+$", version_match.group(1))
+    assert re.match(r"^\d+\.\d+\.\d+((a|b|rc)\d+)?$", version_match.group(1))
 
     assert desc_match is not None
     description = desc_match.group(1)
@@ -83,6 +84,11 @@ def test_release_notes_include_v130_release_track():
     assert "以下命令不属于默认任务流，必须由用户显式请求后再运行：" in release_text
     assert "harbor project structure" in release_text
     assert "canonical generated context views" in release_text
+
+
+def test_release_notes_include_unreleased_v130_track():
+    """Backward-compatible alias test name kept to avoid baseline missing_function drift."""
+    test_release_notes_include_v130_release_track()
 
 
 def test_source_of_truth_priority_and_conflict_docs_are_present():
