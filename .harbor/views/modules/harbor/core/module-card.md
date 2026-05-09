@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-08T17:13:59Z"
+generated_at: "2026-05-09T14:42:40Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 25
@@ -34,11 +34,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:232280c55924b13b0b163e7fa4d6e9f71c1861c617728bdfebb14ff858209c5d"
-contract_fingerprint: "sha256:7cc2b652a2f7fc9c802716db86bb9b80989bf06ae935cf949c5b22370ef00ec0"
+source_fingerprint: "sha256:4f8dc3997a12eeab02fbf1a9cf06cdc471257daf2b5b79c6f3065d8009655a4c"
+contract_fingerprint: "sha256:fb5c20f28d9d90902d790f9993119535e6e64084496f4470175675774565248b"
 generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "a5186a749f925e03e5462a64b9e5339942fe48aecfadb9cf79305fc5a2902ea1"
-fingerprint: "a5186a749f925e03e5462a64b9e5339942fe48aecfadb9cf79305fc5a2902ea1"
+view_fingerprint: "9e6d66c6810808d07e1060cf8e1ead9dba3c6e71fc2dfc97ad4567051d2bcc9b"
+fingerprint: "9e6d66c6810808d07e1060cf8e1ead9dba3c6e71fc2dfc97ad4567051d2bcc9b"
 ---
 
 # Module Card: harbor/core
@@ -198,6 +198,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.doctor.DoctorReport.to_dict | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._collect_next_steps | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._derived_view_detail_status | harbor/core/doctor.py | unknown | standard |
+| harbor.core.doctor._filter_safe_next_steps | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._merge_status | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._parse_generated_frontmatter_safely | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._sanitize_json_text | harbor/core/doctor.py | unknown | standard |
@@ -418,6 +419,9 @@ tests/test_index_builder.py
 tests/test_index_builder_bad_syntax.py
 tests/test_index_progress.py
 tests/test_init_detector.py
+tests/test_init_governance.py
+tests/test_init_llm_env.py
+tests/test_init_wizard.py
 tests/test_initializer.py
 tests/test_l2_paths.py
 tests/test_module_capsule.py

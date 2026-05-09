@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-09T09:16:12Z"
+generated_at: "2026-05-09T14:42:44Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 62
@@ -71,7 +71,7 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:4b6c7ae3f7fa79e436c7525d5acba0883232457bf88a1da955b3dcc21275d9f3"
+source_fingerprint: "sha256:e72798db67fb6221ec8a6f2d202246a54177f2ddbf3371da0536a55ce3fbb112"
 contract_fingerprint: "sha256:f68e9a99f91dbd92cd56d7ab77a58f2d69a1fa9d4be34c70832e801cbddeab79"
 generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0a1e1823ea26ed51"
 ---
@@ -445,7 +445,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_project_structure.test_project_structure_write_does_not_overwrite_existing_legacy_docs_when_export_disabled | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_write_dual_writes_when_docs_export_enabled | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_write_updates_canonical_path_by_default | — | standard | ⚪ Missing |
-| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows stable and pre-release (a/b/rc) ... | standard | ⚪ Missing |
+| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | — | standard | ⚪ Missing |
 | tests.test_drafting.test_raise_when_llm_not_configured | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases | — | standard | ⚪ Missing |

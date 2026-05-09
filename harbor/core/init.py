@@ -272,7 +272,14 @@ class Initializer:
 
         return ["**/*.py"]
 
-    def write_config(self, code_roots: List[str], force: bool = False, profile: str = "enforce_l3", exclude_paths: Optional[List[str]] = None) -> Path:
+    def write_config(
+        self,
+        code_roots: List[str],
+        force: bool = False,
+        profile: str = "enforce_l3",
+        exclude_paths: Optional[List[str]] = None,
+        language: str = "auto",
+    ) -> Path:
         """写入 `.harbor/config/harbor.yaml`。
 
         功能:
@@ -315,7 +322,7 @@ class Initializer:
                 "env/**",
                 "node_modules/**",
             ],
-            language="auto",
+            language=language,
         )
         payload: Dict[str, Any] = {
             "schema_version": cfg.schema_version,

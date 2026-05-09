@@ -1,6 +1,7 @@
 import re
 import sys
 from contextlib import redirect_stderr, redirect_stdout
+from importlib import resources
 from io import StringIO
 from pathlib import Path
 
@@ -149,3 +150,20 @@ def test_help_recognizes_core_release_commands():
         assert code == 0
         assert "usage: harbor" in out
         assert err == ""
+
+
+def test_init_templates_package_resources_are_loadable():
+    base = resources.files("harbor.templates.init").joinpath("files")
+    required = [
+        "AGENTS.md",
+        "harbor/rules/role-rules.md",
+        "harbor/rules/project-rules-guide.md",
+        "harbor/policy.yaml",
+        "harbor/safety.yaml",
+    ]
+    for rel in required:
+        target = base
+        for part in rel.split("/"):
+            target = target.joinpath(part)
+        text = target.read_text(encoding="utf-8")
+        assert text.strip()

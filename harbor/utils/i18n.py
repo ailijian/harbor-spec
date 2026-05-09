@@ -32,7 +32,9 @@ def get_lang(config_path: Optional[Path] = None) -> str:
     env = (os.environ.get("HARBOR_LANGUAGE") or os.environ.get("HARBOR_LANG") or "").strip().lower()
     if env in ("zh", "en"):
         return env
-    cfg_file = config_path or (Path.cwd() / ".harbor" / "config.yaml")
+    canonical_cfg = Path.cwd() / ".harbor" / "config" / "harbor.yaml"
+    legacy_cfg = Path.cwd() / ".harbor" / "config.yaml"
+    cfg_file = config_path or (canonical_cfg if canonical_cfg.exists() else legacy_cfg)
     if cfg_file.exists():
         try:
             data = yaml.safe_load(cfg_file.read_text(encoding="utf-8")) or {}

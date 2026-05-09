@@ -1,0 +1,52 @@
+strictness:
+  default: standard
+
+  rules:
+    - match: "harbor/cli/**"
+      strictness: strict
+    - match: "harbor/core/**"
+      strictness: strict
+    - match: "harbor/adapters/python/**"
+      strictness: strict
+    - match: "tests/**/test_*cli*.py"
+      strictness: strict
+    - match: "tests/**/test_*json*.py"
+      strictness: strict
+    - match: "tests/**/test_*workspace*.py"
+      strictness: strict
+    - match: "tests/**/test_*stale*.py"
+      strictness: strict
+    - match: "tests/**/test_*doctor*.py"
+      strictness: strict
+    - match: "tests/**/test_*ddt*.py"
+      strictness: strict
+    - match: "tests/**/test_*diary*.py"
+      strictness: strict
+    - match: "AGENTS.md"
+      strictness: strict
+    - match: ".harbor/policy.yaml"
+      strictness: strict
+    - match: ".harbor/safety.yaml"
+      strictness: strict
+    - match: ".harbor/rules/**"
+      strictness: strict
+    - match: ".agents/skills/**"
+      strictness: strict
+    - match: "harbor/utils/**"
+      strictness: light
+
+gates:
+  strict:
+    require_contract: true
+    require_ddt: true
+    forbid_latest: true
+    semantic_audit: required
+  standard:
+    require_contract: true
+    require_ddt: recommended
+    allow_latest: true
+    semantic_audit: warning
+  light:
+    require_summary: true
+    require_ddt: false
+    semantic_audit: off

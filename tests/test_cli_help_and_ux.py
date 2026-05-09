@@ -95,6 +95,17 @@ def test_project_structure_preview_message_uses_resolved_canonical_path(tmp_path
     assert "Preview only. Use --write to update .harbor/views/project-structure.md." in out
 
 
+def test_init_help_lists_wizard_flags():
+    out_init, _ = run_help(["init"])
+    assert "--dry-run" in out_init
+    assert "--language" in out_init
+    assert "--project" in out_init
+    assert "--governance" in out_init
+    assert "--governance-docs" in out_init
+    assert "--llm" in out_init
+    assert "--update-gitignore" in out_init
+
+
 def test_docs_modes_error_message_is_friendly_and_clear():
     code, _, err = run_cmd(["docs", "--module", "harbor/core", "--changed"])
     assert code == 2

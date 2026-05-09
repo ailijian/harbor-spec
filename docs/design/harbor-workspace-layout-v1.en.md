@@ -56,6 +56,14 @@ Harbor adopts a **Harbor-only canonical workspace model**.
 
 All Harbor-owned runtime assets, generated views, policies, reports, diary records, exports, integrations, state, and cache should live under `.harbor/`.
 
+### `harbor init` (v1.3.0 Setup Wizard) constraints
+
+```text
+- New initialization targets .harbor/rules/** and no longer writes docs/harbor/**.
+- --dry-run may stay interactive for preview; in non-TTY with incomplete flags it uses safe defaults.
+- --force only affects template file overwrite and does not overwrite existing HARBOR_* keys in .env.
+```
+
 ### Human design documents
 
 ```text
@@ -790,6 +798,16 @@ Recommended:
 ```text
 canonical: .harbor/views/
 optional export: docs/harbor/
+```
+
+Additional v1.3.0 `harbor init` boundary:
+
+```text
+docs/harbor/** is a legacy / optional export path,
+not a new initialization write target.
+
+harbor init governance starter/detailed docs
+must write to .harbor/rules/**.
 ```
 
 ## 6.2 `specs/diary/`

@@ -367,7 +367,7 @@
 | tests.test_cli_project_structure.test_project_structure_write_does_not_overwrite_existing_legacy_docs_when_export_disabled | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_write_dual_writes_when_docs_export_enabled | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_write_updates_canonical_path_by_default | — | standard | ⚪ Missing |
-| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows stable and pre-release (a/b/rc) ... | standard | ⚪ Missing |
+| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | — | standard | ⚪ Missing |
 | tests.test_drafting.test_raise_when_llm_not_configured | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases | — | standard | ⚪ Missing |

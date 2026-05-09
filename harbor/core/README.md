@@ -71,7 +71,7 @@
 | harbor.core.context_integrity._decode_scalar | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._dedup | — | standard | ⚪ Missing |
 | harbor.core.ci._dedupe_checkpoint_items | — | standard | ⚪ Missing |
-| harbor.core.doctor._derived_view_detail_status | — | standard | ⚪ Missing |
+| harbor.core.doctor._derived_view_detail_status | 将内部 view status 归一化为可展示文本。 | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_django | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_go | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_java | — | standard | ⚪ Missing |
@@ -87,6 +87,7 @@
 | harbor.core.decorator.DecoratorEngine._extract_functions | — | standard | ⚪ Missing |
 | harbor.core.project_structure._extract_toml_string_block | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._file_hash | — | standard | ⚪ Missing |
+| harbor.core.doctor._filter_safe_next_steps | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._finding_to_dict | — | standard | ⚪ Missing |
 | harbor.core.stale._format_view_lines | 格式化单个视图状态的文本行。 | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._from_dict | — | standard | ⚪ Missing |

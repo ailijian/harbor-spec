@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-08T17:13:58Z"
+generated_at: "2026-05-09T14:42:40Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 25
@@ -34,8 +34,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:232280c55924b13b0b163e7fa4d6e9f71c1861c617728bdfebb14ff858209c5d"
-contract_fingerprint: "sha256:2e686c0cb580df4cec5e9cc2cd05f81140977b97665f82fbfa6f4d7a783c26ee"
+source_fingerprint: "sha256:4f8dc3997a12eeab02fbf1a9cf06cdc471257daf2b5b79c6f3065d8009655a4c"
+contract_fingerprint: "sha256:60cd263a22ce687a66fa3229a58589da572e8707248398ee8a022ddf9d03c5a6"
 generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0a1e1823ea26ed51"
 ---
 
@@ -112,7 +112,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.context_integrity._decode_scalar | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._dedup | — | standard | ⚪ Missing |
 | harbor.core.ci._dedupe_checkpoint_items | — | standard | ⚪ Missing |
-| harbor.core.doctor._derived_view_detail_status | — | standard | ⚪ Missing |
+| harbor.core.doctor._derived_view_detail_status | 将内部 view status 归一化为可展示文本。 | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_django | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_go | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_java | — | standard | ⚪ Missing |
@@ -128,6 +128,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.decorator.DecoratorEngine._extract_functions | — | standard | ⚪ Missing |
 | harbor.core.project_structure._extract_toml_string_block | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._file_hash | — | standard | ⚪ Missing |
+| harbor.core.doctor._filter_safe_next_steps | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._finding_to_dict | — | standard | ⚪ Missing |
 | harbor.core.stale._format_view_lines | 格式化单个视图状态的文本行。 | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._from_dict | — | standard | ⚪ Missing |

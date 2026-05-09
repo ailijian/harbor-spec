@@ -185,7 +185,37 @@ pip install harbor-spec
 harbor init
 ```
 
-这会创建 Harbor 配置，并使用 `.harbor/config/harbor.yaml` 作为 canonical config 写入目标。
+`harbor init` 在 v1.3.0 中是交互式 Setup Wizard：
+
+* 第一问选择工作语言（中文 / English）。
+* 第二问仅区分项目接入类型（新项目 / 老项目）。
+* 默认写入 `.harbor/config/harbor.yaml`（canonical config）。
+* 可选生成最小治理入口：
+  * `AGENTS.md`
+  * `.harbor/rules/role-rules.md`
+  * `.harbor/rules/project-rules-guide.md`
+  * `.harbor/policy.yaml`
+  * `.harbor/safety.yaml`
+* 不自动生成 `.harbor/rules/project-rules.md`，应由 AI coding 工具基于 guide 和项目实际情况生成。
+* 可选生成详细治理文档，目标路径为 `.harbor/rules/*.md`。
+* `docs/harbor/**` 是 legacy / deprecated path，不作为 v1.3.0 新初始化目标。
+* 可选配置 LLM semantic audit；若写入 `.env`，仅追加缺失 `HARBOR_*` key，不覆盖已有 key。
+* `--force` 只影响模板类文件覆盖；不会覆盖 `.env` 里已存在的 `HARBOR_*` key。
+* 当前版本仅输出 AI IDE 接入说明，不自动写 Cursor/Claude/Copilot/Windsurf 专有文件。
+* `--dry-run` 在交互模式下仍会提问但不写文件；非 TTY 且参数不完整时使用安全默认并输出预览计划。
+* 自动化测试 / CI 推荐显式传全参数，避免交互阻塞，例如：
+
+```powershell
+harbor init --dry-run --language zh --project new --governance --no-governance-docs --no-llm
+```
+
+新项目提示策略：
+
+* 不引导“初始化后立刻执行 `harbor checkpoint` / `harbor accept`”。
+* 在 next steps 中明确完整流程位置：
+  * 开始前：`harbor start`
+  * 完成有意义单元后：`harbor finish --sync-context` + `harbor doctor`
+  * 人工复核后：`harbor accept`
 
 ---
 

@@ -1,4 +1,5 @@
 from pathlib import Path
+import yaml
 
 from harbor.core.init import Initializer
 
@@ -34,3 +35,9 @@ def test_detect_fallback(tmp_path: Path):
     roots = init.detect_code_roots()
     assert roots == ["**/*.py"]
 
+
+def test_write_config_supports_language(tmp_path: Path):
+    init = Initializer(cwd=tmp_path)
+    cfg = init.write_config(["src/**"], force=True, language="zh")
+    data = yaml.safe_load(cfg.read_text(encoding="utf-8")) or {}
+    assert data.get("language") == "zh"

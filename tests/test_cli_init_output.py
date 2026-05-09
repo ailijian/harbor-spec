@@ -4,6 +4,8 @@ from io import StringIO
 from contextlib import redirect_stdout
 import sys
 
+import yaml
+
 from harbor.cli.main import main
 
 
@@ -21,15 +23,27 @@ def test_init_detects_node(tmp_path: Path):
     old = Path.cwd()
     try:
         os.chdir(tmp_path)
-        out = run_cmd(["init", "--force"])
-        assert ("Detected Node.js" in out) or ("检测到 Node.js" in out)
-        assert ("Auto-configured excludes:" in out) or ("自动配置排除" in out)
-        assert "node_modules" in out
-        assert ("Auto-detected code roots:" in out) or ("自动探测的代码根" in out)
+        out = run_cmd(
+            [
+                "init",
+                "--force",
+                "--language",
+                "en",
+                "--project",
+                "existing",
+                "--no-governance",
+                "--no-governance-docs",
+                "--no-llm",
+                "--no-update-gitignore",
+            ]
+        )
+        assert "Detected code roots:" in out
+        assert "Detected excludes:" in out
         cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
-        cfg = cfg_path.read_text(encoding="utf-8")
+        cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
         assert not (tmp_path / ".harbor" / "config.yaml").exists()
-        assert "node_modules/**" in cfg
+        assert "node_modules/**" in cfg.get("exclude_paths", [])
+        assert cfg.get("language") == "en"
     finally:
         os.chdir(old)
 
@@ -39,12 +53,26 @@ def test_init_detects_django(tmp_path: Path):
     old = Path.cwd()
     try:
         os.chdir(tmp_path)
-        out = run_cmd(["init", "--force"])
-        assert ("Detected Python(Django)" in out) or ("检测到 Python(Django)" in out)
-        assert ("Auto-detected code roots:" in out) or ("自动探测的代码根" in out)
+        out = run_cmd(
+            [
+                "init",
+                "--force",
+                "--language",
+                "zh",
+                "--project",
+                "existing",
+                "--no-governance",
+                "--no-governance-docs",
+                "--no-llm",
+                "--no-update-gitignore",
+            ]
+        )
+        assert "Detected code roots:" in out
         cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
-        cfg = cfg_path.read_text(encoding="utf-8")
+        cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
         assert not (tmp_path / ".harbor" / "config.yaml").exists()
-        assert ".venv/**" in cfg or "venv/**" in cfg
+        excludes = cfg.get("exclude_paths", [])
+        assert ".venv/**" in excludes or "venv/**" in excludes
+        assert cfg.get("language") == "zh"
     finally:
         os.chdir(old)

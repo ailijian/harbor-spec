@@ -56,6 +56,14 @@ Harbor 采用 **Harbor-only canonical workspace model**。
 
 所有 Harbor 拥有的运行资产、生成视图、策略、报告、Diary、导出物、集成配置、状态与缓存，都应归入 `.harbor/` 体系。
 
+### `harbor init`（v1.3.0 Setup Wizard）约束
+
+```text
+- 新初始化目标使用 .harbor/rules/**，不再写入 docs/harbor/**。
+- --dry-run 可交互预览；非 TTY 且参数不完整时按安全默认出计划。
+- --force 仅影响模板类文件覆盖，不覆盖 .env 既有 HARBOR_* key。
+```
+
 ### 人类设计文档
 
 ```text
@@ -786,6 +794,16 @@ docs/harbor/modules/harbor/core/module-card.md
 ```text
 canonical: .harbor/views/
 optional export: docs/harbor/
+```
+
+v1.3.0 `harbor init` 的初始化边界补充：
+
+```text
+docs/harbor/** 是 legacy / optional export path，
+不是新初始化的写入目标。
+
+harbor init 的 governance starter / detailed docs
+应写入 .harbor/rules/**。
 ```
 
 ## 6.2 `specs/diary/`

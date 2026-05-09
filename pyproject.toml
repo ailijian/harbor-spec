@@ -37,3 +37,6 @@ addopts = "-q"
 
 [tool.setuptools.packages.find]
 include = ["harbor*"]
+
+[tool.setuptools.package-data]
+"harbor.templates.init" = ["files/**/*"]

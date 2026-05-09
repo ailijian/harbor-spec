@@ -84,6 +84,36 @@ Harbor-spec v1.3.0 正式使用 `.harbor/` 作为 canonical workspace。
   外部 AI 工具 workflow export，不是 source of truth。
 ```
 
+### 1.1.1 Setup Wizard (`harbor init`)
+
+`harbor init` 在 v1.3.0 升级为交互式 Setup Wizard：
+
+```text
+Step 1: 选择工作语言（中文 / English）
+Step 2: 选择接入类型（新项目 / 老项目）
+Step 3: 探测并确认扫描范围
+Step 4: 可选生成最小治理入口
+Step 5: 明确 project-rules 只做引导，不自动生成
+Step 6: 可选生成详细治理文档
+Step 7: 输出 AI IDE 接入说明（不自动写 IDE 专有文件）
+Step 8: 可选配置 LLM（仅语义审计可选能力）
+Step 9: 可选更新 .gitignore（runtime/secrets managed block）
+Step 10: 按新项目/老项目给出差异化 next steps
+```
+
+关键边界：
+
+```text
+- 生成路径统一在 .harbor/rules/**（不写 docs/harbor/**）
+- starter files 包含 AGENTS.md / role-rules / project-rules-guide / policy / safety
+- 不自动生成 .harbor/rules/project-rules.md
+- 不自动执行 harbor checkpoint / harbor accept / harbor lock / harbor log
+- 新项目不引导“立刻 checkpoint/accept”，但会在 next steps 中保留完整工作流位置
+- .env 仅追加缺失 HARBOR_* key，不覆盖已有 key（即使 --force）
+- --dry-run 在交互模式只预览不落盘；非 TTY 且参数不完整时使用安全默认输出计划
+- 自动化/CI 建议为 --dry-run 提供完整参数，避免交互阻塞
+```
+
 ---
 
 ### 1.2 Workflow Facade

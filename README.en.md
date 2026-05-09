@@ -184,7 +184,37 @@ Run this at your project root:
 harbor init
 ```
 
-This creates the Harbor workspace configuration and uses `.harbor/config/harbor.yaml` as the canonical config write target.
+In v1.3.0, `harbor init` is an interactive Setup Wizard:
+
+* Step 1 selects the working language (中文 / English).
+* Step 2 only asks project onboarding type (new / existing).
+* It always writes canonical config to `.harbor/config/harbor.yaml`.
+* It can optionally generate governance starter files:
+  * `AGENTS.md`
+  * `.harbor/rules/role-rules.md`
+  * `.harbor/rules/project-rules-guide.md`
+  * `.harbor/policy.yaml`
+  * `.harbor/safety.yaml`
+* It does not auto-generate `.harbor/rules/project-rules.md`; your AI coding tool should generate it from the guide and actual project context.
+* Detailed governance docs are optional and written to `.harbor/rules/*.md`.
+* `docs/harbor/**` is a legacy / deprecated path and is not a v1.3.0 init target.
+* Optional LLM semantic audit config writes only missing `HARBOR_*` keys into `.env` (never overwrites existing keys).
+* `--force` applies to template files only and does not overwrite existing `HARBOR_*` keys in `.env`.
+* This version only prints AI IDE integration guidance and does not auto-write Cursor/Claude/Copilot/Windsurf specific files.
+* `--dry-run` can stay interactive (prompting without writing); in non-TTY with incomplete flags, it falls back to safe defaults and prints a plan.
+* For CI/automation, prefer explicit full flags to avoid interactive blocking, for example:
+
+```powershell
+harbor init --dry-run --language en --project new --governance --no-governance-docs --no-llm
+```
+
+For new projects:
+
+* The wizard does not suggest running `harbor checkpoint` / `harbor accept` immediately after init.
+* Next steps still place full workflow commands correctly:
+  * before coding: `harbor start`
+  * after a meaningful unit: `harbor finish --sync-context` + `harbor doctor`
+  * after human review: `harbor accept`
 
 ---
 

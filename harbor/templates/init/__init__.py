@@ -1,0 +1,1 @@
+"""Init wizard template resources."""

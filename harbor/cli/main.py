@@ -68,6 +68,7 @@ from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
 from harbor.core.init import Initializer
+from harbor.core.init_wizard import InitWizard, InitWizardOptions
 from harbor.core.decorator import DecoratorEngine
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, write_workspace_config
 
@@ -468,8 +469,27 @@ def main():
     p_log.add_argument("--export", action="store_true")
     p_log.add_argument("--since", type=str, default=None)
 
-    p_init = sub.add_parser("init", help="Initialize Harbor config")
+    p_init = sub.add_parser("init", help="Initialize Harbor via interactive setup wizard")
     p_init.add_argument("--force", action="store_true")
+    p_init.add_argument("--dry-run", action="store_true")
+    p_init.add_argument("--language", choices=["zh", "en"], default=None)
+    p_init.add_argument("--project", choices=["new", "existing"], default=None)
+    p_init_gov = p_init.add_mutually_exclusive_group()
+    p_init_gov.add_argument("--governance", dest="governance", action="store_true")
+    p_init_gov.add_argument("--no-governance", dest="governance", action="store_false")
+    p_init.set_defaults(governance=None)
+    p_init_gov_docs = p_init.add_mutually_exclusive_group()
+    p_init_gov_docs.add_argument("--governance-docs", dest="governance_docs", action="store_true")
+    p_init_gov_docs.add_argument("--no-governance-docs", dest="governance_docs", action="store_false")
+    p_init.set_defaults(governance_docs=None)
+    p_init_llm = p_init.add_mutually_exclusive_group()
+    p_init_llm.add_argument("--llm", dest="llm", action="store_true")
+    p_init_llm.add_argument("--no-llm", dest="llm", action="store_false")
+    p_init.set_defaults(llm=None)
+    p_init_gitignore = p_init.add_mutually_exclusive_group()
+    p_init_gitignore.add_argument("--update-gitignore", dest="update_gitignore", action="store_true")
+    p_init_gitignore.add_argument("--no-update-gitignore", dest="update_gitignore", action="store_false")
+    p_init.set_defaults(update_gitignore=None)
 
     args = parser.parse_args(argv_mapped)
 
@@ -1669,25 +1689,20 @@ def main():
         print(t("cli.adopt.applied", files=len(rep.changed_files)))
         print(t("cli.adopt.added_config", path=pattern))
     elif args.command == "init":
-        init = Initializer()
-        if init.config_path.exists() and not args.force:
-            print(t("cli.init.exist"))
-            return
-        stacks, roots, excludes = init.autodetect()
-        if stacks:
-            print(t("cli.init.detected", stacks=" + ".join(stacks)))
-        if excludes:
-            key_ex = []
-            for k in ["node_modules/**", ".venv/**", "dist/**", ".next/**", "build/**"]:
-                if k in excludes:
-                    key_ex.append(k.split("/")[0])
-            extra_cnt = max(len(excludes) - len(key_ex), 0)
-            if key_ex:
-                print(t("cli.init.excludes", keys=", ".join(key_ex), extra=(f" (+{extra_cnt} more)" if extra_cnt > 0 else "")))
-        print(t("cli.init.roots", roots=roots))
-        init.write_config(roots, force=args.force, exclude_paths=excludes)
-        print(t("cli.init.done"))
-        print(t("cli.init.next"))
+        wiz = InitWizard(
+            cwd=Path.cwd(),
+            options=InitWizardOptions(
+                force=getattr(args, "force", False),
+                dry_run=getattr(args, "dry_run", False),
+                language=getattr(args, "language", None),
+                project=getattr(args, "project", None),
+                governance=getattr(args, "governance", None),
+                governance_docs=getattr(args, "governance_docs", None),
+                llm=getattr(args, "llm", None),
+                update_gitignore=getattr(args, "update_gitignore", None),
+            ),
+        )
+        wiz.run()
     elif args.command == "unadopt":
         data = _load_cfg_data_safe()
         roots = data.get("code_roots", [])
