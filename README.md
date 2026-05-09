@@ -16,7 +16,7 @@
 
 </div>
 
-语言: 中文 | [English](README_en.md)
+语言: 中文 | [English](README.en.md)
 
 ---
 
