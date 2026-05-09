@@ -1,508 +1,951 @@
 <div align="center">
 
 # ⚓ HarborSpec
-### The Context Governance Engine for Vibe Coding
+
+### A Context Governance Engine for Agentic Coding
 
 [![CI Status](https://img.shields.io/github/actions/workflow/status/your-org/harbor-spec/ci.yml?style=flat-square)](https://github.com/your-org/harbor-spec/actions)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue?style=flat-square)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
 [![Strictness](https://img.shields.io/badge/Harbor-L3%20Strict-purple?style=flat-square)](https://github.com/your-org/harbor-spec)
 
-**让 AI 像代码一样被管理，让上下文像 Git 一样可追溯。**
-**它会辅助你完成“程序员到上下文工程师”的革命性转变。**
+**面向 AI 编程工作流的本地上下文治理引擎。**
+让代码、契约、测试、派生上下文、决策记录与 CI 门禁保持一致。
 
-[理念] • [架构] • [快速开始] • [迁移指南] • [日常工作流] • [命令速查]
+[快速开始](#-快速开始) · [核心心智模型](#-核心心智模型l1--l2--l3) · [日常工作流](#-日常工作流) · [CI 门禁](#-ci-门禁) · [工作区布局](#-harbor-workspace-布局) · [命令速查](#-命令速查cheat-sheet) · [核心机制深潜](#-核心机制深潜deep-dive)
 
 </div>
 
-语言: [中文](README.md) | [English](README.en.md)
+语言: 中文 | [English](README_en.md)
 
 ---
 
-## 🌌 The Era of Vibe Coding
+## HarborSpec 是什么？
 
-编程正在经历一场范式转移。我们正在从 "Writing Code"（逐行编写）转向 **"Vibe Coding"**（通过自然语言与 AI 协作生成）。
+HarborSpec 是一个面向 **AI coding / vibe coding / agentic coding** 的本地上下文治理工具。
 
-在这个新时代，**代码生成的边际成本趋近于零，但上下文维护的成本却在指数级上升。**
-- AI 改了代码，Docstring 还没改？👉 **Context Drift (上下文漂移)**
-- 测试用例还在测旧版本的逻辑？👉 **Validation Gap (验证断层)**
-- 为什么上周我们要把这个参数改成 Optional？👉 **Memory Loss (决策遗忘)**
+当 AI 可以快速生成和修改代码之后，真正变难的不是“写代码”，而是：
 
-**Harbor** 应运而生。它是 **Copilot 的监管者**，是一套用于治理 AI 生成代码的 **"良知" (Conscience)** 与 **"记忆" (Memory)** 系统。
+* 代码变了，Docstring / contract 是否还一致？
+* 测试是否仍然验证当前行为？
+* AI 读取的项目上下文是否已经过期？
+* 为什么上一次要改这个参数、路径或返回结构？
+* CI 能否判断当前上下文和基线是否安全？
 
-## 🛡️ Core Philosophy
+HarborSpec 的目标是：
 
-Harbor 的核心设计理念基于 **L3 Contract Theory**：
-1.  **Code is Volatile, Contract is Immutable**: 代码可由 AI 随意重写，但 L3 级契约（Docstring）是锚点，必须严格审计。
-2.  **Noise is Signal**: 未索引的代码、未同步的文档，都是系统中的“噪音”。Harbor 将其显性化。
-3.  **Trust, but Verify**: 信任 AI 的编码能力，但通过 AST 分析和 LLM 审计验证其产出。
+> **让 AI 编程工作流中的上下文、契约、派生文档和语义基线变得可检查、可追踪、可接受。**
 
-## 🏗️ Architecture
+它不是另一个文档生成器，也不是另一个 Copilot。
+它是一个 repo-local 的 **context governance layer**。
 
-```mermaid
-graph TD
-    Source[Source Code] -->|AST Parse| Adapter(Adapter)
-    Adapter -->|Contract Hash| Index(L3 Index / Memory)
-    Index -->|Compare| Sync(Sync Engine)
-    Source -->|Body Hash| Sync
-    Sync -->|Drift Detected| Status[CLI Status]
-    Sync -->|Diff Target| Audit(Semantic Guard)
-    Env[.env / LLM] --> Audit
-    Audit -->|Semantic Check| Report[Audit Report]
-    Tests[Test Cases] -->|DDT Binding| Validator(DDT Validator)
-    Index -->|Version Match| Validator
-    Index -->|Aggregation| L2(L2 Generator)
-    User[Developer] -->|Log Decision| Diary(Diary / History)
+---
+
+## HarborSpec 解决的问题
+
+### 1. Contract Drift
+
+AI 改了实现，但契约没变：
+
+```text
+Implementation changed, contract static.
 ```
 
------
+HarborSpec 会在 `checkpoint` 中提示潜在语义漂移，并通过 Contract Impact Classifier 标记高风险变更，例如：
 
-## ⚡ Quick Start
+* CLI 参数变化
+* JSON 输出结构变化
+* 文件写入目标变化
+* generated view format 变化
+* source-of-truth 规则变化
 
-### 1\. Installation
+---
 
-```bash
+### 2. Stale Generated Context
+
+AI 通常会优先读取压缩后的上下文视图，例如模块 README、Module Capsule、项目结构视图。
+但这些视图可能已经过期。
+
+HarborSpec 在 `.harbor/views/**` 中维护 canonical generated views，并通过 integrity frontmatter 与 `stale` 检查判断它们是否仍然可信。
+
+---
+
+### 3. Lost Project Memory
+
+重要决策容易散落在聊天记录、commit message 或口头讨论中。
+
+HarborSpec 提供 Diary 机制，将重要变更、架构决策和上下文演进写入：
+
+```text
+.harbor/diary/YYYY-MM.jsonl
+```
+
+---
+
+### 4. Unsafe AI Automation
+
+AI 工具很容易自动运行命令、修改文件、刷新文档、接受基线。
+
+HarborSpec 明确区分：
+
+* AI 可以执行的只读检查
+* AI 可在明确工作流中执行的派生视图刷新
+* 必须由人类授权的基线接受、日志写入、发布动作
+
+---
+
+## 核心心智模型：L1 / L2 / L3
+
+HarborSpec 的上下文治理可以理解为三层：
+
+| 层级 | 名称                   | 作用                | 典型文件 / 命令                                                                  |
+| -- | -------------------- | ----------------- | -------------------------------------------------------------------------- |
+| L1 | Constitution / Rules | 全局规则、安全策略、项目治理边界  | `AGENTS.md`、`.harbor/rules/**`、`.harbor/policy.yaml`、`.harbor/safety.yaml` |
+| L2 | Module Context       | 模块级上下文、AI 可读的派生视图 | `.harbor/views/l2/**`、`.harbor/views/modules/**`、`harbor stale`            |
+| L3 | Contract / Docstring | 函数级契约、测试绑定、具体实现语义 | Docstring、type hints、DDT、`l3_version`、`harbor checkpoint`                  |
+
+简化理解：
+
+```text
+L1 决定 AI 应该遵守什么规则。
+L2 决定 AI 应该先读哪些模块上下文。
+L3 决定某个函数、接口或行为的具体契约。
+```
+
+```mermaid
+flowchart TD
+    L1[L1 Rules / Policy / Safety] --> L2[L2 Module Context Views]
+    L2 --> L3[L3 Contracts / Docstrings / Tests]
+    L3 --> Source[Source Implementation]
+    Source --> Checkpoint[harbor checkpoint]
+    L2 --> Stale[harbor stale]
+    L1 --> Doctor[harbor doctor]
+    Checkpoint --> Accept[harbor accept]
+    Stale --> Doctor
+```
+
+这也是为什么 HarborSpec 同时包含：
+
+* `checkpoint`：关注 L3 contract / implementation drift
+* `stale`：关注 L2 generated context 是否过期
+* `doctor`：关注 L1 / workspace / derived views / skill references 的整体健康
+
+---
+
+## Source of Truth Priority
+
+HarborSpec 明确区分 **事实源** 与 **派生上下文**。
+
+| 优先级 | 层级                        | 示例                                                       |
+| --: | ------------------------- | -------------------------------------------------------- |
+|   1 | Safety / Policy           | tool sandbox、`.harbor/safety.yaml`、`.harbor/policy.yaml` |
+|   2 | Explicit Contract         | docstring、schema、CLI contract、public API                 |
+|   3 | Contract Tests / DDT      | explicit `l3_version` 绑定测试                               |
+|   4 | Source Implementation     | 当前源码实现                                                   |
+|   5 | Human-authored Docs       | README、design docs、rules                                 |
+|   6 | Canonical Generated Views | `.harbor/views/**`                                       |
+|   7 | Exports / Skills          | `<module>/README.md`、`.agents/skills/**`                 |
+|   8 | Cache / State / Temp      | `.harbor/cache/**`、`.harbor/state/**`                    |
+
+关键规则：
+
+* `.harbor/views/**` 是 canonical generated context，但不是 source of truth。
+* Generated views 不能覆盖 contracts、tests 或 source implementation。
+* `<module>/README.md` 是 L2 README export，不是 canonical L2。
+* `docs/harbor/**` 是 legacy / optional export，不是 canonical storage。
+* `specs/diary/**` 是 legacy diary read-compatible，不是新写入目标。
+* 发生冲突时，应标记 `semantic drift` / `contract gap`，再通过测试、DDT 或人工确认裁决。
+
+---
+
+## ⚡ 快速开始
+
+### 1. 环境要求
+
+* Python 3.9+
+* Windows / macOS / Linux
+* 推荐在 Git 仓库根目录使用
+* 默认命令示例使用 PowerShell
+
+---
+
+### 2. 安装
+
+```powershell
 pip install harbor-spec
 ```
 
-### 2\. Initialize
+---
 
-在项目根目录运行初始化，Harbor 会自动探测项目结构并生成配置（包含 Git 感知过滤）：
+### 3. 初始化
 
-```bash
+在项目根目录执行：
+
+```powershell
 harbor init
 ```
 
-### 3\. Setup AI Role Rules (关键\!)
+这会创建 Harbor 配置，并使用 `.harbor/config/harbor.yaml` 作为 canonical config 写入目标。
 
-为了让 Trae/Cursor/Windsurf/Copilot 自动生成符合 Harbor 标准的代码，请配置 **Role Rules**。
+---
 
-<details>
-<summary><strong>👉 点击展开：复制 Role Rules 到你的 .trae.role_rules 或 .cursorrules 或 .windsurfrules</strong></summary>
+### 4. 第一次检查
 
-````markdown
-# Harbor-spec L3 Documentation Standards
-
-你是一个在此项目中工作的 **Harbor-spec 认证工程师**。
-所有新编写或重构的 **Public API**（不以 `_` 开头的函数、类、方法）必须包含严格符合 **Harbor L3 Contract** 标准的 Docstring。
-
-## 核心规则 (Critical Rules)
-1.  **风格**: 使用 **Google Style** 格式，但增加了 Harbor 专用的扩展部分。
-2.  **语言**: Docstring 的描述内容必须使用 **中文**。
-3.  **强制标记**: 所有公共方法必须包含 `@harbor.scope: public` 标记。
-
-## Docstring 结构模版
-1.  **摘要**: 一句话概括。
-2.  **Harbor Tags** (必须):
-    * `@harbor.scope: public`
-    * `@harbor.l3_strictness: strict`
-    * `@harbor.idempotency: once`
-3.  **Args / Returns / Raises**: 标准格式。
-
-## 标准示例
-```python
-def build_index(self, incremental: bool = True) -> IndexReport:
-    """构建或增量更新 L3 索引到缓存。
-
-    功能:
-      - 扫描配置的代码根目录，解析 Python 文件中的 L3 契约元数据。
-      - 计算签名哈希与体哈希，生成索引条目。
-
-    @harbor.scope: public
-    @harbor.l3_strictness: strict
-    @harbor.idempotency: once
-
-    Args:
-        incremental (bool): 是否启用增量构建。
-
-    Returns:
-        IndexReport: 构建统计。
-    """
-    ...
-```
-````
-
-</details>
-
-### 4\. Configure LLM
-
-创建 `.env` 文件以启用语义审计和智能日志功能：
-
-```ini
-HARBOR_LLM_PROVIDER=openai  # 或 deepseek
-HARBOR_LLM_API_KEY=sk-xxxxxx
-HARBOR_LLM_BASE_URL=https://api.openai.com/v1
-HARBOR_LANGUAGE=zh # 可选英文：en
+```powershell
+harbor checkpoint
 ```
 
-### 5\. Build Baseline
+它会检查当前 Harbor baseline 状态，并执行快速 DDT 检查。
 
-锁定初始基线（将当前契约快照写入缓存），接管当前代码库：
+---
 
-```bash
-harbor lock
+### 5. 推荐日常流
+
+```powershell
+harbor start
+
+# Work with your AI IDE...
+
+harbor finish --sync-context
+harbor doctor
 ```
 
------
+如果你已经人工复核并准备接受新基线：
 
-## 🛠️ Migration Guide (接管存量代码)
-
-已有项目代码量巨大且没有 Docstring？使用 **交互式装饰器** 快速迁移。
-
-### 1\. 扫描并标记 (Decorate)
-
-```bash
-harbor adopt backend/ --strategy safe
+```powershell
+harbor accept
 ```
 
-  * **Safe Mode (默认)**: 仅识别已有 Docstring 但缺少 `@harbor.scope` 的函数。
-  * **Aggressive Mode**: `--strategy aggressive` 会识别所有 Public 函数，为无文档函数插入带 `TODO` 的模板。
-  * **Dry Run**: 使用 `--dry-run` 预览变更。
+> HarborSpec 搭配 Cursor、Windsurf、Trae、Claude Code、Codex 等 AI IDE 的终端使用体验最佳。
+> 推荐让 AI 读取 `AGENTS.md` 与 `.harbor/rules/**`，但不要让 AI 自动执行 `harbor accept`。
 
-### 2\. 更新索引
+---
 
-完成接管后，锁定基线：
+## 🔄 日常工作流
 
-```bash
-harbor lock
-```
-
------
-
-## 🔄 The Vibe Coding Workflow
-
-推荐工作流：
+大多数 AI coding 任务只需要记住这条主线：
 
 ```powershell
 harbor start
 # AI coding
-harbor checkpoint
-# more AI coding
+harbor finish --sync-context
+harbor doctor
+# human review
+harbor accept
+```
+
+| 命令                             | 作用                                          | 是否建议 AI 自动执行 |
+| ------------------------------ | ------------------------------------------- | ------------ |
+| `harbor start`                 | 开始任务前查看工作区和 Harbor 状态                       | 可以           |
+| `harbor finish --sync-context` | 收尾检查，并刷新 changed L2 README 与 Module Capsule | 仅在明确收尾流程中可以  |
+| `harbor doctor`                | 综合健康检查                                      | 可以           |
+| `harbor accept`                | 人工确认后接受新的 Harbor baseline                   | 不应自动执行       |
+
+更严格的本地收尾：
+
+```powershell
 harbor finish --sync-context
 harbor stale
 harbor doctor
 ```
 
 说明：
-- `harbor start`：开始任务前查看上下文状态。
-- `harbor checkpoint`：开发中执行 `status + check --fast`。
-- `harbor checkpoint --ci`：发布门禁/自动化场景下执行 strict baseline gate（只读，不自动 accept）。
-- `harbor finish --sync-context`：收尾时同步 changed L2 README 与 changed Module Capsule。
-- `harbor stale`：检查派生视图是否仍然新鲜。
-- `harbor doctor`：检查 Harbor workspace、技能引用、派生视图与配置健康。
-- `harbor log`：仅在你明确要写 Diary / decision memory 时手动运行。
-- `harbor accept`：仅在你明确要接受新基线时手动运行；它是 `harbor lock` 的语义化 alias。
 
------
+* `finish --sync-context` 会刷新 changed modules 的派生上下文。
+* `stale` 精确检查 L2 README 与 Module Capsule 是否过期。
+* `doctor` 做整体健康检查。
 
-## 🚀 What's New in v1.3.0
+---
 
-- Workflow Facade：提供 `harbor start`、`harbor checkpoint`、`harbor finish`、`harbor finish --sync-context` 与 `harbor accept`
-- Stale / Doctor：把派生视图 freshness 与 Harbor workspace 健康检查拆成两个只读入口
-- Project Structure View：引入 `.harbor/views/project-structure.md` 作为 canonical 项目结构视图
-- L2 README / Module Capsule：统一沉淀到 `.harbor/views/l2/**` 与 `.harbor/views/modules/**`
-- Workspace Diagnostics：提供 `harbor workspace inspect` 与 `harbor workspace migrate --dry-run`
-- JSON 输出：`harbor stale --format json` 与 `harbor doctor --format json` 提供机器可读结果
-- Checkpoint CI Mode MVP：新增 `harbor checkpoint --ci` 与 `harbor checkpoint --ci --format json`
-- Legacy Advisory：对 `specs/diary`、旧 config 与旧 project structure export 提供 advisory，而不是 silent drift
-- Contract Impact Classifier MVP：在 `harbor checkpoint` 中对变更做 Contract Impact 分类摘要（advisory / conservative / explainable）
+## 什么时候执行 `harbor log`？
 
-### Source of Truth Priority 与冲突裁决
-
-为避免“先读 generated views 却误当真源”的悖论，v1.3.0 明确区分：
-
-- Instruction Hierarchy：用于规则/指令冲突；
-- Source of Truth Priority：用于 contract、tests、implementation、generated views、exports 的事实冲突。
-
-关键边界：
-- `.harbor/views/**` 是 canonical generated context，但 generated views are not source of truth。
-- Canonical wins 仅用于 canonical artifact 与 legacy/export copy 冲突（例如 `.harbor/views/l2/<module>/README.md` 优先于 `<module>/README.md`）。
-- `.harbor/views/**` 不能覆盖 contracts / DDT / source implementation；generated views remain advisory context, not truth override。
-- 发生冲突时应标记 `semantic drift` / `contract gap`，并通过测试、DDT 或人工确认处理，不得静默裁决。
-- `harbor workspace migrate --write` is not implemented in v1.3.0。
-- canonical `.harbor/views/**` 是生成上下文的标准路径。
-
-### Contract Impact Classifier MVP（P0-3）
-
-- 分类级别：`no_contract_impact` / `possible_contract_impact` / `confirmed_contract_impact` / `unknown`。
-- `confirmed_contract_impact` 表示“确认存在 contract surface 变化”，不等价于 bug 或 breaking change。
-- `possible_contract_impact` 为默认保守层级；对 public CLI、JSON output、write target、generated view format、source-of-truth rules 变更不会轻易降为 no impact。
-- 该分类器是 advisory 工具，不替代人工评审、DDT 绑定校验或语义审计。
-
-### L2 README Generation
+只有当本次变更包含重要决策时才建议执行：
 
 ```powershell
-harbor docs --module harbor/core
-harbor docs --module harbor/core --write
-harbor docs --changed
-harbor docs --changed --write
-harbor docs --all
-harbor docs --all --write
+harbor log
 ```
 
-说明：
-- 默认 preview，不写文件。
-- 只有 `--write` 才会写 README。
-- canonical L2 README 路径为 `.harbor/views/l2/<module>/README.md`。
-- 默认会额外导出 `<module>/README.md`（`l2.export.module_readme.enabled=true`）。
-- `l2.export.module_readme.enabled=false` 时仅写 canonical L2 README。
-- canonical L2 README 现在带有 integrity frontmatter（含 `source_paths`/fingerprints/生成命令等元数据）。
-- export `<module>/README.md` 默认保持人类可读正文，不附加 integrity frontmatter（仅 advisory export，不是 canonical source）。
-- L2 metadata canonical 路径为 `.harbor/views/l2/_meta.json`。
-- legacy `.harbor/l2_meta.json` 仅读取兼容，不再作为写入目标。
-- `--module`、`--changed`、`--all` 三种模式互斥。
+适合记录：
 
-### Module Capsule
+* Contract Change
+* Breaking Change
+* 架构决策
+* 重要 bugfix
+* CI / runtime safety 策略变化
+* source-of-truth 规则变化
+
+`harbor finish --sync-context` 不会自动写 Diary。
+`harbor log` 必须由人类明确授权。
+
+---
+
+## ✅ CI 门禁
+
+HarborSpec v1.3.0 提供三个 CI gate：
 
 ```powershell
-harbor module inspect harbor/core
-harbor module seal harbor/core
-harbor module seal harbor/core --write
-harbor module seal --changed --write
-harbor module seal --all --write
-harbor module stale harbor/core
-harbor module stale --changed
-harbor module stale --all
-harbor stale
-harbor stale --changed
-harbor stale --all
-harbor stale --module harbor/core
-harbor stale --format json
+harbor checkpoint --ci
 harbor stale --ci
-harbor stale --ci --format json
-harbor doctor
-harbor doctor --changed
-harbor doctor --all
-harbor doctor --module harbor/core
-harbor doctor --format json
 harbor doctor --ci
+```
+
+### `checkpoint --ci`
+
+严格 baseline gate。
+
+会阻断：
+
+* DDT failure
+* missing / untracked function
+* implementation drift
+* contract changed
+* body + contract changed
+* confirmed contract impact
+
+不会因为 `possible_contract_impact` 直接失败。
+`possible_contract_impact` 是 advisory。
+
+---
+
+### `stale --ci`
+
+派生上下文 freshness gate。
+
+会阻断：
+
+* canonical L2 README stale / unknown
+* canonical Module Capsule stale / unknown
+
+不会阻断：
+
+* `<module>/README.md` export mismatch
+* legacy advisory
+* optional export advisory
+
+---
+
+### `doctor --ci`
+
+整体健康 gate。
+
+默认只阻断：
+
+```text
+DoctorCheckResult.status == FAIL
+```
+
+不会因为普通 WARN / SKIP 直接失败，例如：
+
+* workspace changed advisory
+* legacy metadata advisory
+* legacy diary advisory
+* optional export advisory
+
+---
+
+### CI JSON 输出
+
+所有 CI JSON 命令均保证：
+
+* stdout 为单一 JSON 对象
+* `writes_files=false`
+* 不自动修复
+* 不自动刷新
+* 不自动 `accept`
+* 不混入人类文本
+
+示例：
+
+```powershell
+harbor checkpoint --ci --format json
+harbor stale --ci --format json
 harbor doctor --ci --format json
 ```
 
-说明：
-- Module Capsule 是 derived maintenance view，不是 source of truth。
-- `module seal` 默认 preview，不写文件；仅 `--write` 会写 capsule。
-- `.harbor/views/modules/<module>/module-card.md`、`review-checklist.md`、`debug-playbook.md` 现在都包含 integrity frontmatter。
-- Module Capsule stale 主判定仍使用 capsule fingerprint（`view_fingerprint`/`fingerprint`），`source_fingerprint` 仅用于 integrity metadata。
-- `module stale` 只读检查，不写文件。
-- `harbor stale` 是顶层只读聚合检查，同时检查 L2 README 与 Module Capsule。
-- `harbor stale` 默认等价 `harbor stale --changed`。
-- `harbor doctor` 是顶层只读健康检查聚合；默认等价 `harbor doctor --changed`。
-- `harbor doctor` 不会自动修复，也不会写入 docs / capsule / skill。
-- `harbor doctor` 的 Derived Views 会显示 `l2_readme_export` advisory 与 legacy `.harbor/l2_meta.json` advisory（只读兼容提示，不自动迁移/删除）。
-- `harbor doctor` 还会在检测到 `specs/diary/*.jsonl` 时显示 legacy diary advisory：`specs/diary` 为 legacy read-compatible，canonical 路径是 `.harbor/diary`，新条目写入 `.harbor/diary`，不自动迁移/删除。
-- `harbor stale`（文本与 JSON）不会显示 diary advisory。
-- `harbor stale --format json` 与 `harbor doctor --format json` 输出稳定机器可读 JSON（stdout 仅 JSON）。
-- `harbor stale --ci --format json` 与 `harbor doctor --ci --format json` 在 pass/fail 下均只输出单一 JSON 对象（不混入人类文本）。
-- `harbor checkpoint --ci --format json` 在 pass/fail 下也只输出单一 JSON 对象（不混入人类文本）。
-- JSON 输出是 advisory read-only 视图，不会触发修复、写入或 lock/log。
-- `--ci` 仅在显式启用时改变 exit code 语义：`0=pass`、`1=fail`、`2=参数错误（argparse）`。
-- `checkpoint --ci` 是 strict baseline gate（比 `stale/doctor --ci` 更严格），默认阻断：
-  - DDT failure
-  - missing/untracked
-  - drift（Body changed, Contract static）
-  - contract_changed / body+contract_changed（baseline 未 accept）
-  - confirmed_contract_impact
-- `checkpoint --ci` 中 `possible_contract_impact` 保持 advisory，不直接阻断。
-- `checkpoint --ci` 只读，不会写文件，不会自动刷新派生视图，不会自动 accept baseline。
-- `stale --ci` 默认只阻断 canonical `l2_readme` / `module_capsule` 的 `stale|unknown`；`l2_readme_export` 仅 advisory。
-- `doctor --ci` 默认只阻断 `DoctorCheckResult.status == FAIL`；WARN/SKIP 作为 advisory 报告。
-- CI Mode 定位为 gate/check/report，不提供 auto-fix、auto-refresh、auto-migrate。
-- `module` 的单模块 / `--changed` / `--all` 三种模式互斥。
+---
 
-### Optional Skill Promotion
+## 🧭 Harbor Workspace 布局
 
-```powershell
-harbor module promote-skill harbor/core
+HarborSpec v1.3.0 使用 `.harbor/*` 作为 canonical workspace。
+
+```text
+.harbor/
+  config/
+    harbor.yaml              # canonical config
+  views/
+    project-structure.md     # canonical project structure view
+    l2/
+      <module>/README.md     # canonical L2 README
+      _meta.json             # canonical L2 metadata
+    modules/
+      <module>/
+        module-card.md
+        review-checklist.md
+        debug-playbook.md
+  diary/
+    YYYY-MM.jsonl            # canonical diary
+  reports/
+    dogfooding/
+  cache/                     # ignored runtime cache
+  state/                     # ignored runtime state
+  exports/                   # ignored generated exports
+```
+
+### Git tracking 建议
+
+建议追踪：
+
+```text
+.harbor/config/harbor.yaml
+.harbor/views/**
+.harbor/diary/**
+.harbor/reports/dogfooding/**
+docs/design/**
+```
+
+建议忽略：
+
+```text
+.harbor/cache/**
+.harbor/state/**
+.harbor/exports/**
+.pytest_cache/**
+**/__pycache__/**
+```
+
+Legacy / export 路径：
+
+| 路径                     | 定位                                 |
+| ---------------------- | ---------------------------------- |
+| `.harbor/config.yaml`  | legacy config read-compatible      |
+| `.harbor/l2_meta.json` | legacy L2 metadata read-compatible |
+| `specs/diary/**`       | legacy diary read-compatible       |
+| `docs/harbor/**`       | optional docs export / legacy      |
+| `<module>/README.md`   | human-readable L2 README export    |
+
+---
+
+## 🧱 Generated Context Integrity
+
+`.harbor/views/**` 中的 canonical generated markdown views 会包含 integrity frontmatter。
+
+示例：
+
+```yaml
+---
+generated_by: harbor-spec
+harbor_version: 1.3.0
+view_type: l2_readme
+module: harbor/core
+generation_command: harbor docs --module harbor/core --write
+stale_policy: fail-closed
+source_path_count: 12
+source_paths_truncated: false
+source_fingerprint: sha256:...
+contract_fingerprint: sha256:...
+generator_fingerprint: sha256:...
+generated_at: 2026-05-09T10:00:00Z
+---
 ```
 
 说明：
-- `promote-skill` 是可选手动动作。
-- 不建议为所有模块默认生成 skill。
-- 若 capsule 缺失或过时，请先执行：
+
+* `generated_at` 仅用于信息展示。
+* stale 比较会忽略 `generated_at`。
+* 输入不变时，Harbor 会尽量复用旧 `generated_at`，避免无意义 Git diff。
+* generated views 是 advisory context，不是 source of truth。
+
+---
+
+## 📌 命令速查（Cheat Sheet）
+
+HarborSpec 命令较多，但日常不需要全部记住。
+建议按使用场景理解。
+
+### 1. 日常 AI coding
+
+| 命令                             | 说明                                           |
+| ------------------------------ | -------------------------------------------- |
+| `harbor start`                 | 开始任务前查看 Harbor 状态                            |
+| `harbor checkpoint`            | 本地检查点：status + fast DDT + contract impact 摘要 |
+| `harbor finish`                | 收尾检查，不刷新派生上下文                                |
+| `harbor finish --sync-context` | 收尾检查，并刷新 changed L2 README 与 Module Capsule  |
+| `harbor stale`                 | 检查派生上下文 freshness                            |
+| `harbor doctor`                | 综合健康检查                                       |
+| `harbor accept`                | 人工接受新 Harbor baseline                        |
+
+---
+
+### 2. CI / 发布门禁
+
+| 命令                       | 说明                                       |
+| ------------------------ | ---------------------------------------- |
+| `harbor checkpoint --ci` | 严格 baseline gate                         |
+| `harbor stale --ci`      | canonical generated views freshness gate |
+| `harbor doctor --ci`     | workspace health gate                    |
+| `--format json`          | 输出机器可读 JSON                              |
+
+---
+
+### 3. 派生上下文生成
+
+通常你只需要：
 
 ```powershell
-harbor module seal harbor/core --write
-```
-
-### Project Structure View
-
-```powershell
-harbor project structure
-harbor project structure --write
-```
-
-说明：
-- 该命令的 canonical 写入目标为 `.harbor/views/project-structure.md`。
-- `docs/harbor/project-structure.md` 是可选 export 目标（默认关闭）。
-- `.harbor/` 是 Harbor canonical workspace，不应在 `.gitignore` 中被整目录忽略。
-- 推荐仅忽略本地运行态目录（如 `.harbor/state/`、`.harbor/cache/`、`.harbor/exports/` 与本地临时 reports）。
-- `.harbor/views/project-structure.md` 是 canonical project structure view；`docs/harbor` 仅是可选导出位，不是 canonical storage。
-- canonical generated views frontmatter 中 `generated_at` 仅信息用途；stale 比较会忽略该字段，且输入不变时会复用旧值避免无意义 Git diff。
-- `docs/design/` 用于人类编写的设计文档，应该保持可追踪（trackable）。
-- Project Structure View 是 derived view，不是 Project Rules。
-- 它不替代 `AGENTS.md`、L2 README、Module Capsule 或源代码本身。
-- 它用于帮助 AI coding agent 在 debug、review、refactor 前快速理解项目结构。
-- 输出会将 `Code Modules` 与 `Supporting Areas` 分开展示。
-- 输出包含 `Discovery Mode` 区块，用于说明当前结构来源。
-- 当处于 filesystem fallback 模式时，`Indexed Contracts` 可能为 0，因为没有可用的 Harbor index records。
-- 默认模式仅预览，不写文件。
-- 仅 `--write` 会更新 canonical 路径；仅在 `views.export.docs.enabled=true` 时才会额外更新 `docs/harbor/project-structure.md`。
-- `harbor finish --sync-context` 不会自动刷新 Project Structure View。
-- 推荐在任务起始阶段手动执行：
-
-```powershell
-harbor project structure --write
-harbor start
-# AI coding
 harbor finish --sync-context
+```
+
+需要精确控制时可使用：
+
+| 命令                                      | 说明                                  |
+| --------------------------------------- | ----------------------------------- |
+| `harbor project structure --write`      | 写入 canonical project structure view |
+| `harbor docs --changed --write`         | 刷新 changed modules 的 L2 README      |
+| `harbor docs --module <module> --write` | 刷新单模块 L2 README                     |
+| `harbor module seal --changed --write`  | 刷新 changed modules 的 Module Capsule |
+| `harbor module seal <module> --write`   | 刷新单模块 Module Capsule                |
+
+---
+
+### 4. Workspace 诊断
+
+| 命令                                                 | 说明                                                |
+| -------------------------------------------------- | ------------------------------------------------- |
+| `harbor workspace inspect`                         | 查看 canonical / legacy / export / cache / state 布局 |
+| `harbor workspace inspect --format json`           | 输出机器可读 workspace report                           |
+| `harbor workspace migrate --dry-run`               | 只读迁移计划                                            |
+| `harbor workspace migrate --dry-run --format json` | 机器可读 dry-run report                               |
+
+注意：
+
+```text
+harbor workspace migrate --write is not implemented in v1.3.0.
+```
+
+---
+
+### 5. 模块级维护
+
+| 命令                                     | 说明                      |
+| -------------------------------------- | ----------------------- |
+| `harbor module inspect <module>`       | 查看模块索引上下文               |
+| `harbor module seal <module>`          | 预览 Module Capsule       |
+| `harbor module seal <module> --write`  | 写入 Module Capsule       |
+| `harbor module stale <module>`         | 检查单模块 Capsule freshness |
+| `harbor module promote-skill <module>` | 可选：将高价值模块晋升为 skill      |
+
+`promote-skill` 是手动动作，不建议默认对所有模块执行。
+
+---
+
+### 6. Onboarding / Migration
+
+| 命令                               | 说明                   |
+| -------------------------------- | -------------------- |
+| `harbor init`                    | 初始化 Harbor workspace |
+| `harbor adopt <path>`            | 接管存量代码               |
+| `harbor config list`             | 查看配置                 |
+| `harbor config add <pattern>`    | 添加扫描路径               |
+| `harbor config remove <pattern>` | 移除路径                 |
+| `harbor lock`                    | 底层基线/索引操作            |
+| `harbor accept`                  | 人类可读的接受新 baseline 动作 |
+
+日常建议使用 `harbor accept`，而不是直接使用 `harbor lock`。
+
+---
+
+## 🤖 AI Tool Integration
+
+HarborSpec 推荐使用分层规则系统，而不是把所有规范塞进一个超长 prompt。
+
+推荐结构：
+
+```text
+AGENTS.md                         # 跨工具共享入口
+.harbor/rules/role-rules.md       # TRAE / IDE 轻入口
+.harbor/rules/project-rules.md    # 本项目专属规则
+.harbor/policy.yaml               # 机器可读治理策略
+.harbor/safety.yaml               # 机器可读安全策略
+.agents/skills/**                 # 可选 skill integration artifacts
+```
+
+### AI 可以自动执行的命令
+
+只读检查：
+
+```powershell
+harbor start
+harbor checkpoint
 harbor stale
 harbor doctor
+harbor workspace inspect
+harbor workspace migrate --dry-run
 ```
 
-如需写 Diary 或接受新基线，请在确认无剩余 drift 后显式手动执行 `harbor log` 或 `harbor accept`。
+CI gate：
 
------
+```powershell
+harbor checkpoint --ci
+harbor stale --ci
+harbor doctor --ci
+```
 
-## 🚀 What's New in v1.2.0（历史版本）
+明确收尾流程中可执行：
 
-- Smart Configuration：`harbor init` 现已自动探测 Django/Node.js/Go/Java 技术栈，并融合 `.gitignore` 规则生成更稳健的默认配置
-- SQLite Backend (WAL)：索引从 JSON 迁移至 SQLite，常驻 O(1) 内存占用、秒级启动与安全并发写入
-- Parallel Indexing：`harbor lock` 利用多核并行解析与哈希，适配大型 Monorepo 的高吞吐构建
-- Windows 兼容：全面适配路径归一化与并行处理，跨平台体验一致
+```powershell
+harbor finish --sync-context
+```
 
-v1.2.0 重点围绕“工业级稳定性与规模化性能”，让 Harbor 更适合在企业级代码库中长期运行。
+### AI 不应自动执行的命令
 
-## 🧩 Features Deep Dive
+必须由人类明确授权：
 
-<details>
-<summary><strong>📐 DDT (Decorator-Driven Testing)</strong></summary>
+```powershell
+harbor accept
+harbor log
+harbor lock
+harbor module promote-skill <module>
+git tag
+git push
+```
 
-防止“假绿灯”。将测试用例与代码版本强绑定。
+原因：
+
+* `accept` 接受新的 Harbor baseline
+* `log` 写入决策记忆
+* `lock` 更新底层基线
+* `promote-skill` 生成外部 integration artifact
+* `git tag/push` 属于发布动作
+
+---
+
+## 🔍 核心机制深潜（Deep Dive）
+
+### 1. Checkpoint：语义基线检查
+
+`checkpoint` 用于回答：
+
+> 当前代码相对 Harbor baseline 是否发生了语义变化？
+
+它会检查：
+
+* 新增函数
+* 缺失函数
+* Body changed, Contract static
+* Contract changed
+* Body + Contract changed
+* DDT 绑定状态
+* Contract Impact 分类摘要
+
+常用命令：
+
+```powershell
+harbor checkpoint
+harbor checkpoint --ci
+```
+
+---
+
+### 2. Stale：派生上下文 freshness 检查
+
+`stale` 用于回答：
+
+> AI 要读取的 L2 README / Module Capsule 是否还是最新？
+
+它关注的是 `.harbor/views/**` 中的 canonical generated views。
+
+如果 source / contract / generator 发生变化，但派生视图没有刷新，`stale --ci` 会失败。
+
+常用修复方式：
+
+```powershell
+harbor finish --sync-context
+```
+
+---
+
+### 3. Doctor：工作区健康检查
+
+`doctor` 用于回答：
+
+> Harbor workspace 整体是否健康？
+
+它会检查：
+
+* config / index
+* workspace status
+* DDT fast check
+* derived views
+* skill references
+* legacy advisory
+
+`doctor --ci` 默认只对 FAIL 阻断，WARN/SKIP 作为 advisory。
+
+---
+
+### 4. L2 README：模块级上下文
+
+L2 README 是模块级 AI context view。
+
+canonical 路径：
+
+```text
+.harbor/views/l2/<module>/README.md
+```
+
+默认 export：
+
+```text
+<module>/README.md
+```
+
+L2 README 帮助 AI 快速理解：
+
+* 模块职责
+* 关键文件
+* public API
+* 测试入口
+* 维护建议
+
+---
+
+### 5. Module Capsule：AI 维护胶囊
+
+Module Capsule 是更面向维护动作的上下文包。
+
+canonical 路径：
+
+```text
+.harbor/views/modules/<module>/
+  module-card.md
+  review-checklist.md
+  debug-playbook.md
+```
+
+它适合在 debug、review、refactor 前帮助 AI 判断：
+
+* 这个模块的职责是什么？
+* 哪些文件最重要？
+* 修改前应该检查什么？
+* 调试时应该从哪里入手？
+
+Module Capsule 是 derived maintenance view，不是 source of truth。
+
+---
+
+### 6. DDT：Docstring / Contract-Driven Testing
+
+DDT 用于防止“测试仍然是绿的，但测的是旧契约”。
+
+示例：
 
 ```python
 from harbor.core.ddt import harbor_ddt_target
 
-@harbor_ddt_target("backend.core.calculate_tax", l3_version=1)
-def test_calculate_tax():
+@harbor_ddt_target("harbor.core.sync.SyncEngine.check_status", l3_version=1)
+def test_sync_engine_drift_detection():
     ...
 ```
 
-运行 `harbor ddt validate`，如果契约升级到 v2，Harbor 会强制测试失败。
-推荐使用 `harbor check --fast`（仅运行 DDT 验证）。
+严格目标必须使用显式 `l3_version`，不要使用 `strategy="latest"`。
 
-</details>
+---
 
-<details>
-<summary><strong>📚 L2 Documentation Generator</strong></summary>
+### 7. Diary：决策记忆
 
-自动生成模块级的 README，作为代码质量仪表盘。
+Diary 用于记录重要变更和决策。
 
-```bash
-harbor docs --module harbor/core --write
-harbor docs --changed --write
-harbor docs --all --write
+```powershell
+harbor log
 ```
 
-生成包含 Public API 列表、严格度状态及测试覆盖率的 Markdown 文档。
-支持三种模式：
-- `--module`：刷新单个模块
-- `--changed`：刷新变更模块
-- `--all`：刷新全部已索引模块
+canonical 写入路径：
 
-</details>
-
-<details>
-<summary><strong>⚙️ Configuration Management</strong></summary>
-
-使用 CLI 管理配置，避免手写 YAML 出错。
-
-```bash
-harbor config list                   # 查看配置 (Rich表格)
-harbor config add "scripts/**"       # 添加扫描路径
-harbor config remove "legacy/**"     # 移除路径
+```text
+.harbor/diary/YYYY-MM.jsonl
 ```
 
-</details>
+`specs/diary/**` 仅 legacy read-compatible。
 
-<details>
-<summary><strong>🧱 Module Capsule MVP</strong></summary>
+---
 
-为指定模块生成 AI 维护上下文胶囊（deterministic、无 LLM）：
+## 🧪 Optional LLM Semantic Audit
 
-```bash
-harbor module inspect harbor/core
-harbor module seal harbor/core
-harbor module seal harbor/core --write
-harbor module stale harbor/core
-harbor module stale --changed
-harbor module stale --all
-harbor module seal --changed --write
-harbor module seal --all --write
-harbor module promote-skill harbor/core
+HarborSpec 的核心检查不强制依赖 LLM。
+如果你希望启用语义审计，可以配置 `.env`：
+
+```ini
+HARBOR_LLM_PROVIDER=openai
+HARBOR_LLM_API_KEY=sk-xxxxxx
+HARBOR_LLM_BASE_URL=https://api.openai.com/v1
+HARBOR_LANGUAGE=zh
 ```
 
-说明：
-- Module Capsule 是派生维护视图，不是事实源。
-- 它不替代 L2 README（canonical：`.harbor/views/l2/<module>/README.md`，可选导出：`<module>/README.md`）。
-- `seal <module>`：刷新单模块 capsule。
-- `seal --changed`：刷新变更模块的 capsule。
-- `seal --all`：刷新全部已索引模块的 capsule。
-- `stale <module>`：检查单模块 capsule 是否与当前索引上下文一致。
-- `stale --changed`：检查变更模块的 capsule 是否过时。
-- `stale --all`：检查全部已索引模块的 capsule 是否过时。
-- 默认是 preview 模式，不写文件。
-- 仅 `--write` 才会更新 capsule 文件。
-- `module seal --write` 默认写 canonical：`.harbor/views/modules/<module>/`。
-- 仅当 `views.export.docs.enabled=true` 时，才会额外导出到 `docs/harbor/modules/<module>/`。
-- 对 harbor-spec 仓库，`.harbor/views/modules/` 默认保持可追踪；用户项目可按需在 `.gitignore` 忽略该目录。
-- stale 命令只做检查，不写文件；若过时请执行 `seal --write` 刷新。
-- 目标是帮助 AI agent 更快进入 debug/review/refactor 上下文。
-- `promote-skill <module>` 会生成一个薄 Skill 入口，路径为 `.agents/skills/harbor-debug-<slug>/SKILL.md`。
-- Skill 默认引用 canonical capsule（三件套）路径，不复制 capsule 全文。
-- Skill promotion 是可选能力，多数模块只需要 Module Capsule。
-- 仅当模块复杂、维护频繁或反复 debug 时，才建议晋升为 Skill。
-- promote-skill 要求 capsule 已存在且为最新状态。
-- 推荐收口流（可选复查 stale）：
+也可使用其他兼容 OpenAI API 的 provider。
 
-```bash
+---
+
+## 🚀 v1.3.0 核心能力
+
+v1.3.0 的目标是把 HarborSpec 从“契约/文档检查工具”升级为 **agentic coding context governance workflow**。
+
+核心新增：
+
+* Canonical `.harbor/*` workspace
+* `.harbor/views/**` generated context views
+* Generated Context Integrity frontmatter
+* Source of Truth Priority
+* Contract Impact Classifier MVP
+* `harbor checkpoint --ci`
+* `harbor stale --ci`
+* `harbor doctor --ci`
+* Workspace inspect
+* Workspace migrate dry-run
+* L2 README canonical path
+* Module Capsule canonical path
+* Diary canonical path
+* legacy/export advisory
+
+---
+
+## 🧩 Advanced：接管已有项目
+
+对于已有项目，可以先初始化：
+
+```powershell
+harbor init
+```
+
+查看配置：
+
+```powershell
+harbor config list
+```
+
+接管已有代码：
+
+```powershell
+harbor adopt backend/ --strategy safe
+```
+
+模式：
+
+| 模式           | 说明                    |
+| ------------ | --------------------- |
+| `safe`       | 仅接管已有 docstring 的函数   |
+| `aggressive` | 为 public 函数插入 TODO 模板 |
+| `--dry-run`  | 只预览，不写入               |
+
+接管后由人类确认是否接受基线：
+
+```powershell
+harbor accept
+```
+
+---
+
+## 🛡️ Runtime Safety
+
+HarborSpec 默认遵守以下原则：
+
+* 只读检查不写文件
+* `--ci` 不自动修复
+* `workspace migrate --dry-run` 不写文件
+* `finish --sync-context` 只刷新派生上下文
+* `accept` 必须人工授权
+* `log` 必须人工授权
+* `lock` 不应由 AI 自动执行
+* 发布相关命令必须人工执行
+
+---
+
+## 📚 Recommended Reading
+
+* `AGENTS.md`：跨工具共享入口
+* `.harbor/rules/role-rules.md`：TRAE / IDE 轻入口
+* `.harbor/rules/project-rules.md`：本项目专属规则
+* `docs/design/harbor-workspace-layout-v1.md`：workspace layout 设计说明
+* `.harbor/views/project-structure.md`：canonical project structure view
+* `.harbor/views/l2/**`：canonical L2 README
+* `.harbor/views/modules/**`：canonical Module Capsule
+
+---
+
+## FAQ
+
+### HarborSpec 是文档生成器吗？
+
+不是。
+HarborSpec 会生成上下文视图，但这些视图只是 advisory context。
+它的核心是治理代码、契约、测试、派生上下文和基线之间的一致性。
+
+---
+
+### 我每天需要记住所有命令吗？
+
+不需要。
+大多数情况下只需要：
+
+```powershell
+harbor start
 harbor finish --sync-context
 harbor doctor
 ```
 
-若你明确要写 Diary 或接受新基线，再手动执行 `harbor log` 或 `harbor accept`。
+发布前再运行：
 
-</details>
-
-<details>
-<summary><strong>🚀 Performance Tuning (Monorepo)</strong></summary>
-
-对于大型项目，性能与可扩展性至关重要：
-- SQLite (WAL)：索引缓存持久化到 `.harbor/cache/harbor.db`，避免全量 JSON 读写，冷启动更快
-- 并行构建：`harbor lock` 默认多核并行解析与哈希，吞吐显著提升
-- 增量查询：`harbor status` 通过数据库增量对比，加速变更检测
-
-此外，**排除无关目录**非常关键。canonical 配置写入目标为 `.harbor/config/harbor.yaml`（legacy `.harbor/config.yaml` 仍可读），建议显式配置排除：
-
-```yaml
-exclude_paths:
-  - ".venv/**"
-  - "node_modules/**"  # 前端依赖必须排除
-  - "**/tests/**"      # 排除测试代码被索引
-  - "dist/**"
+```powershell
+pytest
+harbor checkpoint --ci
+harbor stale --ci
+harbor doctor --ci
 ```
 
-</details>
+---
 
------
+### `harbor stale` 和 `harbor doctor` 有什么区别？
 
-## 📝 Commands Cheatsheet
+`stale` 关注 generated views 是否过期。
+`doctor` 关注 Harbor workspace 整体健康。
 
-| Command | Description |
-| :--- | :--- |
-| `harbor init` | 智能初始化项目配置 |
-| `harbor start` | 工作流入口：开始 AI coding 前执行状态检查 |
-| `harbor checkpoint` | 工作流检查点：等价 `status + check --fast` |
-| `harbor finish` | 工作流收尾：等价 `status + check` 并提示下一步 |
-| `harbor finish --sync-context` | 工作流收尾增强：执行 `finish` 检查并同步 changed L2 README + Module Capsule，再执行 changed stale 检查 |
-| `harbor doctor` | 顶层只读健康检查聚合：默认检查 changed modules 的 Config/Index、Workspace、DDT、Derived Views、Skill References |
+简单理解：
+
+```text
+stale = freshness check
+doctor = health check
+```
+
+---
+
+### `harbor finish --sync-context` 会自动写 Diary 吗？
+
+不会。
+它只刷新 changed modules 的 L2 README 与 Module Capsule，并做收尾检查。
+
+`harbor log` 必须手动执行。
+
+---
+
+### `harbor accept` 可以让 AI 自动执行吗？
+
+不建议。
+`accept` 代表接受新的 Harbor baseline，必须由人类确认。
+
+---
+
+### v1.3.0 支持 `workspace migrate --write` 吗？
+
+不支持。
+v1.3.0 仅支持：
+
+```powershell
+harbor workspace migrate --dry-run
+```
+
+它只输出迁移计划，不写文件。
+
+---
+
+## License
+
+Apache-2.0
