@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.3.0b3"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-09T16:00:51Z"
+generated_at: "2026-05-09T18:49:50Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 66
+source_path_count: 67
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -72,14 +72,15 @@ source_paths:
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_workspace_gitignore_policy.py"
+  - "tests/test_workspace_i18n.py"
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:0e81353ae9671e1d569708ff5bda8f23c107407d8b7cb579a1b138fee7c9fc0e"
-contract_fingerprint: "sha256:be3e34e6d8c1903dd1bf7fea9e4d63ae1c3dffd53c80a31bfdb81a580e3234ee"
-generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "a9260ba8d8879468ffcb07b547a4d7e03320dc2d11f15232064f2bf8e0e01830"
-fingerprint: "a9260ba8d8879468ffcb07b547a4d7e03320dc2d11f15232064f2bf8e0e01830"
+source_fingerprint: "sha256:2965771307e48077bf06f16997d196165fc55956e5ac9d49f612e704daa04121"
+contract_fingerprint: "sha256:2377c31c62da0ab8db9b2c3b986ddc3bb8be368bcdc74e324d0c7e5573179fc4"
+generator_fingerprint: "sha256:0140a7f988cbfc5dee7f1a51e1f71722ff320848431e40b31bf4c34ad98c00b0"
+view_fingerprint: "ee4089fc40fedc9d18491a9a885fb7678a4a10ff2ef4563735b26b3228716ae4"
+fingerprint: "ee4089fc40fedc9d18491a9a885fb7678a4a10ff2ef4563735b26b3228716ae4"
 ---
 
 # Module Card: tests
@@ -163,6 +164,7 @@ tests/test_sync_engine.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_workspace_gitignore_policy.py
+tests/test_workspace_i18n.py
 tests/test_workspace_inspect.py
 tests/test_workspace_migrate.py
 tests/test_workspace_paths.py
@@ -204,11 +206,13 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_no_write_regression | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_pass_when_clean | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_zh_text_labels | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_ci_mode._force_en_locale | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode._stale_summary | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.run_cmd | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode.test_ci_mode_i18n_labels_follow_language | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.test_ci_mode_no_write_regression | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.test_ci_next_steps_excludes_accept_log_lock | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.test_doctor_ci_fail_on_fail_check | tests/test_ci_mode.py | unknown | standard |
@@ -281,9 +285,13 @@ tests/test_workspace_paths.py
 | tests.test_cli_help_and_ux.test_stale_help_lists_changed_all_module_and_format_flags | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_workflow_help_exposes_start_checkpoint_finish_accept | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_i18n.run_cmd | tests/test_cli_i18n.py | unknown | standard |
+| tests.test_cli_i18n.run_cmd_with_err | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy | tests/test_cli_i18n.py | unknown | standard |
+| tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.test_config_list_zh | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n_env.run_cmd | tests/test_cli_i18n_env.py | unknown | standard |
+| tests.test_cli_i18n_env.run_cmd_with_code | tests/test_cli_i18n_env.py | unknown | standard |
+| tests.test_cli_i18n_env.test_env_language_controls_ci_text | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_env_language_overrides_config | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_init_output.run_cmd | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_init_output.test_init_detects_django | tests/test_cli_init_output.py | unknown | standard |
@@ -500,6 +508,7 @@ tests/test_workspace_paths.py
 | tests.test_init_llm_env.test_llm_env_append_missing_only_and_force_does_not_overwrite | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_wizard.test_dry_run_non_tty_uses_safe_defaults | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_wizard_language_prompt_comes_first | tests/test_init_wizard.py | unknown | standard |
 | tests.test_initializer.test_detect_fallback | tests/test_initializer.py | unknown | standard |
@@ -602,6 +611,9 @@ tests/test_workspace_paths.py
 | tests.test_workspace_gitignore_policy.test_gitignore_ignores_required_local_runtime_paths | tests/test_workspace_gitignore_policy.py | unknown | standard |
 | tests.test_workspace_gitignore_policy.test_harbor_canonical_and_runtime_ignore_policy | tests/test_workspace_gitignore_policy.py | unknown | standard |
 | tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views | tests/test_workspace_gitignore_policy.py | unknown | standard |
+| tests.test_workspace_i18n._write_workspace_fixture | tests/test_workspace_i18n.py | unknown | standard |
+| tests.test_workspace_i18n.run_cmd | tests/test_workspace_i18n.py | unknown | standard |
+| tests.test_workspace_i18n.test_workspace_text_i18n_zh | tests/test_workspace_i18n.py | unknown | standard |
 | tests.test_workspace_inspect._force_en_locale | tests/test_workspace_inspect.py | unknown | standard |
 | tests.test_workspace_inspect._touch | tests/test_workspace_inspect.py | unknown | standard |
 | tests.test_workspace_inspect._write_workspace_config | tests/test_workspace_inspect.py | unknown | standard |
@@ -697,6 +709,7 @@ tests/test_sync_engine.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_workspace_gitignore_policy.py
+tests/test_workspace_i18n.py
 tests/test_workspace_inspect.py
 tests/test_workspace_migrate.py
 tests/test_workspace_paths.py

@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.3.0b3"
 view_type: "debug_playbook"
 module: "tests"
-generated_at: "2026-05-09T16:00:51Z"
+generated_at: "2026-05-09T18:49:50Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 66
+source_path_count: 67
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -72,12 +72,13 @@ source_paths:
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_workspace_gitignore_policy.py"
+  - "tests/test_workspace_i18n.py"
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:0e81353ae9671e1d569708ff5bda8f23c107407d8b7cb579a1b138fee7c9fc0e"
-contract_fingerprint: "sha256:be3e34e6d8c1903dd1bf7fea9e4d63ae1c3dffd53c80a31bfdb81a580e3234ee"
-generator_fingerprint: "sha256:9f7097e10acbee9a2269f5ceb3ba21165b4b3de7ea6b46984a8131350c13130f"
+source_fingerprint: "sha256:2965771307e48077bf06f16997d196165fc55956e5ac9d49f612e704daa04121"
+contract_fingerprint: "sha256:2377c31c62da0ab8db9b2c3b986ddc3bb8be368bcdc74e324d0c7e5573179fc4"
+generator_fingerprint: "sha256:08e51b0ce3a3dbc2acf5445b584212ff1e59ecb5a00789118abfedd514be104c"
 ---
 
 # Debug Playbook: tests

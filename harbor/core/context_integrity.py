@@ -6,7 +6,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from harbor import __version__ as HARBOR_VERSION
+try:
+    from harbor import __version__ as HARBOR_VERSION
+except Exception:
+    try:
+        from importlib.metadata import version
+
+        HARBOR_VERSION = version("harbor-spec")
+    except Exception:
+        HARBOR_VERSION = "unknown"
 
 
 DEFAULT_STALE_POLICY = "advisory"

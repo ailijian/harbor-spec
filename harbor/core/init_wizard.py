@@ -12,6 +12,7 @@ from rich.console import Console
 from rich.prompt import Prompt
 
 from harbor.core.init import Initializer
+from harbor.core.init_prompt import Choice, confirm, select_one
 
 
 STARTER_TEMPLATES: Dict[str, str] = {
@@ -210,9 +211,16 @@ class InitWizard:
             return self.options.language
         if not self.interactive:
             return _default_language()
-        self.console.print("选择工作语言 / Choose language:\n1. 中文\n2. English")
-        ans = Prompt.ask(">", choices=["1", "2"], default="1")
-        return "zh" if ans == "1" else "en"
+        return select_one(
+            "选择工作语言 / Choose language:",
+            options=[
+                Choice(value="zh", label_zh="中文", label_en="Chinese", aliases=["zh", "chinese"]),
+                Choice(value="en", label_zh="英文", label_en="English", aliases=["en", "english"]),
+            ],
+            default="zh",
+            language="zh",
+            console=self.console,
+        )
 
     def _ask_project(self, stacks: List[str], roots: List[str]) -> str:
         if self.options.project in ("new", "existing"):
@@ -220,19 +228,48 @@ class InitWizard:
         default_project = _default_project(stacks, roots, self.cwd)
         if not self.interactive:
             return default_project
-        self.console.print(
+        return select_one(
             "你准备如何接入 HarborSpec？\n"
-            "1. 新项目：从一开始使用 HarborSpec 管理 AI coding 工作流\n"
-            "2. 老项目：在已有代码库中逐步接入 HarborSpec"
+            "How do you want to onboard HarborSpec?",
+            options=[
+                Choice(
+                    value="new",
+                    label_zh="新项目",
+                    label_en="New project",
+                    aliases=["new"],
+                    description_zh="从一开始使用 HarborSpec 管理 AI coding 工作流",
+                    description_en="Start with HarborSpec from project day one",
+                ),
+                Choice(
+                    value="existing",
+                    label_zh="老项目",
+                    label_en="Existing project",
+                    aliases=["existing", "old"],
+                    description_zh="在已有代码库中逐步接入 HarborSpec",
+                    description_en="Adopt HarborSpec incrementally in an existing repo",
+                ),
+            ],
+            default=default_project,
+            language="zh",
+            console=self.console,
         )
-        ans = Prompt.ask(">", choices=["1", "2"], default="2" if default_project == "existing" else "1")
-        return "new" if ans == "1" else "existing"
 
     def _ask_yes_no(self, prompt_text: str, default: bool) -> bool:
-        if not self.interactive:
-            return default
-        choice = Prompt.ask(prompt_text, choices=["Y", "N", "y", "n"], default="Y" if default else "N")
-        return choice.upper() == "Y"
+        return confirm(prompt_text, default=default, language=self.result.language or "en", console=self.console)
+
+    def _emit_detected_summary(self, language: str, stacks: List[str], roots: List[str]) -> None:
+        stack_text = ", ".join(stacks) if stacks else ("Python" if language == "en" else "Python")
+        root_text = ", ".join(roots) if roots else "**/*.py"
+        if language == "zh":
+            self.console.print(f"检测到：技术栈 {stack_text}")
+            self.console.print(f"默认扫描范围：{root_text}")
+            self.console.print("已自动排除：缓存、虚拟环境、构建产物、.git、.harbor 等运行目录")
+            self.console.print("完整配置可稍后运行：harbor config list")
+            return
+        self.console.print(f"Detected stack: {stack_text}")
+        self.console.print(f"Default scan roots: {root_text}")
+        self.console.print("Auto-excluded: cache, virtual env, build artifacts, .git, .harbor and runtime directories")
+        self.console.print("See full config later with: harbor config list")
 
     def _emit_project_rules_guidance(self, language: str) -> None:
         if language == "zh":
@@ -360,17 +397,18 @@ class InitWizard:
     def run(self) -> InitWizardResult:
         init = Initializer(cwd=self.cwd)
         stacks, roots, excludes = init.autodetect()
+        detect_warnings = list(init.last_warnings)
 
         language = self._ask_language()
         project = self._ask_project(stacks, roots)
         self.result.language = language
         self.result.project = project
-        if language == "zh":
-            self.console.print(f"探测到的代码根：{roots}")
-            self.console.print(f"探测到的排除项：{excludes}")
-        else:
-            self.console.print(f"Detected code roots: {roots}")
-            self.console.print(f"Detected excludes: {excludes}")
+        self._emit_detected_summary(language, stacks, roots)
+        for warn in detect_warnings:
+            if language == "zh":
+                self.console.print(f"警告：{warn}")
+            else:
+                self.console.print(f"Warning: {warn}")
 
         use_detected = self._ask_yes_no("使用这些扫描范围吗？[Y/n] / Use detected scan roots?", True)
         if not use_detected and self.interactive:
@@ -452,12 +490,29 @@ class InitWizard:
             base_url = "https://api.openai.com/v1"
             api_key = ""
             if self.interactive:
-                self.console.print("Provider:\n1. OpenAI\n2. DeepSeek\n3. OpenAI-compatible custom endpoint")
-                p_choice = Prompt.ask(">", choices=["1", "2", "3"], default="1")
-                if p_choice == "2":
+                provider = select_one(
+                    "请选择 LLM 服务商（使用 ↑/↓ 选择，Enter 确认；也可输入编号或名称）："
+                    if language == "zh"
+                    else "Choose LLM provider (use ↑/↓ and Enter, or type number/name):",
+                    options=[
+                        Choice(value="openai", label_zh="OpenAI", label_en="OpenAI", aliases=["openai"]),
+                        Choice(value="deepseek", label_zh="DeepSeek", label_en="DeepSeek", aliases=["deepseek"]),
+                        Choice(
+                            value="custom",
+                            label_zh="OpenAI-compatible 自定义 endpoint",
+                            label_en="OpenAI-compatible custom endpoint",
+                            aliases=["custom", "openai-compatible", "compatible"],
+                        ),
+                    ],
+                    default="openai",
+                    aliases={"1": "openai", "2": "deepseek", "3": "custom"},
+                    language=language,
+                    console=self.console,
+                )
+                if provider == "deepseek":
                     provider = "deepseek"
                     base_url = "https://api.deepseek.com/v1"
-                elif p_choice == "3":
+                elif provider == "custom":
                     provider = "custom"
                     base_url = Prompt.ask("HARBOR_LLM_BASE_URL")
                 api_key = Prompt.ask("HARBOR_LLM_API_KEY", password=True, default="")

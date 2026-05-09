@@ -4,7 +4,11 @@ from io import StringIO
 from contextlib import redirect_stderr, redirect_stdout
 import sys
 
+from rich.console import Console
+from rich.prompt import Prompt
+
 from harbor.cli.main import main
+from harbor.core.init_wizard import InitWizard, InitWizardOptions
 
 
 
@@ -84,3 +88,46 @@ def test_checkpoint_format_error_uses_zh_i18n(tmp_path: Path):
         else:
             os.environ["HARBOR_LANGUAGE"] = old_env
         os.chdir(old)
+
+
+def test_init_provider_prompt_i18n_text(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
+    def _yes_no(self, prompt_text, default):
+        return "scan roots" in prompt_text
+
+    zh_stream = StringIO()
+    zh_asks = iter(["1", ""])
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(zh_asks)))
+    monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
+    InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            language="zh",
+            project="new",
+            governance=False,
+            governance_docs=False,
+            llm=True,
+            update_gitignore=False,
+        ),
+        console=Console(file=zh_stream, force_terminal=False),
+    ).run()
+    zh_out = zh_stream.getvalue()
+    assert "请选择 LLM 服务商（使用 ↑/↓ 选择，Enter 确认；也可输入编号或名称）" in zh_out
+
+    en_stream = StringIO()
+    en_asks = iter(["1", ""])
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(en_asks)))
+    InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            language="en",
+            project="new",
+            governance=False,
+            governance_docs=False,
+            llm=True,
+            update_gitignore=False,
+        ),
+        console=Console(file=en_stream, force_terminal=False),
+    ).run()
+    en_out = en_stream.getvalue()
+    assert "Choose LLM provider (use ↑/↓ and Enter, or type number/name):" in en_out

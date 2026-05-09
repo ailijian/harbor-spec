@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from io import StringIO
 from contextlib import redirect_stdout
+import shutil
+import subprocess
 import sys
 
 import yaml
@@ -37,8 +39,10 @@ def test_init_detects_node(tmp_path: Path):
                 "--no-update-gitignore",
             ]
         )
-        assert "Detected code roots:" in out
-        assert "Detected excludes:" in out
+        assert "Detected stack:" in out
+        assert "Default scan roots:" in out
+        assert "Auto-excluded:" in out
+        assert "harbor config list" in out
         cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
         cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
         assert not (tmp_path / ".harbor" / "config.yaml").exists()
@@ -67,7 +71,9 @@ def test_init_detects_django(tmp_path: Path):
                 "--no-update-gitignore",
             ]
         )
-        assert "探测到的代码根：" in out
+        assert "检测到：技术栈" in out
+        assert "默认扫描范围：" in out
+        assert "已自动排除：" in out
         cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
         cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
         assert not (tmp_path / ".harbor" / "config.yaml").exists()
@@ -76,3 +82,59 @@ def test_init_detects_django(tmp_path: Path):
         assert cfg.get("language") == "zh"
     finally:
         os.chdir(old)
+
+
+def test_real_harbor_init_writes_config_without_dangerous_py_excludes(tmp_path: Path):
+    harbor_cmd = shutil.which("harbor")
+    if not harbor_cmd:
+        return
+    (tmp_path / "src").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "src" / "app.py").write_text("print('hello')\n", encoding="utf-8")
+    (tmp_path / ".gitignore").write_text("*.py\n", encoding="utf-8")
+    subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True, text=True)
+    proc = subprocess.run(
+        [
+            harbor_cmd,
+            "init",
+            "--language",
+            "zh",
+            "--project",
+            "new",
+            "--governance",
+            "--no-governance-docs",
+            "--no-llm",
+            "--update-gitignore",
+        ],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    cfg = yaml.safe_load((tmp_path / ".harbor" / "config" / "harbor.yaml").read_text(encoding="utf-8")) or {}
+    excludes = cfg.get("exclude_paths", [])
+    assert "*.py" not in excludes
+    assert "**/*.py" not in excludes
+    assert "警告：skip exclude pattern '*.py'" in proc.stdout
+
+
+def test_harbor_wrapper_output_matches_python_module(tmp_path: Path):
+    harbor_cmd = shutil.which("harbor")
+    if not harbor_cmd:
+        return
+    args = [
+        "init",
+        "--language",
+        "zh",
+        "--project",
+        "new",
+        "--governance",
+        "--no-governance-docs",
+        "--no-llm",
+        "--update-gitignore",
+        "--dry-run",
+    ]
+    wrap = subprocess.run([harbor_cmd] + args, cwd=tmp_path, check=True, capture_output=True, text=True)
+    mod = subprocess.run([sys.executable, "-m", "harbor.cli.main"] + args, cwd=tmp_path, check=True, capture_output=True, text=True)
+    for marker in ["检测到：技术栈", "默认扫描范围", "已自动排除", "完整配置可稍后运行：harbor config list"]:
+        assert marker in wrap.stdout
+        assert marker in mod.stdout

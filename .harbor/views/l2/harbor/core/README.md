@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.3.0b3"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-09T16:00:50Z"
+generated_at: "2026-05-09T18:49:34Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 26
@@ -35,9 +35,9 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:6b88f243d0f46adb36291031c45e2a61a5e65426aac69e3d05a042ac3e90f302"
+source_fingerprint: "sha256:303d2baa672e33ad55c16b622bab17a18b35e99f6235bf2eb1da6d4a2ee05912"
 contract_fingerprint: "sha256:86886797cead1031da3796a63f66f085e08392aaa760780109615c30a05a26e3"
-generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0a1e1823ea26ed51"
+generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257d5ea0dec6e7d7a1"
 ---
 
 # Module: harbor/core
@@ -47,11 +47,11 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 |---|---|---|---|
 | harbor.core.drafting.DiaryDrafter.__init__ | AI 辅助生成 Diary 草稿。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder._iter_py_files | 生成待扫描的 Python 文件列表（支持 Git 感知剪枝）。 | strict | ❌ Missing |
-| harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
+| harbor.core.init.Initializer.autodetect | — | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
 | harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
-| harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
-| harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
+| harbor.core.init.ProjectDetector.detect | — | strict | ❌ Missing |
+| harbor.core.init.Initializer.detect_code_roots | — | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_all_files | 列出所有已索引文件及其 mtime。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_file | 查询单文件记录。 | strict | ❌ Missing |
@@ -67,7 +67,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.storage.HarborDB.transaction | 事务上下文管理器（单文件原子写入）。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_entry | 插入或更新函数条目。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_file | 插入或更新文件记录。 | strict | ❌ Missing |
-| harbor.core.init.Initializer.write_config | 写入 `.harbor/config/harbor.yaml`。 | strict | ❌ Missing |
+| harbor.core.init.Initializer.write_config | — | strict | ❌ Missing |
 
 ## Internal Details (optional)
 <details>
@@ -120,7 +120,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.ci._dedupe_checkpoint_items | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_language | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_project | — | standard | ⚪ Missing |
-| harbor.core.doctor._derived_view_detail_status | — | standard | ⚪ Missing |
+| harbor.core.doctor._derived_view_detail_status | 将内部 view status 归一化为可展示文本。 | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_django | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_go | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_java | — | standard | ⚪ Missing |
@@ -141,7 +141,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.index.IndexBuilder._file_hash | — | standard | ⚪ Missing |
 | harbor.core.doctor._filter_safe_next_steps | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._finding_to_dict | — | standard | ⚪ Missing |
-| harbor.core.stale._format_view_lines | — | standard | ⚪ Missing |
+| harbor.core.stale._format_view_lines | 格式化单个视图状态的文本行。 | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._from_dict | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._get_default_excludes | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._has_env_ignore | — | standard | ⚪ Missing |
@@ -302,7 +302,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.ci.format_ci_result | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.format_contract_impact_report | — | standard | ⚪ Missing |
 | harbor.core.doctor.format_doctor_report | — | standard | ⚪ Missing |
-| harbor.core.stale.format_stale_summary | — | standard | ⚪ Missing |
+| harbor.core.stale.format_stale_summary | 将 stale 检查结果渲染为 CLI 文本摘要。 | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.format_workspace_inspect_report | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.format_workspace_migrate_report | — | standard | ⚪ Missing |
 | harbor.core.git_utils.GitIgnoreMatcher.from_root | — | standard | ⚪ Missing |
@@ -346,7 +346,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.ddt.DDTScanner.scan_tests | — | standard | ⚪ Missing |
 | harbor.core.module_skill.skill_dir_for_module | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.split_frontmatter | — | standard | ⚪ Missing |
-| harbor.core.stale.stale_report_to_dict | — | standard | ⚪ Missing |
+| harbor.core.stale.stale_report_to_dict | 将 stale 检查结果序列化为 machine-readable JSON 对象。 | standard | ⚪ Missing |
 | harbor.core.context_integrity.strip_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.doctor.DoctorCheckResult.to_dict | — | standard | ⚪ Missing |
 | harbor.core.doctor.DoctorReport.to_dict | — | standard | ⚪ Missing |

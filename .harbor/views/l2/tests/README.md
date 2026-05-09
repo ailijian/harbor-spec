@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.3.0b3"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-09T16:00:51Z"
+generated_at: "2026-05-09T18:49:45Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
-source_path_count: 66
+source_path_count: 67
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -72,12 +72,13 @@ source_paths:
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_workspace_gitignore_policy.py"
+  - "tests/test_workspace_i18n.py"
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:0e81353ae9671e1d569708ff5bda8f23c107407d8b7cb579a1b138fee7c9fc0e"
-contract_fingerprint: "sha256:2d02e9e58169e0e36c4e4fc5dd98bb5a000a6c1e2b979ed7aad951c1907bc60b"
-generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0a1e1823ea26ed51"
+source_fingerprint: "sha256:2965771307e48077bf06f16997d196165fc55956e5ac9d49f612e704daa04121"
+contract_fingerprint: "sha256:6616200886451c8d7033909f0c9315c3ec8014eaa3fca6852abbddd8b3d13c6d"
+generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257d5ea0dec6e7d7a1"
 ---
 
 # Module: tests
@@ -171,6 +172,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_workspace_migrate._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_migrate._write_workspace_fixture | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_inspect._write_workspace_fixture | — | standard | ⚪ Missing |
+| tests.test_workspace_i18n._write_workspace_fixture | — | standard | ⚪ Missing |
 | tests.test_l2_paths._write_yaml | — | standard | ⚪ Missing |
 | tests.test_workspace_paths._write_yaml | — | standard | ⚪ Missing |
 | tests.test_drafting._EngStub.check_status | — | standard | ⚪ Missing |
@@ -196,6 +198,9 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_ci_mode.run_cmd | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.run_cmd | — | standard | ⚪ Missing |
 | tests.test_init_governance.run_cmd | — | standard | ⚪ Missing |
+| tests.test_workspace_i18n.run_cmd | — | standard | ⚪ Missing |
+| tests.test_cli_i18n_env.run_cmd_with_code | — | standard | ⚪ Missing |
+| tests.test_cli_i18n.run_cmd_with_err | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.run_cmd_with_err | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.run_cmd_with_err | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_migrate.run_cmd_with_err | — | standard | ⚪ Missing |
@@ -227,13 +232,16 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_no_write_regression | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_pass_when_clean | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_zh_text_labels | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_command_recognized | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit | — | standard | ⚪ Missing |
+| tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_prints_contract_impact_summary_when_dirty | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_fields_use_ci_failures_and_advisory | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_stdout_is_single_object | — | standard | ⚪ Missing |
+| tests.test_ci_mode.test_ci_mode_i18n_labels_follow_language | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_ci_mode_no_write_regression | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_ci_next_steps_excludes_accept_log_lock | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_classify_project_area_is_stable | — | standard | ⚪ Missing |
@@ -319,6 +327,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_doctor.test_doctor_text_output_uses_unknown_for_no_indexed_records | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_dry_run_non_tty_uses_safe_defaults | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_dual_read_merge_with_stable_normalized_hash_dedupe | — | standard | ⚪ Missing |
+| tests.test_cli_i18n_env.test_env_language_controls_ci_text | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env.test_env_language_overrides_config | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_export_options_parsing | — | standard | ⚪ Missing |
@@ -364,6 +373,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_init_governance.test_init_governance_creates_starter_files_without_project_rules | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_init_help_lists_wizard_flags | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_init_templates_package_resources_are_loadable | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | — | standard | ⚪ Missing |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_json_output_does_not_include_absolute_paths | — | standard | ⚪ Missing |
@@ -539,6 +549,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_workspace_migrate.test_workspace_migrate_legacy_l2_metadata_plan_item | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate.test_workspace_migrate_module_readme_export_items | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_workspace_outside_diary_paths_are_rejected | — | standard | ⚪ Missing |
+| tests.test_workspace_i18n.test_workspace_text_i18n_zh | — | standard | ⚪ Missing |
 | tests.test_config_update.test_write_config_and_update | — | standard | ⚪ Missing |
 | tests.test_initializer.test_write_config_supports_language | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_write_function_hits_file_write_target_and_writes_files | — | standard | ⚪ Missing |

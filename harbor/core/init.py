@@ -19,6 +19,7 @@ class DefaultConfig:
 class ProjectDetector:
     def __init__(self, cwd: Optional[Path] = None) -> None:
         self.cwd = cwd or Path.cwd()
+        self.last_warnings: List[str] = []
 
     def detect(self) -> Tuple[List[str], List[str], List[str]]:
         """启发式探测技术栈并生成配置建议。
@@ -44,6 +45,7 @@ class ProjectDetector:
         stacks: List[str] = []
         code_roots: List[str] = []
         excludes: List[str] = []
+        warnings: List[str] = []
 
         dj_roots, dj_excl, dj_stack = self._detect_django()
         if dj_stack:
@@ -83,8 +85,62 @@ class ProjectDetector:
 
         code_roots = self._dedup(code_roots) or ["**/*.py"]
         excludes = self._dedup(excludes)
+        excludes = self._filter_excludes(stacks, code_roots, excludes, warnings)
+        self.last_warnings = warnings
 
         return stacks or ["Python"], code_roots, excludes
+
+    def _normalize_glob(self, pattern: str) -> str:
+        p = (pattern or "").strip().replace("\\", "/")
+        while p.startswith("./"):
+            p = p[2:]
+        p = p.lstrip("/")
+        return p
+
+    def _is_dangerous_python_exclude(self, pattern: str) -> bool:
+        p = self._normalize_glob(pattern)
+        return p in {"*.py", "**/*.py"}
+
+    def _exclude_covers_root(self, exclude_pattern: str, root_pattern: str) -> bool:
+        ex = self._normalize_glob(exclude_pattern)
+        root = self._normalize_glob(root_pattern)
+        if not ex or not root:
+            return False
+        if ex == root:
+            return True
+        if ex == "." or ex == "**":
+            return True
+        if ex.endswith("/**"):
+            prefix = ex[:-3]
+            return bool(prefix) and (root == prefix or root.startswith(prefix + "/"))
+        return False
+
+    def _filter_excludes(
+        self,
+        stacks: List[str],
+        code_roots: List[str],
+        excludes: List[str],
+        warnings: List[str],
+    ) -> List[str]:
+        is_python = any("python" in (s or "").lower() for s in stacks) or any(
+            self._normalize_glob(r).endswith(".py") for r in code_roots
+        )
+        filtered: List[str] = []
+        for raw in excludes:
+            pat = self._normalize_glob(raw)
+            if is_python and self._is_dangerous_python_exclude(pat):
+                warnings.append(f"skip exclude pattern '{raw}' because it may exclude Python sources")
+                continue
+            conflicted = False
+            for root in code_roots:
+                if self._exclude_covers_root(pat, root):
+                    warnings.append(f"skip exclude pattern '{raw}' because it overlaps code_roots '{root}'")
+                    conflicted = True
+                    break
+            if conflicted:
+                continue
+            filtered.append(raw)
+        return self._dedup(filtered)
 
     def _detect_django(self) -> Tuple[List[str], List[str], Optional[str]]:
         roots: List[str] = []
@@ -193,6 +249,7 @@ class Initializer:
         self.cwd = cwd or Path.cwd()
         self.config_dir = self.cwd / ".harbor" / "config"
         self.config_path = self.config_dir / "harbor.yaml"
+        self.last_warnings: List[str] = []
 
     def autodetect(self) -> Tuple[List[str], List[str], List[str]]:
         """高级启发式自动探测。
@@ -205,7 +262,9 @@ class Initializer:
           Tuple[List[str], List[str], List[str]]: (detected_stacks, code_roots, exclude_paths)
         """
         detector = ProjectDetector(cwd=self.cwd)
-        return detector.detect()
+        stacks, roots, excludes = detector.detect()
+        self.last_warnings = list(detector.last_warnings)
+        return stacks, roots, excludes
 
     def detect_code_roots(self) -> List[str]:
         """智能探测项目代码根目录。

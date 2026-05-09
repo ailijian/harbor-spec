@@ -2,6 +2,7 @@ from io import StringIO
 from pathlib import Path
 
 from rich.console import Console
+from rich.prompt import Prompt
 
 from harbor.core.init_wizard import InitWizard, InitWizardOptions
 
@@ -84,3 +85,52 @@ def test_gitignore_managed_blocks_are_idempotent(tmp_path: Path, monkeypatch):
     text = (tmp_path / ".gitignore").read_text(encoding="utf-8")
     assert text.count("# >>> HarborSpec secrets (managed)") == 1
     assert text.count("# >>> HarborSpec runtime files (managed)") == 1
+
+
+def test_llm_provider_alias_custom_writes_env(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
+    asks = iter(["compatible", "https://example.com/v1", "sk-xyz"])
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
+    def _yes_no(self, prompt_text, default):
+        return "scan roots" in prompt_text
+    monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
+    wiz = InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            language="en",
+            project="new",
+            governance=False,
+            governance_docs=False,
+            llm=True,
+            update_gitignore=False,
+        ),
+        console=Console(file=StringIO(), force_terminal=False),
+    )
+    wiz.run()
+    text = (tmp_path / ".env").read_text(encoding="utf-8")
+    assert "HARBOR_LLM_PROVIDER=custom" in text
+    assert "HARBOR_LLM_BASE_URL=https://example.com/v1" in text
+
+
+def test_llm_provider_alias_openai_writes_env(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
+    asks = iter(["openai", ""])
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
+    def _yes_no(self, prompt_text, default):
+        return "scan roots" in prompt_text
+    monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
+    wiz = InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            language="zh",
+            project="new",
+            governance=False,
+            governance_docs=False,
+            llm=True,
+            update_gitignore=False,
+        ),
+        console=Console(file=StringIO(), force_terminal=False),
+    )
+    wiz.run()
+    text = (tmp_path / ".env").read_text(encoding="utf-8")
+    assert "HARBOR_LLM_PROVIDER=openai" in text
