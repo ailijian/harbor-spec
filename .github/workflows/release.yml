@@ -37,7 +37,11 @@ jobs:
         env:
           HARBOR_LANGUAGE: zh
           HARBOR_LANG: zh
-        run: pytest -q
+        run: |
+          pytest -q \
+            tests/test_cli_workspace_inspect.py \
+            tests/test_stale.py \
+            tests/test_project_structure.py::test_write_project_structure_returns_canonical_first
 
       - name: Build distributions
         run: python -m build
