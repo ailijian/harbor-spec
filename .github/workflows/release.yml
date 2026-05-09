@@ -59,4 +59,5 @@ jobs:
           packages-dir: dist/
           skip-existing: true
           verbose: true
-          pypi-token: ${{ secrets.PYPI_API_TOKEN }}
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
