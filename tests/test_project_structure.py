@@ -2,6 +2,7 @@ import json
 import re
 from pathlib import Path
 
+import harbor
 from harbor.core.project_structure import (
     classify_project_area,
     collect_project_structure_context,
@@ -213,6 +214,6 @@ def test_write_project_structure_returns_canonical_first(tmp_path: Path):
     assert result.canonical_path.exists()
     text = result.canonical_path.read_text(encoding="utf-8")
     assert text.startswith("---\n")
-    assert 'harbor_version: "1.3.0"' in text
+    assert f'harbor_version: "{harbor.__version__}"' in text
     assert 'view_type: "project_structure"' in text
     assert "source_path_count:" in text
