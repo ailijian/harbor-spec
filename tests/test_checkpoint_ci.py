@@ -265,3 +265,13 @@ def test_checkpoint_format_json_requires_ci_mode():
     code, _, err = run_cmd(["checkpoint", "--format", "json"])
     assert code == 2
     assert "applies to CI mode only" in err
+
+
+def test_checkpoint_ci_zh_text_labels(monkeypatch):
+    _patch_checkpoint_inputs(monkeypatch)
+    monkeypatch.setenv("HARBOR_LANGUAGE", "zh")
+    code, out, _ = run_cmd(["checkpoint", "--ci"])
+    assert code == 0
+    assert "CI 模式已启用" in out
+    assert "CI 门禁：" in out
+    assert "下一步：" in out or "建议下一步：" in out

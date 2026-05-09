@@ -8,6 +8,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 from harbor.core.contract_impact import ContractImpactLevel, contract_impact_report_to_dict
 from harbor.core.doctor import FAIL, DoctorReport
 from harbor.core.stale import ModuleStaleSummary
+from harbor.utils.i18n import t
 
 
 @dataclass
@@ -106,7 +107,7 @@ def build_checkpoint_ci_result(
                 func_id=str(getattr(binding, "func_id", "") or ""),
                 file_path=str(getattr(binding, "file_path", "") or ""),
                 reason=f"{typ}: {message}",
-                suggested_action="Run targeted tests and fix DDT binding; update explicit l3_version only when contract intentionally changed.",
+                suggested_action=t("cli.ci.checkpoint.action.ddt_binding"),
             )
         )
 
@@ -114,31 +115,31 @@ def build_checkpoint_ci_result(
         failures,
         items=list(getattr(status_report, "missing", []) or []),
         category="missing_function",
-        reason="baseline function missing from implementation",
+        reason=t("cli.ci.checkpoint.failure.missing"),
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "untracked", []) or []),
         category="untracked_function",
-        reason="new function not accepted into Harbor baseline",
+        reason=t("cli.ci.checkpoint.failure.untracked"),
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "drift", []) or []),
         category="possible_semantic_drift",
-        reason="implementation changed while contract stayed static",
+        reason=t("cli.ci.checkpoint.failure.drift"),
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "contract_changed", []) or []),
         category="contract_changed",
-        reason="contract changed and baseline not accepted",
+        reason=t("cli.ci.checkpoint.failure.contract_changed"),
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "modified", []) or []),
         category="contract_and_body_changed",
-        reason="implementation and contract changed; baseline not accepted",
+        reason=t("cli.ci.checkpoint.failure.contract_and_body_changed"),
     )
 
     advisory: List[CheckpointCIItem] = []
@@ -154,8 +155,8 @@ def build_checkpoint_ci_result(
                     category="confirmed_contract_impact",
                     func_id=str(getattr(finding, "func_id", "") or ""),
                     file_path=str(getattr(finding, "file_path", "") or ""),
-                    reason=str(getattr(finding, "reason", "") or "confirmed contract surface change"),
-                    suggested_action="Review public contract impact and update implementation/tests/docs before re-running checkpoint CI.",
+                    reason=str(getattr(finding, "reason", "") or t("cli.ci.checkpoint.failure.confirmed_contract_impact")),
+                    suggested_action=t("cli.ci.checkpoint.action.confirmed_contract_impact"),
                 )
             )
         elif level == ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT:
@@ -165,8 +166,8 @@ def build_checkpoint_ci_result(
                     category="possible_contract_impact",
                     func_id=str(getattr(finding, "func_id", "") or ""),
                     file_path=str(getattr(finding, "file_path", "") or ""),
-                    reason=str(getattr(finding, "reason", "") or "possible contract surface change"),
-                    suggested_action="Review whether public behavior changed intentionally and update contract/tests if needed.",
+                    reason=str(getattr(finding, "reason", "") or t("cli.ci.checkpoint.failure.possible_contract_impact")),
+                    suggested_action=t("cli.ci.checkpoint.action.possible_contract_impact"),
                 )
             )
         elif level == ContractImpactLevel.UNKNOWN:
@@ -175,8 +176,8 @@ def build_checkpoint_ci_result(
                     category="unknown_contract_impact",
                     func_id=str(getattr(finding, "func_id", "") or ""),
                     file_path=str(getattr(finding, "file_path", "") or ""),
-                    reason=str(getattr(finding, "reason", "") or "unknown contract impact"),
-                    suggested_action="Review related changes and clarify contract impact before release gating.",
+                    reason=str(getattr(finding, "reason", "") or t("cli.ci.checkpoint.failure.unknown_contract_impact")),
+                    suggested_action=t("cli.ci.checkpoint.action.unknown_contract_impact"),
                 )
             )
 
@@ -185,7 +186,7 @@ def build_checkpoint_ci_result(
             CheckpointCIItem(
                 category="checkpoint_internal_error",
                 reason=str(err),
-                suggested_action="Fix checkpoint internal error and re-run harbor checkpoint --ci.",
+                suggested_action=t("cli.ci.checkpoint.action.internal_error"),
             )
         )
 
@@ -325,13 +326,20 @@ def ci_result_to_dict(result: CIResult) -> dict:
 
 def format_ci_result(result: CIResult) -> str:
     lines = []
-    lines.append(f"{result.command.upper()} CI mode enabled")
-    lines.append(f"CI gate: {result.status.upper()} (exit {result.exit_code})")
-    lines.append("writes_files: false")
+    lines.append(t("cli.ci.title", command=result.command.upper()))
+    lines.append(t("cli.ci.mode_enabled"))
+    lines.append(
+        t(
+            "cli.ci.gate_with_exit",
+            status=t(f"cli.ci.status.{result.status.lower()}"),
+            exit_code=result.exit_code,
+        )
+    )
+    lines.append(f"{t('cli.ci.writes_files')}: false")
 
     if result.ci_failures:
         lines.append("")
-        lines.append("Blocking failures:")
+        lines.append(t("cli.ci.blocking_failures"))
         for failure in result.ci_failures:
             payload = failure.to_dict()
             if failure.kind == "view":
@@ -341,11 +349,11 @@ def format_ci_result(result: CIResult) -> str:
             else:
                 lines.append(f"- {payload.get('check', '')} {payload.get('status', '')}: {payload.get('reason', '')}")
             if payload.get("suggested_command"):
-                lines.append(f"  Suggested: {payload['suggested_command']}")
+                lines.append(f"  {t('cli.ci.suggested')}: {payload['suggested_command']}")
 
     if result.advisory:
         lines.append("")
-        lines.append("Advisory:")
+        lines.append(t("cli.ci.advisory"))
         for item in result.advisory:
             payload = item.to_dict()
             if item.kind == "view":
@@ -357,7 +365,7 @@ def format_ci_result(result: CIResult) -> str:
 
     if result.next_steps:
         lines.append("")
-        lines.append("Suggested next steps:")
+        lines.append(t("cli.ci.suggested_next_steps"))
         for step in result.next_steps:
             lines.append(f"- {step}")
     return "\n".join(lines)
@@ -444,33 +452,35 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
 
 def format_checkpoint_ci_result(result: CheckpointCIResult) -> str:
     lines: List[str] = []
-    lines.append("Harbor Checkpoint CI")
-    lines.append("CI mode enabled")
-    lines.append(f"CI gate: {result.status.upper()}")
-    lines.append("Writes files: false")
+    lines.append(t("cli.ci.checkpoint.title"))
+    lines.append(t("cli.ci.mode_enabled"))
+    lines.append(t("cli.ci.gate", status=t(f"cli.ci.status.{result.status.lower()}")))
+    lines.append(f"{t('cli.ci.writes_files')}: false")
     if result.ci_failures:
         lines.append("")
-        lines.append("Blocking failures:")
+        lines.append(t("cli.ci.blocking_failures"))
         for item in result.ci_failures:
             payload = item.to_dict()
             target = payload.get("func_id") or payload.get("file_path")
+            label = t(f"cli.ci.checkpoint.category.{payload['category']}")
             if target:
-                lines.append(f"- {payload['category']}: {target}")
+                lines.append(f"- {label}: {target}")
             else:
-                lines.append(f"- {payload['category']}: {payload.get('reason', '')}")
+                lines.append(f"- {label}: {payload.get('reason', '')}")
     if result.advisory:
         lines.append("")
-        lines.append("Advisory:")
+        lines.append(t("cli.ci.advisory"))
         for item in result.advisory:
             payload = item.to_dict()
             target = payload.get("func_id") or payload.get("file_path")
+            label = t(f"cli.ci.checkpoint.category.{payload['category']}")
             if target:
-                lines.append(f"- {payload['category']}: {target}")
+                lines.append(f"- {label}: {target}")
             else:
-                lines.append(f"- {payload['category']}: {payload.get('reason', '')}")
+                lines.append(f"- {label}: {payload.get('reason', '')}")
     if result.next_steps:
         lines.append("")
-        lines.append("Next steps:")
+        lines.append(t("cli.ci.next_steps"))
         for step in result.next_steps:
             lines.append(f"- {step}")
     return "\n".join(lines)
@@ -484,7 +494,7 @@ def _push_status_failures(failures: List[CheckpointCIItem], *, items: Sequence[o
                 func_id=str(getattr(entry, "id", "") or ""),
                 file_path=str(getattr(entry, "file_path", "") or ""),
                 reason=reason,
-                suggested_action="Review baseline drift, update implementation/contracts/tests as needed, then re-run harbor checkpoint --ci.",
+                suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
             )
         )
 
@@ -519,13 +529,13 @@ def _dedupe_checkpoint_items(items: Sequence[CheckpointCIItem]) -> List[Checkpoi
 def _collect_checkpoint_next_steps(ci_failures: Sequence[CheckpointCIItem]) -> List[str]:
     if not ci_failures:
         return [
-            "Checkpoint CI gate passed.",
-            "Re-run harbor checkpoint --ci after new changes.",
+            t("cli.ci.checkpoint.next_steps.pass"),
+            t("cli.ci.checkpoint.next_steps.rerun"),
         ]
     return [
-        "Review blocking failures and update implementation/contracts/tests when behavior intentionally changed.",
-        "Run targeted tests for affected functions or modules.",
-        "Re-run harbor checkpoint --ci.",
+        t("cli.ci.checkpoint.next_steps.review_blocking_failures"),
+        t("cli.ci.checkpoint.next_steps.run_targeted_tests"),
+        t("cli.ci.checkpoint.next_steps.rerun"),
     ]
 
 

@@ -237,7 +237,7 @@ class InitWizard:
     def _emit_project_rules_guidance(self, language: str) -> None:
         if language == "zh":
             self.console.print(
-                "\nProject Rules 未自动生成。\n\n"
+                "\n项目规则（Project Rules）未自动生成。\n\n"
                 "请让你的 AI coding 工具读取：\n"
                 "- .harbor/rules/project-rules-guide.md\n\n"
                 "建议提示词：\n"
@@ -255,14 +255,24 @@ class InitWizard:
             "Do not duplicate AGENTS.md and do not override Harbor machine policy.\""
         )
 
-    def _emit_ide_guidance(self) -> None:
+    def _emit_ide_guidance(self, language: str) -> None:
+        if language == "zh":
+            self.console.print(
+                "\nAI IDE 接入说明：\n"
+                "- AGENTS.md：适合 AGENTS-compatible / Codex-style 工具读取\n"
+                "- .harbor/rules/role-rules.md：可复制或引用到 TRAE / IDE role rules\n"
+                "- Cursor：可根据 role-rules 手动创建 .cursor/rules/harbor.mdc\n"
+                "- Claude Code：可根据 AGENTS.md 手动创建 CLAUDE.md\n"
+                "- GitHub Copilot：可根据 AGENTS.md 手动创建 .github/copilot-instructions.md"
+            )
+            return
         self.console.print(
-            "\nAI IDE 接入说明 / AI IDE integration guidance:\n"
-            "- AGENTS.md：适合 AGENTS-compatible / Codex-style 工具读取\n"
-            "- .harbor/rules/role-rules.md：可复制或引用到 TRAE / IDE role rules\n"
-            "- Cursor：可根据 role-rules 手动创建 .cursor/rules/harbor.mdc\n"
-            "- Claude Code：可根据 AGENTS.md 手动创建 CLAUDE.md\n"
-            "- GitHub Copilot：可根据 AGENTS.md 手动创建 .github/copilot-instructions.md"
+            "\nAI IDE integration guidance:\n"
+            "- AGENTS.md: best for AGENTS-compatible / Codex-style tools\n"
+            "- .harbor/rules/role-rules.md: copy or reference in TRAE / IDE role rules\n"
+            "- Cursor: create .cursor/rules/harbor.mdc from role-rules\n"
+            "- Claude Code: create CLAUDE.md from AGENTS.md\n"
+            "- GitHub Copilot: create .github/copilot-instructions.md from AGENTS.md"
         )
 
     def _emit_next_steps(self, language: str, project: str) -> None:
@@ -270,7 +280,7 @@ class InitWizard:
             if language == "zh":
                 self.console.print(
                     "\nHarborSpec 已为你的新项目准备就绪。\n\n"
-                    "Next steps:\n"
+                    "建议下一步：\n"
                     "1. 打开你的 AI coding 工具并让它遵循：\n"
                     "   - AGENTS.md\n"
                     "   - .harbor/rules/role-rules.md\n"
@@ -311,7 +321,7 @@ class InitWizard:
         if language == "zh":
             self.console.print(
                 "\nHarborSpec 已准备好检查你的已有项目。\n\n"
-                "Recommended next steps:\n"
+                "建议下一步：\n"
                 "1. 查看探测到的扫描根：\n"
                 "   harbor config list\n"
                 "2. 生成项目结构视图：\n"
@@ -355,8 +365,12 @@ class InitWizard:
         project = self._ask_project(stacks, roots)
         self.result.language = language
         self.result.project = project
-        self.console.print(f"Detected code roots: {roots}")
-        self.console.print(f"Detected excludes: {excludes}")
+        if language == "zh":
+            self.console.print(f"探测到的代码根：{roots}")
+            self.console.print(f"探测到的排除项：{excludes}")
+        else:
+            self.console.print(f"Detected code roots: {roots}")
+            self.console.print(f"Detected excludes: {excludes}")
 
         use_detected = self._ask_yes_no("使用这些扫描范围吗？[Y/n] / Use detected scan roots?", True)
         if not use_detected and self.interactive:
@@ -422,7 +436,7 @@ class InitWizard:
 
         show_guide = self._ask_yes_no("是否输出 AI IDE 接入说明？[Y/n]", True)
         if show_guide:
-            self._emit_ide_guidance()
+            self._emit_ide_guidance(language)
 
         llm_enabled = self.options.llm if self.options.llm is not None else self._ask_yes_no(
             "是否配置可选 LLM semantic audit？[y/N]",
@@ -430,7 +444,10 @@ class InitWizard:
         )
         llm_kv: Dict[str, str] = {}
         if llm_enabled:
-            self.console.print("HarborSpec core checks do not require an LLM. LLM is optional for semantic audit.")
+            if language == "zh":
+                self.console.print("HarborSpec 核心检查不依赖 LLM。LLM 仅用于可选语义审计。")
+            else:
+                self.console.print("HarborSpec core checks do not require an LLM. LLM is optional for semantic audit.")
             provider = "openai"
             base_url = "https://api.openai.com/v1"
             api_key = ""
@@ -505,17 +522,17 @@ class InitWizard:
                     self.result.notes.append("warning: .env is not ignored by .gitignore")
 
         if self.options.dry_run:
-            self.console.print("dry-run: no files were written.")
+            self.console.print("dry-run：未写入任何文件。" if language == "zh" else "dry-run: no files were written.")
         if self.result.created:
-            self.console.print("Created:")
+            self.console.print("已创建：" if language == "zh" else "Created:")
             for x in self.result.created:
                 self.console.print(f"- {x}")
         if self.result.overwritten:
-            self.console.print("Overwritten:")
+            self.console.print("已覆盖：" if language == "zh" else "Overwritten:")
             for x in self.result.overwritten:
                 self.console.print(f"- {x}")
         if self.result.skipped:
-            self.console.print("Skipped:")
+            self.console.print("已跳过：" if language == "zh" else "Skipped:")
             for x in self.result.skipped:
                 self.console.print(f"- {x}")
         for note in self.result.notes:

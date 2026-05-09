@@ -1002,7 +1002,7 @@ def main():
             print(t("cli.start.dirty"))
     elif args.command == "checkpoint":
         if not getattr(args, "ci", False) and getattr(args, "format", "text") != "text":
-            parser.error("--format applies to CI mode only.")
+            parser.error(t("cli.checkpoint.error.format_ci_only"))
         if not getattr(args, "ci", False):
             print(t("cli.checkpoint.title"))
             rep, clean = _run_status()

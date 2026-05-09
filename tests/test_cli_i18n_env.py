@@ -4,7 +4,10 @@ from io import StringIO
 from contextlib import redirect_stdout
 import sys
 
+import harbor.cli.main as cli_main
 from harbor.cli.main import main
+from harbor.core.doctor import DoctorCheckResult, DoctorReport, PASS
+from harbor.core.stale import ModuleStaleSummary, ViewStaleResult
 
 
 def run_cmd(argv):
@@ -13,6 +16,18 @@ def run_cmd(argv):
         sys.argv = ["harbor"] + argv
         main()
     return buf.getvalue()
+
+
+def run_cmd_with_code(argv):
+    buf = StringIO()
+    code = 0
+    with redirect_stdout(buf):
+        sys.argv = ["harbor"] + argv
+        try:
+            main()
+        except SystemExit as ex:
+            code = ex.code if isinstance(ex.code, int) else 1
+    return code, buf.getvalue()
 
 
 def test_env_language_overrides_config(tmp_path: Path):
@@ -37,3 +52,59 @@ def test_env_language_overrides_config(tmp_path: Path):
         else:
             os.environ["HARBOR_LANGUAGE"] = old_env
         os.chdir(old)
+
+
+def test_env_language_controls_ci_text(monkeypatch):
+    monkeypatch.setattr(
+        cli_main,
+        "check_module_derived_views_stale",
+        lambda module: ModuleStaleSummary(
+            module=module,
+            l2_readme=ViewStaleResult("L2 README", "up_to_date", None, None),
+            l2_readme_export=ViewStaleResult("L2 README Export", "up_to_date", None, None),
+            module_capsule=ViewStaleResult("Module Capsule", "up_to_date", None, None),
+        ),
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "build_doctor_report",
+        lambda scope, modules: DoctorReport(scope=scope, checks=[DoctorCheckResult("Config / Index", PASS, ["ok"], [])]),
+    )
+
+    class _FakeSyncEngine:
+        def check_status(self):
+            return type(
+                "StatusReport",
+                (),
+                {"drift": [], "modified": [], "contract_changed": [], "untracked": [], "missing": [], "counts": {}},
+            )()
+
+    class _FakeDDTScanner:
+        def scan_tests(self):
+            return []
+
+    class _FakeDDTValidator:
+        def validate(self, bindings):
+            return type("DDTReport", (), {"valid": [], "violations": [], "counts": {}})()
+
+    monkeypatch.setattr(cli_main, "SyncEngine", _FakeSyncEngine)
+    monkeypatch.setattr(cli_main, "DDTScanner", _FakeDDTScanner)
+    monkeypatch.setattr(cli_main, "DDTValidator", _FakeDDTValidator)
+
+    monkeypatch.setenv("HARBOR_LANGUAGE", "zh")
+    _, zh_checkpoint = run_cmd_with_code(["checkpoint", "--ci"])
+    _, zh_stale = run_cmd_with_code(["stale", "--module", "harbor/core", "--ci"])
+    _, zh_doctor = run_cmd_with_code(["doctor", "--module", "harbor/core", "--ci"])
+    zh_text = "\n".join([zh_checkpoint, zh_stale, zh_doctor])
+    assert "CI 模式已启用" in zh_text
+    assert "CI 门禁：" in zh_text
+    assert "建议下一步：" in zh_text
+
+    monkeypatch.setenv("HARBOR_LANGUAGE", "en")
+    _, en_checkpoint = run_cmd_with_code(["checkpoint", "--ci"])
+    _, en_stale = run_cmd_with_code(["stale", "--module", "harbor/core", "--ci"])
+    _, en_doctor = run_cmd_with_code(["doctor", "--module", "harbor/core", "--ci"])
+    en_text = "\n".join([en_checkpoint, en_stale, en_doctor])
+    assert "CI mode enabled" in en_text
+    assert "CI gate" in en_text
+    assert "Suggested next steps" in en_text

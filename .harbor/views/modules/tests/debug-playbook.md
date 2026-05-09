@@ -3,13 +3,14 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "debug_playbook"
 module: "tests"
-generated_at: "2026-05-09T14:43:56Z"
+generated_at: "2026-05-09T16:00:51Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 62
+source_path_count: 66
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
+  - "tests/conftest.py"
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"
   - "tests/fixtures_sqlite/sample.py"
@@ -53,6 +54,9 @@ source_paths:
   - "tests/test_index_builder_bad_syntax.py"
   - "tests/test_index_progress.py"
   - "tests/test_init_detector.py"
+  - "tests/test_init_governance.py"
+  - "tests/test_init_llm_env.py"
+  - "tests/test_init_wizard.py"
   - "tests/test_initializer.py"
   - "tests/test_l2_paths.py"
   - "tests/test_lock_flags.py"
@@ -71,8 +75,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:e72798db67fb6221ec8a6f2d202246a54177f2ddbf3371da0536a55ce3fbb112"
-contract_fingerprint: "sha256:8842ad443a3172a401b7eecc4a5908833fb95a7a90d550c551b654accbe269e0"
+source_fingerprint: "sha256:0e81353ae9671e1d569708ff5bda8f23c107407d8b7cb579a1b138fee7c9fc0e"
+contract_fingerprint: "sha256:be3e34e6d8c1903dd1bf7fea9e4d63ae1c3dffd53c80a31bfdb81a580e3234ee"
 generator_fingerprint: "sha256:9f7097e10acbee9a2269f5ceb3ba21165b4b3de7ea6b46984a8131350c13130f"
 ---
 
@@ -85,7 +89,7 @@ generator_fingerprint: "sha256:9f7097e10acbee9a2269f5ceb3ba21165b4b3de7ea6b46984
 
 ```text
 tests/__init__.py
-tests/core/test_index_sync_sqlite.py
+tests/conftest.py
 ```
 
 ## Minimal Checks

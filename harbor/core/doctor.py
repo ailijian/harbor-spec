@@ -69,7 +69,7 @@ def run_config_index_check() -> DoctorCheckResult:
     suggestions: List[str] = []
     harbor_root = Path(".harbor")
     if not harbor_root.exists():
-        details.append("Harbor root (.harbor/) not found in current workspace.")
+        details.append(t("cli.doctor.detail.harbor_root_missing"))
         suggestions.append("harbor init")
         try:
             db = HarborDB(project_root=Path.cwd())
@@ -84,7 +84,7 @@ def run_config_index_check() -> DoctorCheckResult:
                 suggestions=_unique(suggestions),
             )
         except Exception as ex:
-            details.append(f"Index/database unavailable: {ex}")
+            details.append(t("cli.doctor.detail.index_unavailable", error=str(ex)))
             return DoctorCheckResult(
                 name=t("cli.doctor.config_index"),
                 status=FAIL,
@@ -99,12 +99,12 @@ def run_config_index_check() -> DoctorCheckResult:
         return DoctorCheckResult(
             name=t("cli.doctor.config_index"),
             status=FAIL,
-            details=[f"Index/database unavailable: {ex}"],
+            details=[t("cli.doctor.detail.index_unavailable", error=str(ex))],
             suggestions=[],
         )
 
     if record_count <= 0:
-        details.append("Indexed records not found.")
+        details.append(t("cli.doctor.detail.indexed_records_not_found"))
         suggestions.extend(["harbor lock", "harbor adopt <path>"])
         return DoctorCheckResult(
             name=t("cli.doctor.config_index"),
@@ -115,7 +115,7 @@ def run_config_index_check() -> DoctorCheckResult:
     return DoctorCheckResult(
         name=t("cli.doctor.config_index"),
         status=PASS,
-        details=[f"Indexed records available: {record_count}"],
+        details=[t("cli.doctor.detail.indexed_records_available", count=record_count)],
         suggestions=[],
     )
 
@@ -127,7 +127,7 @@ def run_workspace_status_check(sync_engine: Optional[SyncEngine] = None) -> Doct
         return DoctorCheckResult(
             name=t("cli.doctor.workspace_status"),
             status=FAIL,
-            details=[f"Workspace status check failed: {ex}"],
+            details=[t("cli.doctor.detail.workspace_status_failed", error=str(ex))],
             suggestions=[],
         )
 
@@ -143,11 +143,11 @@ def run_workspace_status_check(sync_engine: Optional[SyncEngine] = None) -> Doct
         return DoctorCheckResult(
             name=t("cli.doctor.workspace_status"),
             status=PASS,
-            details=["No Harbor drift detected."],
+            details=[t("cli.doctor.detail.no_drift")],
             suggestions=[],
         )
 
-    details = [f"Changed records detected: {changed_count}"]
+    details = [t("cli.doctor.detail.changed_records_detected", count=changed_count)]
     for key in ("drift", "modified", "contract_changed", "untracked", "missing"):
         value = int(counts.get(key, 0))
         if value > 0:
@@ -171,11 +171,11 @@ def run_ddt_fast_check(
         return DoctorCheckResult(
             name=t("cli.doctor.ddt_fast"),
             status=FAIL,
-            details=[f"DDT fast check failed: {ex}"],
+            details=[t("cli.doctor.detail.ddt_fast_failed", error=str(ex))],
             suggestions=[],
         )
 
-    details = [f"Bindings scanned: {len(bindings)}"]
+    details = [t("cli.doctor.detail.bindings_scanned", count=len(bindings))]
     violations = getattr(report, "violations", []) or []
     if not violations:
         return DoctorCheckResult(
@@ -186,8 +186,8 @@ def run_ddt_fast_check(
         )
 
     kinds = sorted({str(v[0]) for v in violations})
-    details.append(f"Violations: {len(violations)}")
-    details.append(f"Types: {', '.join(kinds)}")
+    details.append(t("cli.doctor.detail.violations", count=len(violations)))
+    details.append(t("cli.doctor.detail.violation_types", types=", ".join(kinds)))
     suggestions = ["update DDT binding to explicit l3_version"]
     return DoctorCheckResult(
         name=t("cli.doctor.ddt_fast"),
@@ -212,7 +212,7 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
         return DoctorCheckResult(
             name=t("cli.doctor.derived_views"),
             status=PASS,
-            details=["No modules in selected scope."],
+            details=[t("cli.doctor.detail.no_modules_in_scope")],
             suggestions=[],
         )
 
@@ -230,7 +230,9 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
             if view_result.status == "up_to_date":
                 continue
             if view_result.status == "disabled":
-                stale_details.append(f"{summary.module} {view_name} disabled: {view_result.reason or 'disabled'}")
+                stale_details.append(
+                    f"{summary.module} {view_name} {t('cli.doctor.status.disabled')}: {view_result.reason or t('cli.doctor.status.disabled')}"
+                )
                 continue
             status = _merge_status(status, WARN)
             detail_status = _derived_view_detail_status(view_result.status)
@@ -254,11 +256,13 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
             parsed = _parse_generated_frontmatter_safely(check_path)
             if parsed is None:
                 status = _merge_status(status, WARN)
-                stale_details.append(f"{label} frontmatter unknown: missing or parse failed")
+                stale_details.append(
+                    f"{label} frontmatter {t('cli.doctor.status.unknown')}: {t('cli.doctor.detail.frontmatter_missing_or_parse_failed')}"
+                )
                 continue
             if not parsed:
                 status = _merge_status(status, WARN)
-                stale_details.append(f"{label} frontmatter unknown: empty metadata")
+                stale_details.append(f"{label} frontmatter {t('cli.doctor.status.unknown')}: {t('cli.doctor.detail.frontmatter_empty')}")
 
     legacy_meta = Path(".harbor") / "l2_meta.json"
     if legacy_meta.exists():
@@ -279,7 +283,7 @@ def run_derived_views_check(modules: List[str]) -> DoctorCheckResult:
         return DoctorCheckResult(
             name=t("cli.doctor.derived_views"),
             status=PASS,
-            details=["All derived context views are up to date."],
+            details=[t("cli.doctor.detail.derived_views_up_to_date")],
             suggestions=[],
         )
     return DoctorCheckResult(
@@ -295,7 +299,7 @@ def run_skill_reference_check(skills_root: Path = Path(".agents") / "skills") ->
         return DoctorCheckResult(
             name=t("cli.doctor.skill_refs"),
             status=SKIP,
-            details=[".agents/skills not found."],
+            details=[t("cli.doctor.detail.skills_not_found")],
             suggestions=[],
         )
 
@@ -338,7 +342,7 @@ def run_skill_reference_check(skills_root: Path = Path(".agents") / "skills") ->
         return DoctorCheckResult(
             name=t("cli.doctor.skill_refs"),
             status=PASS,
-            details=["Optional skill references look valid."],
+            details=[t("cli.doctor.detail.skill_refs_valid")],
             suggestions=[],
         )
     return DoctorCheckResult(
@@ -361,13 +365,13 @@ def build_doctor_report(scope: str, modules: List[str]) -> DoctorReport:
 
 
 def format_doctor_report(report: DoctorReport) -> str:
-    lines: List[str] = [t("cli.doctor.title"), f"Scope: {report.scope}", ""]
+    lines: List[str] = [t("cli.doctor.title"), f"{t('cli.doctor.scope_label')}: {report.scope}", ""]
     for check in report.checks:
         lines.append(f"{check.name}: {_status_text(check.status)}")
         for detail in check.details:
             lines.append(f"- {detail}")
         if check.suggestions:
-            lines.append("Suggested:")
+            lines.append(t("cli.doctor.suggested"))
             for suggestion in check.suggestions:
                 lines.append(f"- {suggestion}")
         lines.append("")
@@ -455,13 +459,13 @@ def _derived_view_detail_status(status: str) -> str:
         str: 面向文本输出的状态描述；未知值会执行 ``_`` 到空格的退化转换。
     """
     if status == "disabled":
-        return "disabled"
+        return t("cli.doctor.status.disabled")
     if status == "unknown":
-        return "unknown"
+        return t("cli.doctor.status.unknown")
     if status == "stale":
-        return "stale"
+        return t("cli.doctor.status.stale")
     if status == "up_to_date":
-        return "up to date"
+        return t("cli.doctor.status.up_to_date")
     return (status or "stale").replace("_", " ")
 
 

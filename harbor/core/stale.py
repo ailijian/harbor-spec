@@ -199,10 +199,12 @@ def check_module_derived_views_stale(module: str) -> ModuleStaleSummary:
     capsule_raw = check_module_capsule_stale(context)
     capsule_reason = capsule_raw.get("reason") or ""
     capsule_status = "up_to_date" if capsule_raw.get("status") == "up_to_date" else "stale"
-    if capsule_reason == "no indexed records found for module":
+    no_indexed_reason = "no indexed records found for module"
+    legacy_no_indexed_reason = "no indexed records found for module"
+    if capsule_reason in (no_indexed_reason, legacy_no_indexed_reason):
         capsule_status = "unknown"
     capsule_suggest = None
-    if capsule_status != "up_to_date" and capsule_reason != "no indexed records found for module":
+    if capsule_status != "up_to_date" and capsule_reason not in (no_indexed_reason, legacy_no_indexed_reason):
         capsule_suggest = f"harbor module seal {normalized} --write"
 
     capsule_result = ViewStaleResult(
@@ -231,7 +233,7 @@ def format_stale_summary(results: List[ModuleStaleSummary], scope_text: str) -> 
     """
     lines: List[str] = []
     lines.append(t("cli.stale.title"))
-    lines.append(f"Scope: {scope_text}")
+    lines.append(f"{t('cli.stale.scope_label')}: {scope_text}")
 
     all_up_to_date = True
     for summary in results:

@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-09T14:42:40Z"
+generated_at: "2026-05-09T16:00:51Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 25
+source_path_count: 26
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
@@ -22,6 +22,7 @@ source_paths:
   - "harbor/core/git_utils.py"
   - "harbor/core/index.py"
   - "harbor/core/init.py"
+  - "harbor/core/init_wizard.py"
   - "harbor/core/l2.py"
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
@@ -34,11 +35,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:4f8dc3997a12eeab02fbf1a9cf06cdc471257daf2b5b79c6f3065d8009655a4c"
-contract_fingerprint: "sha256:fb5c20f28d9d90902d790f9993119535e6e64084496f4470175675774565248b"
+source_fingerprint: "sha256:6b88f243d0f46adb36291031c45e2a61a5e65426aac69e3d05a042ac3e90f302"
+contract_fingerprint: "sha256:0b3ecf7cbc251e77e02833a364b6b0103942f53dbb62833ef8b513adfc69ed44"
 generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "9e6d66c6810808d07e1060cf8e1ead9dba3c6e71fc2dfc97ad4567051d2bcc9b"
-fingerprint: "9e6d66c6810808d07e1060cf8e1ead9dba3c6e71fc2dfc97ad4567051d2bcc9b"
+view_fingerprint: "ce88a953b876dc540b0a2a80318c369616fd94d7d2b79eb49275075a78d113df"
+fingerprint: "ce88a953b876dc540b0a2a80318c369616fd94d7d2b79eb49275075a78d113df"
 ---
 
 # Module Card: harbor/core
@@ -72,6 +73,7 @@ harbor/core/drafting.py
 harbor/core/git_utils.py
 harbor/core/index.py
 harbor/core/init.py
+harbor/core/init_wizard.py
 harbor/core/l2.py
 harbor/core/module_capsule.py
 harbor/core/module_skill.py
@@ -248,6 +250,24 @@ harbor/core/workspace_migrate.py
 | harbor.core.init.ProjectDetector._get_default_excludes | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._parse_gitignore | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector.detect | harbor/core/init.py | public | strict |
+| harbor.core.init_wizard.InitWizard.__init__ | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._ask_language | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._ask_project | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._ask_yes_no | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._emit_ide_guidance | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._emit_next_steps | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard.run | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._append_missing_env_keys | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._default_language | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._default_project | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._has_env_ignore | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._is_tty | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._load_template_text | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._mask_key | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._read_env_keys | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._update_managed_block | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard._write_file_with_policy | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.l2.L2Generator.__init__ | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._collect_integrity_inputs | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._ensure_within_root | harbor/core/l2.py | unknown | standard |
@@ -432,6 +452,7 @@ tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_utils_format.py
 tests/test_workspace_gitignore_policy.py
+tests/test_workspace_i18n.py
 tests/test_workspace_inspect.py
 tests/test_workspace_migrate.py
 tests/test_workspace_paths.py

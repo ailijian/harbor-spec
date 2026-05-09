@@ -3,13 +3,14 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.0"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-09T14:43:56Z"
+generated_at: "2026-05-09T16:00:51Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 62
+source_path_count: 66
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
+  - "tests/conftest.py"
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"
   - "tests/fixtures_sqlite/sample.py"
@@ -53,6 +54,9 @@ source_paths:
   - "tests/test_index_builder_bad_syntax.py"
   - "tests/test_index_progress.py"
   - "tests/test_init_detector.py"
+  - "tests/test_init_governance.py"
+  - "tests/test_init_llm_env.py"
+  - "tests/test_init_wizard.py"
   - "tests/test_initializer.py"
   - "tests/test_l2_paths.py"
   - "tests/test_lock_flags.py"
@@ -71,11 +75,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:e72798db67fb6221ec8a6f2d202246a54177f2ddbf3371da0536a55ce3fbb112"
-contract_fingerprint: "sha256:8842ad443a3172a401b7eecc4a5908833fb95a7a90d550c551b654accbe269e0"
+source_fingerprint: "sha256:0e81353ae9671e1d569708ff5bda8f23c107407d8b7cb579a1b138fee7c9fc0e"
+contract_fingerprint: "sha256:be3e34e6d8c1903dd1bf7fea9e4d63ae1c3dffd53c80a31bfdb81a580e3234ee"
 generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "0505fdb1c6e68ef10d22e9417aa13b4058b943b4e5f9ca7ca3e39dbf2e8463a4"
-fingerprint: "0505fdb1c6e68ef10d22e9417aa13b4058b943b4e5f9ca7ca3e39dbf2e8463a4"
+view_fingerprint: "a9260ba8d8879468ffcb07b547a4d7e03320dc2d11f15232064f2bf8e0e01830"
+fingerprint: "a9260ba8d8879468ffcb07b547a4d7e03320dc2d11f15232064f2bf8e0e01830"
 ---
 
 # Module Card: tests
@@ -97,6 +101,7 @@ If this summary is too generic, update the underlying contracts or module docume
 
 ```text
 tests/__init__.py
+tests/conftest.py
 tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 tests/fixtures_sqlite/sample.py
@@ -140,6 +145,9 @@ tests/test_index_builder.py
 tests/test_index_builder_bad_syntax.py
 tests/test_index_progress.py
 tests/test_init_detector.py
+tests/test_init_governance.py
+tests/test_init_llm_env.py
+tests/test_init_wizard.py
 tests/test_initializer.py
 tests/test_l2_paths.py
 tests/test_lock_flags.py
@@ -263,6 +271,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_help_and_ux.test_docs_help_lists_changed_all_and_write_flags | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_docs_modes_error_message_is_friendly_and_clear | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_doctor_help_lists_changed_all_and_module_flags | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_init_help_lists_wizard_flags | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_module_help_lists_inspect_seal_stale_and_promote_skill | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_module_seal_modes_error_message_is_friendly_and_clear | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_module_stale_modes_error_message_is_friendly_and_clear | tests/test_cli_help_and_ux.py | unknown | standard |
@@ -272,6 +281,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_help_and_ux.test_stale_help_lists_changed_all_module_and_format_flags | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_workflow_help_exposes_start_checkpoint_finish_accept | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_i18n.run_cmd | tests/test_cli_i18n.py | unknown | standard |
+| tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.test_config_list_zh | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n_env.run_cmd | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_env_language_overrides_config | tests/test_cli_i18n_env.py | unknown | standard |
@@ -480,10 +490,23 @@ tests/test_workspace_paths.py
 | tests.test_init_detector.test_django_detection | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_detector.test_gitignore_mapping | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_detector.test_mixed_stack_rules | tests/test_init_detector.py | unknown | standard |
+| tests.test_init_governance._starter_targets | tests/test_init_governance.py | unknown | standard |
+| tests.test_init_governance.run_cmd | tests/test_init_governance.py | unknown | standard |
+| tests.test_init_governance.test_init_dry_run_with_full_flags_writes_nothing | tests/test_init_governance.py | unknown | standard |
+| tests.test_init_governance.test_init_existing_files_are_skipped_unless_force | tests/test_init_governance.py | unknown | standard |
+| tests.test_init_governance.test_init_governance_creates_starter_files_without_project_rules | tests/test_init_governance.py | unknown | standard |
+| tests.test_init_llm_env.test_gitignore_has_separate_managed_blocks | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_llm_env.test_gitignore_managed_blocks_are_idempotent | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_llm_env.test_llm_env_append_missing_only_and_force_does_not_overwrite | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_wizard.test_dry_run_non_tty_uses_safe_defaults | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_wizard_language_prompt_comes_first | tests/test_init_wizard.py | unknown | standard |
 | tests.test_initializer.test_detect_fallback | tests/test_initializer.py | unknown | standard |
 | tests.test_initializer.test_detect_package_layout | tests/test_initializer.py | unknown | standard |
 | tests.test_initializer.test_detect_script_layout | tests/test_initializer.py | unknown | standard |
 | tests.test_initializer.test_detect_src_layout | tests/test_initializer.py | unknown | standard |
+| tests.test_initializer.test_write_config_supports_language | tests/test_initializer.py | unknown | standard |
 | tests.test_l2_paths._write_yaml | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_absolute_module_path_outside_repo_still_rejected | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root | tests/test_l2_paths.py | unknown | standard |
@@ -539,6 +562,8 @@ tests/test_workspace_paths.py
 | tests.test_release_packaging._repo_root | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging._run_help | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_help_recognizes_core_release_commands | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_init_templates_package_resources_are_loadable | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_pyproject_declares_cli_runtime_dependencies | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_readme_contains_release_key_commands | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | tests/test_release_packaging.py | unknown | standard |
@@ -654,6 +679,9 @@ tests/test_index_builder.py
 tests/test_index_builder_bad_syntax.py
 tests/test_index_progress.py
 tests/test_init_detector.py
+tests/test_init_governance.py
+tests/test_init_llm_env.py
+tests/test_init_wizard.py
 tests/test_initializer.py
 tests/test_l2_paths.py
 tests/test_lock_flags.py
@@ -687,7 +715,7 @@ Start with:
 
 ```text
 tests/__init__.py
-tests/core/test_index_sync_sqlite.py
+tests/conftest.py
 ```
 
 ## Related Views

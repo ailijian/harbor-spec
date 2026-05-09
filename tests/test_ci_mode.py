@@ -119,6 +119,37 @@ def test_doctor_ci_warn_only_is_pass(monkeypatch):
     assert payload["ci_failures"] == []
 
 
+def test_ci_mode_i18n_labels_follow_language(monkeypatch):
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _stale_summary(module))
+    monkeypatch.setattr(
+        cli_main,
+        "build_doctor_report",
+        lambda scope, modules: DoctorReport(scope=scope, checks=[DoctorCheckResult("Config / Index", PASS, ["ok"], [])]),
+    )
+
+    monkeypatch.setenv("HARBOR_LANGUAGE", "zh")
+    _, zh_checkpoint = run_cmd(["checkpoint", "--ci"])
+    _, zh_stale = run_cmd(["stale", "--module", "harbor/core", "--ci"])
+    _, zh_doctor = run_cmd(["doctor", "--module", "harbor/core", "--ci"])
+    zh_text = "\n".join([zh_checkpoint, zh_stale, zh_doctor])
+    assert "CI 模式已启用" in zh_text
+    assert "CI 门禁：" in zh_text
+    assert "建议下一步：" in zh_text
+    assert "写入文件: false" in zh_text or "写入文件：false" in zh_text
+    assert "CI mode enabled" not in zh_text
+    assert "Suggested next steps" not in zh_text
+    assert "Blocking failures" not in zh_text
+
+    monkeypatch.setenv("HARBOR_LANGUAGE", "en")
+    _, en_checkpoint = run_cmd(["checkpoint", "--ci"])
+    _, en_stale = run_cmd(["stale", "--module", "harbor/core", "--ci"])
+    _, en_doctor = run_cmd(["doctor", "--module", "harbor/core", "--ci"])
+    en_text = "\n".join([en_checkpoint, en_stale, en_doctor])
+    assert "CI mode enabled" in en_text
+    assert "CI gate" in en_text
+    assert "Suggested next steps" in en_text
+
+
 def test_doctor_ci_fail_on_fail_check(monkeypatch):
     report = DoctorReport(
         scope="changed modules",
@@ -200,4 +231,3 @@ def test_ci_mode_no_write_regression(monkeypatch, tmp_path: Path):
     assert before.keys() == after.keys()
     for key in before:
         assert before[key][0] == after[key][0]
-

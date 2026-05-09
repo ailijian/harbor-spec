@@ -67,7 +67,7 @@ def test_init_detects_django(tmp_path: Path):
                 "--no-update-gitignore",
             ]
         )
-        assert "Detected code roots:" in out
+        assert "探测到的代码根：" in out
         cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
         cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
         assert not (tmp_path / ".harbor" / "config.yaml").exists()

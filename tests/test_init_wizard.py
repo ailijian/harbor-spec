@@ -107,3 +107,53 @@ def test_dry_run_non_tty_uses_safe_defaults(tmp_path: Path, monkeypatch):
     assert "AGENTS.md" in out
     assert ".harbor/rules/project-rules-guide.md" in out
     assert ".harbor/rules/glossary.md" not in out
+
+
+def test_init_wizard_dry_run_i18n_purity(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: False)
+
+    zh_stream = StringIO()
+    zh_wiz = InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            dry_run=True,
+            language="zh",
+            project="new",
+            governance=False,
+            governance_docs=False,
+            llm=False,
+            update_gitignore=False,
+        ),
+        console=Console(file=zh_stream, force_terminal=False, width=200),
+    )
+    zh_wiz.run()
+    zh_out = zh_stream.getvalue()
+    assert "探测到的代码根" in zh_out
+    assert "探测到的排除项" in zh_out
+    assert "建议下一步：" in zh_out
+    assert "AI IDE 接入说明" in zh_out
+    assert "Detected code roots" not in zh_out
+    assert "Next steps:" not in zh_out
+
+    en_stream = StringIO()
+    en_wiz = InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            dry_run=True,
+            language="en",
+            project="new",
+            governance=False,
+            governance_docs=False,
+            llm=False,
+            update_gitignore=False,
+        ),
+        console=Console(file=en_stream, force_terminal=False, width=200),
+    )
+    en_wiz.run()
+    en_out = en_stream.getvalue()
+    assert "Detected code roots" in en_out
+    assert "Detected excludes" in en_out
+    assert "Next steps:" in en_out
+    assert "AI IDE integration guidance" in en_out
+    assert "探测到的代码根" not in en_out
+    assert "AI IDE 接入说明" not in en_out
