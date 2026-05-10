@@ -76,6 +76,9 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.status.modified": "Changes (Body + Contract):",
         "cli.status.untracked": "Untracked functions:",
         "cli.status.missing": "Missing functions:",
+        "cli.status.skipped_no_contract.summary": "Skipped No Contract: {count} targets skipped (non-blocking)",
+        "cli.status.skipped_no_contract.reason": "Reason: no contract required for these targets.",
+        "cli.common.use_verbose_details": "Use --verbose to view details.",
         "cli.start.title": "Harbor Start:",
         "cli.start.clean": "No Harbor changes detected. You can start AI coding.",
         "cli.start.dirty": "Existing Harbor changes detected. Resolve drift or finish the current task before starting a new one.",
@@ -84,10 +87,19 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.finish.title": "Harbor Finish:",
         "cli.finish.next_steps": (
             "Next steps:\n"
-            "  - harbor docs --module <module> --write\n"
-            "  - Run `harbor log` only if this task involved an important decision or Contract Change.\n"
-            "  - Run `harbor accept` only when you are ready to accept the new baseline."
+            "  - harbor checkpoint --ci --format json --advice basic\n"
+            "  - harbor stale --ci --format json --advice basic\n"
+            "  - harbor doctor --ci --format json --advice basic"
         ),
+        "cli.finish.summary.title": "Finish Summary:",
+        "cli.finish.summary.blocking": "- Blocking failures: {status}",
+        "cli.finish.summary.ddt_binding": "- DDT binding status: {status}",
+        "cli.finish.summary.ddt_advisory": "- DDT advisory (baseline-missing): {count}",
+        "cli.finish.summary.semantic_targets": "- Semantic audit targets: {count}",
+        "cli.finish.summary.status.yes": "yes",
+        "cli.finish.summary.status.no": "no",
+        "cli.finish.summary.status.ok": "OK",
+        "cli.finish.summary.status.fail": "FAIL",
         "cli.finish.sync_context.title": "Context Sync:",
         "cli.finish.sync_context.docs": "- Refreshing L2 README for changed modules...",
         "cli.finish.sync_context.capsules": "- Refreshing Module Capsules for changed modules...",
@@ -95,15 +107,19 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.finish.sync_context.none": "No changed modules detected. Context sync skipped.",
         "cli.finish.sync_context.next_steps": (
             "Next steps:\n"
-            "  - Run `harbor log` if this task involved an important decision or Contract Change.\n"
-            "  - Run `harbor accept` when you are ready to accept the new baseline.\n"
-            "  - Optionally run `harbor module promote-skill <module>` for high-value modules with up-to-date capsules."
+            "  - harbor checkpoint --ci --format json --advice basic\n"
+            "  - harbor stale --ci --format json --advice basic\n"
+            "  - harbor doctor --ci --format json --advice basic"
         ),
         "cli.accept.done": "Accepted current Harbor baseline.",
         "cli.check.title": "Harbor Check Report:",
         "cli.check.ddt": "[DDT] Validation:",
         "cli.check.ddt_advisory": "[DDT Advisory]",
         "cli.check.ddt_advisory.baseline_missing": "Strict DDT binding is structurally valid, but no L3 contract version baseline was found. Harbor cannot verify whether l3_version should be bumped.",
+        "cli.check.ddt_advisory.baseline_missing.line1": "Strict DDT binding is structurally valid, but no L3 contract version baseline was found. Harbor cannot verify whether l3_version should be bumped.",
+        "cli.check.ddt_advisory.baseline_missing.line2": "Please establish or accept the baseline after human review.",
+        "cli.check.ddt_advisory.use_verbose_bindings": "Use --verbose to view bindings.",
+        "cli.check.valid_summary": "Valid bindings: {count}",
         "cli.check.bindings": "Bindings scanned: {count}",
         "cli.check.nobindings": "No DDT bindings found.",
         "cli.contract_impact.advisory_note": "Contract Impact Classifier is advisory/conservative/explainable and does not replace human review, DDT, or semantic audit.",
@@ -399,6 +415,9 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.status.modified": "综合变更（Body + Contract）：",
         "cli.status.untracked": "未跟踪函数：",
         "cli.status.missing": "缺失函数：",
+        "cli.status.skipped_no_contract.summary": "Skipped No Contract: {count} targets skipped (non-blocking)",
+        "cli.status.skipped_no_contract.reason": "Reason: no contract required for these targets.",
+        "cli.common.use_verbose_details": "Use --verbose to view details.",
         "cli.start.title": "Harbor 开始检查：",
         "cli.start.clean": "未检测到 Harbor 变更。你可以开始 AI coding。",
         "cli.start.dirty": "检测到现有 Harbor 变更。请先解决漂移或完成当前任务，再开启新任务。",
@@ -407,10 +426,19 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.finish.title": "Harbor 收尾检查：",
         "cli.finish.next_steps": (
             "建议下一步：\n"
-            "  - harbor docs --module <module> --write\n"
-            "  - 若本次任务包含重要决策或 Contract Change，请执行 `harbor log`。\n"
-            "  - 准备接受新基线时，请执行 `harbor accept`。"
+            "  - harbor checkpoint --ci --format json --advice basic\n"
+            "  - harbor stale --ci --format json --advice basic\n"
+            "  - harbor doctor --ci --format json --advice basic"
         ),
+        "cli.finish.summary.title": "Finish Summary:",
+        "cli.finish.summary.blocking": "- Blocking failures: {status}",
+        "cli.finish.summary.ddt_binding": "- DDT binding status: {status}",
+        "cli.finish.summary.ddt_advisory": "- DDT advisory (baseline-missing): {count}",
+        "cli.finish.summary.semantic_targets": "- Semantic audit targets: {count}",
+        "cli.finish.summary.status.yes": "yes",
+        "cli.finish.summary.status.no": "no",
+        "cli.finish.summary.status.ok": "OK",
+        "cli.finish.summary.status.fail": "FAIL",
         "cli.finish.sync_context.title": "上下文同步：",
         "cli.finish.sync_context.docs": "- 刷新变更模块的 L2 README...",
         "cli.finish.sync_context.capsules": "- 刷新变更模块的 Module Capsule...",
@@ -418,15 +446,19 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.finish.sync_context.none": "未检测到变更模块。已跳过上下文同步。",
         "cli.finish.sync_context.next_steps": (
             "建议下一步：\n"
-            "  - 若本次任务包含重要决策或 Contract Change，请执行 `harbor log`。\n"
-            "  - 准备接受新基线时，请执行 `harbor accept`。\n"
-            "  - 可选：对高价值且 capsule 已最新的模块执行 `harbor module promote-skill <module>`。"
+            "  - harbor checkpoint --ci --format json --advice basic\n"
+            "  - harbor stale --ci --format json --advice basic\n"
+            "  - harbor doctor --ci --format json --advice basic"
         ),
         "cli.accept.done": "已接受当前 Harbor 基线。",
         "cli.check.title": "Harbor 检查报告：",
         "cli.check.ddt": "[DDT] 绑定校验：",
         "cli.check.ddt_advisory": "[DDT Advisory]",
         "cli.check.ddt_advisory.baseline_missing": "严格 DDT 绑定格式有效，但未找到 L3 契约版本基线，无法判断 l3_version 是否需要升级。请在人工复核后建立或接受基线。",
+        "cli.check.ddt_advisory.baseline_missing.line1": "严格 DDT 绑定格式有效，但未找到 L3 契约版本基线，无法判断 l3_version 是否需要升级。",
+        "cli.check.ddt_advisory.baseline_missing.line2": "请在人工复核后建立或接受基线。",
+        "cli.check.ddt_advisory.use_verbose_bindings": "Use --verbose to view bindings.",
+        "cli.check.valid_summary": "有效绑定数量：{count}",
         "cli.check.bindings": "绑定扫描数量：{count}",
         "cli.check.nobindings": "未发现 DDT 绑定。",
         "cli.contract_impact.advisory_note": "Contract Impact Classifier 仅提供 advisory/conservative/explainable 分类，不替代人工评审、DDT 或语义审计。",

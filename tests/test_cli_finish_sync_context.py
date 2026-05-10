@@ -70,7 +70,7 @@ def _empty_status_report():
 
 
 def _empty_validation_report():
-    return SimpleNamespace(valid=[], violations=[])
+    return SimpleNamespace(valid=[], violations=[], advisory=[], counts={"valid": 0, "violations": 0, "advisory": 0})
 
 
 def _patch_finish_basics(monkeypatch):
@@ -191,9 +191,9 @@ def test_finish_sync_context_runs_status_check_docs_seal_stale(monkeypatch):
     assert "Refreshing L2 README for changed modules" in out
     assert "Refreshing Module Capsules for changed modules" in out
     assert "Checking Module Capsule stale status" in out
-    assert "Run `harbor log`" in out
-    assert "Run `harbor accept`" in out
-    assert "Optionally run `harbor module promote-skill <module>`" in out
+    assert "harbor checkpoint --ci --format json --advice basic" in out
+    assert "harbor stale --ci --format json --advice basic" in out
+    assert "harbor doctor --ci --format json --advice basic" in out
     assert status_calls["count"] >= 3
     assert docs_generated == ["harbor/cli", "harbor/core"]
     assert docs_written == ["harbor/cli", "harbor/core"]

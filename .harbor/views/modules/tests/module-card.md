@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.3.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-10T14:41:04Z"
+generated_at: "2026-05-10T16:16:18Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 70
+source_path_count: 73
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -19,6 +19,7 @@ source_paths:
   - "tests/test_audit.py"
   - "tests/test_cache_isolation_hardening.py"
   - "tests/test_checkpoint_ci.py"
+  - "tests/test_checkpoint_ci_guidance.py"
   - "tests/test_ci_mode.py"
   - "tests/test_cli_config.py"
   - "tests/test_cli_decorate.py"
@@ -52,6 +53,7 @@ source_paths:
   - "tests/test_drafting.py"
   - "tests/test_drafting_json_parse.py"
   - "tests/test_gitignore_prune.py"
+  - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
   - "tests/test_index_builder_bad_syntax.py"
   - "tests/test_index_progress.py"
@@ -69,6 +71,7 @@ source_paths:
   - "tests/test_module_skill.py"
   - "tests/test_project_structure.py"
   - "tests/test_release_packaging.py"
+  - "tests/test_repair_guidance.py"
   - "tests/test_semantic_audit_contract_gap.py"
   - "tests/test_stale.py"
   - "tests/test_sync_engine.py"
@@ -79,11 +82,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:45746c56431cce702eaba6b93b8c8cd2f7620690b3616e158d0afcdca0fc4a6a"
-contract_fingerprint: "sha256:1d9e4cbc2b17582e8c5ee7f347f9f5c88cff701c67661d5b28e2d4d6c81cfa2e"
-generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "8d872617bc1a72282bd7d7f5e68533f2b24b19f0de59cccc0635fb1bf37cb056"
-fingerprint: "8d872617bc1a72282bd7d7f5e68533f2b24b19f0de59cccc0635fb1bf37cb056"
+source_fingerprint: "sha256:02be6fc0b9443db85dd48b41cf316fc8b9aa9f03a890a5f5a5e40e2f6cfb59be"
+contract_fingerprint: "sha256:6cf102a1ff9105ba293df4365d9ecec7a074c0bc2920e7dd765bd3beb5d518eb"
+generator_fingerprint: "sha256:074be0a5b63ac214e37c151a854974866ff3aeefc9fcea3a50b722645556821b"
+view_fingerprint: "0c2f786837d2372139f714729ae5f75ff5d1f61503bef830ea8357f13cd68e20"
+fingerprint: "0c2f786837d2372139f714729ae5f75ff5d1f61503bef830ea8357f13cd68e20"
 ---
 
 # Module Card: tests
@@ -114,6 +117,7 @@ tests/test_adopted_roots.py
 tests/test_audit.py
 tests/test_cache_isolation_hardening.py
 tests/test_checkpoint_ci.py
+tests/test_checkpoint_ci_guidance.py
 tests/test_ci_mode.py
 tests/test_cli_config.py
 tests/test_cli_decorate.py
@@ -147,6 +151,7 @@ tests/test_doctor.py
 tests/test_drafting.py
 tests/test_drafting_json_parse.py
 tests/test_gitignore_prune.py
+tests/test_harbor_next.py
 tests/test_index_builder.py
 tests/test_index_builder_bad_syntax.py
 tests/test_index_progress.py
@@ -164,6 +169,7 @@ tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
 tests/test_release_packaging.py
+tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
 tests/test_stale.py
 tests/test_sync_engine.py
@@ -226,6 +232,16 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci.test_checkpoint_ci_zh_text_labels | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance._ddt_report | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance._patch_inputs | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance._status_entry | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance._status_report | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance.run_cmd | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance.test_advice_off_removes_guidance_field | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance.test_checkpoint_json_output_is_single_json_object | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance.test_contract_gap_guidance_in_checkpoint_json | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance.test_ddt_baseline_missing_is_advisory_with_guidance | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance.test_possible_semantic_drift_guidance_is_conservative | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_ci_mode._force_en_locale | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode._stale_summary | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.run_cmd | tests/test_ci_mode.py | unknown | standard |
@@ -521,6 +537,12 @@ tests/test_workspace_paths.py
 | tests.test_drafting_json_parse.test_parse_with_code_fence | tests/test_drafting_json_parse.py | unknown | standard |
 | tests.test_drafting_json_parse.test_parse_with_noise_prefix_suffix | tests/test_drafting_json_parse.py | unknown | standard |
 | tests.test_gitignore_prune.test_gitignore_prunes_node_modules | tests/test_gitignore_prune.py | unknown | standard |
+| tests.test_harbor_next.run_cmd | tests/test_harbor_next.py | unknown | standard |
+| tests.test_harbor_next.test_next_can_read_utf16_report | tests/test_harbor_next.py | unknown | standard |
+| tests.test_harbor_next.test_next_json_items_include_blocking_and_status_is_ok_even_for_fail_report | tests/test_harbor_next.py | unknown | standard |
+| tests.test_harbor_next.test_next_json_output_contract | tests/test_harbor_next.py | unknown | standard |
+| tests.test_harbor_next.test_next_reads_checkpoint_report_and_groups_output | tests/test_harbor_next.py | unknown | standard |
+| tests.test_harbor_next.test_next_unknown_category_graceful_degrade | tests/test_harbor_next.py | unknown | standard |
 | tests.test_index_builder.read_index | tests/test_index_builder.py | unknown | standard |
 | tests.test_index_builder.test_index_build_incremental_and_docstring_stability | tests/test_index_builder.py | unknown | standard |
 | tests.test_index_builder.write_module | tests/test_index_builder.py | unknown | standard |
@@ -551,6 +573,7 @@ tests/test_workspace_paths.py
 | tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_init_wizard_prompts_are_single_language_after_selection | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_init_wizard_repair_guidance_mode_prompt_is_localized | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_non_tty_does_not_try_arrow_selector | tests/test_init_wizard.py | unknown | standard |
@@ -629,6 +652,13 @@ tests/test_workspace_paths.py
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_source_of_truth_priority_and_conflict_docs_are_present | tests/test_release_packaging.py | unknown | standard |
+| tests.test_repair_guidance.test_contract_gap_guidance_defaults | tests/test_repair_guidance.py | unknown | standard |
+| tests.test_repair_guidance.test_ddt_version_baseline_missing_guidance_is_manual | tests/test_repair_guidance.py | unknown | standard |
+| tests.test_repair_guidance.test_doctor_fail_guidance_is_conservative | tests/test_repair_guidance.py | unknown | standard |
+| tests.test_repair_guidance.test_possible_semantic_drift_requires_decision_and_is_conservative | tests/test_repair_guidance.py | unknown | standard |
+| tests.test_repair_guidance.test_repair_guidance_has_no_llm_integration_symbols | tests/test_repair_guidance.py | unknown | standard |
+| tests.test_repair_guidance.test_stale_view_guidance_maps_context_refresh | tests/test_repair_guidance.py | unknown | standard |
+| tests.test_repair_guidance.test_unknown_checkpoint_category_graceful_degrade | tests/test_repair_guidance.py | unknown | standard |
 | tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | tests/test_semantic_audit_contract_gap.py | unknown | standard |
 | tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_non_required_contract_skips_llm | tests/test_semantic_audit_contract_gap.py | unknown | standard |
 | tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_required_contract_skips_llm | tests/test_semantic_audit_contract_gap.py | unknown | standard |
@@ -746,6 +776,7 @@ tests/test_doctor.py
 tests/test_drafting.py
 tests/test_drafting_json_parse.py
 tests/test_gitignore_prune.py
+tests/test_harbor_next.py
 tests/test_index_builder.py
 tests/test_index_builder_bad_syntax.py
 tests/test_index_progress.py
@@ -763,6 +794,7 @@ tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
 tests/test_release_packaging.py
+tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
 tests/test_stale.py
 tests/test_sync_engine.py

@@ -1,15 +1,16 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.3.1"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-10T14:41:02Z"
+generated_at: "2026-05-10T16:07:40Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 28
+source_path_count: 30
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
+  - "harbor/core/advice_config.py"
   - "harbor/core/audit.py"
   - "harbor/core/ci.py"
   - "harbor/core/context_integrity.py"
@@ -29,6 +30,7 @@ source_paths:
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
   - "harbor/core/project_structure.py"
+  - "harbor/core/repair_guidance.py"
   - "harbor/core/stale.py"
   - "harbor/core/storage.py"
   - "harbor/core/sync.py"
@@ -37,9 +39,9 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:b11804536c79ba91281e7e5cf3e638db7a2266d6ca342174a4f3e839afaef3e3"
-contract_fingerprint: "sha256:c58b0a66e3a070a4f99e67b92c10e0f0dd5748ac4a7d9262dd575d6bd589c7d0"
-generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0a1e1823ea26ed51"
+source_fingerprint: "sha256:16628e2b6fac23d14244326955e312af88d8dd4e82a84c42bbdb5992abc1c906"
+contract_fingerprint: "sha256:3cce59eb53d5c7cc39e5e745ca25b499565df961d5fc9796f25e5d542c5b515b"
+generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177fb2fe34b0b75a150"
 ---
 
 # Module: harbor/core
@@ -52,8 +54,8 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
 | harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
-| harbor.core.ci.checkpoint_ci_result_to_dict | — | strict | ❌ Missing |
-| harbor.core.ci.ci_result_to_dict | — | strict | ❌ Missing |
+| harbor.core.ci.checkpoint_ci_result_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci` 公开 CI JSON pa... | strict | ❌ Missing |
+| harbor.core.ci.ci_result_to_dict | 将通用 CIResult 序列化为 checkpoint 之外的公开 CI JSON payload。 | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
 | harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
@@ -68,8 +70,9 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.storage.HarborDB.migrate_from_json | 从旧版 JSON 索引迁移到 SQLite。 | strict | ❌ Missing |
 | harbor.core.index.process_file_worker | 并行 Worker：解析并计算单文件条目。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.purge_missing | 删除 DB 中存在但磁盘已缺失的文件记录。 | strict | ❌ Missing |
-| harbor.core.ci.CIFailure.to_dict | — | strict | ❌ Missing |
-| harbor.core.ci.CheckpointCIItem.to_dict | — | strict | ❌ Missing |
+| harbor.core.ci.CIFailure.to_dict | 将通用 CI failure/advisory 项序列化为 machine-readable JSON-compa... | strict | ❌ Missing |
+| harbor.core.ci.CheckpointCIItem.to_dict | 将 checkpoint CI failure/advisory 项序列化为 machine-readable J... | strict | ❌ Missing |
+| harbor.core.repair_guidance.RepairGuidance.to_dict | Serialize deterministic repair guidance into a JSON-compa... | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.transaction | 事务上下文管理器（单文件原子写入）。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_entry | 插入或更新函数条目。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_file | 插入或更新文件记录。 | strict | ❌ Missing |
@@ -93,10 +96,12 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.storage.HarborDB.__init__ | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.__init__ | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard.__init__ | — | standard | ⚪ Missing |
+| harbor.core.ci._append_checkpoint_guidance_lines | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._append_missing_env_keys | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._apply_pragmas | — | standard | ⚪ Missing |
 | harbor.core.project_structure._area_purpose | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._as_repo_relative | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._ask_advice_mode | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._ask_language | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._ask_project | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._ask_yes_no | — | standard | ⚪ Missing |
@@ -182,6 +187,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.ddt.DDTScanner._load_config | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._load_config | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._load_config | — | standard | ⚪ Missing |
+| harbor.core.advice_config._load_config_advice | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTValidator._load_index | — | standard | ⚪ Missing |
 | harbor.core.project_structure._load_index | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._load_index | — | standard | ⚪ Missing |
@@ -201,6 +207,8 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
 | harbor.core.stale._normalize_l2_body_for_export_compare | — | standard | ⚪ Missing |
 | harbor.core.stale._normalize_l2_markdown_for_stale | — | standard | ⚪ Missing |
+| harbor.core.advice_config._normalize_mode | — | standard | ⚪ Missing |
+| harbor.core.advice_config._normalize_mode_optional | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_path | — | standard | ⚪ Missing |
 | harbor.core.workspace._normalize_path_like | — | standard | ⚪ Missing |
 | harbor.core.project_structure._normalize_rel_path | — | standard | ⚪ Missing |
@@ -258,6 +266,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.project_structure._table_cell | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._title_with_marker | — | standard | ⚪ Missing |
 | harbor.core.workspace._to_bool | — | standard | ⚪ Missing |
+| harbor.core.advice_config._to_bool | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate._to_display_path | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._to_display_path | — | standard | ⚪ Missing |
 | harbor.core.project_structure._to_project_relative_path | — | standard | ⚪ Missing |
@@ -313,6 +322,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
 | harbor.core.utils.derive_adopted_roots | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
+| harbor.core.advice_config.AdviceSettings.enabled | — | standard | ⚪ Missing |
 | harbor.core.contract_presence.evaluate_contract_presence | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager.export_markdown | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.extract_integrity_fingerprints | — | standard | ⚪ Missing |
@@ -331,6 +341,10 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.module_skill.generate_module_skill | — | standard | ⚪ Missing |
 | harbor.core.project_structure.generate_project_structure_markdown | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.generate_review_checklist | — | standard | ⚪ Missing |
+| harbor.core.repair_guidance.generic_conservative_guidance | — | standard | ⚪ Missing |
+| harbor.core.repair_guidance.guidance_for_checkpoint_category | — | standard | ⚪ Missing |
+| harbor.core.repair_guidance.guidance_for_doctor_item | — | standard | ⚪ Missing |
+| harbor.core.repair_guidance.guidance_for_stale_item | — | standard | ⚪ Missing |
 | harbor.core.audit.LLMProvider.infer | — | standard | ⚪ Missing |
 | harbor.core.audit.MockProvider.infer | — | standard | ⚪ Missing |
 | harbor.core.audit.OpenAIProvider.infer | — | standard | ⚪ Missing |
@@ -351,6 +365,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | harbor.core.project_structure.rank_key_file | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.read_capsule_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.render_frontmatter | — | standard | ⚪ Missing |
+| harbor.core.advice_config.resolve_advice_settings | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.resolve_module_capsule_paths | — | standard | ⚪ Missing |
 | harbor.core.audit.resolve_provider | — | standard | ⚪ Missing |
 | harbor.core.workspace.resolve_workspace_config_path | — | standard | ⚪ Missing |

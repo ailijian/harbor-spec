@@ -1,15 +1,16 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.3.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-10T14:41:04Z"
+generated_at: "2026-05-10T16:07:41Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 28
+source_path_count: 30
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
+  - "harbor/core/advice_config.py"
   - "harbor/core/audit.py"
   - "harbor/core/ci.py"
   - "harbor/core/context_integrity.py"
@@ -29,6 +30,7 @@ source_paths:
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
   - "harbor/core/project_structure.py"
+  - "harbor/core/repair_guidance.py"
   - "harbor/core/stale.py"
   - "harbor/core/storage.py"
   - "harbor/core/sync.py"
@@ -37,11 +39,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:b11804536c79ba91281e7e5cf3e638db7a2266d6ca342174a4f3e839afaef3e3"
-contract_fingerprint: "sha256:458a018ae980168d59bcbbacb361173033154595b58ad47f93ed914f9fb8b2a2"
-generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "e2f9bbc78f4193740f0bc63d8797015424e7a8a6a0433d26caeab3c2e688eb76"
-fingerprint: "e2f9bbc78f4193740f0bc63d8797015424e7a8a6a0433d26caeab3c2e688eb76"
+source_fingerprint: "sha256:16628e2b6fac23d14244326955e312af88d8dd4e82a84c42bbdb5992abc1c906"
+contract_fingerprint: "sha256:86994d8932d2147e016175a74505f215dd913a49aad5108df294a9a2de2e1047"
+generator_fingerprint: "sha256:074be0a5b63ac214e37c151a854974866ff3aeefc9fcea3a50b722645556821b"
+view_fingerprint: "e6e3644add3f16137d8df2aa40e11fb8f97222e51455b22bbcd9aeb7f066317a"
+fingerprint: "e6e3644add3f16137d8df2aa40e11fb8f97222e51455b22bbcd9aeb7f066317a"
 ---
 
 # Module Card: harbor/core
@@ -63,6 +65,7 @@ If this summary is too generic, update the underlying contracts or module docume
 
 ```text
 harbor/core/__init__.py
+harbor/core/advice_config.py
 harbor/core/audit.py
 harbor/core/ci.py
 harbor/core/context_integrity.py
@@ -82,6 +85,7 @@ harbor/core/l2.py
 harbor/core/module_capsule.py
 harbor/core/module_skill.py
 harbor/core/project_structure.py
+harbor/core/repair_guidance.py
 harbor/core/stale.py
 harbor/core/storage.py
 harbor/core/sync.py
@@ -96,6 +100,12 @@ harbor/core/workspace_migrate.py
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
+| harbor.core.advice_config.AdviceSettings.enabled | harbor/core/advice_config.py | unknown | standard |
+| harbor.core.advice_config._load_config_advice | harbor/core/advice_config.py | unknown | standard |
+| harbor.core.advice_config._normalize_mode | harbor/core/advice_config.py | unknown | standard |
+| harbor.core.advice_config._normalize_mode_optional | harbor/core/advice_config.py | unknown | standard |
+| harbor.core.advice_config._to_bool | harbor/core/advice_config.py | unknown | standard |
+| harbor.core.advice_config.resolve_advice_settings | harbor/core/advice_config.py | unknown | standard |
 | harbor.core.audit.LLMProvider.infer | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.MockProvider.infer | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.OpenAIProvider.__init__ | harbor/core/audit.py | unknown | standard |
@@ -107,6 +117,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci.CIFailure.to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.CheckpointCIItem.to_dict | harbor/core/ci.py | public | strict |
+| harbor.core.ci._append_checkpoint_guidance_lines | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._collect_checkpoint_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._collect_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._dedupe_checkpoint_items | harbor/core/ci.py | unknown | standard |
@@ -271,6 +282,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.init_prompt.confirm | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt.select_one | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard.__init__ | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._ask_advice_mode | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._ask_language | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._ask_project | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._ask_yes_no | harbor/core/init_wizard.py | unknown | standard |
@@ -363,6 +375,11 @@ harbor/core/workspace_migrate.py
 | harbor.core.project_structure.generate_project_structure_markdown | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure.rank_key_file | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure.write_project_structure | harbor/core/project_structure.py | unknown | standard |
+| harbor.core.repair_guidance.RepairGuidance.to_dict | harbor/core/repair_guidance.py | public | strict |
+| harbor.core.repair_guidance.generic_conservative_guidance | harbor/core/repair_guidance.py | unknown | standard |
+| harbor.core.repair_guidance.guidance_for_checkpoint_category | harbor/core/repair_guidance.py | unknown | standard |
+| harbor.core.repair_guidance.guidance_for_doctor_item | harbor/core/repair_guidance.py | unknown | standard |
+| harbor.core.repair_guidance.guidance_for_stale_item | harbor/core/repair_guidance.py | unknown | standard |
 | harbor.core.stale.ModuleStaleSummary.to_dict | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale.ViewStaleResult.to_dict | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale._format_view_lines | harbor/core/stale.py | unknown | standard |
@@ -472,6 +489,7 @@ tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
+tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
 tests/test_stale.py
 tests/test_sync_engine.py
@@ -496,7 +514,7 @@ Start with:
 
 ```text
 harbor/core/__init__.py
-harbor/core/audit.py
+harbor/core/advice_config.py
 ```
 
 ## Related Views

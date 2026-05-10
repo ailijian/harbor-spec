@@ -3,7 +3,7 @@
 ## Public API
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
-| harbor.cli.main.main | — | strict | ❌ Missing |
+| harbor.cli.main.main | Harbor CLI entrypoint and public command dispatch contract. | strict | ❌ Missing |
 
 
 ## Dependency (MVP)

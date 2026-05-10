@@ -53,7 +53,7 @@ def _clean_status_report():
 
 
 def _empty_validation_report():
-    return SimpleNamespace(valid=[], violations=[])
+    return SimpleNamespace(valid=[], violations=[], advisory=[], counts={"valid": 0, "violations": 0, "advisory": 0})
 
 
 def test_status_alias_st():
@@ -164,8 +164,10 @@ def test_finish_command_recognized(monkeypatch):
     )
     out = run_cmd(["finish"])
     assert "Harbor Finish:" in out
+    assert "Finish Summary:" in out
+    assert "- Blocking failures:" in out
     assert "Next steps:" in out
-    assert "harbor accept" in out
+    assert "harbor checkpoint --ci --format json --advice basic" in out
 
 
 def test_accept_maps_to_lock_logic(monkeypatch):
@@ -297,3 +299,138 @@ def test_finish_does_not_auto_run_docs_log_lock(monkeypatch):
     assert calls["docs"] == 0
     assert calls["log"] == 0
     assert calls["lock"] == 0
+
+
+def test_status_skipped_no_contract_default_summary(monkeypatch):
+    rep = _clean_status_report()
+    rep.counts["skipped_no_contract"] = 2
+    rep.skipped_no_contract = [
+        SimpleNamespace(id="harbor.core.a._helper", details="No contract required", file_path="harbor/core/a.py"),
+        SimpleNamespace(id="harbor.core.b._helper", details="No contract required", file_path="harbor/core/b.py"),
+    ]
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: rep)
+
+    out = run_cmd(["status"])
+    assert "Skipped No Contract: 2 targets skipped (non-blocking)" in out
+    assert "Reason: no contract required for these targets." in out
+    assert "Use --verbose to view details." in out
+    assert "harbor.core.a._helper" not in out
+    assert "harbor.core.b._helper" not in out
+
+
+def test_status_skipped_no_contract_verbose_lists_targets(monkeypatch):
+    rep = _clean_status_report()
+    rep.counts["skipped_no_contract"] = 2
+    rep.skipped_no_contract = [
+        SimpleNamespace(id="harbor.core.a._helper", details="No contract required", file_path="harbor/core/a.py"),
+        SimpleNamespace(id="harbor.core.b._helper", details="No contract required", file_path="harbor/core/b.py"),
+    ]
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: rep)
+
+    out = run_cmd(["status", "--verbose"])
+    assert "harbor.core.a._helper" in out
+    assert "harbor.core.b._helper" in out
+
+
+def test_check_ddt_baseline_missing_default_aggregated(monkeypatch):
+    binding1 = SimpleNamespace(
+        func_id="harbor.core.sync.SyncEngine.check_status",
+        l3_version=1,
+        strategy="strict",
+        test_name="test_sync_status",
+        file_path="tests/test_sync.py",
+    )
+    binding2 = SimpleNamespace(
+        func_id="harbor.core.ci.format_checkpoint_ci_result",
+        l3_version=2,
+        strategy="strict",
+        test_name="test_ci_format",
+        file_path="tests/test_ci.py",
+    )
+    advisory = [
+        SimpleNamespace(category="ddt_version_baseline_missing", binding=binding1, message="msg"),
+        SimpleNamespace(category="ddt_version_baseline_missing", binding=binding2, message="msg"),
+    ]
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [binding1, binding2])
+    monkeypatch.setattr(
+        cli_main.DDTValidator,
+        "validate",
+        lambda self, bindings: SimpleNamespace(valid=[binding1, binding2], violations=[], advisory=advisory),
+    )
+
+    out = run_cmd(["check", "--fast"])
+    assert "baseline-missing: 2 strict DDT bindings" in out
+    assert out.count("Strict DDT binding is structurally valid") == 1
+    assert "Use --verbose to view bindings." in out
+    assert "func_id=harbor.core.sync.SyncEngine.check_status" not in out
+
+
+def test_check_ddt_baseline_missing_verbose_lists_bindings(monkeypatch):
+    binding1 = SimpleNamespace(
+        func_id="harbor.core.sync.SyncEngine.check_status",
+        l3_version=1,
+        strategy="strict",
+        test_name="test_sync_status",
+        file_path="tests/test_sync.py",
+    )
+    binding2 = SimpleNamespace(
+        func_id="harbor.core.ci.format_checkpoint_ci_result",
+        l3_version=2,
+        strategy="strict",
+        test_name="test_ci_format",
+        file_path="tests/test_ci.py",
+    )
+    advisory = [
+        SimpleNamespace(category="ddt_version_baseline_missing", binding=binding1, message="msg"),
+        SimpleNamespace(category="ddt_version_baseline_missing", binding=binding2, message="msg"),
+    ]
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [binding1, binding2])
+    monkeypatch.setattr(
+        cli_main.DDTValidator,
+        "validate",
+        lambda self, bindings: SimpleNamespace(valid=[binding1, binding2], violations=[], advisory=advisory),
+    )
+
+    out = run_cmd(["check", "--fast", "--verbose"])
+    assert "func_id=harbor.core.sync.SyncEngine.check_status" in out
+    assert "func_id=harbor.core.ci.format_checkpoint_ci_result" in out
+
+
+def test_checkpoint_ci_json_advisory_unchanged_with_advice_modes(monkeypatch):
+    binding = SimpleNamespace(
+        func_id="harbor.core.sync.SyncEngine.check_status",
+        file_path="harbor/core/sync.py",
+        l3_version=1,
+        strategy="strict",
+        test_name="test_sync",
+    )
+    binding2 = SimpleNamespace(
+        func_id="harbor.core.ci.format_checkpoint_ci_result",
+        file_path="harbor/core/ci.py",
+        l3_version=2,
+        strategy="strict",
+        test_name="test_ci",
+    )
+    advisory = [
+        SimpleNamespace(category="ddt_version_baseline_missing", binding=binding, message="m1", suggested_action="s1"),
+        SimpleNamespace(category="ddt_version_baseline_missing", binding=binding2, message="m2", suggested_action="s2"),
+    ]
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
+    monkeypatch.setattr(
+        cli_main.DDTValidator,
+        "validate",
+        lambda self, bindings: SimpleNamespace(valid=[], violations=[], advisory=advisory, counts={"valid": 0, "violations": 0, "advisory": 2}),
+    )
+
+    out_basic = run_cmd(["checkpoint", "--ci", "--format", "json", "--advice", "basic"])
+    payload_basic = json.loads(out_basic)
+    assert len(payload_basic["advisory"]) == 2
+    assert all(item["category"] == "ddt_version_baseline_missing" for item in payload_basic["advisory"])
+    assert all("guidance" in item for item in payload_basic["advisory"])
+
+    out_off = run_cmd(["checkpoint", "--ci", "--format", "json", "--advice", "off"])
+    payload_off = json.loads(out_off)
+    assert len(payload_off["advisory"]) == 2
+    assert all(item["category"] == "ddt_version_baseline_missing" for item in payload_off["advisory"])
+    assert all("guidance" not in item for item in payload_off["advisory"])

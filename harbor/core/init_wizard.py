@@ -266,7 +266,7 @@ class InitWizard:
             return configured
         if not self.interactive:
             return "basic"
-        title = "Repair guidance mode:" if language == "en" else "Repair guidance mode:"
+        title = "修复建议模式：" if language == "zh" else "Repair guidance mode:"
         return select_one(
             title,
             options=[
@@ -275,7 +275,7 @@ class InitWizard:
                     label_zh="basic",
                     label_en="basic",
                     aliases=["basic", "1"],
-                    description_zh="deterministic suggestions, no LLM, recommended",
+                    description_zh="确定性建议，不依赖 LLM，推荐",
                     description_en="deterministic suggestions, no LLM, recommended",
                 ),
                 Choice(
@@ -283,7 +283,7 @@ class InitWizard:
                     label_zh="off",
                     label_en="off",
                     aliases=["off", "2"],
-                    description_zh="no extra repair guidance",
+                    description_zh="关闭额外修复建议",
                     description_en="no extra repair guidance",
                 ),
             ],

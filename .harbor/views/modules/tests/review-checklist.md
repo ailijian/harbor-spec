@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.3.1"
 view_type: "review_checklist"
 module: "tests"
-generated_at: "2026-05-10T14:41:04Z"
+generated_at: "2026-05-10T16:16:18Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 70
+source_path_count: 73
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -19,6 +19,7 @@ source_paths:
   - "tests/test_audit.py"
   - "tests/test_cache_isolation_hardening.py"
   - "tests/test_checkpoint_ci.py"
+  - "tests/test_checkpoint_ci_guidance.py"
   - "tests/test_ci_mode.py"
   - "tests/test_cli_config.py"
   - "tests/test_cli_decorate.py"
@@ -52,6 +53,7 @@ source_paths:
   - "tests/test_drafting.py"
   - "tests/test_drafting_json_parse.py"
   - "tests/test_gitignore_prune.py"
+  - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
   - "tests/test_index_builder_bad_syntax.py"
   - "tests/test_index_progress.py"
@@ -69,6 +71,7 @@ source_paths:
   - "tests/test_module_skill.py"
   - "tests/test_project_structure.py"
   - "tests/test_release_packaging.py"
+  - "tests/test_repair_guidance.py"
   - "tests/test_semantic_audit_contract_gap.py"
   - "tests/test_stale.py"
   - "tests/test_sync_engine.py"
@@ -79,9 +82,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:45746c56431cce702eaba6b93b8c8cd2f7620690b3616e158d0afcdca0fc4a6a"
-contract_fingerprint: "sha256:1d9e4cbc2b17582e8c5ee7f347f9f5c88cff701c67661d5b28e2d4d6c81cfa2e"
-generator_fingerprint: "sha256:9aa599104db634269af4ca90f2eac723f930d74effcd845f0e15ac1ed8891dcb"
+source_fingerprint: "sha256:02be6fc0b9443db85dd48b41cf316fc8b9aa9f03a890a5f5a5e40e2f6cfb59be"
+contract_fingerprint: "sha256:6cf102a1ff9105ba293df4365d9ecec7a074c0bc2920e7dd765bd3beb5d518eb"
+generator_fingerprint: "sha256:89fbe1d7c10db1aa46b216b12102cc88da8aa9f315cd63f5b330c96a533e3551"
 ---
 
 # Review Checklist: tests

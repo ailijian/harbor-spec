@@ -178,6 +178,11 @@ def main():
     p_cfg_adopted.add_argument("--min-count", type=int, default=5)
 
     p_status = sub.add_parser("status", help="Show Harbor context status (no implicit index update)")
+    p_status.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Show detailed non-blocking items",
+    )
     p_start = sub.add_parser(
         "start",
         help="Workflow facade: run status before AI coding",
@@ -217,6 +222,11 @@ def main():
         action="store_true",
         help="Run finish checks and sync derived context views for changed modules",
     )
+    p_finish.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Show detailed non-blocking items",
+    )
     p_accept = sub.add_parser(
         "accept",
         help="Workflow facade alias for lock",
@@ -238,6 +248,7 @@ def main():
     p_check.add_argument("--diff-only", action="store_true", default=True)
     p_check.add_argument("--debug", action="store_true", default=False)
     p_check.add_argument("--format", type=str, choices=["plain", "jsonl"], default="jsonl")
+    p_check.add_argument("--verbose", action="store_true", help="Show detailed advisory and semantic output")
 
     p_docs = sub.add_parser(
         "docs",
@@ -622,7 +633,7 @@ def main():
         except Exception:
             pass
 
-    def _run_status():
+    def _run_status(*, verbose=False):
         console = Console()
         with console.status(f"[bold blue]{t('cli.status.scanning')}", spinner="dots"):
             eng = SyncEngine()
@@ -645,9 +656,14 @@ def main():
             for e in rep.contract_gap:
                 print(f"  G {e.id} ({e.details})")
         if getattr(rep, "skipped_no_contract", []):
-            print("\nSkipped No Contract")
-            for e in rep.skipped_no_contract:
-                print(f"  S {e.id} ({e.details})")
+            count = len(list(getattr(rep, "skipped_no_contract", []) or []))
+            print(f"\n{t('cli.status.skipped_no_contract.summary', count=count)}")
+            print(f"  {t('cli.status.skipped_no_contract.reason')}")
+            if verbose:
+                for e in rep.skipped_no_contract:
+                    print(f"  S {e.id} ({e.details})")
+            else:
+                print(f"  {t('cli.common.use_verbose_details')}")
         if getattr(rep, "contract_parse_error", []):
             print("\nContract Parse Error")
             for e in rep.contract_parse_error:
@@ -683,7 +699,7 @@ def main():
         print(format_contract_impact_report(report))
         print(t("cli.contract_impact.advisory_note"))
 
-    def _run_check(*, fast=False, module=None, func=None, diff_only=True, debug=False, output_format="jsonl"):
+    def _run_check(*, fast=False, module=None, func=None, diff_only=True, debug=False, output_format="jsonl", verbose=False):
         scanner = DDTScanner()
         bindings = scanner.scan_tests()
         if func:
@@ -695,23 +711,41 @@ def main():
         print(t("cli.check.title"))
         print(f"\n{t('cli.check.ddt')}")
         print(t("cli.check.bindings", count=len(bindings)))
+        baseline_missing_count = 0
         if rep.valid:
-            for b in rep.valid:
-                print(f"  OK {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path})")
+            if verbose:
+                for b in rep.valid:
+                    print(f"  OK {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path})")
+            else:
+                print(f"  {t('cli.check.valid_summary', count=len(rep.valid))}")
         if rep.violations:
             for typ, b, msg in rep.violations:
                 print(f"  [!] {typ.upper()} {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path}) :: {msg}")
         if getattr(rep, "advisory", []):
             print(f"\n{t('cli.check.ddt_advisory')}")
-            for adv in rep.advisory:
-                b = adv.binding
-                print(
-                    f"  [baseline-missing] {b.func_id} v={b.l3_version} strategy={b.strategy} "
-                    f"({b.test_name} @ {b.file_path})"
-                )
-                print(f"  {adv.message}")
+            baseline_missing = [adv for adv in rep.advisory if str(getattr(adv, "category", "") or "") == "ddt_version_baseline_missing"]
+            baseline_missing_count = len(baseline_missing)
+            if baseline_missing and not verbose:
+                print(f"  baseline-missing: {len(baseline_missing)} strict DDT bindings")
+                print(f"  {t('cli.check.ddt_advisory.baseline_missing.line1')}")
+                print(f"  {t('cli.check.ddt_advisory.baseline_missing.line2')}")
+                print(f"  {t('cli.check.ddt_advisory.use_verbose_bindings')}")
+            else:
+                for adv in rep.advisory:
+                    b = adv.binding
+                    print(
+                        "  - "
+                        f"func_id={b.func_id} "
+                        f"l3_version={b.l3_version} "
+                        f"strategy={b.strategy} "
+                        f"test_name={b.test_name} "
+                        f"file_path={b.file_path}"
+                    )
+                    print(f"    {adv.message}")
         if not rep.valid and not rep.violations:
             print(f"  {t('cli.check.nobindings')}")
+        semantic_targets_count = 0
+        semantic_counts = {"OK": 0, "POSSIBLE_SEMANTIC_DRIFT": 0, "CONTRACT_GAP": 0, "SKIPPED_NO_CONTRACT": 0, "ERROR": 0}
         if not fast:
             eng = SyncEngine()
             status = eng.check_status()
@@ -724,6 +758,7 @@ def main():
             targets.extend(status.modified)
             if not diff_only:
                 targets.extend(status.contract_changed)
+            semantic_targets_count = len(targets)
             print(f"targets={len(targets)}")
             out_lines = []
             for e in targets:
@@ -783,6 +818,7 @@ def main():
                         "llm_called": llm_called,
                     }, ensure_ascii=False))
                 else:
+                    semantic_counts[mapped_status if mapped_status in semantic_counts else "ERROR"] += 1
                     if res.status == "OK":
                         out_lines.append(f"OK {e.id}")
                     elif res.status == "MISMATCH":
@@ -798,8 +834,25 @@ def main():
                     print(t("cli.semantic.notargets"))
             else:
                 if output_format == "plain":
-                    for ln in out_lines:
-                        print(ln)
+                    if verbose:
+                        for ln in out_lines:
+                            print(ln)
+                    elif out_lines:
+                        print(
+                            "summary: "
+                            f"OK={semantic_counts['OK']} "
+                            f"POSSIBLE_SEMANTIC_DRIFT={semantic_counts['POSSIBLE_SEMANTIC_DRIFT']} "
+                            f"CONTRACT_GAP={semantic_counts['CONTRACT_GAP']} "
+                            f"SKIPPED_NO_CONTRACT={semantic_counts['SKIPPED_NO_CONTRACT']} "
+                            f"ERROR={semantic_counts['ERROR']}"
+                        )
+        return {
+            "bindings": len(bindings),
+            "ddt_violations": len(list(getattr(rep, "violations", []) or [])),
+            "ddt_baseline_missing": baseline_missing_count,
+            "semantic_targets": semantic_targets_count,
+            "semantic_counts": semantic_counts,
+        }
 
     def _run_fast_ddt_for_ci():
         scanner = DDTScanner()
@@ -1206,7 +1259,7 @@ def main():
             print(t("cli.accept.done"))
     elif args.command == "start":
         print(t("cli.start.title"))
-        _, clean = _run_status()
+        _, clean = _run_status(verbose=False)
         if clean:
             print(t("cli.start.clean"))
         else:
@@ -1216,10 +1269,10 @@ def main():
             parser.error(t("cli.checkpoint.error.format_ci_only"))
         if not getattr(args, "ci", False):
             print(t("cli.checkpoint.title"))
-            rep, clean = _run_status()
+            rep, clean = _run_status(verbose=False)
             if not clean:
                 _print_checkpoint_contract_impact(rep)
-            _run_check(fast=True)
+            _run_check(fast=True, verbose=False)
         else:
             advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
             check_errors = []
@@ -1293,8 +1346,46 @@ def main():
             print(_render_next_text(source_command, items))
     elif args.command == "finish":
         print(t("cli.finish.title"))
-        _run_status()
-        _run_check(fast=False)
+        status_report, _ = _run_status(verbose=getattr(args, "verbose", False))
+        check_summary = _run_check(fast=False, output_format="plain", verbose=getattr(args, "verbose", False))
+        blocking_count = (
+            len(list(getattr(status_report, "drift", []) or []))
+            + len(list(getattr(status_report, "modified", []) or []))
+            + len(list(getattr(status_report, "contract_changed", []) or []))
+            + len(list(getattr(status_report, "contract_gap", []) or []))
+            + len(list(getattr(status_report, "contract_parse_error", []) or []))
+            + len(list(getattr(status_report, "untracked", []) or []))
+            + len(list(getattr(status_report, "missing", []) or []))
+            + int(check_summary.get("ddt_violations", 0))
+        )
+        print("")
+        print(t("cli.finish.summary.title"))
+        print(
+            t(
+                "cli.finish.summary.blocking",
+                status=t("cli.finish.summary.status.yes") if blocking_count > 0 else t("cli.finish.summary.status.no"),
+            )
+        )
+        print(
+            t(
+                "cli.finish.summary.ddt_binding",
+                status=t("cli.finish.summary.status.ok")
+                if int(check_summary.get("ddt_violations", 0)) == 0
+                else t("cli.finish.summary.status.fail"),
+            )
+        )
+        print(
+            t(
+                "cli.finish.summary.ddt_advisory",
+                count=int(check_summary.get("ddt_baseline_missing", 0)),
+            )
+        )
+        print(
+            t(
+                "cli.finish.summary.semantic_targets",
+                count=int(check_summary.get("semantic_targets", 0)),
+            )
+        )
         if not getattr(args, "sync_context", False):
             print(t("cli.finish.next_steps"))
         else:
@@ -1384,7 +1475,7 @@ def main():
             _write_cfg_data(data)
             print(t("cli.config.adopted.wrote", count=len(derived)))
     elif args.command == "status":
-        _run_status()
+        _run_status(verbose=getattr(args, "verbose", False))
     elif args.command == "check":
         _run_check(
             fast=args.fast,
@@ -1393,6 +1484,7 @@ def main():
             diff_only=args.diff_only,
             debug=args.debug,
             output_format=args.format,
+            verbose=getattr(args, "verbose", False),
         )
     elif args.command == "docs":
         docs_mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))

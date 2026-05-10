@@ -397,3 +397,47 @@ def test_init_wizard_prompts_are_single_language_after_selection(tmp_path: Path,
     assert "How do you want to onboard HarborSpec?" not in zh_out
     assert "Use detected scan roots?" not in zh_out
     assert "Show AI IDE integration guidance?" not in zh_out
+
+
+def test_init_wizard_repair_guidance_mode_prompt_is_localized(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
+    monkeypatch.setattr("harbor.core.init_prompt._is_interactive", lambda _interactive=None: True)
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
+
+    en_answers = iter(["2", "1", "1", "1", "2"])
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(en_answers)))
+    en_stream = StringIO()
+    InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            dry_run=True,
+            governance=False,
+            governance_docs=False,
+            llm=False,
+            update_gitignore=False,
+        ),
+        console=Console(file=en_stream, force_terminal=False, width=200),
+    ).run()
+    en_out = en_stream.getvalue()
+    assert "Repair guidance mode:" in en_out
+    assert "deterministic suggestions, no LLM, recommended" in en_out
+    assert "修复建议模式：" not in en_out
+
+    zh_answers = iter(["1", "1", "1", "1", "2"])
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(zh_answers)))
+    zh_stream = StringIO()
+    InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            dry_run=True,
+            governance=False,
+            governance_docs=False,
+            llm=False,
+            update_gitignore=False,
+        ),
+        console=Console(file=zh_stream, force_terminal=False, width=200),
+    ).run()
+    zh_out = zh_stream.getvalue()
+    assert "修复建议模式：" in zh_out
+    assert "确定性建议，不依赖 LLM，推荐" in zh_out
+    assert "Repair guidance mode:" not in zh_out

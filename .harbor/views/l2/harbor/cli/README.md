@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0b6"
+harbor_version: "1.3.1"
 view_type: "l2_readme"
 module: "harbor/cli"
-generated_at: "2026-05-10T11:36:56Z"
+generated_at: "2026-05-10T16:16:17Z"
 generation_command: "harbor docs --module harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -11,9 +11,9 @@ source_paths_truncated: false
 source_paths:
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
-source_fingerprint: "sha256:abb24d64644456d9d641ddf971593a29078ca5bd1724e48c962c03bc7f3309f9"
+source_fingerprint: "sha256:79e866b21cf30d6f8e4b14735b81f5ce99141839d2786d29794307f037f5eabd"
 contract_fingerprint: "sha256:1185ef60b008e0808931348f06cf5f4a4fafff3c8299691dc7f60a9984bb0826"
-generator_fingerprint: "sha256:54afdda2c9382734ebf0442aff9e415ac5580a7c796fce9e51fdac17b86df535"
+generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177fb2fe34b0b75a150"
 ---
 
 # Module: harbor/cli
@@ -21,7 +21,7 @@ generator_fingerprint: "sha256:54afdda2c9382734ebf0442aff9e415ac5580a7c796fce9e5
 ## Public API
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
-| harbor.cli.main.main | — | strict | ❌ Missing |
+| harbor.cli.main.main | Harbor CLI entrypoint and public command dispatch contract. | strict | ❌ Missing |
 
 
 ## Dependency (MVP)

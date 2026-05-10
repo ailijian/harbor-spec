@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.3.1"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-10T14:41:04Z"
+generated_at: "2026-05-10T16:16:18Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
-source_path_count: 70
+source_path_count: 73
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -19,6 +19,7 @@ source_paths:
   - "tests/test_audit.py"
   - "tests/test_cache_isolation_hardening.py"
   - "tests/test_checkpoint_ci.py"
+  - "tests/test_checkpoint_ci_guidance.py"
   - "tests/test_ci_mode.py"
   - "tests/test_cli_config.py"
   - "tests/test_cli_decorate.py"
@@ -52,6 +53,7 @@ source_paths:
   - "tests/test_drafting.py"
   - "tests/test_drafting_json_parse.py"
   - "tests/test_gitignore_prune.py"
+  - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
   - "tests/test_index_builder_bad_syntax.py"
   - "tests/test_index_progress.py"
@@ -69,6 +71,7 @@ source_paths:
   - "tests/test_module_skill.py"
   - "tests/test_project_structure.py"
   - "tests/test_release_packaging.py"
+  - "tests/test_repair_guidance.py"
   - "tests/test_semantic_audit_contract_gap.py"
   - "tests/test_stale.py"
   - "tests/test_sync_engine.py"
@@ -79,9 +82,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:45746c56431cce702eaba6b93b8c8cd2f7620690b3616e158d0afcdca0fc4a6a"
-contract_fingerprint: "sha256:31a81660ca6dcc2454d4c337b76ffb7b9555cd65c5ec4272628698d51d49173a"
-generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0a1e1823ea26ed51"
+source_fingerprint: "sha256:02be6fc0b9443db85dd48b41cf316fc8b9aa9f03a890a5f5a5e40e2f6cfb59be"
+contract_fingerprint: "sha256:53246bc2bdb3419d64e3b7b73d2b008b3dfaee5d36cde3b543ae2127eb47c7bc"
+generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177fb2fe34b0b75a150"
 ---
 
 # Module: tests
@@ -101,6 +104,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_v2._clean_status_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._contract_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._ddt_report | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance._ddt_report | — | standard | ⚪ Missing |
 | tests.test_cli_doctor._empty_status_report | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._empty_status_report | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_stale._empty_status_report | — | standard | ⚪ Missing |
@@ -142,6 +146,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_doctor._pass_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._patch_checkpoint_inputs | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._patch_finish_basics | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance._patch_inputs | — | standard | ⚪ Missing |
 | tests.test_lock_flags._prepare_proj | — | standard | ⚪ Missing |
 | tests.test_drafting._rep_with | — | standard | ⚪ Missing |
 | tests.test_release_packaging._repo_root | — | standard | ⚪ Missing |
@@ -156,7 +161,9 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_ci_mode._stale_summary | — | standard | ⚪ Missing |
 | tests.test_init_governance._starter_targets | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._status_entry | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance._status_entry | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._status_report | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance._status_report | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._status_report_with_changed | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect._touch | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._touch | — | standard | ⚪ Missing |
@@ -206,6 +213,8 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_checkpoint_ci.run_cmd | — | standard | ⚪ Missing |
 | tests.test_init_governance.run_cmd | — | standard | ⚪ Missing |
 | tests.test_workspace_i18n.run_cmd | — | standard | ⚪ Missing |
+| tests.test_harbor_next.run_cmd | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance.run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env.run_cmd_with_code | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.run_cmd_with_err | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.run_cmd_with_err | — | standard | ⚪ Missing |
@@ -216,6 +225,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_v2.test_accept_maps_to_lock_logic | — | standard | ⚪ Missing |
 | tests.test_adapter_basic.test_adapter_parses_itself | — | standard | ⚪ Missing |
 | tests.test_adopted_roots.test_adopted_roots_write_and_remove | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance.test_advice_off_removes_guidance_field | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_aggressive_inserts_todo_docstring | — | standard | ⚪ Missing |
 | tests.test_doctor.test_build_doctor_report_is_read_only | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy | — | standard | ⚪ Missing |
@@ -253,6 +263,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance.test_checkpoint_json_output_is_single_json_object | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_prints_contract_impact_summary_when_dirty | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_fields_use_ci_failures_and_advisory | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_stdout_is_single_object | — | standard | ⚪ Missing |
@@ -288,8 +299,12 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_init_wizard.test_confirm_accepts_english_yes_no | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_shows_yes_no_labels_by_language | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_content_without_generated_at_for_compare_ignores_only_timestamp | — | standard | ⚪ Missing |
+| tests.test_repair_guidance.test_contract_gap_guidance_defaults | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance.test_contract_gap_guidance_in_checkpoint_json | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance.test_ddt_baseline_missing_is_advisory_with_guidance | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_ddt_validate_maps_to_check_fast | — | standard | ⚪ Missing |
 | tests.test_ddt_validate.test_ddt_validate_matrix | — | standard | ⚪ Missing |
+| tests.test_repair_guidance.test_ddt_version_baseline_missing_guidance_is_manual | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_decorate_maps_to_adopt_dry_run | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_default_paths | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_default_text_output_for_stale_and_doctor_is_unchanged | — | standard | ⚪ Missing |
@@ -331,6 +346,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_ci_mode.test_doctor_ci_json_single_object_and_no_abs_path | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_doctor_ci_warn_only_is_pass | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_default_is_changed_scope | — | standard | ⚪ Missing |
+| tests.test_repair_guidance.test_doctor_fail_guidance_is_conservative | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_doctor_help_lists_changed_all_and_module_flags | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_is_advisory_and_does_not_trigger_write_or_llm_paths | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_doctor_json_derived_view_detail_keeps_unknown_semantics | — | standard | ⚪ Missing |
@@ -397,6 +413,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_release_packaging.test_init_templates_package_resources_are_loadable | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_prompts_are_single_language_after_selection | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_init_wizard_repair_guidance_mode_prompt_is_localized | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_init_wizard_source_removes_legacy_yes_no_brackets | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | — | standard | ⚪ Missing |
@@ -479,6 +496,11 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_drafting_json_parse.test_nested_brace_with_code_fence | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_new_config_read | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | — | standard | ⚪ Missing |
+| tests.test_harbor_next.test_next_can_read_utf16_report | — | standard | ⚪ Missing |
+| tests.test_harbor_next.test_next_json_items_include_blocking_and_status_is_ok_even_for_fail_report | — | standard | ⚪ Missing |
+| tests.test_harbor_next.test_next_json_output_contract | — | standard | ⚪ Missing |
+| tests.test_harbor_next.test_next_reads_checkpoint_report_and_groups_output | — | standard | ⚪ Missing |
+| tests.test_harbor_next.test_next_unknown_category_graceful_degrade | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_no_changed_modules_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_no_records_is_friendly | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_non_tty_does_not_try_arrow_selector | — | standard | ⚪ Missing |
@@ -489,6 +511,8 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_drafting_json_parse.test_parse_with_code_fence | — | standard | ⚪ Missing |
 | tests.test_drafting_json_parse.test_parse_with_noise_prefix_suffix | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_parser_rejects_complex_yaml | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci_guidance.test_possible_semantic_drift_guidance_is_conservative | — | standard | ⚪ Missing |
+| tests.test_repair_guidance.test_possible_semantic_drift_requires_decision_and_is_conservative | — | standard | ⚪ Missing |
 | tests.test_contract_presence.test_private_light_helper_without_docstring_is_skippable | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_production_cli_path_remains_possible | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_project_help_lists_structure_and_structure_help_lists_write | — | standard | ⚪ Missing |
@@ -519,6 +543,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | Backward-compatible alias test name kept to avoid baselin... | standard | ⚪ Missing |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | — | standard | ⚪ Missing |
+| tests.test_repair_guidance.test_repair_guidance_has_no_llm_integration_symbols | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_report_to_dict_is_deterministic_and_sanitized | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_does_not_duplicate_tag | — | standard | ⚪ Missing |
@@ -558,6 +583,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_cli_stale.test_stale_modes_are_mutually_exclusive | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_module_mode_runs | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_reports_all_up_to_date_message | — | standard | ⚪ Missing |
+| tests.test_repair_guidance.test_stale_view_guidance_maps_context_refresh | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_stale_when_fingerprint_mismatch | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_stale_when_fingerprint_missing | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_stale_when_module_card_missing | — | standard | ⚪ Missing |
@@ -580,6 +606,7 @@ generator_fingerprint: "sha256:6b9304b870db7c5ff618b75f674235d81f2106e80a504eab0
 | tests.test_contract_impact.test_tests_helper_keyword_noise_stays_no_contract_impact | — | standard | ⚪ Missing |
 | tests.test_contract_presence.test_to_dict_like_without_docstring_is_required | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_to_dict_symbol_hits_cli_json_output | — | standard | ⚪ Missing |
+| tests.test_repair_guidance.test_unknown_checkpoint_category_graceful_degrade | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule.test_unknown_module_does_not_crash_and_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_up_to_date_when_fingerprint_matches | — | standard | ⚪ Missing |
