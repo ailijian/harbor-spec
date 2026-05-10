@@ -1,3 +1,46 @@
+# Harbor-spec v1.3.1 — Repair Guidance & AI IDE Feedback Loop
+
+状态：正式版  
+发布类型：保守修复建议层 / AI IDE 反馈回路增强
+
+v1.3.1 新增确定性 Repair Guidance 层（不使用 LLM）并引入 `harbor next` 只读解释命令。
+
+关键原则：
+
+```text
+- guidance is deterministic
+- no LLM/provider call is required for advice=basic
+- guidance is optional additive field
+- guidance does not change CI gate semantics
+- guidance does not write files
+- semantic drift guidance is conservative and requires adjudication
+- harbor next is read-only and never runs accept/log/lock automatically
+```
+
+CLI / 配置补充：
+
+```text
+- checkpoint/stale/doctor 新增 --advice off|basic
+- .harbor/config/harbor.yaml 新增 advice.mode / include_in_ci_json / include_in_text
+- HARBOR_ADVICE_MODE 支持环境变量覆盖
+- harbor next --from <report.json> --format text|json --advice off|basic --max-items N
+```
+
+JSON 合同补充：
+
+```text
+- ci_failures/advisory item 可选 guidance 字段（可被 --advice off 关闭）
+- checkpoint/stale/doctor --format json stdout 仍为单一 JSON object
+- harbor next 输出:
+  command=next
+  status=ok
+  writes_files=false
+  llm_used=false
+  item 内固定包含 blocking 字段
+```
+
+---
+
 # Harbor-spec v1.3.0 — Canonical Workspace 与 Agentic Context Governance
 
 状态：正式版  

@@ -7,3 +7,7 @@ exclude_paths: []
 language: auto
 adopted_roots:
 - harbor/**
+advice:
+  mode: basic
+  include_in_ci_json: true
+  include_in_text: true

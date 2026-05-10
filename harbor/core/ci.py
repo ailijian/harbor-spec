@@ -6,7 +6,14 @@ from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
 from harbor.core.contract_impact import ContractImpactLevel, contract_impact_report_to_dict
+from harbor.core.advice_config import AdviceSettings
 from harbor.core.doctor import FAIL, DoctorReport
+from harbor.core.repair_guidance import (
+    RepairGuidance,
+    guidance_for_checkpoint_category,
+    guidance_for_doctor_item,
+    guidance_for_stale_item,
+)
 from harbor.core.stale import ModuleStaleSummary
 from harbor.utils.i18n import t
 
@@ -20,8 +27,9 @@ class CIFailure:
     status: Optional[str] = None
     reason: Optional[str] = None
     suggested_command: Optional[str] = None
+    guidance: Optional[RepairGuidance] = None
 
-    def to_dict(self) -> dict:
+    def to_dict(self, *, include_guidance: bool = True) -> dict:
         """将通用 CI failure/advisory 项序列化为 machine-readable JSON-compatible dict。
 
         此函数是 Harbor CI JSON 输出序列化契约的一部分（用于 `stale --ci` / `doctor --ci`
@@ -54,6 +62,8 @@ class CIFailure:
             payload["reason"] = _sanitize_json_text(self.reason)
         if self.suggested_command is not None:
             payload["suggested_command"] = _sanitize_json_text(self.suggested_command)
+        if include_guidance and self.guidance is not None:
+            payload["guidance"] = self.guidance.to_dict()
         return payload
 
 
@@ -68,6 +78,9 @@ class CIResult:
     next_steps: List[str]
     ci: bool = True
     writes_files: bool = False
+    advice_mode: str = "basic"
+    include_in_ci_json: bool = True
+    include_in_text: bool = True
 
 
 @dataclass
@@ -77,13 +90,14 @@ class CheckpointCIItem:
     func_id: Optional[str] = None
     file_path: Optional[str] = None
     suggested_action: Optional[str] = None
+    guidance: Optional[RepairGuidance] = None
 
     def dedupe_key(self) -> Tuple[str, str]:
         func = str(self.func_id or "").strip()
         path = _normalize_checkpoint_key_path(self.file_path)
         return (func, path)
 
-    def to_dict(self) -> dict:
+    def to_dict(self, *, include_guidance: bool = True) -> dict:
         """将 checkpoint CI failure/advisory 项序列化为 machine-readable JSON-compatible dict。
 
         此函数输出 shape 是 `harbor checkpoint --ci --format json` 公开契约之一。
@@ -111,6 +125,8 @@ class CheckpointCIItem:
             payload["file_path"] = _sanitize_single_path(self.file_path)
         if self.suggested_action:
             payload["suggested_action"] = _sanitize_json_text(self.suggested_action)
+        if include_guidance and self.guidance is not None:
+            payload["guidance"] = self.guidance.to_dict()
         return payload
 
 
@@ -126,6 +142,9 @@ class CheckpointCIResult:
     next_steps: List[str]
     ci: bool = True
     writes_files: bool = False
+    advice_mode: str = "basic"
+    include_in_ci_json: bool = True
+    include_in_text: bool = True
 
 
 def build_checkpoint_ci_result(
@@ -134,7 +153,9 @@ def build_checkpoint_ci_result(
     ddt_report,
     contract_impact_report,
     check_errors: Optional[Sequence[str]] = None,
+    advice_settings: Optional[AdviceSettings] = None,
 ) -> CheckpointCIResult:
+    settings = advice_settings or AdviceSettings()
     check_errors = list(check_errors or [])
     failures: List[CheckpointCIItem] = []
     advisory: List[CheckpointCIItem] = []
@@ -147,6 +168,7 @@ def build_checkpoint_ci_result(
                 file_path=str(getattr(binding, "file_path", "") or ""),
                 reason=f"{typ}: {message}",
                 suggested_action=t("cli.ci.checkpoint.action.ddt_binding"),
+                guidance=guidance_for_checkpoint_category("ddt_binding") if settings.enabled else None,
             )
         )
     for item in list(getattr(ddt_report, "advisory", []) or []):
@@ -158,6 +180,11 @@ def build_checkpoint_ci_result(
                 file_path=str(getattr(binding, "file_path", "") or ""),
                 reason=str(getattr(item, "message", "") or ""),
                 suggested_action=str(getattr(item, "suggested_action", "") or t("cli.ci.checkpoint.action.ddt_baseline_missing")),
+                guidance=(
+                    guidance_for_checkpoint_category(str(getattr(item, "category", "") or "ddt_binding_advisory"))
+                    if settings.enabled
+                    else None
+                ),
             )
         )
 
@@ -166,42 +193,49 @@ def build_checkpoint_ci_result(
         items=list(getattr(status_report, "missing", []) or []),
         category="missing_function",
         reason=t("cli.ci.checkpoint.failure.missing"),
+        include_guidance=settings.enabled,
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "untracked", []) or []),
         category="untracked_function",
         reason=t("cli.ci.checkpoint.failure.untracked"),
+        include_guidance=settings.enabled,
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "drift", []) or []),
         category="possible_semantic_drift",
         reason=t("cli.ci.checkpoint.failure.drift"),
+        include_guidance=settings.enabled,
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "contract_gap", []) or []),
         category="contract_gap",
         reason=t("cli.ci.checkpoint.failure.contract_gap"),
+        include_guidance=settings.enabled,
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "contract_parse_error", []) or []),
         category="contract_parse_error",
         reason=t("cli.ci.checkpoint.failure.contract_parse_error"),
+        include_guidance=settings.enabled,
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "contract_changed", []) or []),
         category="contract_changed",
         reason=t("cli.ci.checkpoint.failure.contract_changed"),
+        include_guidance=settings.enabled,
     )
     _push_status_failures(
         failures,
         items=list(getattr(status_report, "modified", []) or []),
         category="contract_and_body_changed",
         reason=t("cli.ci.checkpoint.failure.contract_and_body_changed"),
+        include_guidance=settings.enabled,
     )
     for entry in list(getattr(status_report, "skipped_no_contract", []) or []):
         advisory.append(
@@ -211,6 +245,7 @@ def build_checkpoint_ci_result(
                 file_path=str(getattr(entry, "file_path", "") or ""),
                 reason=t("cli.ci.checkpoint.failure.skipped_no_contract"),
                 suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
+                guidance=guidance_for_checkpoint_category("skipped_no_contract") if settings.enabled else None,
             )
         )
 
@@ -228,6 +263,7 @@ def build_checkpoint_ci_result(
                     file_path=str(getattr(finding, "file_path", "") or ""),
                     reason=str(getattr(finding, "reason", "") or t("cli.ci.checkpoint.failure.confirmed_contract_impact")),
                     suggested_action=t("cli.ci.checkpoint.action.confirmed_contract_impact"),
+                    guidance=guidance_for_checkpoint_category("confirmed_contract_impact") if settings.enabled else None,
                 )
             )
         elif level == ContractImpactLevel.POSSIBLE_CONTRACT_IMPACT:
@@ -239,6 +275,7 @@ def build_checkpoint_ci_result(
                     file_path=str(getattr(finding, "file_path", "") or ""),
                     reason=str(getattr(finding, "reason", "") or t("cli.ci.checkpoint.failure.possible_contract_impact")),
                     suggested_action=t("cli.ci.checkpoint.action.possible_contract_impact"),
+                    guidance=guidance_for_checkpoint_category("possible_contract_impact") if settings.enabled else None,
                 )
             )
         elif level == ContractImpactLevel.UNKNOWN:
@@ -249,6 +286,7 @@ def build_checkpoint_ci_result(
                     file_path=str(getattr(finding, "file_path", "") or ""),
                     reason=str(getattr(finding, "reason", "") or t("cli.ci.checkpoint.failure.unknown_contract_impact")),
                     suggested_action=t("cli.ci.checkpoint.action.unknown_contract_impact"),
+                    guidance=guidance_for_checkpoint_category("unknown_contract_impact") if settings.enabled else None,
                 )
             )
 
@@ -258,6 +296,7 @@ def build_checkpoint_ci_result(
                 category="checkpoint_internal_error",
                 reason=str(err),
                 suggested_action=t("cli.ci.checkpoint.action.internal_error"),
+                guidance=guidance_for_checkpoint_category("checkpoint_internal_error") if settings.enabled else None,
             )
         )
 
@@ -289,10 +328,16 @@ def build_checkpoint_ci_result(
         advisory=deduped_advisory,
         contract_impact=report_payload,
         next_steps=next_steps,
+        advice_mode=settings.mode,
+        include_in_ci_json=settings.include_in_ci_json,
+        include_in_text=settings.include_in_text,
     )
 
 
-def build_stale_ci_result(results: List[ModuleStaleSummary], scope: str) -> CIResult:
+def build_stale_ci_result(
+    results: List[ModuleStaleSummary], scope: str, advice_settings: Optional[AdviceSettings] = None
+) -> CIResult:
+    settings = advice_settings or AdviceSettings()
     ci_failures: List[CIFailure] = []
     advisory: List[CIFailure] = []
     modules_checked = 0
@@ -313,6 +358,9 @@ def build_stale_ci_result(results: List[ModuleStaleSummary], scope: str) -> CIRe
                 status=view.status,
                 reason=view.reason,
                 suggested_command=view.suggested_command,
+                guidance=(
+                    guidance_for_stale_item(kind="view", view=view_name, status=view.status) if settings.enabled else None
+                ),
             )
             # Canonical blockers in CI mode:
             # - l2_readme stale/unknown
@@ -339,10 +387,14 @@ def build_stale_ci_result(results: List[ModuleStaleSummary], scope: str) -> CIRe
         ci_failures=ci_failures,
         advisory=advisory,
         next_steps=next_steps,
+        advice_mode=settings.mode,
+        include_in_ci_json=settings.include_in_ci_json,
+        include_in_text=settings.include_in_text,
     )
 
 
-def build_doctor_ci_result(report: DoctorReport) -> CIResult:
+def build_doctor_ci_result(report: DoctorReport, advice_settings: Optional[AdviceSettings] = None) -> CIResult:
+    settings = advice_settings or AdviceSettings()
     ci_failures: List[CIFailure] = []
     advisory: List[CIFailure] = []
 
@@ -356,6 +408,7 @@ def build_doctor_ci_result(report: DoctorReport) -> CIResult:
             status=status,
             reason=details or None,
             suggested_command=suggested,
+            guidance=guidance_for_doctor_item(check=check.name, status=status.lower()) if settings.enabled else None,
         )
         # P1-1A policy: doctor --ci blocks only explicit FAIL checks.
         if status == FAIL:
@@ -382,6 +435,9 @@ def build_doctor_ci_result(report: DoctorReport) -> CIResult:
         ci_failures=ci_failures,
         advisory=advisory,
         next_steps=next_steps,
+        advice_mode=settings.mode,
+        include_in_ci_json=settings.include_in_ci_json,
+        include_in_text=settings.include_in_text,
     )
 
 
@@ -406,6 +462,7 @@ def ci_result_to_dict(result: CIResult) -> dict:
     @harbor.l3_strictness: strict
     @harbor.idempotency: read-only
     """
+    include_guidance = result.advice_mode == "basic" and result.include_in_ci_json
     return {
         "command": result.command,
         "ci": True,
@@ -413,8 +470,8 @@ def ci_result_to_dict(result: CIResult) -> dict:
         "exit_code": result.exit_code,
         "writes_files": False,
         "summary": _sanitize_summary(result.summary),
-        "ci_failures": [item.to_dict() for item in result.ci_failures],
-        "advisory": [item.to_dict() for item in result.advisory],
+        "ci_failures": [item.to_dict(include_guidance=include_guidance) for item in result.ci_failures],
+        "advisory": [item.to_dict(include_guidance=include_guidance) for item in result.advisory],
         "next_steps": [_sanitize_json_text(step) for step in result.next_steps],
     }
 
@@ -552,6 +609,7 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
     @harbor.l3_strictness: strict
     @harbor.idempotency: read-only
     """
+    include_guidance = result.advice_mode == "basic" and result.include_in_ci_json
     return {
         "command": result.command,
         "ci": True,
@@ -559,8 +617,8 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
         "exit_code": result.exit_code,
         "writes_files": False,
         "summary": _sanitize_summary(result.summary),
-        "ci_failures": [item.to_dict() for item in result.ci_failures],
-        "advisory": [item.to_dict() for item in result.advisory],
+        "ci_failures": [item.to_dict(include_guidance=include_guidance) for item in result.ci_failures],
+        "advisory": [item.to_dict(include_guidance=include_guidance) for item in result.advisory],
         "contract_impact": _sanitize_checkpoint_contract_impact(result.contract_impact),
         "next_steps": [_sanitize_json_text(step) for step in result.next_steps],
     }
@@ -568,6 +626,7 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
 
 def format_checkpoint_ci_result(result: CheckpointCIResult) -> str:
     lines: List[str] = []
+    show_guidance = result.advice_mode == "basic" and result.include_in_text
     lines.append(t("cli.ci.checkpoint.title"))
     lines.append(t("cli.ci.mode_enabled"))
     lines.append(t("cli.ci.gate", status=t(f"cli.ci.status.{result.status.lower()}")))
@@ -576,24 +635,28 @@ def format_checkpoint_ci_result(result: CheckpointCIResult) -> str:
         lines.append("")
         lines.append(t("cli.ci.blocking_failures"))
         for item in result.ci_failures:
-            payload = item.to_dict()
+            payload = item.to_dict(include_guidance=show_guidance)
             target = payload.get("func_id") or payload.get("file_path")
             label = t(f"cli.ci.checkpoint.category.{payload['category']}")
             if target:
                 lines.append(f"- {label}: {target}")
             else:
                 lines.append(f"- {label}: {payload.get('reason', '')}")
+            if show_guidance:
+                _append_checkpoint_guidance_lines(lines, payload)
     if result.advisory:
         lines.append("")
         lines.append(t("cli.ci.advisory"))
         for item in result.advisory:
-            payload = item.to_dict()
+            payload = item.to_dict(include_guidance=show_guidance)
             target = payload.get("func_id") or payload.get("file_path")
             label = t(f"cli.ci.checkpoint.category.{payload['category']}")
             if target:
                 lines.append(f"- {label}: {target}")
             else:
                 lines.append(f"- {label}: {payload.get('reason', '')}")
+            if show_guidance:
+                _append_checkpoint_guidance_lines(lines, payload)
     if result.next_steps:
         lines.append("")
         lines.append(t("cli.ci.next_steps"))
@@ -602,7 +665,36 @@ def format_checkpoint_ci_result(result: CheckpointCIResult) -> str:
     return "\n".join(lines)
 
 
-def _push_status_failures(failures: List[CheckpointCIItem], *, items: Sequence[object], category: str, reason: str) -> None:
+def _append_checkpoint_guidance_lines(lines: List[str], payload: dict) -> None:
+    guidance = payload.get("guidance")
+    if not isinstance(guidance, dict):
+        return
+    entries = [
+        ("Reason", payload.get("reason")),
+        ("Action", guidance.get("recommended_action")),
+        ("Do not", guidance.get("anti_action")),
+        ("Skill", guidance.get("suggested_skill")),
+        ("Decision required", guidance.get("decision_required")),
+    ]
+    shown = 0
+    for label, value in entries:
+        if value in (None, "", []):
+            continue
+        lines.append(f"  {label}: {value}")
+        shown += 1
+        if shown >= 5:
+            break
+    lines.append("  Full guidance: harbor next --from <report.json>")
+
+
+def _push_status_failures(
+    failures: List[CheckpointCIItem],
+    *,
+    items: Sequence[object],
+    category: str,
+    reason: str,
+    include_guidance: bool,
+) -> None:
     for entry in items:
         failures.append(
             CheckpointCIItem(
@@ -611,6 +703,7 @@ def _push_status_failures(failures: List[CheckpointCIItem], *, items: Sequence[o
                 file_path=str(getattr(entry, "file_path", "") or ""),
                 reason=reason,
                 suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
+                guidance=guidance_for_checkpoint_category(category) if include_guidance else None,
             )
         )
 

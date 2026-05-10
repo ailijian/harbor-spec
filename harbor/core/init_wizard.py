@@ -47,6 +47,7 @@ class InitWizardOptions:
     governance: Optional[bool] = None
     governance_docs: Optional[bool] = None
     llm: Optional[bool] = None
+    advice_mode: Optional[str] = None
     update_gitignore: Optional[bool] = None
 
 
@@ -258,6 +259,39 @@ class InitWizard:
     def _ask_yes_no(self, prompt_text: str, default: bool) -> bool:
         return confirm(prompt_text, default=default, language=self.result.language or "en", console=self.console)
 
+    def _ask_advice_mode(self) -> str:
+        language = self.result.language or "en"
+        configured = str(self.options.advice_mode or "").strip().lower()
+        if configured in ("off", "basic"):
+            return configured
+        if not self.interactive:
+            return "basic"
+        title = "Repair guidance mode:" if language == "en" else "Repair guidance mode:"
+        return select_one(
+            title,
+            options=[
+                Choice(
+                    value="basic",
+                    label_zh="basic",
+                    label_en="basic",
+                    aliases=["basic", "1"],
+                    description_zh="deterministic suggestions, no LLM, recommended",
+                    description_en="deterministic suggestions, no LLM, recommended",
+                ),
+                Choice(
+                    value="off",
+                    label_zh="off",
+                    label_en="off",
+                    aliases=["off", "2"],
+                    description_zh="no extra repair guidance",
+                    description_en="no extra repair guidance",
+                ),
+            ],
+            default="basic",
+            language=language,
+            console=self.console,
+        )
+
     def _emit_detected_summary(self, language: str, stacks: List[str], roots: List[str]) -> None:
         stack_text = ", ".join(stacks) if stacks else ("Python" if language == "en" else "Python")
         root_text = ", ".join(roots) if roots else "**/*.py"
@@ -404,6 +438,7 @@ class InitWizard:
         self.result.language = language
         project = self._ask_project(stacks, roots)
         self.result.project = project
+        advice_mode = self._ask_advice_mode()
         self._emit_detected_summary(language, stacks, roots)
         for warn in detect_warnings:
             if language == "zh":
@@ -432,7 +467,13 @@ class InitWizard:
             else:
                 self.result.created.append(".harbor/config/harbor.yaml")
         else:
-            path = init.write_config(roots, force=self.options.force, exclude_paths=excludes, language=language)
+            path = init.write_config(
+                roots,
+                force=self.options.force,
+                exclude_paths=excludes,
+                language=language,
+                advice_mode=advice_mode,
+            )
             if path.exists():
                 if config_target.exists() and not self.options.force:
                     # best effort; actual write_config handles this branch

@@ -13,7 +13,7 @@ def test_wizard_language_prompt_comes_first(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
     monkeypatch.setattr("harbor.core.init_prompt._is_interactive", lambda _interactive=None: True)
     monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
-    asks = iter(["1", "1"])
+    asks = iter(["1", "1", "1"])
 
     def _fake_prompt(*args, **kwargs):
         return next(asks)
@@ -180,6 +180,7 @@ def test_provider_fallback_accepts_name_deepseek(tmp_path: Path, monkeypatch):
             governance=False,
             governance_docs=False,
             llm=True,
+            advice_mode="basic",
             update_gitignore=False,
         ),
         console=Console(file=StringIO(), force_terminal=False, width=200),
@@ -205,6 +206,7 @@ def test_provider_fallback_accepts_number_2(tmp_path: Path, monkeypatch):
             governance=False,
             governance_docs=False,
             llm=True,
+            advice_mode="basic",
             update_gitignore=False,
         ),
         console=Console(file=StringIO(), force_terminal=False, width=200),
@@ -231,6 +233,7 @@ def test_provider_invalid_input_shows_available_options(tmp_path: Path, monkeypa
             governance=False,
             governance_docs=False,
             llm=True,
+            advice_mode="basic",
             update_gitignore=False,
         ),
         console=Console(file=stream, force_terminal=False, width=200),
@@ -351,7 +354,7 @@ def test_init_wizard_prompts_are_single_language_after_selection(tmp_path: Path,
     monkeypatch.setattr("harbor.core.init_prompt._is_interactive", lambda _interactive=None: True)
     monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
 
-    en_answers = iter(["2", "1", "1", "2"])
+    en_answers = iter(["2", "1", "1", "1", "2"])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(en_answers)))
     en_stream = StringIO()
     InitWizard(
@@ -373,7 +376,7 @@ def test_init_wizard_prompts_are_single_language_after_selection(tmp_path: Path,
     assert "使用这些扫描范围吗？" not in en_out
     assert "是否输出 AI IDE 接入说明？" not in en_out
 
-    zh_answers = iter(["1", "1", "1", "2"])
+    zh_answers = iter(["1", "1", "1", "1", "2"])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(zh_answers)))
     zh_stream = StringIO()
     InitWizard(

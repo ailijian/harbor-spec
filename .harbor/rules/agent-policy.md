@@ -355,6 +355,36 @@ do not silently ignore the conflict
 
 ---
 
+## 5.3 Repair Guidance Policy (v1.3.1)
+
+Repair guidance policy:
+
+```text
+guidance is deterministic (rule-table based), not LLM-generated
+guidance is optional additive data and must not change existing CI gate semantics
+guidance can be disabled by --advice off
+advice=basic remains independent from optional LLM semantic audit switches
+```
+
+Conservative requirements:
+
+```text
+for semantic drift, Harbor provides adjudication guidance only
+Harbor does not auto-decide whether implementation or contract is stale
+Harbor does not auto-fix implementation, contract, baseline, or l3_version
+```
+
+`harbor next` policy:
+
+```text
+harbor next is read-only
+it does not write files
+it does not run tests or repair commands
+it does not run harbor accept / harbor log / harbor lock
+```
+
+---
+
 ## 6. Harbor Layer Model
 
 Harbor-spec uses a layered governance model.

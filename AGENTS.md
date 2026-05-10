@@ -47,6 +47,14 @@ Optimize for:
 code + contract + tests + generated context + diary + safety consistency
 ```
 
+v1.3.1 guidance note:
+
+```text
+Repair guidance is deterministic and optional.
+No LLM is required for advice=basic.
+Guidance is advisory and does not change CI gate pass/fail semantics.
+```
+
 ---
 
 ## 2. What This File Is
@@ -347,6 +355,14 @@ Meaning:
 checkpoint --ci = baseline / contract / DDT gate
 stale --ci      = generated context freshness gate
 doctor --ci     = aggregated workspace health gate
+```
+
+Repair guidance controls:
+
+```text
+checkpoint/stale/doctor support --advice off|basic
+guidance in CI JSON is optional additive data and can be disabled with --advice off
+harbor next --from <report.json> is read-only and does not execute repair commands
 ```
 
 Workspace diagnostics:

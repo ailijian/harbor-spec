@@ -338,6 +338,7 @@ class Initializer:
         profile: str = "enforce_l3",
         exclude_paths: Optional[List[str]] = None,
         language: str = "auto",
+        advice_mode: str = "basic",
     ) -> Path:
         """写入 `.harbor/config/harbor.yaml`。
 
@@ -390,6 +391,11 @@ class Initializer:
             "exclude_paths": cfg.exclude_paths,
             "language": cfg.language,
             "adopted_roots": [],
+            "advice": {
+                "mode": "off" if str(advice_mode or "").strip().lower() == "off" else "basic",
+                "include_in_ci_json": True,
+                "include_in_text": True,
+            },
         }
         text = yaml.safe_dump(payload, allow_unicode=True, sort_keys=False)
         self.config_path.write_text(text, encoding="utf-8")

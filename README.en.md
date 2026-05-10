@@ -401,6 +401,14 @@ harbor stale --ci --format json
 harbor doctor --ci --format json
 ```
 
+Repair guidance (v1.3.1) notes:
+
+* `guidance` is an optional additive field and does not remove or redefine existing JSON fields.
+* `guidance` is deterministic and does not use LLM; it does not change `checkpoint/stale/doctor` pass/fail semantics.
+* You can disable guidance with `--advice off` while keeping existing fields such as `reason/suggested_action/next_steps`.
+* For `possible_semantic_drift`, Harbor is conservative and does not auto-decide whether implementation or contract is stale.
+* `harbor next --from <report.json>` is read-only and does not run auto-fix, `accept`, `log`, or `lock`.
+
 ---
 
 ## 🧭 Harbor Workspace Layout

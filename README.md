@@ -402,6 +402,14 @@ harbor stale --ci --format json
 harbor doctor --ci --format json
 ```
 
+Repair guidance（v1.3.1）补充：
+
+* `guidance` 是可选附加字段（optional additive field），不会删除或改变现有 JSON 字段语义。
+* `guidance` 默认由确定性规则生成，不使用 LLM，不会改变 `checkpoint/stale/doctor` 的 pass/fail 判定。
+* 可通过 `--advice off` 关闭 guidance 输出（保留原有 `reason/suggested_action/next_steps` 等字段）。
+* Harbor 对 `possible_semantic_drift` 仅做保守提示，不默认判定“实现错”或“契约错”。
+* `harbor next --from <report.json>` 为只读解释命令，不执行自动修复、不运行 `accept/log/lock`。
+
 ---
 
 ## 🧭 Harbor Workspace 布局

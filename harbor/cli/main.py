@@ -50,6 +50,13 @@ from harbor.core.ci import (
     format_checkpoint_ci_result,
     format_ci_result,
 )
+from harbor.core.advice_config import resolve_advice_settings
+from harbor.core.repair_guidance import (
+    generic_conservative_guidance,
+    guidance_for_checkpoint_category,
+    guidance_for_doctor_item,
+    guidance_for_stale_item,
+)
 from harbor.core.workspace_inspect import (
     build_workspace_inspect_report,
     format_workspace_inspect_report,
@@ -202,6 +209,13 @@ def main():
         default="text",
         help="Output format for CI mode only: text (default) or json",
     )
+    p_checkpoint.add_argument(
+        "--advice",
+        type=str,
+        choices=["off", "basic"],
+        default=None,
+        help="Repair guidance mode override: off or basic",
+    )
     p_finish = sub.add_parser(
         "finish",
         help="Workflow facade: status + check + next steps",
@@ -305,6 +319,13 @@ def main():
         action="store_true",
         help="Enable CI gate mode with deterministic exit code semantics",
     )
+    p_stale.add_argument(
+        "--advice",
+        type=str,
+        choices=["off", "basic"],
+        default=None,
+        help="Repair guidance mode override: off or basic",
+    )
     p_doctor = sub.add_parser(
         "doctor",
         help="Run read-only aggregated Harbor health checks",
@@ -336,6 +357,44 @@ def main():
         "--ci",
         action="store_true",
         help="Enable CI gate mode with deterministic exit code semantics",
+    )
+    p_doctor.add_argument(
+        "--advice",
+        type=str,
+        choices=["off", "basic"],
+        default=None,
+        help="Repair guidance mode override: off or basic",
+    )
+    p_next = sub.add_parser(
+        "next",
+        help="Read Harbor JSON report and print conservative next actions (read-only)",
+    )
+    p_next.add_argument(
+        "--from",
+        dest="from_path",
+        required=True,
+        type=str,
+        help="Path to checkpoint/stale/doctor JSON report",
+    )
+    p_next.add_argument(
+        "--format",
+        type=str,
+        choices=["text", "json"],
+        default="text",
+        help="Output format: text (default) or json",
+    )
+    p_next.add_argument(
+        "--advice",
+        type=str,
+        choices=["off", "basic"],
+        default=None,
+        help="Repair guidance mode override: off or basic",
+    )
+    p_next.add_argument(
+        "--max-items",
+        type=int,
+        default=20,
+        help="Maximum items to display",
     )
     p_workspace = sub.add_parser(
         "workspace",
@@ -475,6 +534,7 @@ def main():
     p_init.add_argument("--dry-run", action="store_true")
     p_init.add_argument("--language", choices=["zh", "en"], default=None)
     p_init.add_argument("--project", choices=["new", "existing"], default=None)
+    p_init.add_argument("--advice", choices=["off", "basic"], default=None)
     p_init_gov = p_init.add_mutually_exclusive_group()
     p_init_gov.add_argument("--governance", dest="governance", action="store_true")
     p_init_gov.add_argument("--no-governance", dest="governance", action="store_false")
@@ -1043,6 +1103,104 @@ def main():
             print(f"- {module}: {status_text}")
         return target_modules
 
+    def _coerce_report_items(payload_obj, key: str):
+        items = payload_obj.get(key, [])
+        return items if isinstance(items, list) else []
+
+    def _load_json_report(report_path: Path) -> dict:
+        raw = report_path.read_bytes()
+        decode_errors = []
+        for encoding in ("utf-8", "utf-8-sig", "utf-16", "utf-16-le", "utf-16-be"):
+            try:
+                text = raw.decode(encoding)
+            except Exception as ex:
+                decode_errors.append(f"{encoding}: {str(ex)}")
+                continue
+            try:
+                payload_obj = json.loads(text)
+            except Exception as ex:
+                decode_errors.append(f"{encoding}: {str(ex)}")
+                continue
+            if not isinstance(payload_obj, dict):
+                raise ValueError("report JSON root must be an object.")
+            return payload_obj
+        raise ValueError("failed to parse report JSON: " + "; ".join(decode_errors))
+
+    def _normalize_next_item(source_command: str, raw_item: dict, *, blocking: bool, include_guidance: bool) -> dict:
+        item = dict(raw_item or {})
+        normalized = {
+            "category": str(item.get("category") or item.get("kind") or "unknown"),
+            "func_id": item.get("func_id"),
+            "file_path": item.get("file_path"),
+            "blocking": bool(blocking),
+        }
+        if include_guidance:
+            existing = item.get("guidance")
+            if isinstance(existing, dict):
+                guidance_payload = existing
+            elif source_command == "checkpoint":
+                guidance_payload = guidance_for_checkpoint_category(str(item.get("category") or "unknown")).to_dict()
+            elif source_command == "stale":
+                generated = guidance_for_stale_item(
+                    kind=item.get("kind"),
+                    view=item.get("view"),
+                    status=item.get("status"),
+                )
+                guidance_payload = (
+                    generated.to_dict()
+                    if generated is not None
+                    else generic_conservative_guidance(
+                        what_happened="Stale report item is unknown or missing explicit deterministic mapping."
+                    ).to_dict()
+                )
+            elif source_command == "doctor":
+                generated = guidance_for_doctor_item(
+                    check=item.get("check"),
+                    status=str(item.get("status") or "").lower(),
+                )
+                guidance_payload = (
+                    generated.to_dict()
+                    if generated is not None
+                    else generic_conservative_guidance(
+                        what_happened="Doctor report item is unknown or missing explicit deterministic mapping."
+                    ).to_dict()
+                )
+            else:
+                guidance_payload = generic_conservative_guidance(
+                    what_happened="Report source is unknown; using conservative fallback guidance."
+                ).to_dict()
+            normalized["guidance"] = guidance_payload
+        return normalized
+
+    def _render_next_text(source_command: str, items: List[dict]) -> str:
+        lines: List[str] = ["Harbor Next Actions", ""]
+        blocking_items = [row for row in items if row.get("blocking")]
+        advisory_items = [row for row in items if not row.get("blocking")]
+
+        def _append_group(title: str, group_items: List[dict]) -> None:
+            if not group_items:
+                return
+            lines.append(f"{title}:")
+            for idx, row in enumerate(group_items, start=1):
+                lines.append(f"{idx}. {row.get('category', 'unknown')}")
+                target = row.get("func_id") or row.get("file_path")
+                if target:
+                    lines.append(f"   Target: {target}")
+                guidance = row.get("guidance")
+                if isinstance(guidance, dict):
+                    lines.append(f"   What happened: {guidance.get('what_happened', '')}")
+                    lines.append(f"   Recommended action: {guidance.get('recommended_action', '')}")
+                    if guidance.get("anti_action"):
+                        lines.append(f"   Do not: {guidance.get('anti_action')}")
+                    lines.append(f"   Requires user decision: {guidance.get('decision_required', True)}")
+            lines.append("")
+
+        _append_group("Blocking failures", blocking_items)
+        _append_group("Advisory", advisory_items)
+        if not blocking_items and not advisory_items:
+            lines.append(f"No actionable items from source command: {source_command}")
+        return "\n".join(lines).rstrip()
+
     if args.command in ("lock", "accept"):
         code_roots = args.code_root if args.command == "lock" else None
         cache_dir = Path(args.cache_dir) if args.command == "lock" and args.cache_dir else None
@@ -1072,6 +1230,7 @@ def main():
                 _print_checkpoint_contract_impact(rep)
             _run_check(fast=True)
         else:
+            advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
             check_errors = []
             status_report = _empty_status_report()
             ddt_report = _empty_ddt_report()
@@ -1095,6 +1254,7 @@ def main():
                 ddt_report=ddt_report,
                 contract_impact_report=contract_impact_report,
                 check_errors=check_errors,
+                advice_settings=advice_settings,
             )
             if args.format == "json":
                 print(json.dumps(checkpoint_ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
@@ -1102,6 +1262,44 @@ def main():
                 print(format_checkpoint_ci_result(ci_result))
             if ci_result.exit_code != 0:
                 raise SystemExit(ci_result.exit_code)
+    elif args.command == "next":
+        report_path = Path(str(getattr(args, "from_path", "") or "")).resolve()
+        if not report_path.exists() or not report_path.is_file():
+            parser.error("--from must point to an existing JSON report file.")
+        try:
+            payload = _load_json_report(report_path)
+        except Exception as ex:
+            parser.error(str(ex))
+
+        source_command = str(payload.get("command") or "unknown")
+        advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
+        include_guidance = advice_settings.mode == "basic"
+
+        items: List[dict] = []
+        for row in _coerce_report_items(payload, "ci_failures"):
+            if not isinstance(row, dict):
+                continue
+            items.append(_normalize_next_item(source_command, row, blocking=True, include_guidance=include_guidance))
+        for row in _coerce_report_items(payload, "advisory"):
+            if not isinstance(row, dict):
+                continue
+            items.append(_normalize_next_item(source_command, row, blocking=False, include_guidance=include_guidance))
+
+        max_items = max(int(getattr(args, "max_items", 20) or 20), 1)
+        items = items[:max_items]
+
+        if args.format == "json":
+            out = {
+                "command": "next",
+                "source_command": source_command,
+                "status": "ok",
+                "items": items,
+                "writes_files": False,
+                "llm_used": False,
+            }
+            print(json.dumps(out, ensure_ascii=False, sort_keys=True, indent=2))
+        else:
+            print(_render_next_text(source_command, items))
     elif args.command == "finish":
         print(t("cli.finish.title"))
         _run_status()
@@ -1277,7 +1475,8 @@ def main():
             scope_value = "all"
             if not modules:
                 if args.ci:
-                    ci_result = build_stale_ci_result([], scope=scope_value)
+                    advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
+                    ci_result = build_stale_ci_result([], scope=scope_value, advice_settings=advice_settings)
                     if args.format == "json":
                         print(json.dumps(ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
                     else:
@@ -1291,7 +1490,8 @@ def main():
             modules = _collect_changed_modules()
             if not modules:
                 if args.ci:
-                    ci_result = build_stale_ci_result([], scope=scope_value)
+                    advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
+                    ci_result = build_stale_ci_result([], scope=scope_value, advice_settings=advice_settings)
                     if args.format == "json":
                         print(json.dumps(ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
                     else:
@@ -1304,7 +1504,8 @@ def main():
 
         results = [check_module_derived_views_stale(module) for module in modules]
         if args.ci:
-            ci_result = build_stale_ci_result(results, scope=scope_value)
+            advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
+            ci_result = build_stale_ci_result(results, scope=scope_value, advice_settings=advice_settings)
             payload = ci_result_to_dict(ci_result)
             if args.format == "json":
                 print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
@@ -1340,7 +1541,8 @@ def main():
             modules=sorted(modules) if args.format == "json" else modules,
         )
         if args.ci:
-            ci_result = build_doctor_ci_result(report)
+            advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
+            ci_result = build_doctor_ci_result(report, advice_settings=advice_settings)
             payload = ci_result_to_dict(ci_result)
             if args.format == "json":
                 print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
@@ -1761,6 +1963,7 @@ def main():
                 governance=getattr(args, "governance", None),
                 governance_docs=getattr(args, "governance_docs", None),
                 llm=getattr(args, "llm", None),
+                advice_mode=getattr(args, "advice", None),
                 update_gitignore=getattr(args, "update_gitignore", None),
             ),
         )

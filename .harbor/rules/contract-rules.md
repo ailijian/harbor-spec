@@ -1070,6 +1070,16 @@ Do not hide drift.
 
 Do not run `harbor accept` to silence unresolved drift.
 
+v1.3.1 conservative guidance note:
+
+```text
+possible_semantic_drift guidance is advisory only
+Harbor does not auto-trust implementation or contract by default
+Harbor does not auto-rewrite implementation to match contract
+Harbor does not auto-rewrite contract to match implementation
+human adjudication is required when intent is unclear
+```
+
 ---
 
 ## 22. Contract Change Workflow
