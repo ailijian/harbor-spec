@@ -55,6 +55,7 @@ def test_pyproject_declares_cli_runtime_dependencies():
     assert deps_block_match is not None
     deps_block = deps_block_match.group(1)
     assert '"rich' in deps_block
+    assert '"prompt_toolkit>=3.0,<4"' in deps_block
 
 
 def test_readme_contains_release_key_commands():

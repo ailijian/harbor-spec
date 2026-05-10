@@ -223,14 +223,15 @@ class InitWizard:
         )
 
     def _ask_project(self, stacks: List[str], roots: List[str]) -> str:
+        language = self.result.language or "en"
         if self.options.project in ("new", "existing"):
             return self.options.project
         default_project = _default_project(stacks, roots, self.cwd)
         if not self.interactive:
             return default_project
+        title = "你准备如何接入 HarborSpec？" if language == "zh" else "How do you want to onboard HarborSpec?"
         return select_one(
-            "你准备如何接入 HarborSpec？\n"
-            "How do you want to onboard HarborSpec?",
+            title,
             options=[
                 Choice(
                     value="new",
@@ -250,7 +251,7 @@ class InitWizard:
                 ),
             ],
             default=default_project,
-            language="zh",
+            language=language,
             console=self.console,
         )
 
@@ -274,7 +275,7 @@ class InitWizard:
     def _emit_project_rules_guidance(self, language: str) -> None:
         if language == "zh":
             self.console.print(
-                "\n项目规则（Project Rules）未自动生成。\n\n"
+                "\n项目规则未自动生成。\n\n"
                 "请让你的 AI coding 工具读取：\n"
                 "- .harbor/rules/project-rules-guide.md\n\n"
                 "建议提示词：\n"
@@ -400,8 +401,8 @@ class InitWizard:
         detect_warnings = list(init.last_warnings)
 
         language = self._ask_language()
-        project = self._ask_project(stacks, roots)
         self.result.language = language
+        project = self._ask_project(stacks, roots)
         self.result.project = project
         self._emit_detected_summary(language, stacks, roots)
         for warn in detect_warnings:
@@ -410,9 +411,15 @@ class InitWizard:
             else:
                 self.console.print(f"Warning: {warn}")
 
-        use_detected = self._ask_yes_no("使用这些扫描范围吗？[Y/n] / Use detected scan roots?", True)
+        use_detected = self._ask_yes_no(
+            "使用这些扫描范围吗？" if language == "zh" else "Use detected scan roots?",
+            True,
+        )
         if not use_detected and self.interactive:
-            entered = Prompt.ask("输入自定义 roots（逗号分隔）/ Custom roots (comma-separated)", default=",".join(roots))
+            entered = Prompt.ask(
+                "输入自定义扫描 roots（逗号分隔）：" if language == "zh" else "Enter custom scan roots (comma-separated):",
+                default=",".join(roots),
+            )
             custom = [x.strip() for x in entered.split(",") if x.strip()]
             if custom:
                 roots = custom
@@ -433,7 +440,8 @@ class InitWizard:
                 self.result.created.append(".harbor/config/harbor.yaml")
 
         governance = self.options.governance if self.options.governance is not None else self._ask_yes_no(
-            "是否生成 Harbor governance starter files？[Y/n]", True
+            "是否生成 Harbor 治理入口文件？" if language == "zh" else "Generate Harbor governance starter files?",
+            True,
         )
         if governance:
             for target_rel, source_rel in STARTER_TEMPLATES.items():
@@ -453,7 +461,7 @@ class InitWizard:
             self._emit_project_rules_guidance(language)
 
         governance_docs = self.options.governance_docs if self.options.governance_docs is not None else self._ask_yes_no(
-            "是否生成详细 Harbor governance docs？[y/N]",
+            "是否生成详细 Harbor 治理文档？" if language == "zh" else "Generate detailed Harbor governance docs?",
             False,
         )
         if governance_docs:
@@ -472,12 +480,12 @@ class InitWizard:
                 else:
                     self.result.skipped.append(target_rel)
 
-        show_guide = self._ask_yes_no("是否输出 AI IDE 接入说明？[Y/n]", True)
+        show_guide = self._ask_yes_no("是否输出 AI IDE 接入说明？" if language == "zh" else "Show AI IDE integration guidance?", True)
         if show_guide:
             self._emit_ide_guidance(language)
 
         llm_enabled = self.options.llm if self.options.llm is not None else self._ask_yes_no(
-            "是否配置可选 LLM semantic audit？[y/N]",
+            "是否配置可选 LLM 语义审计？" if language == "zh" else "Configure optional LLM semantic audit?",
             False,
         )
         llm_kv: Dict[str, str] = {}
@@ -491,9 +499,7 @@ class InitWizard:
             api_key = ""
             if self.interactive:
                 provider = select_one(
-                    "请选择 LLM 服务商（使用 ↑/↓ 选择，Enter 确认；也可输入编号或名称）："
-                    if language == "zh"
-                    else "Choose LLM provider (use ↑/↓ and Enter, or type number/name):",
+                    "请选择 LLM 服务商" if language == "zh" else "Choose LLM provider",
                     options=[
                         Choice(value="openai", label_zh="OpenAI", label_en="OpenAI", aliases=["openai"]),
                         Choice(value="deepseek", label_zh="DeepSeek", label_en="DeepSeek", aliases=["deepseek"]),
@@ -514,8 +520,13 @@ class InitWizard:
                     base_url = "https://api.deepseek.com/v1"
                 elif provider == "custom":
                     provider = "custom"
-                    base_url = Prompt.ask("HARBOR_LLM_BASE_URL")
-                api_key = Prompt.ask("HARBOR_LLM_API_KEY", password=True, default="")
+                    base_url = Prompt.ask("请输入自定义 Base URL：" if language == "zh" else "Enter custom base URL:")
+                api_key = Prompt.ask(
+                    "请输入 API Key（输入时不会显示；将写入 .env；不会覆盖已有 key）：" if language == "zh"
+                    else "Enter API key (hidden input; saved to .env; existing keys are not overwritten):",
+                    password=True,
+                    default="",
+                )
             else:
                 provider = (os.environ.get("HARBOR_LLM_PROVIDER") or "openai").strip().lower()
                 base_url = (os.environ.get("HARBOR_LLM_BASE_URL") or base_url).strip()
@@ -529,16 +540,26 @@ class InitWizard:
             env_path = self.cwd / ".env"
             added, skipped, _ = _append_missing_env_keys(env_path, llm_kv, dry_run=self.options.dry_run)
             if added:
-                self.result.notes.append(".env updated with missing HARBOR_* keys only")
+                self.result.notes.append(
+                    "仅向 .env 追加缺失的 HARBOR_* 键"
+                    if language == "zh"
+                    else ".env updated with missing HARBOR_* keys only"
+                )
             if "HARBOR_LLM_API_KEY" in added and api_key:
                 self.result.notes.append(f"HARBOR_LLM_API_KEY={_mask_key(api_key)}")
             if skipped:
-                self.result.notes.append(f".env skipped existing keys: {', '.join(sorted(skipped))}")
+                self.result.notes.append(
+                    f".env 跳过已有键：{', '.join(sorted(skipped))}"
+                    if language == "zh"
+                    else f".env skipped existing keys: {', '.join(sorted(skipped))}"
+                )
             if self.options.dry_run:
-                self.result.notes.append("dry-run: .env write preview only")
+                self.result.notes.append("dry-run：仅预览 .env 写入" if language == "zh" else "dry-run: .env write preview only")
 
         update_gitignore = self.options.update_gitignore if self.options.update_gitignore is not None else self._ask_yes_no(
-            "是否更新 .gitignore 以忽略 Harbor runtime files？[Y/n]",
+            "是否更新 .gitignore 以忽略 Harbor 运行时文件？"
+            if language == "zh"
+            else "Update .gitignore to ignore Harbor runtime files?",
             True,
         )
         gitignore_path = self.cwd / ".gitignore"
@@ -559,10 +580,19 @@ class InitWizard:
                 dry_run=self.options.dry_run,
             )
             if changed_runtime:
-                self.result.notes.append("updated .gitignore runtime managed block")
+                self.result.notes.append(
+                    "已更新 .gitignore 运行时 managed block"
+                    if language == "zh"
+                    else "updated .gitignore runtime managed block"
+                )
             env_ignored = _has_env_ignore(gitignore_path)
             if llm_enabled and not env_ignored:
-                add_env = self._ask_yes_no("`.env` 当前未在 .gitignore 中，是否追加？[Y/n]", True)
+                add_env = self._ask_yes_no(
+                    "`.env` 当前未在 .gitignore 中，是否追加？"
+                    if language == "zh"
+                    else "`.env` is not ignored in .gitignore. Add it now?",
+                    True,
+                )
                 if add_env:
                     changed_secret = _update_managed_block(
                         gitignore_path,
@@ -572,9 +602,17 @@ class InitWizard:
                         dry_run=self.options.dry_run,
                     )
                     if changed_secret:
-                        self.result.notes.append("updated .gitignore secrets managed block")
+                        self.result.notes.append(
+                            "已更新 .gitignore secrets managed block"
+                            if language == "zh"
+                            else "updated .gitignore secrets managed block"
+                        )
                 else:
-                    self.result.notes.append("warning: .env is not ignored by .gitignore")
+                    self.result.notes.append(
+                        "警告：.env 未被 .gitignore 忽略"
+                        if language == "zh"
+                        else "warning: .env is not ignored by .gitignore"
+                    )
 
         if self.options.dry_run:
             self.console.print("dry-run：未写入任何文件。" if language == "zh" else "dry-run: no files were written.")

@@ -1,14 +1,18 @@
 from io import StringIO
 from pathlib import Path
 
+import pytest
 from rich.console import Console
 from rich.prompt import Prompt
 
+from harbor.core.init_prompt import Choice, confirm, select_one
 from harbor.core.init_wizard import InitWizard, InitWizardOptions
 
 
 def test_wizard_language_prompt_comes_first(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
+    monkeypatch.setattr("harbor.core.init_prompt._is_interactive", lambda _interactive=None: True)
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
     asks = iter(["1", "1"])
 
     def _fake_prompt(*args, **kwargs):
@@ -166,7 +170,7 @@ def test_provider_fallback_accepts_name_deepseek(tmp_path: Path, monkeypatch):
     asks = iter(["deepseek", ""])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
     def _yes_no(self, prompt_text, default):
-        return "scan roots" in prompt_text
+        return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
     monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
     wiz = InitWizard(
         cwd=tmp_path,
@@ -191,7 +195,7 @@ def test_provider_fallback_accepts_number_2(tmp_path: Path, monkeypatch):
     asks = iter(["2", ""])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
     def _yes_no(self, prompt_text, default):
-        return "scan roots" in prompt_text
+        return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
     monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
     wiz = InitWizard(
         cwd=tmp_path,
@@ -216,7 +220,7 @@ def test_provider_invalid_input_shows_available_options(tmp_path: Path, monkeypa
     asks = iter(["oops", "2", ""])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
     def _yes_no(self, prompt_text, default):
-        return "scan roots" in prompt_text
+        return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
     monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
     stream = StringIO()
     wiz = InitWizard(
@@ -246,3 +250,147 @@ def test_non_tty_does_not_try_arrow_selector(tmp_path: Path, monkeypatch):
         console=Console(file=StringIO(), force_terminal=False, width=200),
     )
     wiz.run()
+
+
+def test_pytest_env_does_not_try_arrow_selector(monkeypatch):
+    monkeypatch.setenv("PYTEST_CURRENT_TEST", "tests/test_init_wizard.py::test_pytest_env_does_not_try_arrow_selector")
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: (_ for _ in ()).throw(AssertionError()))
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "1"))
+    selected = select_one(
+        "Choose",
+        options=[
+            Choice(value="openai", label_zh="OpenAI", label_en="OpenAI", aliases=["openai"]),
+            Choice(value="deepseek", label_zh="DeepSeek", label_en="DeepSeek", aliases=["deepseek"]),
+        ],
+        default="openai",
+        language="en",
+        interactive=None,
+        console=Console(file=StringIO(), force_terminal=False, width=120),
+    )
+    assert selected == "openai"
+
+
+def test_selector_source_does_not_use_full_screen_dialog():
+    src = (Path(__file__).resolve().parents[1] / "harbor" / "core" / "init_prompt.py").read_text(encoding="utf-8")
+    assert "radiolist_dialog" not in src
+    assert "checkboxlist_dialog" not in src
+    assert "full_screen=True" not in src
+    assert "Confirm.ask" not in src
+    assert "WordCompleter" not in src
+    assert "complete_while_typing=True" not in src
+
+
+def test_selector_fallback_does_not_repeat_selector_block(monkeypatch):
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "1"))
+    stream = StringIO()
+    selected = select_one(
+        "Choose provider",
+        options=[
+            Choice(value="openai", label_zh="OpenAI", label_en="OpenAI", aliases=["openai"]),
+            Choice(value="deepseek", label_zh="DeepSeek", label_en="DeepSeek", aliases=["deepseek"]),
+        ],
+        default="openai",
+        language="en",
+        interactive=True,
+        console=Console(file=stream, force_terminal=False, width=120),
+    )
+    out = stream.getvalue()
+    assert selected == "openai"
+    assert "◇ Choose provider" in out
+    assert out.count("◇ Choose provider") == 1
+    assert out.count("1. OpenAI") == 1
+    assert out.count("2. DeepSeek") == 1
+
+
+def test_confirm_accepts_english_yes_no(monkeypatch):
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "yes"))
+    assert confirm("Use detected scan roots?", default=True, language="en", interactive=True) is True
+
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "n"))
+    assert confirm("Use detected scan roots?", default=True, language="en", interactive=True) is False
+
+
+def test_confirm_accepts_chinese_yes_no(monkeypatch):
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "是"))
+    assert confirm("使用这些扫描范围吗？", default=True, language="zh", interactive=True) is True
+
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "否"))
+    assert confirm("使用这些扫描范围吗？", default=True, language="zh", interactive=True) is False
+
+
+def test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens():
+    src = (Path(__file__).resolve().parents[1] / "harbor" / "core" / "init_wizard.py").read_text(encoding="utf-8")
+    assert "Confirm.ask" not in src
+    assert "Prompt.ask(choices=" not in src
+    assert "[Y/n]" not in src
+    assert "[y/N]" not in src
+    assert "Use detected scan roots? (Y)" not in src
+
+
+def test_confirm_shows_yes_no_labels_by_language(monkeypatch):
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "1"))
+
+    en_stream = StringIO()
+    confirm("Generate Harbor governance starter files?", default=True, language="en", interactive=True, console=Console(file=en_stream))
+    en_out = en_stream.getvalue()
+    assert "1. Yes" in en_out
+    assert "2. No" in en_out
+
+    zh_stream = StringIO()
+    confirm("是否生成 Harbor 治理入口文件？", default=True, language="zh", interactive=True, console=Console(file=zh_stream))
+    zh_out = zh_stream.getvalue()
+    assert "1. 是" in zh_out
+    assert "2. 否" in zh_out
+
+
+def test_init_wizard_prompts_are_single_language_after_selection(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
+    monkeypatch.setattr("harbor.core.init_prompt._is_interactive", lambda _interactive=None: True)
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
+
+    en_answers = iter(["2", "1", "1", "2"])
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(en_answers)))
+    en_stream = StringIO()
+    InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            dry_run=True,
+            governance=False,
+            governance_docs=False,
+            llm=False,
+            update_gitignore=False,
+        ),
+        console=Console(file=en_stream, force_terminal=False, width=200),
+    ).run()
+    en_out = en_stream.getvalue()
+    assert "How do you want to onboard HarborSpec?" in en_out
+    assert "Use detected scan roots?" in en_out
+    assert "Show AI IDE integration guidance?" in en_out
+    assert "你准备如何接入 HarborSpec？" not in en_out
+    assert "使用这些扫描范围吗？" not in en_out
+    assert "是否输出 AI IDE 接入说明？" not in en_out
+
+    zh_answers = iter(["1", "1", "1", "2"])
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(zh_answers)))
+    zh_stream = StringIO()
+    InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            dry_run=True,
+            governance=False,
+            governance_docs=False,
+            llm=False,
+            update_gitignore=False,
+        ),
+        console=Console(file=zh_stream, force_terminal=False, width=200),
+    ).run()
+    zh_out = zh_stream.getvalue()
+    assert "你准备如何接入 HarborSpec？" in zh_out
+    assert "使用这些扫描范围吗？" in zh_out
+    assert "是否输出 AI IDE 接入说明？" in zh_out
+    assert "How do you want to onboard HarborSpec?" not in zh_out
+    assert "Use detected scan roots?" not in zh_out
+    assert "Show AI IDE integration guidance?" not in zh_out

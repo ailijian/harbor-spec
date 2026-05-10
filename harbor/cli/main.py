@@ -67,7 +67,6 @@ from harbor.core.contract_impact import (
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
-from harbor.core.init import Initializer
 from harbor.core.init_wizard import InitWizard, InitWizardOptions
 from harbor.core.decorator import DecoratorEngine
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, write_workspace_config

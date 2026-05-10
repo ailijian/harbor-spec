@@ -43,6 +43,7 @@ def test_init_detects_node(tmp_path: Path):
         assert "Default scan roots:" in out
         assert "Auto-excluded:" in out
         assert "harbor config list" in out
+        assert "node_modules/**" not in out
         cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
         cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
         assert not (tmp_path / ".harbor" / "config.yaml").exists()
@@ -74,6 +75,8 @@ def test_init_detects_django(tmp_path: Path):
         assert "检测到：技术栈" in out
         assert "默认扫描范围：" in out
         assert "已自动排除：" in out
+        assert ".venv/**" not in out
+        assert "venv/**" not in out
         cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
         cfg = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
         assert not (tmp_path / ".harbor" / "config.yaml").exists()

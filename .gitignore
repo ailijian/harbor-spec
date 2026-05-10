@@ -224,3 +224,11 @@ node_modules/
 docs/*
 !docs/design/
 !docs/design/**
+
+# >>> HarborSpec runtime files (managed)
+.harbor/cache/
+.harbor/state/
+.harbor/exports/
+.harbor/reports/tmp/
+.harbor/reports/local/
+# <<< HarborSpec runtime files (managed)

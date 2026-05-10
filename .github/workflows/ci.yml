@@ -30,6 +30,9 @@ jobs:
           python -m pip install -e ".[dev]"
 
       - name: Run unit tests
+        env:
+          HARBOR_LANGUAGE: zh
+          HARBOR_LANG: zh
         run: pytest
 
       - name: Harbor build-index

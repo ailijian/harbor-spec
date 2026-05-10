@@ -92,7 +92,7 @@ def test_llm_provider_alias_custom_writes_env(tmp_path: Path, monkeypatch):
     asks = iter(["compatible", "https://example.com/v1", "sk-xyz"])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
     def _yes_no(self, prompt_text, default):
-        return "scan roots" in prompt_text
+        return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
     monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
     wiz = InitWizard(
         cwd=tmp_path,
@@ -117,7 +117,7 @@ def test_llm_provider_alias_openai_writes_env(tmp_path: Path, monkeypatch):
     asks = iter(["openai", ""])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
     def _yes_no(self, prompt_text, default):
-        return "scan roots" in prompt_text
+        return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
     monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
     wiz = InitWizard(
         cwd=tmp_path,
@@ -134,3 +134,36 @@ def test_llm_provider_alias_openai_writes_env(tmp_path: Path, monkeypatch):
     wiz.run()
     text = (tmp_path / ".env").read_text(encoding="utf-8")
     assert "HARBOR_LLM_PROVIDER=openai" in text
+
+
+def test_llm_provider_alias_number_2_writes_deepseek_env(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
+    asks = iter(["2", ""])
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
+
+    def _yes_no(self, prompt_text, default):
+        return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
+
+    monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
+    wiz = InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            language="en",
+            project="new",
+            governance=False,
+            governance_docs=False,
+            llm=True,
+            update_gitignore=False,
+        ),
+        console=Console(file=StringIO(), force_terminal=False),
+    )
+    wiz.run()
+    text = (tmp_path / ".env").read_text(encoding="utf-8")
+    assert "HARBOR_LLM_PROVIDER=deepseek" in text
+    assert "HARBOR_LLM_BASE_URL=https://api.deepseek.com/v1" in text
+
+
+def test_init_wizard_source_removes_legacy_yes_no_brackets():
+    src = (Path(__file__).resolve().parents[1] / "harbor" / "core" / "init_wizard.py").read_text(encoding="utf-8")
+    assert "[Y/n]" not in src
+    assert "[y/N]" not in src

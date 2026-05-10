@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import sys
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from rich.console import Console
 from rich.prompt import Prompt
@@ -33,20 +33,149 @@ def _choice_label(choice: Choice, language: str) -> str:
     return choice.label_zh if language == "zh" else choice.label_en
 
 
+def _title_with_marker(title: str) -> str:
+    title_text = title.strip()
+    if title_text.startswith("◇"):
+        return title_text
+    return f"◇ {title_text}"
+
+
+def _render_inline_options(
+    *,
+    console: Console,
+    title: str,
+    options: List[Choice],
+    language: str,
+    selected_idx: int,
+) -> None:
+    console.print(_title_with_marker(title))
+    for idx, opt in enumerate(options):
+        marker = "❯" if idx == selected_idx else " "
+        console.print(f"  {marker} {_choice_label(opt, language)}")
+
+
 def _try_arrow_select(
     *,
     title: str,
     options: List[Choice],
     default: Optional[str],
     language: str,
+    aliases: Dict[str, str],
+    console: Console,
 ) -> Optional[str]:
     try:
-        from prompt_toolkit.shortcuts import radiolist_dialog
+        from prompt_toolkit.application import Application
+        from prompt_toolkit.formatted_text import FormattedText
+        from prompt_toolkit.key_binding import KeyBindings
+        from prompt_toolkit.layout import HSplit, Layout, Window
+        from prompt_toolkit.layout.controls import FormattedTextControl
     except Exception:
         return None
-    values = [(opt.value, _choice_label(opt, language)) for opt in options]
-    result = radiolist_dialog(title=title, text=title, values=values, default=default or options[0].value).run()
-    if isinstance(result, str) and result:
+
+    values = [x.value for x in options]
+    if not values:
+        return None
+    default_idx = values.index(default) if default in values else 0
+    selected_idx = default_idx
+    typed = ""
+    error_msg = ""
+    result: Optional[str] = None
+
+    def _render() -> FormattedText:
+        rows: List[Tuple[str, str]] = [("", _title_with_marker(title)), ("", "\n")]
+        for idx, opt in enumerate(options):
+            marker = "❯" if idx == selected_idx else " "
+            rows.append(("", f"  {marker} {_choice_label(opt, language)}"))
+            rows.append(("", "\n"))
+        if language == "zh":
+            hint = "↑/↓ 选择 + Enter 确认；也可直接输入别名/值后回车"
+        else:
+            hint = "↑/↓ + Enter; or type alias/value and press Enter"
+        rows.append(("class:hint", hint))
+        rows.append(("", "\n"))
+        rows.append(("", f"> {typed}"))
+        if error_msg:
+            rows.append(("", "\n"))
+            rows.append(("class:error", error_msg))
+        return FormattedText(rows)
+
+    kb = KeyBindings()
+
+    @kb.add("up")
+    def _up(event) -> None:
+        nonlocal selected_idx
+        selected_idx = (selected_idx - 1) % len(options)
+        event.app.invalidate()
+
+    @kb.add("down")
+    def _down(event) -> None:
+        nonlocal selected_idx
+        selected_idx = (selected_idx + 1) % len(options)
+        event.app.invalidate()
+
+    @kb.add("c-c")
+    def _ctrl_c(event) -> None:
+        event.app.exit(exception=KeyboardInterrupt())
+
+    @kb.add("enter")
+    def _enter(event) -> None:
+        nonlocal typed, error_msg, result
+        raw = typed.strip().lower()
+        if raw:
+            mapped = aliases.get(raw)
+            if mapped in values:
+                result = mapped
+                event.app.exit(result=result)
+                return
+            if language == "zh":
+                error_msg = f"无效输入：{raw}"
+            else:
+                error_msg = f"Invalid input: {raw}"
+            typed = ""
+            event.app.invalidate()
+            return
+        result = options[selected_idx].value
+        event.app.exit(result=result)
+
+    @kb.add("backspace")
+    def _backspace(event) -> None:
+        nonlocal typed, error_msg
+        if typed:
+            typed = typed[:-1]
+            error_msg = ""
+            event.app.invalidate()
+
+    @kb.add("escape")
+    def _escape(event) -> None:
+        nonlocal typed, error_msg
+        typed = ""
+        error_msg = ""
+        event.app.invalidate()
+
+    @kb.add("<any>")
+    def _append_char(event) -> None:
+        nonlocal typed, error_msg
+        data = event.data or ""
+        if len(data) == 1 and data.isprintable():
+            typed += data
+            error_msg = ""
+            event.app.invalidate()
+
+    try:
+        app = Application(
+            layout=Layout(HSplit([Window(content=FormattedTextControl(_render), always_hide_cursor=True)])),
+            key_bindings=kb,
+            full_screen=False,
+            mouse_support=False,
+        )
+        app_result = app.run()
+    except KeyboardInterrupt:
+        raise
+    except Exception:
+        return None
+    if isinstance(app_result, str) and app_result in values:
+        return app_result
+    if isinstance(result, str) and result in values:
         return result
     return None
 
@@ -78,11 +207,18 @@ def select_one(
 
     can_interactive = _is_interactive(interactive)
     if can_interactive:
-        val = _try_arrow_select(title=title, options=options, default=selected_default, language=language)
+        val = _try_arrow_select(
+            title=title,
+            options=options,
+            default=selected_default,
+            language=language,
+            aliases=merged_aliases,
+            console=c,
+        )
         if val in {x.value for x in options}:
             return val
 
-    c.print(title)
+    c.print(_title_with_marker(title))
     for idx, opt in enumerate(options, start=1):
         label = _choice_label(opt, language)
         desc = opt.description_zh if language == "zh" else opt.description_en
@@ -117,15 +253,15 @@ def confirm(
 ) -> bool:
     if not _is_interactive(interactive):
         return default
-    c = console or Console()
-    default_token = "Y" if default else "N"
-    while True:
-        raw = Prompt.ask(title, default=default_token).strip().lower()
-        if raw in {"y", "yes"}:
-            return True
-        if raw in {"n", "no"}:
-            return False
-        if language == "zh":
-            c.print("请输入 y 或 n。")
-        else:
-            c.print("Please enter y or n.")
+    selected = select_one(
+        title,
+        options=[
+            Choice(value="yes", label_zh="是", label_en="Yes", aliases=["y", "yes", "是", "对", "true", "1"]),
+            Choice(value="no", label_zh="否", label_en="No", aliases=["n", "no", "否", "错", "false", "2"]),
+        ],
+        default="yes" if default else "no",
+        language=language,
+        console=console or Console(),
+        interactive=interactive,
+    )
+    return selected == "yes"

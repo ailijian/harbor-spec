@@ -92,8 +92,10 @@ def test_checkpoint_format_error_uses_zh_i18n(tmp_path: Path):
 
 def test_init_provider_prompt_i18n_text(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
+    monkeypatch.setattr("harbor.core.init_prompt._is_interactive", lambda _interactive=None: True)
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
     def _yes_no(self, prompt_text, default):
-        return "scan roots" in prompt_text
+        return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
 
     zh_stream = StringIO()
     zh_asks = iter(["1", ""])
@@ -112,7 +114,8 @@ def test_init_provider_prompt_i18n_text(tmp_path: Path, monkeypatch):
         console=Console(file=zh_stream, force_terminal=False),
     ).run()
     zh_out = zh_stream.getvalue()
-    assert "请选择 LLM 服务商（使用 ↑/↓ 选择，Enter 确认；也可输入编号或名称）" in zh_out
+    assert "请选择 LLM 服务商" in zh_out
+    assert "Invalid input" not in zh_out
 
     en_stream = StringIO()
     en_asks = iter(["1", ""])
@@ -130,4 +133,5 @@ def test_init_provider_prompt_i18n_text(tmp_path: Path, monkeypatch):
         console=Console(file=en_stream, force_terminal=False),
     ).run()
     en_out = en_stream.getvalue()
-    assert "Choose LLM provider (use ↑/↓ and Enter, or type number/name):" in en_out
+    assert "Choose LLM provider" in en_out
+    assert "输入无效" not in en_out
