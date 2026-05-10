@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0b6"
+harbor_version: "1.3.0"
 view_type: "debug_playbook"
 module: "tests"
-generated_at: "2026-05-10T11:36:59Z"
+generated_at: "2026-05-10T14:41:04Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 67
+source_path_count: 70
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -42,7 +42,9 @@ source_paths:
   - "tests/test_config_update.py"
   - "tests/test_context_integrity.py"
   - "tests/test_contract_impact.py"
+  - "tests/test_contract_presence.py"
   - "tests/test_ddt_validate.py"
+  - "tests/test_ddt_version_baseline.py"
   - "tests/test_decorator_engine.py"
   - "tests/test_derive_adopted_roots.py"
   - "tests/test_diary_workspace_paths.py"
@@ -67,6 +69,7 @@ source_paths:
   - "tests/test_module_skill.py"
   - "tests/test_project_structure.py"
   - "tests/test_release_packaging.py"
+  - "tests/test_semantic_audit_contract_gap.py"
   - "tests/test_stale.py"
   - "tests/test_sync_engine.py"
   - "tests/test_utils_format.py"
@@ -76,9 +79,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:7116e98bdd9d6baa4752b1c5ecb963b3630af2ef45e14a5b3d901b7957a3cab9"
-contract_fingerprint: "sha256:cadce5317d6e6023f92b74442b0c0d775caaab1159f6b9eb4be5855c1600885e"
-generator_fingerprint: "sha256:8d691a3d335bbfe1a2a75e7dfc840166b4880122ea742d41e9c2bf038a41c37f"
+source_fingerprint: "sha256:45746c56431cce702eaba6b93b8c8cd2f7620690b3616e158d0afcdca0fc4a6a"
+contract_fingerprint: "sha256:1d9e4cbc2b17582e8c5ee7f347f9f5c88cff701c67661d5b28e2d4d6c81cfa2e"
+generator_fingerprint: "sha256:9f7097e10acbee9a2269f5ceb3ba21165b4b3de7ea6b46984a8131350c13130f"
 ---
 
 # Debug Playbook: tests

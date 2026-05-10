@@ -89,7 +89,7 @@ def test_gitignore_managed_blocks_are_idempotent(tmp_path: Path, monkeypatch):
 
 def test_llm_provider_alias_custom_writes_env(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
-    asks = iter(["compatible", "https://example.com/v1", "sk-xyz"])
+    asks = iter(["1", "compatible", "https://example.com/v1", "sk-xyz"])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
     def _yes_no(self, prompt_text, default):
         return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
@@ -114,7 +114,7 @@ def test_llm_provider_alias_custom_writes_env(tmp_path: Path, monkeypatch):
 
 def test_llm_provider_alias_openai_writes_env(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
-    asks = iter(["openai", ""])
+    asks = iter(["1", "openai", ""])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
     def _yes_no(self, prompt_text, default):
         return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
@@ -138,7 +138,7 @@ def test_llm_provider_alias_openai_writes_env(tmp_path: Path, monkeypatch):
 
 def test_llm_provider_alias_number_2_writes_deepseek_env(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
-    asks = iter(["2", ""])
+    asks = iter(["1", "2", ""])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(asks)))
 
     def _yes_no(self, prompt_text, default):

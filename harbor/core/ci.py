@@ -39,6 +39,11 @@ class CIFailure:
           - 输出固定包含 `kind`。
           - `module` / `view` / `check` / `status` / `reason` / `suggested_command`
             仅在字段值非 None 时输出（None 字段省略）。
+          - `guidance` 为 optional additive field：
+            仅在 `include_guidance=True` 且 guidance 存在时输出；
+            advice=off 路径会传入 `include_guidance=False`，因此不输出 `guidance`。
+          - guidance 只提供 deterministic 元数据建议，不调用 LLM，不改变既有字段语义。
+          - guidance 不改变 gate 语义：不改变 `exit_code`、blocking/failure 归类或 advisory 归类。
           - 所有文本字段在输出前均进行 sanitize，避免暴露原始绝对路径或未脱敏文本片段。
 
         Side Effects:
@@ -48,6 +53,14 @@ class CIFailure:
         @harbor.scope: public
         @harbor.l3_strictness: strict
         @harbor.idempotency: read-only
+
+        Args:
+          include_guidance (bool): 是否输出可选 guidance 附加字段；
+            `advice=off` 路径会传入 False，因此不输出 guidance。
+
+        Returns:
+          dict: JSON-compatible item dict；None 字段省略；guidance 仅为 deterministic
+            advisory metadata，不改变 exit_code/blocking/advisory 语义。
         """
         payload: Dict[str, object] = {"kind": self.kind}
         if self.module is not None:
@@ -106,6 +119,11 @@ class CheckpointCIItem:
           - 输出固定包含 `category` 与 `reason`。
           - `func_id` / `file_path` / `suggested_action` 仅在字段存在且非空时输出。
           - `file_path` 会进行路径脱敏与规范化，文本字段会执行 sanitize。
+          - `guidance` 为 optional additive field：
+            仅在 `include_guidance=True` 且 guidance 存在时输出；
+            advice=off 路径会传入 `include_guidance=False`，因此不输出 `guidance`。
+          - guidance 为 deterministic metadata，不调用 LLM，不改变既有字段语义。
+          - guidance 不改变 `exit_code` / blocking / advisory 判定。
 
         Side Effects:
           - 只读序列化；不写文件、不触发修复、不刷新上下文、不接受 baseline。
@@ -114,6 +132,15 @@ class CheckpointCIItem:
         @harbor.scope: public
         @harbor.l3_strictness: strict
         @harbor.idempotency: read-only
+
+        Args:
+          include_guidance (bool): 是否输出可选 guidance 附加字段；
+            `advice=off` 路径会传入 False，因此不输出 guidance。
+
+        Returns:
+          dict: JSON-compatible checkpoint item dict；None/空字段按规则省略；
+            guidance 仅为 deterministic advisory metadata，不改变
+            exit_code/blocking/advisory 语义。
         """
         payload: Dict[str, object] = {
             "category": _sanitize_json_text(self.category),
@@ -453,6 +480,11 @@ def ci_result_to_dict(result: CIResult) -> dict:
       - `summary`、`next_steps` 与条目文本会执行 sanitize（含路径/文本脱敏）。
       - `ci_failures` / `advisory` 的 item 形状由对应 `to_dict()` 契约保证；
         item 内 None 字段会按各自规则省略。
+      - guidance 是 optional additive field：
+        advice=basic 且 include_in_ci_json=true 时可输出 guidance；
+        advice=off 时不输出 guidance。
+      - guidance 不改变已有字段语义，不改变 `exit_code` / blocking/failure / advisory 归类。
+      - guidance 为 deterministic metadata，不调用 LLM。
 
     Side Effects:
       - 只做序列化，不执行修复、不刷新上下文、不接受 baseline。
@@ -461,6 +493,14 @@ def ci_result_to_dict(result: CIResult) -> dict:
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: read-only
+
+    Args:
+      result (CIResult): 通用 CI 结果对象（stale/doctor）。
+
+    Returns:
+      dict: 单一 JSON-compatible payload。`writes_files` 固定 false，
+        guidance 为 optional additive field（advice=off 不输出），且不改变
+        exit_code / blocking-failure / advisory 语义。
     """
     include_guidance = result.advice_mode == "basic" and result.include_in_ci_json
     return {
@@ -600,6 +640,11 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
         `possible_semantic_drift` / `contract_and_body_changed` / `modified` 等）。
       - `advisory` 保留非阻断项（包括 `ddt_version_baseline_missing`）。
       - 路径与文本字段在输出前会做 sanitize；item 内 None 字段按 item 规则省略。
+      - guidance 是 optional additive field：
+        advice=basic 且 include_in_ci_json=true 时可输出 guidance；
+        advice=off 时不输出 guidance。
+      - guidance 不改变既有字段语义，不改变 `exit_code` / blocking/failure / advisory 归类。
+      - guidance 为 deterministic metadata，不调用 LLM。
 
     Side Effects:
       - 只做序列化，不执行修复、不刷新上下文、不接受 baseline。
@@ -608,6 +653,14 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: read-only
+
+    Args:
+      result (CheckpointCIResult): checkpoint CI 结果对象。
+
+    Returns:
+      dict: 单一 JSON-compatible payload。`writes_files` 固定 false，
+        guidance 为 optional additive field（advice=off 不输出），且不改变
+        exit_code / blocking-failure / advisory 语义。
     """
     include_guidance = result.advice_mode == "basic" and result.include_in_ci_json
     return {

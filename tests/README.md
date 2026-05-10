@@ -11,6 +11,7 @@
 
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
+| tests.test_ddt_version_baseline._build_strict_target | — | standard | ⚪ Missing |
 | tests.test_cli_v2._clean_status_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._contract_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._ddt_report | — | standard | ⚪ Missing |
@@ -23,6 +24,7 @@
 | tests.test_doctor._empty_status_report | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._empty_validation_report | — | standard | ⚪ Missing |
 | tests.test_cli_v2._empty_validation_report | — | standard | ⚪ Missing |
+| tests.test_contract_presence._fc | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening._fingerprint | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._fingerprint_tree | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux._force_en_locale | — | standard | ⚪ Missing |
@@ -95,6 +97,7 @@
 | tests.test_workspace_paths._write_yaml | — | standard | ⚪ Missing |
 | tests.test_drafting._EngStub.check_status | — | standard | ⚪ Missing |
 | tests.test_drafting._OKProvider.infer | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | — | standard | ⚪ Missing |
 | tests.test_index_builder.read_index | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.run_cmd | — | standard | ⚪ Missing |
@@ -139,17 +142,25 @@
 | tests.test_workspace_inspect.test_check_git_ignored_directory_rule_uses_nested_probe | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_contract_parse_error_blocks | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_ddt_baseline_missing_stays_advisory_not_failure | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_dedupe_prefers_contract_and_body_changed_over_confirmed_contract_impact | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_dedupe_prefers_contract_changed_over_confirmed_contract_impact | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_does_not_fail_on_possible_contract_impact_alone | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_body_changed_contract_static | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_confirmed_contract_impact | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_contract_changed | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_contract_gap | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_missing_function | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_untracked_function | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_failure_dedupe_keeps_readable_ci_failures | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_json_includes_ddt_baseline_missing_advisory_without_blocking | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_ci_json_recognized | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_keeps_confirmed_contract_impact_when_no_status_failure_covers_target | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_no_write_regression | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_pass_when_clean | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_skipped_no_contract_is_advisory | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_zh_text_labels | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_command_recognized | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | — | standard | ⚪ Missing |
@@ -187,6 +198,9 @@
 | tests.test_cli_config.test_config_add_list_remove | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_config_list_zh | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_configured_diary_root_within_repo_is_used | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_confirm_accepts_chinese_yes_no | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_confirm_accepts_english_yes_no | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_confirm_shows_yes_no_labels_by_language | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_content_without_generated_at_for_compare_ignores_only_timestamp | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_ddt_validate_maps_to_check_fast | — | standard | ⚪ Missing |
 | tests.test_ddt_validate.test_ddt_validate_matrix | — | standard | ⚪ Missing |
@@ -296,6 +310,9 @@
 | tests.test_cli_i18n.test_init_provider_prompt_i18n_text | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_init_templates_package_resources_are_loadable | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_init_wizard_prompts_are_single_language_after_selection | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens | — | standard | ⚪ Missing |
+| tests.test_init_llm_env.test_init_wizard_source_removes_legacy_yes_no_brackets | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | — | standard | ⚪ Missing |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_json_output_does_not_include_absolute_paths | — | standard | ⚪ Missing |
@@ -323,6 +340,7 @@
 | tests.test_module_capsule_stale.test_legacy_exists_but_canonical_missing_is_stale | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_llm_env_append_missing_only_and_force_does_not_overwrite | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_llm_provider_alias_custom_writes_env | — | standard | ⚪ Missing |
+| tests.test_init_llm_env.test_llm_provider_alias_number_2_writes_deepseek_env | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_llm_provider_alias_openai_writes_env | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_load_active_keeps_recent_two_month_window | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_load_active_reads_legacy_only_without_mutation | — | standard | ⚪ Missing |
@@ -385,6 +403,7 @@
 | tests.test_drafting_json_parse.test_parse_with_code_fence | — | standard | ⚪ Missing |
 | tests.test_drafting_json_parse.test_parse_with_noise_prefix_suffix | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_parser_rejects_complex_yaml | — | standard | ⚪ Missing |
+| tests.test_contract_presence.test_private_light_helper_without_docstring_is_skippable | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_production_cli_path_remains_possible | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_project_help_lists_structure_and_structure_help_lists_write | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views | — | standard | ⚪ Missing |
@@ -401,8 +420,10 @@
 | tests.test_init_wizard.test_provider_fallback_accepts_name_deepseek | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_provider_fallback_accepts_number_2 | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_provider_invalid_input_shows_available_options | — | standard | ⚪ Missing |
+| tests.test_contract_presence.test_public_without_docstring_is_contract_gap_required | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_pyproject_declares_cli_runtime_dependencies | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows stable and pre-release (a/b/rc) ... | standard | ⚪ Missing |
+| tests.test_init_wizard.test_pytest_env_does_not_try_arrow_selector | — | standard | ⚪ Missing |
 | tests.test_init_detector.test_python_project_excludes_do_not_contain_py_globs | — | standard | ⚪ Missing |
 | tests.test_drafting.test_raise_when_llm_not_configured | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | — | standard | ⚪ Missing |
@@ -410,13 +431,19 @@
 | tests.test_release_packaging.test_readme_contains_release_key_commands | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | — | standard | ⚪ Missing |
-| tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | — | standard | ⚪ Missing |
+| tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | Backward-compatible alias test name kept to avoid baselin... | standard | ⚪ Missing |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_report_to_dict_is_deterministic_and_sanitized | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_does_not_duplicate_tag | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_selector_fallback_does_not_repeat_selector_block | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_selector_source_does_not_use_full_screen_dialog | — | standard | ⚪ Missing |
+| tests.test_audit.test_semantic_guard_contract_gap_without_docstring | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_mismatch_parsing | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_non_required_contract_skips_llm | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_required_contract_skips_llm | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_ok | — | standard | ⚪ Missing |
+| tests.test_audit.test_semantic_guard_skipped_no_contract_for_internal_helper | — | standard | ⚪ Missing |
 | tests.test_adapter_basic.test_signature_hash_changes | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_single_write_new_config_target | — | standard | ⚪ Missing |
 | tests.test_doctor.test_skill_reference_check_legacy_existing_passes_when_export_enabled | — | standard | ⚪ Missing |
@@ -451,12 +478,21 @@
 | tests.test_cli_v2.test_start_command_recognized | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_status_alias_st | — | standard | ⚪ Missing |
 | tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | — | standard | ⚪ Missing |
+| tests.test_ddt_version_baseline.test_strict_binding_missing_l3_version_still_fails | — | standard | ⚪ Missing |
+| tests.test_ddt_version_baseline.test_strict_binding_reports_baseline_missing_advisory | — | standard | ⚪ Missing |
+| tests.test_ddt_version_baseline.test_strict_binding_with_available_baseline_has_no_missing_baseline_advisory | — | standard | ⚪ Missing |
+| tests.test_ddt_version_baseline.test_strict_binding_with_latest_still_fails | — | standard | ⚪ Missing |
+| tests.test_contract_presence.test_strict_without_docstring_is_contract_gap_required | — | standard | ⚪ Missing |
+| tests.test_sync_engine.test_sync_engine_contract_gap_for_required_target_without_docstring | — | standard | ⚪ Missing |
+| tests.test_sync_engine.test_sync_engine_contract_parse_error_when_contract_presence_is_malformed | — | standard | ⚪ Missing |
 | tests.test_sync_engine.test_sync_engine_drift_detection | — | standard | ⚪ Missing |
+| tests.test_sync_engine.test_sync_engine_skipped_no_contract_for_internal_helper_without_docstring | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_tests_cli_snapshot_signal_remains_possible | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_tests_ddt_binding_signal_remains_possible | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_tests_generated_view_frontmatter_signal_remains_possible | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_tests_helper_change_is_not_confirmed | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_tests_helper_keyword_noise_stays_no_contract_impact | — | standard | ⚪ Missing |
+| tests.test_contract_presence.test_to_dict_like_without_docstring_is_required | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_to_dict_symbol_hits_cli_json_output | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule.test_unknown_module_does_not_crash_and_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale | — | standard | ⚪ Missing |
@@ -483,6 +519,7 @@
 | tests.test_config_update.test_write_config_and_update | — | standard | ⚪ Missing |
 | tests.test_initializer.test_write_config_supports_language | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_write_function_hits_file_write_target_and_writes_files | — | standard | ⚪ Missing |
+| tests.test_contract_presence.test_write_function_without_docstring_is_required | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_write_module_capsule_rejects_export_root_outside_repo | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_write_module_capsule_rejects_nested_parent_traversal_module_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_write_module_capsule_rejects_parent_traversal_module_path | — | standard | ⚪ Missing |

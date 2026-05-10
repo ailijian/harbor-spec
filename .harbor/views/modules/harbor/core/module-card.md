@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0b6"
+harbor_version: "1.3.0"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-10T11:36:59Z"
+generated_at: "2026-05-10T14:41:04Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 27
+source_path_count: 28
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
@@ -14,6 +14,7 @@ source_paths:
   - "harbor/core/ci.py"
   - "harbor/core/context_integrity.py"
   - "harbor/core/contract_impact.py"
+  - "harbor/core/contract_presence.py"
   - "harbor/core/ddt.py"
   - "harbor/core/decorator.py"
   - "harbor/core/diary.py"
@@ -36,11 +37,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:f76c5def8f00e812f014760f6873bdec7054fd557f1c08bcea523ae028a67598"
-contract_fingerprint: "sha256:fc4407a9286e811ecf09aedabe6055527b077daeb9795a01abbf9d3ef89afd82"
-generator_fingerprint: "sha256:0acbda2b8373cae54e2dfdd4fcdc04d3ae161995df4d56e6e735fbf284b8348b"
-view_fingerprint: "e4c1b6b4c30b3d7c9fead2f2d5f58505372aadbb1b5b7577abdeff80c86414f7"
-fingerprint: "e4c1b6b4c30b3d7c9fead2f2d5f58505372aadbb1b5b7577abdeff80c86414f7"
+source_fingerprint: "sha256:b11804536c79ba91281e7e5cf3e638db7a2266d6ca342174a4f3e839afaef3e3"
+contract_fingerprint: "sha256:458a018ae980168d59bcbbacb361173033154595b58ad47f93ed914f9fb8b2a2"
+generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
+view_fingerprint: "e2f9bbc78f4193740f0bc63d8797015424e7a8a6a0433d26caeab3c2e688eb76"
+fingerprint: "e2f9bbc78f4193740f0bc63d8797015424e7a8a6a0433d26caeab3c2e688eb76"
 ---
 
 # Module Card: harbor/core
@@ -66,6 +67,7 @@ harbor/core/audit.py
 harbor/core/ci.py
 harbor/core/context_integrity.py
 harbor/core/contract_impact.py
+harbor/core/contract_presence.py
 harbor/core/ddt.py
 harbor/core/decorator.py
 harbor/core/diary.py
@@ -100,13 +102,15 @@ harbor/core/workspace_migrate.py
 | harbor.core.audit.OpenAIProvider.infer | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.SemanticGuard.audit | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.SemanticGuard.build_prompt | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._infer_file_path_from_contract | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.resolve_provider | harbor/core/audit.py | unknown | standard |
-| harbor.core.ci.CIFailure.to_dict | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.CIFailure.to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | harbor/core/ci.py | unknown | standard |
-| harbor.core.ci.CheckpointCIItem.to_dict | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.CheckpointCIItem.to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci._collect_checkpoint_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._collect_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._dedupe_checkpoint_items | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._normalize_checkpoint_key_path | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._push_status_failures | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_checkpoint_contract_impact | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_json_text | harbor/core/ci.py | unknown | standard |
@@ -115,8 +119,8 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci.build_checkpoint_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.build_doctor_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.build_stale_ci_result | harbor/core/ci.py | unknown | standard |
-| harbor.core.ci.checkpoint_ci_result_to_dict | harbor/core/ci.py | unknown | standard |
-| harbor.core.ci.ci_result_to_dict | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.checkpoint_ci_result_to_dict | harbor/core/ci.py | public | strict |
+| harbor.core.ci.ci_result_to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci.format_checkpoint_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.format_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.context_integrity._as_repo_relative | harbor/core/context_integrity.py | unknown | standard |
@@ -163,6 +167,9 @@ harbor/core/workspace_migrate.py
 | harbor.core.contract_impact.classify_contract_impact_from_status_record | harbor/core/contract_impact.py | unknown | standard |
 | harbor.core.contract_impact.contract_impact_report_to_dict | harbor/core/contract_impact.py | unknown | standard |
 | harbor.core.contract_impact.format_contract_impact_report | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_presence._looks_like_contract_doc | harbor/core/contract_presence.py | unknown | standard |
+| harbor.core.contract_presence.evaluate_contract_presence | harbor/core/contract_presence.py | unknown | standard |
+| harbor.core.contract_presence.is_contract_required | harbor/core/contract_presence.py | unknown | standard |
 | harbor.core.ddt.DDTScanner.__init__ | harbor/core/ddt.py | unknown | standard |
 | harbor.core.ddt.DDTScanner._iter_py_files | harbor/core/ddt.py | unknown | standard |
 | harbor.core.ddt.DDTScanner._load_config | harbor/core/ddt.py | unknown | standard |
@@ -258,6 +265,8 @@ harbor/core/workspace_migrate.py
 | harbor.core.init.ProjectDetector.detect | harbor/core/init.py | public | strict |
 | harbor.core.init_prompt._choice_label | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt._is_interactive | harbor/core/init_prompt.py | unknown | standard |
+| harbor.core.init_prompt._render_inline_options | harbor/core/init_prompt.py | unknown | standard |
+| harbor.core.init_prompt._title_with_marker | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt._try_arrow_select | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt.confirm | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt.select_one | harbor/core/init_prompt.py | unknown | standard |
@@ -427,6 +436,7 @@ tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 tests/test_audit.py
 tests/test_checkpoint_ci.py
+tests/test_checkpoint_ci_guidance.py
 tests/test_ci_mode.py
 tests/test_cli_doctor.py
 tests/test_cli_finish_sync_context.py
@@ -441,6 +451,7 @@ tests/test_cli_workspace_inspect.py
 tests/test_cli_workspace_migrate.py
 tests/test_context_integrity.py
 tests/test_contract_impact.py
+tests/test_contract_presence.py
 tests/test_ddt_validate.py
 tests/test_ddt_version_baseline.py
 tests/test_decorator_engine.py

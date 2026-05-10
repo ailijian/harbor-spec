@@ -80,43 +80,34 @@ from harbor.core.workspace import load_workspace_config, load_workspace_paths, w
 
 
 def main():
-    """Harbor CLI 入口与公开命令分发契约。
+    """Harbor CLI entrypoint and public command dispatch contract.
 
-    该函数负责解析 `harbor` CLI 参数并分发到对应子命令实现，覆盖工作流门面、
-    读写命令、只读检查命令与 CI 门禁命令。
+    This function parses `harbor` arguments and dispatches workflow, check/gate,
+    and write commands to subcommand handlers.
 
     Behavior:
-      - `harbor check` 执行 DDT binding validation 与语义审计流程，并输出：
-        DDT Advisory（如 `ddt_version_baseline_missing`）以及语义审计状态
-        `OK` / `POSSIBLE_SEMANTIC_DRIFT` / `CONTRACT_GAP` /
-        `SKIPPED_NO_CONTRACT` / `CONTRACT_PARSE_ERROR` / `ERROR`。
-      - `harbor check --format jsonl` 当前为“混合输出”：
-        既会有人类可读 DDT 区块，也会有语义审计 JSONL 行；不承诺 stdout 为纯 JSONL。
-      - `harbor checkpoint --ci --format json` 输出公开 CI payload，包含
-        `ci_failures`、`advisory`、`summary.ddt_advisory`、`writes_files=false`；
-        其中 `contract_gap` / `contract_parse_error` / drift / modified 等进入阻断项，
-        `ddt_version_baseline_missing` 作为 advisory，不作为 blocking failure。
-      - `check` / `checkpoint` / `stale` / `doctor` 在 CI 语义上属于检查或门禁命令；
-        不执行自动修复、自动刷新或自动 accept baseline。
-      - `accept` / `log` / `lock` 保持显式人工触发与授权语义，不由检查命令隐式触发。
+      - `checkpoint` / `stale` / `doctor` support `--advice off|basic`.
+      - `init` supports `--advice off|basic` and writes advice defaults into
+        `.harbor/config/harbor.yaml` through initializer logic.
+      - `next --from <report.json>` supports `--format text|json`.
+      - Guidance for `--advice basic` is deterministic metadata and does not use
+        LLM/provider calls.
+      - Guidance is optional additive data and does not change
+        `exit_code` / `ci_failures` / advisory gate semantics.
+      - `harbor next` is read-only: does not write files, does not execute fix
+        commands, does not call LLM, and does not accept baseline.
+      - `--format json` outputs for CI/next commands remain a single JSON object
+        on stdout (no mixed human text in the JSON stream).
+      - `harbor check --format jsonl` is intentionally mixed output (DDT text
+        sections plus semantic-audit JSONL lines), not pure JSONL-only stdout.
 
     Side Effects:
-      - 是否写文件取决于具体子命令（例如 `lock`/`log`/`docs --write` 会写文件，
-        `check`/`checkpoint --ci`/`stale --ci`/`doctor --ci` 作为门禁流程默认只读）。
+      - Depends on subcommand. Gate commands are read-only by contract; write
+        commands such as `lock` / `log` / `docs --write` may write files.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: once
-
-    Args:
-      None
-
-    Returns:
-      None
-
-    Raises:
-      SystemExit: 参数解析、帮助输出、CI 门禁失败或 argparse 错误导致退出时抛出。
-      Exception: 其他底层子系统异常可能透传（未统一包装为 RuntimeError）。
     """
     try:
         from dotenv import load_dotenv

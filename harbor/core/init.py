@@ -344,6 +344,12 @@ class Initializer:
 
         功能:
           - 在 `.harbor/` 目录生成配置文件，包含 `code_roots/exclude_paths/profile`。
+          - 写入 advice 配置段：
+            - `advice.mode`: `basic|off`
+            - `advice.include_in_ci_json`: `true`
+            - `advice.include_in_text`: `true`
+          - advice 配置与可选 LLM semantic audit 配置解耦：
+            `advice=basic` 不需要 LLM，`--no-llm` 不会关闭 deterministic guidance。
           - 若文件已存在且 `force=False`，不覆盖。
 
         使用场景:
@@ -360,9 +366,14 @@ class Initializer:
           code_roots (List[str]): 探测得到的代码根列表。
           force (bool): 是否覆盖已有配置。
           profile (str): 配置文件中的默认 profile。
+          advice_mode (str): deterministic repair guidance 模式（`basic` 或 `off`）。
 
         Returns:
           Path: 配置文件的路径。
+
+        Side Effects:
+          - 仅在 `force`/文件存在策略允许时写入 `.harbor/config/harbor.yaml`。
+          - 具体是否写入仍受 init 参数与用户交互选择约束。
         """
         self.config_dir.mkdir(parents=True, exist_ok=True)
         if self.config_path.exists() and not force:

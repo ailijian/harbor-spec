@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0b6"
+harbor_version: "1.3.0"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-10T11:36:59Z"
+generated_at: "2026-05-10T14:41:04Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 67
+source_path_count: 70
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -42,7 +42,9 @@ source_paths:
   - "tests/test_config_update.py"
   - "tests/test_context_integrity.py"
   - "tests/test_contract_impact.py"
+  - "tests/test_contract_presence.py"
   - "tests/test_ddt_validate.py"
+  - "tests/test_ddt_version_baseline.py"
   - "tests/test_decorator_engine.py"
   - "tests/test_derive_adopted_roots.py"
   - "tests/test_diary_workspace_paths.py"
@@ -67,6 +69,7 @@ source_paths:
   - "tests/test_module_skill.py"
   - "tests/test_project_structure.py"
   - "tests/test_release_packaging.py"
+  - "tests/test_semantic_audit_contract_gap.py"
   - "tests/test_stale.py"
   - "tests/test_sync_engine.py"
   - "tests/test_utils_format.py"
@@ -76,11 +79,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:7116e98bdd9d6baa4752b1c5ecb963b3630af2ef45e14a5b3d901b7957a3cab9"
-contract_fingerprint: "sha256:cadce5317d6e6023f92b74442b0c0d775caaab1159f6b9eb4be5855c1600885e"
-generator_fingerprint: "sha256:0acbda2b8373cae54e2dfdd4fcdc04d3ae161995df4d56e6e735fbf284b8348b"
-view_fingerprint: "5998193f6a8e7aaaf809a50d2c9db1939447939f7101566c3d09dbc5c2d4c90d"
-fingerprint: "5998193f6a8e7aaaf809a50d2c9db1939447939f7101566c3d09dbc5c2d4c90d"
+source_fingerprint: "sha256:45746c56431cce702eaba6b93b8c8cd2f7620690b3616e158d0afcdca0fc4a6a"
+contract_fingerprint: "sha256:1d9e4cbc2b17582e8c5ee7f347f9f5c88cff701c67661d5b28e2d4d6c81cfa2e"
+generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
+view_fingerprint: "8d872617bc1a72282bd7d7f5e68533f2b24b19f0de59cccc0635fb1bf37cb056"
+fingerprint: "8d872617bc1a72282bd7d7f5e68533f2b24b19f0de59cccc0635fb1bf37cb056"
 ---
 
 # Module Card: tests
@@ -134,7 +137,9 @@ tests/test_cli_workspace_migrate.py
 tests/test_config_update.py
 tests/test_context_integrity.py
 tests/test_contract_impact.py
+tests/test_contract_presence.py
 tests/test_ddt_validate.py
+tests/test_ddt_version_baseline.py
 tests/test_decorator_engine.py
 tests/test_derive_adopted_roots.py
 tests/test_diary_workspace_paths.py
@@ -159,6 +164,7 @@ tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
 tests/test_release_packaging.py
+tests/test_semantic_audit_contract_gap.py
 tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_utils_format.py
@@ -181,8 +187,10 @@ tests/test_workspace_paths.py
 | tests.test_adapter_basic.test_adapter_parses_itself | tests/test_adapter_basic.py | unknown | standard |
 | tests.test_adapter_basic.test_signature_hash_changes | tests/test_adapter_basic.py | unknown | standard |
 | tests.test_adopted_roots.test_adopted_roots_write_and_remove | tests/test_adopted_roots.py | unknown | standard |
+| tests.test_audit.test_semantic_guard_contract_gap_without_docstring | tests/test_audit.py | unknown | standard |
 | tests.test_audit.test_semantic_guard_mismatch_parsing | tests/test_audit.py | unknown | standard |
 | tests.test_audit.test_semantic_guard_ok | tests/test_audit.py | unknown | standard |
+| tests.test_audit.test_semantic_guard_skipped_no_contract_for_internal_helper | tests/test_audit.py | unknown | standard |
 | tests.test_cache_isolation_hardening._fingerprint | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening._run_cmd | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening._snapshot_repo_cache | tests/test_cache_isolation_hardening.py | unknown | standard |
@@ -197,16 +205,24 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci._status_entry | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci._status_report | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.run_cmd | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_contract_parse_error_blocks | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_ddt_baseline_missing_stays_advisory_not_failure | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_dedupe_prefers_contract_and_body_changed_over_confirmed_contract_impact | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_dedupe_prefers_contract_changed_over_confirmed_contract_impact | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_does_not_fail_on_possible_contract_impact_alone | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_body_changed_contract_static | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_confirmed_contract_impact | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_contract_changed | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_contract_gap | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_missing_function | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_untracked_function | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_failure_dedupe_keeps_readable_ci_failures | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_json_includes_ddt_baseline_missing_advisory_without_blocking | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_keeps_confirmed_contract_impact_when_no_status_failure_covers_target | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_no_write_regression | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_pass_when_clean | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_skipped_no_contract_is_advisory | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_zh_text_labels | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | tests/test_checkpoint_ci.py | unknown | standard |
@@ -444,8 +460,19 @@ tests/test_workspace_paths.py
 | tests.test_contract_impact.test_tests_helper_keyword_noise_stays_no_contract_impact | tests/test_contract_impact.py | unknown | standard |
 | tests.test_contract_impact.test_to_dict_symbol_hits_cli_json_output | tests/test_contract_impact.py | unknown | standard |
 | tests.test_contract_impact.test_write_function_hits_file_write_target_and_writes_files | tests/test_contract_impact.py | unknown | standard |
+| tests.test_contract_presence._fc | tests/test_contract_presence.py | unknown | standard |
+| tests.test_contract_presence.test_private_light_helper_without_docstring_is_skippable | tests/test_contract_presence.py | unknown | standard |
+| tests.test_contract_presence.test_public_without_docstring_is_contract_gap_required | tests/test_contract_presence.py | unknown | standard |
+| tests.test_contract_presence.test_strict_without_docstring_is_contract_gap_required | tests/test_contract_presence.py | unknown | standard |
+| tests.test_contract_presence.test_to_dict_like_without_docstring_is_required | tests/test_contract_presence.py | unknown | standard |
+| tests.test_contract_presence.test_write_function_without_docstring_is_required | tests/test_contract_presence.py | unknown | standard |
 | tests.test_ddt_validate.test_ddt_validate_matrix | tests/test_ddt_validate.py | unknown | standard |
 | tests.test_ddt_validate.write_test_file | tests/test_ddt_validate.py | unknown | standard |
+| tests.test_ddt_version_baseline._build_strict_target | tests/test_ddt_version_baseline.py | unknown | standard |
+| tests.test_ddt_version_baseline.test_strict_binding_missing_l3_version_still_fails | tests/test_ddt_version_baseline.py | unknown | standard |
+| tests.test_ddt_version_baseline.test_strict_binding_reports_baseline_missing_advisory | tests/test_ddt_version_baseline.py | unknown | standard |
+| tests.test_ddt_version_baseline.test_strict_binding_with_available_baseline_has_no_missing_baseline_advisory | tests/test_ddt_version_baseline.py | unknown | standard |
+| tests.test_ddt_version_baseline.test_strict_binding_with_latest_still_fails | tests/test_ddt_version_baseline.py | unknown | standard |
 | tests.test_decorator_engine.test_aggressive_inserts_todo_docstring | tests/test_decorator_engine.py | unknown | standard |
 | tests.test_decorator_engine.test_filters_out_internal_and_testlike_names | tests/test_decorator_engine.py | unknown | standard |
 | tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | tests/test_decorator_engine.py | unknown | standard |
@@ -512,17 +539,27 @@ tests/test_workspace_paths.py
 | tests.test_init_governance.test_init_governance_creates_starter_files_without_project_rules | tests/test_init_governance.py | unknown | standard |
 | tests.test_init_llm_env.test_gitignore_has_separate_managed_blocks | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_gitignore_managed_blocks_are_idempotent | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_llm_env.test_init_wizard_source_removes_legacy_yes_no_brackets | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_llm_env_append_missing_only_and_force_does_not_overwrite | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_llm_provider_alias_custom_writes_env | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_llm_env.test_llm_provider_alias_number_2_writes_deepseek_env | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_llm_provider_alias_openai_writes_env | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_wizard.test_confirm_accepts_chinese_yes_no | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_confirm_accepts_english_yes_no | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_confirm_shows_yes_no_labels_by_language | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_dry_run_non_tty_uses_safe_defaults | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_init_wizard_prompts_are_single_language_after_selection | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_non_tty_does_not_try_arrow_selector | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_provider_fallback_accepts_name_deepseek | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_provider_fallback_accepts_number_2 | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_provider_invalid_input_shows_available_options | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_pytest_env_does_not_try_arrow_selector | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_selector_fallback_does_not_repeat_selector_block | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_selector_source_does_not_use_full_screen_dialog | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_wizard_language_prompt_comes_first | tests/test_init_wizard.py | unknown | standard |
 | tests.test_initializer.test_detect_fallback | tests/test_initializer.py | unknown | standard |
 | tests.test_initializer.test_detect_package_layout | tests/test_initializer.py | unknown | standard |
@@ -592,6 +629,9 @@ tests/test_workspace_paths.py
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_source_of_truth_priority_and_conflict_docs_are_present | tests/test_release_packaging.py | unknown | standard |
+| tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | tests/test_semantic_audit_contract_gap.py | unknown | standard |
+| tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_non_required_contract_skips_llm | tests/test_semantic_audit_contract_gap.py | unknown | standard |
+| tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_required_contract_skips_llm | tests/test_semantic_audit_contract_gap.py | unknown | standard |
 | tests.test_stale._write_index | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_l2_export_config | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | tests/test_stale.py | unknown | standard |
@@ -608,7 +648,10 @@ tests/test_workspace_paths.py
 | tests.test_stale.test_l2_readme_unknown_when_no_indexed_records | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_up_to_date_when_content_matches_except_timestamp | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_stale_json_contains_l2_readme_export_view_name | tests/test_stale.py | unknown | standard |
+| tests.test_sync_engine.test_sync_engine_contract_gap_for_required_target_without_docstring | tests/test_sync_engine.py | unknown | standard |
+| tests.test_sync_engine.test_sync_engine_contract_parse_error_when_contract_presence_is_malformed | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_drift_detection | tests/test_sync_engine.py | unknown | standard |
+| tests.test_sync_engine.test_sync_engine_skipped_no_contract_for_internal_helper_without_docstring | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.write_module | tests/test_sync_engine.py | unknown | standard |
 | tests.test_utils_format.test_format_size_bytes | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_kb | tests/test_utils_format.py | unknown | standard |
@@ -669,6 +712,7 @@ tests/test_adopted_roots.py
 tests/test_audit.py
 tests/test_cache_isolation_hardening.py
 tests/test_checkpoint_ci.py
+tests/test_checkpoint_ci_guidance.py
 tests/test_ci_mode.py
 tests/test_cli_config.py
 tests/test_cli_decorate.py
@@ -692,7 +736,9 @@ tests/test_cli_workspace_migrate.py
 tests/test_config_update.py
 tests/test_context_integrity.py
 tests/test_contract_impact.py
+tests/test_contract_presence.py
 tests/test_ddt_validate.py
+tests/test_ddt_version_baseline.py
 tests/test_decorator_engine.py
 tests/test_derive_adopted_roots.py
 tests/test_diary_workspace_paths.py
@@ -717,6 +763,7 @@ tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
 tests/test_release_packaging.py
+tests/test_semantic_audit_contract_gap.py
 tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_utils_format.py

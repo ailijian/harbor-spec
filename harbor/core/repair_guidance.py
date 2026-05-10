@@ -22,6 +22,29 @@ class RepairGuidance:
     notes: List[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
+        """Serialize deterministic repair guidance into a JSON-compatible dict.
+
+        Behavior:
+          - Serializes deterministic advisory metadata only.
+          - Always includes core fields:
+            `what_happened`, `recommended_action`, `suggested_validation`,
+            `decision_required`, `safe_to_auto_fix`, `automation_policy`,
+            `user_feedback_required`, `risk_level`, `notes`.
+          - Optional fields (`anti_action`, `suggested_skill`) are included only
+            when non-empty; no synthetic placeholder values are emitted.
+          - `safe_to_auto_fix` / `automation_policy` / `decision_required` and
+            related fields are recommendation metadata, not execution commands.
+
+        Non-Goals:
+          - Does not call any LLM/provider.
+          - Does not write files.
+          - Does not execute repair commands.
+          - Does not change checkpoint/stale/doctor CI gate outcomes.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: read-only
+        """
         payload: Dict[str, object] = {
             "what_happened": self.what_happened,
             "recommended_action": self.recommended_action,
@@ -331,4 +354,3 @@ def guidance_for_doctor_item(*, check: Optional[str], status: Optional[str]) -> 
         user_feedback_required=False,
         risk_level="medium",
     )
-

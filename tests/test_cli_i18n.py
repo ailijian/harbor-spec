@@ -98,7 +98,7 @@ def test_init_provider_prompt_i18n_text(tmp_path: Path, monkeypatch):
         return ("scan roots" in prompt_text) or ("扫描范围" in prompt_text)
 
     zh_stream = StringIO()
-    zh_asks = iter(["1", ""])
+    zh_asks = iter(["1", "1", ""])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(zh_asks)))
     monkeypatch.setattr(InitWizard, "_ask_yes_no", _yes_no)
     InitWizard(
@@ -118,7 +118,7 @@ def test_init_provider_prompt_i18n_text(tmp_path: Path, monkeypatch):
     assert "Invalid input" not in zh_out
 
     en_stream = StringIO()
-    en_asks = iter(["1", ""])
+    en_asks = iter(["1", "1", ""])
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: next(en_asks)))
     InitWizard(
         cwd=tmp_path,
