@@ -140,7 +140,7 @@ If diary details are needed, read:
 
 ---
 
-## 3. Instruction Priority
+## 3. Instruction Hierarchy and Priority
 
 Harbor separates safety priority from task priority.
 
@@ -184,6 +184,10 @@ choose the safer path
 state the conflict clearly
 do not silently ignore the conflict
 ```
+
+### 3.3 Instruction Hierarchy
+
+Instruction Hierarchy resolves rule and instruction conflicts.
 
 ---
 
@@ -241,7 +245,7 @@ Refresh generated context through Harbor commands.
 
 ---
 
-## 5. Source of Truth
+## 5. Source of Truth Priority (highest to lowest)
 
 Use this compact source-of-truth order when resolving factual conflicts:
 
@@ -296,6 +300,14 @@ Skills guide task execution.
 
 Skills are not source of truth.
 
+Conflict reminders:
+
+```text
+Do not auto-trust either implementation or contract when they conflict.
+Generated views and skills are advisory; they do not override code, contracts, tests, policy, or diary.
+Prefer canonical .harbor/** artifacts over legacy/export copies.
+```
+
 ---
 
 ## 6. Context Loading Order
@@ -349,6 +361,14 @@ stale --ci      = generated context freshness gate
 doctor --ci     = aggregated workspace health gate
 ```
 
+Repair guidance controls:
+
+```text
+checkpoint/stale/doctor support --advice off|basic
+guidance in CI JSON is optional additive data and can be disabled with --advice off
+harbor next --from <report.json> is read-only and does not execute repair commands
+```
+
 Workspace diagnostics:
 
 ```powershell
@@ -361,6 +381,15 @@ harbor workspace migrate --dry-run --format json
 `workspace migrate --dry-run` must remain read-only.
 
 Do not assume `workspace migrate --write` exists.
+
+Repair guidance:
+
+```text
+advice=basic is deterministic and does not require LLM.
+guidance is optional additive metadata; disable it with --advice off.
+guidance does not change CI pass/fail semantics.
+harbor next is read-only and never repairs, writes files, or accepts baselines.
+```
 
 ---
 
