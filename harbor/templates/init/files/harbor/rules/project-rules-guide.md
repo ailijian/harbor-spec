@@ -279,6 +279,16 @@ A complete Project Rules file should include:
 14. Completion checklist
 ```
 
+建议补充的 v1.3.0+ 内容：
+
+```text
+15. project-specific contract_required rules
+16. accepted contract sources
+17. strict target contract requirements
+18. DDT baseline handling
+19. CI gate expectations for contract_gap and ddt_version_baseline_missing
+```
+
 ---
 
 ## 6. What Project Rules Should Not Include
@@ -547,6 +557,8 @@ public behavior
 
 List only sources that actually exist or are project-relevant.
 
+同时应明确本项目的 `contract_required` 规则（按路径、scope、strictness、命名约定等）。
+
 Also identify contract pairs that must stay synchronized.
 
 Examples:
@@ -669,7 +681,7 @@ Use the following template.
 
 ---
 
-````markdown
+```markdown
 <!-- harbor-spec:managed version=1.3.0 kind=project-rules -->
 
 # Project Rules
@@ -686,7 +698,7 @@ Project name:
 
 ```text
 <PROJECT_NAME>
-````
+```
 
 Project goal:
 
@@ -887,6 +899,39 @@ Rules:
 - If Schema and implementation conflict, mark [Schema Gap] or [Semantic Drift].
 - If implementation and Contract conflict, mark [Semantic Drift].
 - If tests verify old behavior, mark [Test / DDT Gap].
+```
+
+---
+
+### Step 5.1: Define Contract Policy Snapshot
+
+Project Rules 可包含一个简化策略片段，帮助 AI agent 快速理解本仓库契约门禁。
+
+示例：
+
+```yaml
+contract_policy:
+  strict_targets_require_contract: true
+  standard_targets_require_contract: recommended
+  light_targets_require_contract: false
+  accepted_contract_sources:
+    - docstring
+    - type_hint
+    - schema
+    - cli_schema
+    - json_output
+    - test
+    - fixture
+```
+
+可再补充：
+
+```text
+CI gate:
+  contract_gap:
+    default: blocking
+  ddt_version_baseline_missing:
+    default: advisory
 ```
 
 ---
@@ -1274,7 +1319,7 @@ letting stale generated context override code, contracts, schemas, or tests
 duplicating generic Harbor rules inside Project Rules
 ```
 
-````
+```
 
 ---
 
@@ -1294,7 +1339,7 @@ contract sources change
 new skills are added
 generated context layout changes
 workspace structure changes
-````
+```
 
 Do not update Project Rules for every small implementation change.
 

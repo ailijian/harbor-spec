@@ -231,6 +231,54 @@ DDT is one layer in the Harbor governance system.
 
 ---
 
+## 5.1 DDT_VERSION_BASELINE_MISSING
+
+`DDT_VERSION_BASELINE_MISSING` / `ddt_version_baseline_missing` 表示：
+
+```text
+DDT binding is structurally valid
+but no L3 contract version baseline was found
+```
+
+这属于 advisory，不是 violation。
+
+它表示“当前缺少可核验基线”，不表示“DDT 已永久语义通过”。
+
+处理建议：
+
+```text
+review baseline state first
+do not blindly bump l3_version
+decide whether contract baseline should be established or updated
+```
+
+出现该 advisory 时，不应把 DDT 绑定视为无效；应理解为“版本核验步骤尚不完整”。
+
+---
+
+## 5.2 Contract Gap vs DDT Gap
+
+二者必须区分：
+
+```text
+Contract Gap:
+  required contract itself is missing (or not usable).
+  先补契约源，再谈语义比较和 DDT 对齐。
+
+DDT Gap:
+  contract exists, but tests / DDT binding is missing, stale, or insufficient.
+```
+
+换言之：
+
+```text
+没有契约 ≠ DDT 已通过
+有契约但测试不够 = DDT Gap
+必需契约缺失 = Contract Gap
+```
+
+---
+
 ## 6. Strictness and DDT
 
 Use `.harbor/policy.yaml` as the source of truth when available.
@@ -410,6 +458,14 @@ Reason:
 
 ```text
 strategy="latest" can make tests silently follow the newest contract and produce a false green result.
+```
+
+Strict baseline behavior:
+
+```text
+strict targets still need explicit l3_version
+strict targets still must avoid strategy="latest"
+ddt_version_baseline_missing is advisory, not an auto-pass
 ```
 
 ---

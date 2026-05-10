@@ -652,6 +652,10 @@ user-visible result generation
 
 Semantic Drift means implementation and contract no longer agree.
 
+Semantic drift requires a comparable contract.
+
+Missing contract alone is not semantic drift.
+
 Examples:
 
 ```text
@@ -731,9 +735,14 @@ harbor doctor
 For machine-readable checks:
 
 ```powershell
-harbor stale --format json
-harbor doctor --format json
+harbor checkpoint --ci --format json
+harbor stale --ci --format json
+harbor doctor --ci --format json
 ```
+
+checkpoint --ci is the baseline / contract / DDT gate.
+stale --ci is generated context freshness gate.
+doctor --ci is aggregated workspace health gate.
 
 For workspace diagnostics:
 
@@ -817,11 +826,15 @@ Required decisions:
 
 ```text
 Contract Impact: yes / no / uncertain
+Contract Presence: present / missing / empty / non_contract_doc / malformed
+Contract Required: yes / no
 Strictness: strict / standard / light
 Tests / DDT needed: yes / no
 Diary needed: yes / no
 Generated context update needed: yes / no
 ```
+
+If `CONTRACT_GAP` appears, add/update contract source, or explain why the target should be downgraded to light/skipped.
 
 ---
 
@@ -991,14 +1004,15 @@ When Contract Impact is yes or uncertain:
 
 ```text
 1. Read or define the relevant contract.
-2. Determine strictness.
-3. Update contract first if intended behavior changes.
-4. Update implementation.
-5. Update tests / DDT.
-6. Check semantic drift.
-7. Refresh generated context if needed.
-8. Create Diary Draft if important.
-9. Accept baseline only after verification and explicit request.
+2. Determine contract presence and whether contract is required.
+3. Determine strictness.
+4. Update contract first if intended behavior changes.
+5. Update implementation.
+6. Update tests / DDT.
+7. Check semantic drift.
+8. Refresh generated context if needed.
+9. Create Diary Draft if important.
+10. Accept baseline only after verification and explicit request.
 ```
 
 If Contract Impact is no, state why.
@@ -1054,6 +1068,14 @@ When contract changes:
 5. Update assertions.
 6. Add missing edge cases.
 7. Do not blindly change bindings to the latest version.
+```
+
+If `ddt_version_baseline_missing` appears:
+
+```text
+do not blindly bump l3_version
+review baseline state first
+confirm whether baseline should be established or upgraded
 ```
 
 ---
