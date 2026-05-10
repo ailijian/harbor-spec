@@ -78,6 +78,121 @@ The task is to keep them synchronized.
 
 ---
 
+## 2.1 Contract Presence
+
+Harbor 使用 Contract Presence 判断一个 target 是否存在可比较契约源。
+
+presence 状态：
+
+```text
+present
+  存在可比较契约源，可进入语义比较。
+
+missing
+  未发现契约源。
+
+empty
+  存在契约容器（如 docstring）但内容为空。
+
+non_contract_doc
+  存在文档文本但不满足契约结构信号，无法可靠比较。
+
+malformed
+  存在契约源但解析失败或结构损坏，无法可靠分类。
+```
+
+关键规则：
+
+```text
+Missing contract is not semantic drift.
+Semantic drift requires an existing comparable contract.
+```
+
+---
+
+## 2.2 Contract Required
+
+Contract Required 用于判定某个 target 是否必须具备契约源。
+
+默认应要求契约的目标包括：
+
+```text
+public API
+strict targets
+CLI behavior
+JSON output
+to_dict / report_to_dict
+file write behavior
+schema / parser / generated view formatter
+user-visible or external-visible behavior
+```
+
+如果 target 被判定为 `contract_required=true`，则缺少有效契约源应归类为 `CONTRACT_GAP`。
+
+---
+
+## 2.3 Contract Gap
+
+`Contract Gap` 定义：
+
+```text
+target requires a contract
+but no valid contract source exists
+```
+
+`Contract Gap` 不是语义漂移。它表示“还没有可比较契约”，不是“契约与实现不一致”。
+
+建议动作：
+
+```text
+add Harbor contract docstring
+or configure an equivalent contract source
+```
+
+CONTRACT_GAP 的解决方式应优先是补充或更新契约源；只有当该目标确实不应承担契约时，才应调整项目策略或 strictness。
+
+---
+
+## 2.4 Skipped No Contract
+
+`Skipped No Contract` 定义：
+
+```text
+target does not require contract
+semantic audit is skipped
+```
+
+`Skipped No Contract` 不应被当作 drift，也不应被映射为 `possible_semantic_drift`。
+
+---
+
+## 2.5 Python Contract Authoring Standard
+
+Python 目标的默认契约源为 docstring。
+
+同时需明确：
+
+```text
+Docstring is the default Python contract source.
+Contract does not mean docstring only.
+strict/public Python targets should use Harbor Contract Docstring
+unless equivalent contract source exists.
+```
+
+推荐保留的 Harbor contract 字段：
+
+```text
+@harbor.scope
+@harbor.l3_strictness
+@harbor.idempotency
+Args
+Returns
+Raises
+Side effects (when relevant)
+```
+
+---
+
 ## 3. Relationship to AGENTS.md, Project Rules, and Skills
 
 ### 3.1 AGENTS.md
@@ -923,6 +1038,10 @@ Do not assume `migrate --write` exists.
 ## 21. Semantic Drift
 
 Semantic Drift means implementation and contract no longer agree.
+
+Semantic drift requires a comparable contract.
+
+Missing contract alone is not semantic drift.
 
 Examples:
 

@@ -40,30 +40,56 @@ def _status_entry(func_id: str, file_path: str, details: str):
     return SimpleNamespace(id=func_id, file_path=file_path, details=details)
 
 
-def _status_report(*, drift=None, modified=None, contract_changed=None, untracked=None, missing=None):
+def _status_report(
+    *,
+    drift=None,
+    modified=None,
+    contract_changed=None,
+    contract_gap=None,
+    skipped_no_contract=None,
+    contract_parse_error=None,
+    untracked=None,
+    missing=None,
+):
     drift = list(drift or [])
     modified = list(modified or [])
     contract_changed = list(contract_changed or [])
+    contract_gap = list(contract_gap or [])
+    skipped_no_contract = list(skipped_no_contract or [])
+    contract_parse_error = list(contract_parse_error or [])
     untracked = list(untracked or [])
     missing = list(missing or [])
     return SimpleNamespace(
         drift=drift,
         modified=modified,
         contract_changed=contract_changed,
+        contract_gap=contract_gap,
+        skipped_no_contract=skipped_no_contract,
+        contract_parse_error=contract_parse_error,
         untracked=untracked,
         missing=missing,
         counts={
             "drift": len(drift),
             "modified": len(modified),
             "contract_changed": len(contract_changed),
+            "contract_gap": len(contract_gap),
+            "skipped_no_contract": len(skipped_no_contract),
+            "contract_parse_error": len(contract_parse_error),
             "untracked": len(untracked),
             "missing": len(missing),
         },
     )
 
 
-def _ddt_report(*, violations=None):
-    return SimpleNamespace(valid=[], violations=list(violations or []), counts={"valid": 0, "violations": len(list(violations or []))})
+def _ddt_report(*, violations=None, advisory=None):
+    violations = list(violations or [])
+    advisory = list(advisory or [])
+    return SimpleNamespace(
+        valid=[],
+        violations=violations,
+        advisory=advisory,
+        counts={"valid": 0, "violations": len(violations), "advisory": len(advisory)},
+    )
 
 
 def _contract_report(*, findings=None):
@@ -141,6 +167,57 @@ def test_checkpoint_ci_fail_on_body_changed_contract_static(monkeypatch):
     code, out, _ = run_cmd(["checkpoint", "--ci"])
     assert code == 1
     assert "possible_semantic_drift" in out
+
+
+def test_checkpoint_ci_fail_on_contract_gap(monkeypatch):
+    status = _status_report(contract_gap=[_status_entry("harbor.core.bar.write_report", "harbor/core/bar.py", "No contract source found")])
+    _patch_checkpoint_inputs(monkeypatch, status=status)
+    code, out, _ = run_cmd(["checkpoint", "--ci"])
+    assert code == 1
+    assert "contract_gap" in out
+
+
+def test_checkpoint_ci_contract_parse_error_blocks(monkeypatch):
+    status = _status_report(contract_parse_error=[_status_entry("harbor.core.bar.run", "harbor/core/bar.py", "Contract source malformed")])
+    _patch_checkpoint_inputs(monkeypatch, status=status)
+    code, out, _ = run_cmd(["checkpoint", "--ci"])
+    assert code == 1
+    assert "contract_parse_error" in out
+
+
+def test_checkpoint_ci_skipped_no_contract_is_advisory(monkeypatch):
+    status = _status_report(skipped_no_contract=[_status_entry("harbor.core.bar._helper", "harbor/core/bar.py", "No contract required")])
+    _patch_checkpoint_inputs(monkeypatch, status=status)
+    code, out, _ = run_cmd(["checkpoint", "--ci"])
+    assert code == 0
+    assert "skipped_no_contract" in out
+
+
+def test_checkpoint_ci_json_includes_ddt_baseline_missing_advisory_without_blocking(monkeypatch):
+    binding = SimpleNamespace(
+        func_id="harbor.core.sync.SyncEngine.check_status",
+        file_path="harbor/core/sync.py",
+        l3_version=1,
+        strategy="strict",
+        test_name="test_sync_engine_drift_detection",
+    )
+    ddt_advisory = SimpleNamespace(
+        category="ddt_version_baseline_missing",
+        binding=binding,
+        message=(
+            "Strict DDT binding is structurally valid, but no L3 contract baseline was found. "
+            "Version bump cannot be verified."
+        ),
+        suggested_action="Run harbor checkpoint after baseline initialization and review l3_version before harbor accept.",
+    )
+    _patch_checkpoint_inputs(monkeypatch, ddt=_ddt_report(advisory=[ddt_advisory]))
+    code, out, _ = run_cmd(["checkpoint", "--ci", "--format", "json"])
+    payload = json.loads(out)
+    assert code == 0
+    assert payload["exit_code"] == 0
+    assert payload["writes_files"] is False
+    assert payload["ci_failures"] == []
+    assert any(item.get("category") == "ddt_version_baseline_missing" for item in payload["advisory"])
 
 
 def test_checkpoint_ci_fail_on_contract_changed(monkeypatch):
@@ -226,6 +303,97 @@ def test_checkpoint_ci_failure_dedupe_keeps_readable_ci_failures(monkeypatch):
     assert payload["summary"]["confirmed_contract_impact"] == 1
     assert len(payload["ci_failures"]) == 1
     assert payload["ci_failures"][0]["category"] == "contract_changed"
+
+
+def test_checkpoint_ci_dedupe_prefers_contract_changed_over_confirmed_contract_impact(monkeypatch):
+    target_id = "harbor.core.ci.CIFailure.to_dict"
+    status = _status_report(contract_changed=[_status_entry(target_id, "E:/project/harbor-spec/harbor/core/ci.py", "Contract updated")])
+    finding = ContractImpactFinding(
+        level=ContractImpactLevel.CONFIRMED_CONTRACT_IMPACT,
+        categories=[ContractImpactCategory.CLI_JSON_OUTPUT],
+        func_id=target_id,
+        file_path="harbor/core/ci.py",
+        reason="confirmed contract impact",
+        evidence="change_type=Contract Changed",
+        suggested_action="review",
+        confidence="high",
+        source="status_record",
+    )
+    _patch_checkpoint_inputs(monkeypatch, status=status, contract_report=_contract_report(findings=[finding]))
+    code, out, _ = run_cmd(["checkpoint", "--ci", "--format", "json"])
+    payload = json.loads(out)
+    assert code == 1
+    target_rows = [row for row in payload["ci_failures"] if row.get("func_id") == target_id]
+    assert len(target_rows) == 1
+    assert target_rows[0]["category"] == "contract_changed"
+
+
+def test_checkpoint_ci_dedupe_prefers_contract_and_body_changed_over_confirmed_contract_impact(monkeypatch):
+    target_id = "harbor.cli.main.main"
+    status = _status_report(modified=[_status_entry(target_id, "E:/project/harbor-spec/harbor/cli/main.py", "Body and contract changed")])
+    finding = ContractImpactFinding(
+        level=ContractImpactLevel.CONFIRMED_CONTRACT_IMPACT,
+        categories=[ContractImpactCategory.CLI_JSON_OUTPUT],
+        func_id=target_id,
+        file_path="harbor/cli/main.py",
+        reason="confirmed contract impact",
+        evidence="change_type=Modified",
+        suggested_action="review",
+        confidence="high",
+        source="status_record",
+    )
+    _patch_checkpoint_inputs(monkeypatch, status=status, contract_report=_contract_report(findings=[finding]))
+    code, out, _ = run_cmd(["checkpoint", "--ci", "--format", "json"])
+    payload = json.loads(out)
+    assert code == 1
+    target_rows = [row for row in payload["ci_failures"] if row.get("func_id") == target_id]
+    assert len(target_rows) == 1
+    assert target_rows[0]["category"] == "contract_and_body_changed"
+
+
+def test_checkpoint_ci_keeps_confirmed_contract_impact_when_no_status_failure_covers_target(monkeypatch):
+    target_id = "harbor.core.contract_impact.classify_contract_impact_for_file_path"
+    finding = ContractImpactFinding(
+        level=ContractImpactLevel.CONFIRMED_CONTRACT_IMPACT,
+        categories=[ContractImpactCategory.CLI_JSON_OUTPUT],
+        func_id=target_id,
+        file_path="harbor/core/contract_impact.py",
+        reason="confirmed contract impact",
+        evidence="change_type=Contract Changed",
+        suggested_action="review",
+        confidence="high",
+        source="status_record",
+    )
+    _patch_checkpoint_inputs(monkeypatch, contract_report=_contract_report(findings=[finding]))
+    code, out, _ = run_cmd(["checkpoint", "--ci", "--format", "json"])
+    payload = json.loads(out)
+    assert code == 1
+    target_rows = [row for row in payload["ci_failures"] if row.get("func_id") == target_id]
+    assert len(target_rows) == 1
+    assert target_rows[0]["category"] == "confirmed_contract_impact"
+
+
+def test_checkpoint_ci_ddt_baseline_missing_stays_advisory_not_failure(monkeypatch):
+    target_id = "harbor.core.sync.SyncEngine.check_status"
+    binding = SimpleNamespace(
+        func_id=target_id,
+        file_path="harbor/core/sync.py",
+        l3_version=1,
+        strategy="strict",
+        test_name="test_sync_engine_drift_detection",
+    )
+    ddt_advisory = SimpleNamespace(
+        category="ddt_version_baseline_missing",
+        binding=binding,
+        message="baseline missing advisory",
+        suggested_action="review baseline",
+    )
+    _patch_checkpoint_inputs(monkeypatch, ddt=_ddt_report(advisory=[ddt_advisory]))
+    code, out, _ = run_cmd(["checkpoint", "--ci", "--format", "json"])
+    payload = json.loads(out)
+    assert code == 0
+    assert all(item.get("category") != "ddt_version_baseline_missing" for item in payload["ci_failures"])
+    assert any(item.get("category") == "ddt_version_baseline_missing" for item in payload["advisory"])
 
 
 def test_checkpoint_ci_no_write_regression(monkeypatch, tmp_path: Path):

@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0b3"
+harbor_version: "1.3.0b6"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-09T18:49:50Z"
+generated_at: "2026-05-10T11:36:59Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 67
@@ -76,11 +76,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:2965771307e48077bf06f16997d196165fc55956e5ac9d49f612e704daa04121"
-contract_fingerprint: "sha256:2377c31c62da0ab8db9b2c3b986ddc3bb8be368bcdc74e324d0c7e5573179fc4"
-generator_fingerprint: "sha256:0140a7f988cbfc5dee7f1a51e1f71722ff320848431e40b31bf4c34ad98c00b0"
-view_fingerprint: "ee4089fc40fedc9d18491a9a885fb7678a4a10ff2ef4563735b26b3228716ae4"
-fingerprint: "ee4089fc40fedc9d18491a9a885fb7678a4a10ff2ef4563735b26b3228716ae4"
+source_fingerprint: "sha256:7116e98bdd9d6baa4752b1c5ecb963b3630af2ef45e14a5b3d901b7957a3cab9"
+contract_fingerprint: "sha256:cadce5317d6e6023f92b74442b0c0d775caaab1159f6b9eb4be5855c1600885e"
+generator_fingerprint: "sha256:0acbda2b8373cae54e2dfdd4fcdc04d3ae161995df4d56e6e735fbf284b8348b"
+view_fingerprint: "5998193f6a8e7aaaf809a50d2c9db1939447939f7101566c3d09dbc5c2d4c90d"
+fingerprint: "5998193f6a8e7aaaf809a50d2c9db1939447939f7101566c3d09dbc5c2d4c90d"
 ---
 
 # Module Card: tests
@@ -174,6 +174,7 @@ tests/test_workspace_paths.py
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
+| tests.conftest._isolate_harbor_language_env | tests/conftest.py | unknown | standard |
 | tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | standard |
 | tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | standard |
 | tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict |
@@ -289,13 +290,16 @@ tests/test_workspace_paths.py
 | tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.test_config_list_zh | tests/test_cli_i18n.py | unknown | standard |
+| tests.test_cli_i18n.test_init_provider_prompt_i18n_text | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n_env.run_cmd | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.run_cmd_with_code | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_env_language_controls_ci_text | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_env_language_overrides_config | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_init_output.run_cmd | tests/test_cli_init_output.py | unknown | standard |
+| tests.test_cli_init_output.test_harbor_wrapper_output_matches_python_module | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_init_output.test_init_detects_django | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_init_output.test_init_detects_node | tests/test_cli_init_output.py | unknown | standard |
+| tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_json_output._force_en_locale | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output._sample_doctor_report | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output._sample_stale_summary | tests/test_cli_json_output.py | unknown | standard |
@@ -496,8 +500,11 @@ tests/test_workspace_paths.py
 | tests.test_index_builder_bad_syntax.test_index_builder_skips_bad_syntax | tests/test_index_builder_bad_syntax.py | unknown | standard |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | tests/test_index_progress.py | unknown | standard |
 | tests.test_init_detector.test_django_detection | tests/test_init_detector.py | unknown | standard |
+| tests.test_init_detector.test_excludes_do_not_override_code_roots | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_detector.test_gitignore_mapping | tests/test_init_detector.py | unknown | standard |
+| tests.test_init_detector.test_gitignore_py_pattern_is_skipped_with_warning | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_detector.test_mixed_stack_rules | tests/test_init_detector.py | unknown | standard |
+| tests.test_init_detector.test_python_project_excludes_do_not_contain_py_globs | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_governance._starter_targets | tests/test_init_governance.py | unknown | standard |
 | tests.test_init_governance.run_cmd | tests/test_init_governance.py | unknown | standard |
 | tests.test_init_governance.test_init_dry_run_with_full_flags_writes_nothing | tests/test_init_governance.py | unknown | standard |
@@ -506,10 +513,16 @@ tests/test_workspace_paths.py
 | tests.test_init_llm_env.test_gitignore_has_separate_managed_blocks | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_gitignore_managed_blocks_are_idempotent | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_llm_env_append_missing_only_and_force_does_not_overwrite | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_llm_env.test_llm_provider_alias_custom_writes_env | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_llm_env.test_llm_provider_alias_openai_writes_env | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_wizard.test_dry_run_non_tty_uses_safe_defaults | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_non_tty_does_not_try_arrow_selector | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_provider_fallback_accepts_name_deepseek | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_provider_fallback_accepts_number_2 | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_provider_invalid_input_shows_available_options | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_wizard_language_prompt_comes_first | tests/test_init_wizard.py | unknown | standard |
 | tests.test_initializer.test_detect_fallback | tests/test_initializer.py | unknown | standard |
 | tests.test_initializer.test_detect_package_layout | tests/test_initializer.py | unknown | standard |

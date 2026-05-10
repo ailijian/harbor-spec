@@ -587,6 +587,10 @@ security docs
 
 Semantic Drift means implementation and contract no longer agree.
 
+Semantic drift requires a comparable contract.
+
+Missing contract alone is not semantic drift.
+
 Examples:
 
 ```text
@@ -605,20 +609,80 @@ stale docstring
 stale schema
 stale tests
 missing DDT
-contract gap
 false positive
+
+Related but distinct:
+Contract Gap: no comparable contract exists
+```
+
+---
+
+## 26.1 Contract Presence
+
+Contract Presence 是 Harbor 对“契约源是否可用于比较”的状态判定。
+
+常见状态：
+
+```text
+present
+missing
+empty
+non_contract_doc
+malformed
+```
+
+---
+
+## 26.2 Contract Required
+
+Contract Required 表示某个 target 是否默认必须具备契约源。
+
+常见 required 目标：
+
+```text
+public API
+strict targets
+CLI behavior
+JSON output
+to_dict / report_to_dict
+file write behavior
+schema / parser / generated view formatter
+user-visible or external-visible behavior
 ```
 
 ---
 
 ## 27. Contract Gap
 
-Contract Gap means the implementation has behavior that is not clearly defined by any contract source.
+Contract Gap means a target requires a contract but no valid contract source exists.
+
+Contract Gap is not semantic drift.
 
 Example:
 
 ```text
 A function writes files, but no docstring, schema, test, or rule describes the write behavior.
+```
+
+---
+
+## 27.1 Skipped No Contract
+
+Skipped No Contract means the target does not require a contract, so semantic audit is skipped.
+
+It should not be treated as semantic drift.
+
+---
+
+## 27.2 Contract Parse Error
+
+Contract Parse Error means a contract source exists, but parsing or classification is not reliable.
+
+This differs from Contract Gap:
+
+```text
+Contract Gap = required contract source missing
+Contract Parse Error = source exists but unusable
 ```
 
 ---
@@ -689,6 +753,14 @@ def test_func_success_path():
 For strict targets, explicit `l3_version` is required where DDT binding is used.
 
 ---
+
+## 31.1 DDT Version Baseline Missing
+
+`DDT_VERSION_BASELINE_MISSING` / `ddt_version_baseline_missing` means DDT binding is structurally valid, but no L3 version baseline is found.
+
+It is advisory, not blocking by default.
+
+It does not mean DDT is semantically validated forever.
 
 ## 32. strategy="latest"
 

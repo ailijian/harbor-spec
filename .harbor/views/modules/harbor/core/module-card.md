@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0b3"
+harbor_version: "1.3.0b6"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-09T18:49:38Z"
+generated_at: "2026-05-10T11:36:59Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 26
+source_path_count: 27
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
@@ -22,6 +22,7 @@ source_paths:
   - "harbor/core/git_utils.py"
   - "harbor/core/index.py"
   - "harbor/core/init.py"
+  - "harbor/core/init_prompt.py"
   - "harbor/core/init_wizard.py"
   - "harbor/core/l2.py"
   - "harbor/core/module_capsule.py"
@@ -35,11 +36,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:303d2baa672e33ad55c16b622bab17a18b35e99f6235bf2eb1da6d4a2ee05912"
-contract_fingerprint: "sha256:0b3ecf7cbc251e77e02833a364b6b0103942f53dbb62833ef8b513adfc69ed44"
-generator_fingerprint: "sha256:0140a7f988cbfc5dee7f1a51e1f71722ff320848431e40b31bf4c34ad98c00b0"
-view_fingerprint: "ce88a953b876dc540b0a2a80318c369616fd94d7d2b79eb49275075a78d113df"
-fingerprint: "ce88a953b876dc540b0a2a80318c369616fd94d7d2b79eb49275075a78d113df"
+source_fingerprint: "sha256:f76c5def8f00e812f014760f6873bdec7054fd557f1c08bcea523ae028a67598"
+contract_fingerprint: "sha256:fc4407a9286e811ecf09aedabe6055527b077daeb9795a01abbf9d3ef89afd82"
+generator_fingerprint: "sha256:0acbda2b8373cae54e2dfdd4fcdc04d3ae161995df4d56e6e735fbf284b8348b"
+view_fingerprint: "e4c1b6b4c30b3d7c9fead2f2d5f58505372aadbb1b5b7577abdeff80c86414f7"
+fingerprint: "e4c1b6b4c30b3d7c9fead2f2d5f58505372aadbb1b5b7577abdeff80c86414f7"
 ---
 
 # Module Card: harbor/core
@@ -73,6 +74,7 @@ harbor/core/drafting.py
 harbor/core/git_utils.py
 harbor/core/index.py
 harbor/core/init.py
+harbor/core/init_prompt.py
 harbor/core/init_wizard.py
 harbor/core/l2.py
 harbor/core/module_capsule.py
@@ -247,13 +249,23 @@ harbor/core/workspace_migrate.py
 | harbor.core.init.ProjectDetector._detect_java | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._detect_node | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._detect_python_misc | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._exclude_covers_root | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._filter_excludes | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._get_default_excludes | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._is_dangerous_python_exclude | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._normalize_glob | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._parse_gitignore | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector.detect | harbor/core/init.py | public | strict |
+| harbor.core.init_prompt._choice_label | harbor/core/init_prompt.py | unknown | standard |
+| harbor.core.init_prompt._is_interactive | harbor/core/init_prompt.py | unknown | standard |
+| harbor.core.init_prompt._try_arrow_select | harbor/core/init_prompt.py | unknown | standard |
+| harbor.core.init_prompt.confirm | harbor/core/init_prompt.py | unknown | standard |
+| harbor.core.init_prompt.select_one | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard.__init__ | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._ask_language | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._ask_project | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._ask_yes_no | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._emit_detected_summary | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._emit_ide_guidance | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | harbor/core/init_wizard.py | unknown | standard |
@@ -430,6 +442,7 @@ tests/test_cli_workspace_migrate.py
 tests/test_context_integrity.py
 tests/test_contract_impact.py
 tests/test_ddt_validate.py
+tests/test_ddt_version_baseline.py
 tests/test_decorator_engine.py
 tests/test_diary_workspace_paths.py
 tests/test_doctor.py
@@ -448,6 +461,7 @@ tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
+tests/test_semantic_audit_contract_gap.py
 tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_utils_format.py

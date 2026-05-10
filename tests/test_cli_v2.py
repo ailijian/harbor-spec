@@ -31,10 +31,22 @@ def run_cmd(argv):
 
 def _clean_status_report():
     return SimpleNamespace(
-        counts={"drift": 0, "contract_changed": 0, "modified": 0, "untracked": 0, "missing": 0},
+        counts={
+            "drift": 0,
+            "contract_changed": 0,
+            "modified": 0,
+            "contract_gap": 0,
+            "skipped_no_contract": 0,
+            "contract_parse_error": 0,
+            "untracked": 0,
+            "missing": 0,
+        },
         drift=[],
         contract_changed=[],
         modified=[],
+        contract_gap=[],
+        skipped_no_contract=[],
+        contract_parse_error=[],
         untracked=[],
         missing=[],
     )
@@ -219,7 +231,16 @@ def test_checkpoint_does_not_trigger_semantic_audit(monkeypatch):
 
 def test_checkpoint_prints_contract_impact_summary_when_dirty(monkeypatch):
     dirty = SimpleNamespace(
-        counts={"drift": 0, "contract_changed": 1, "modified": 0, "untracked": 0, "missing": 0},
+        counts={
+            "drift": 0,
+            "contract_changed": 1,
+            "modified": 0,
+            "contract_gap": 0,
+            "skipped_no_contract": 0,
+            "contract_parse_error": 0,
+            "untracked": 0,
+            "missing": 0,
+        },
         drift=[],
         contract_changed=[
             SimpleNamespace(
@@ -231,6 +252,9 @@ def test_checkpoint_prints_contract_impact_summary_when_dirty(monkeypatch):
             )
         ],
         modified=[],
+        contract_gap=[],
+        skipped_no_contract=[],
+        contract_parse_error=[],
         untracked=[],
         missing=[],
     )

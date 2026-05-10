@@ -73,27 +73,29 @@ from harbor.core.workspace import load_workspace_config, load_workspace_paths, w
 
 
 def main():
-    """Harbor CLI 入口。
+    """Harbor CLI 入口与公开命令分发契约。
 
-    功能:
-      - 提供 `harbor` 命令的工作流门面、治理检查、派生视图与兼容子命令入口。
-      - 主要工作流命令包括：`start/checkpoint/finish/stale/doctor/workspace/module/project`。
-      - 同时保留 `init/status/lock/check/log/adopt/unadopt/docs/config` 等兼容与辅助命令。
-      - 解析参数并委派到对应子系统。
-      - adopt：在应用装饰变更后，将接管目录注册到 `.harbor/config/harbor.yaml` 的 `code_roots`。
-      - unadopt：从 `.harbor/config/harbor.yaml` 的 `code_roots` 中移除接管目录。
+    该函数负责解析 `harbor` CLI 参数并分发到对应子命令实现，覆盖工作流门面、
+    读写命令、只读检查命令与 CI 门禁命令。
 
-    使用场景:
-      - 开发者在本地与 CI 中调用 Harbor 管理上下文。
+    Behavior:
+      - `harbor check` 执行 DDT binding validation 与语义审计流程，并输出：
+        DDT Advisory（如 `ddt_version_baseline_missing`）以及语义审计状态
+        `OK` / `POSSIBLE_SEMANTIC_DRIFT` / `CONTRACT_GAP` /
+        `SKIPPED_NO_CONTRACT` / `CONTRACT_PARSE_ERROR` / `ERROR`。
+      - `harbor check --format jsonl` 当前为“混合输出”：
+        既会有人类可读 DDT 区块，也会有语义审计 JSONL 行；不承诺 stdout 为纯 JSONL。
+      - `harbor checkpoint --ci --format json` 输出公开 CI payload，包含
+        `ci_failures`、`advisory`、`summary.ddt_advisory`、`writes_files=false`；
+        其中 `contract_gap` / `contract_parse_error` / drift / modified 等进入阻断项，
+        `ddt_version_baseline_missing` 作为 advisory，不作为 blocking failure。
+      - `check` / `checkpoint` / `stale` / `doctor` 在 CI 语义上属于检查或门禁命令；
+        不执行自动修复、自动刷新或自动 accept baseline。
+      - `accept` / `log` / `lock` 保持显式人工触发与授权语义，不由检查命令隐式触发。
 
-    依赖:
-      - harbor.core.index.IndexBuilder
-      - harbor.core.sync.SyncEngine
-      - harbor.core.ddt.DDTScanner/DDTValidator
-      - harbor.core.l2.L2Generator
-      - harbor.core.diary.DiaryManager
-      - harbor.core.audit.SemanticGuard
-      - harbor.utils.i18n.t/get_lang
+    Side Effects:
+      - 是否写文件取决于具体子命令（例如 `lock`/`log`/`docs --write` 会写文件，
+        `check`/`checkpoint --ci`/`stale --ci`/`doctor --ci` 作为门禁流程默认只读）。
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
@@ -106,7 +108,7 @@ def main():
       None
 
     Raises:
-      SystemExit: 当参数解析、帮助输出或 argparse 错误触发退出时。
+      SystemExit: 参数解析、帮助输出、CI 门禁失败或 argparse 错误导致退出时抛出。
       Exception: 其他底层子系统异常可能透传（未统一包装为 RuntimeError）。
     """
     try:
@@ -587,6 +589,18 @@ def main():
             print(f"\n{t('cli.status.contract')}")
             for e in rep.contract_changed:
                 print(f"  C {e.id} ({e.details})")
+        if getattr(rep, "contract_gap", []):
+            print("\nContract Gap")
+            for e in rep.contract_gap:
+                print(f"  G {e.id} ({e.details})")
+        if getattr(rep, "skipped_no_contract", []):
+            print("\nSkipped No Contract")
+            for e in rep.skipped_no_contract:
+                print(f"  S {e.id} ({e.details})")
+        if getattr(rep, "contract_parse_error", []):
+            print("\nContract Parse Error")
+            for e in rep.contract_parse_error:
+                print(f"  E {e.id} ({e.details})")
         if rep.modified:
             print(f"\n{t('cli.status.modified')}")
             for e in rep.modified:
@@ -606,6 +620,9 @@ def main():
         records.extend(getattr(rep, "drift", []))
         records.extend(getattr(rep, "modified", []))
         records.extend(getattr(rep, "contract_changed", []))
+        records.extend(getattr(rep, "contract_gap", []))
+        records.extend(getattr(rep, "skipped_no_contract", []))
+        records.extend(getattr(rep, "contract_parse_error", []))
         records.extend(getattr(rep, "untracked", []))
         records.extend(getattr(rep, "missing", []))
         if not records:
@@ -633,6 +650,15 @@ def main():
         if rep.violations:
             for typ, b, msg in rep.violations:
                 print(f"  [!] {typ.upper()} {b.func_id} v={b.l3_version} strategy={b.strategy} ({b.test_name} @ {b.file_path}) :: {msg}")
+        if getattr(rep, "advisory", []):
+            print(f"\n{t('cli.check.ddt_advisory')}")
+            for adv in rep.advisory:
+                b = adv.binding
+                print(
+                    f"  [baseline-missing] {b.func_id} v={b.l3_version} strategy={b.strategy} "
+                    f"({b.test_name} @ {b.file_path})"
+                )
+                print(f"  {adv.message}")
         if not rep.valid and not rep.violations:
             print(f"  {t('cli.check.nobindings')}")
         if not fast:
@@ -681,24 +707,39 @@ def main():
                     else:
                         out_lines.append(f"ERROR {e.id} :: contract not found")
                     continue
-                res = guard.audit(matched, src, provider)
+                res = guard.audit(matched, src, provider, file_path=e.file_path)
                 if debug:
                     print(f"[DEBUG] Prompt >>>\n{res.prompt or ''}\n[DEBUG] Raw <<<\n{res.raw_output or ''}")
                 reason = " ".join((res.reason or "").split())
+                llm_called = res.status not in ("CONTRACT_GAP", "SKIPPED_NO_CONTRACT")
+                mapped_status = (
+                    "OK"
+                    if res.status == "OK"
+                    else (
+                        "POSSIBLE_SEMANTIC_DRIFT"
+                        if res.status == "MISMATCH"
+                        else (res.status if res.status in ("CONTRACT_GAP", "SKIPPED_NO_CONTRACT") else "ERROR")
+                    )
+                )
                 if output_format == "jsonl":
                     print(json.dumps({
-                        "status": "OK" if res.status == "OK" else ("POSSIBLE_SEMANTIC_DRIFT" if res.status == "MISMATCH" else "ERROR"),
+                        "status": mapped_status,
                         "func_id": e.id,
                         "file_path": e.file_path,
                         "provider": provider.name,
                         "model": model,
-                        "reason": reason if res.status != "OK" else None
+                        "reason": reason if res.status != "OK" else None,
+                        "llm_called": llm_called,
                     }, ensure_ascii=False))
                 else:
                     if res.status == "OK":
                         out_lines.append(f"OK {e.id}")
                     elif res.status == "MISMATCH":
                         out_lines.append(f"POSSIBLE_SEMANTIC_DRIFT {e.id} :: {reason}")
+                    elif res.status == "CONTRACT_GAP":
+                        out_lines.append(f"CONTRACT_GAP {e.id} :: {reason}")
+                    elif res.status == "SKIPPED_NO_CONTRACT":
+                        out_lines.append(f"SKIPPED_NO_CONTRACT {e.id} :: {reason}")
                     else:
                         out_lines.append(f"ERROR {e.id} :: {reason}")
             if not out_lines:
@@ -723,20 +764,39 @@ def main():
                 "drift": [],
                 "modified": [],
                 "contract_changed": [],
+                "contract_gap": [],
+                "skipped_no_contract": [],
+                "contract_parse_error": [],
                 "untracked": [],
                 "missing": [],
-                "counts": {"drift": 0, "modified": 0, "contract_changed": 0, "untracked": 0, "missing": 0},
+                "counts": {
+                    "drift": 0,
+                    "modified": 0,
+                    "contract_changed": 0,
+                    "contract_gap": 0,
+                    "skipped_no_contract": 0,
+                    "contract_parse_error": 0,
+                    "untracked": 0,
+                    "missing": 0,
+                },
             },
         )()
 
     def _empty_ddt_report():
-        return type("CheckpointDDTReport", (), {"valid": [], "violations": [], "counts": {"valid": 0, "violations": 0}})()
+        return type(
+            "CheckpointDDTReport",
+            (),
+            {"valid": [], "violations": [], "advisory": [], "counts": {"valid": 0, "violations": 0, "advisory": 0}},
+        )()
 
     def _collect_status_records_for_checkpoint_ci(rep):
         records = []
         records.extend(getattr(rep, "drift", []))
         records.extend(getattr(rep, "modified", []))
         records.extend(getattr(rep, "contract_changed", []))
+        records.extend(getattr(rep, "contract_gap", []))
+        records.extend(getattr(rep, "skipped_no_contract", []))
+        records.extend(getattr(rep, "contract_parse_error", []))
         records.extend(getattr(rep, "untracked", []))
         records.extend(getattr(rep, "missing", []))
         return records
@@ -746,6 +806,9 @@ def main():
         changed_paths.extend([e.file_path for e in rep.drift])
         changed_paths.extend([e.file_path for e in rep.modified])
         changed_paths.extend([e.file_path for e in rep.contract_changed])
+        changed_paths.extend([e.file_path for e in getattr(rep, "contract_gap", [])])
+        changed_paths.extend([e.file_path for e in getattr(rep, "skipped_no_contract", [])])
+        changed_paths.extend([e.file_path for e in getattr(rep, "contract_parse_error", [])])
         changed_paths.extend([e.file_path for e in rep.untracked])
         changed_paths.extend([e.file_path for e in rep.missing])
         return changed_paths

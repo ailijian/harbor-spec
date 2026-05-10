@@ -5,11 +5,11 @@
 |---|---|---|---|
 | harbor.core.drafting.DiaryDrafter.__init__ | AI 辅助生成 Diary 草稿。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder._iter_py_files | 生成待扫描的 Python 文件列表（支持 Git 感知剪枝）。 | strict | ❌ Missing |
-| harbor.core.init.Initializer.autodetect | — | strict | ❌ Missing |
+| harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
-| harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
-| harbor.core.init.ProjectDetector.detect | — | strict | ❌ Missing |
-| harbor.core.init.Initializer.detect_code_roots | — | strict | ❌ Missing |
+| harbor.core.sync.SyncEngine.check_status | — | strict | ✅ Valid |
+| harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
+| harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_all_files | 列出所有已索引文件及其 mtime。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_file | 查询单文件记录。 | strict | ❌ Missing |
@@ -25,7 +25,7 @@
 | harbor.core.storage.HarborDB.transaction | 事务上下文管理器（单文件原子写入）。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_entry | 插入或更新函数条目。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_file | 插入或更新文件记录。 | strict | ❌ Missing |
-| harbor.core.init.Initializer.write_config | — | strict | ❌ Missing |
+| harbor.core.init.Initializer.write_config | 写入 `.harbor/config/harbor.yaml`。 | strict | ❌ Missing |
 
 ## Internal Details (optional)
 <details>
@@ -59,6 +59,7 @@
 | harbor.core.project_structure._build_transient_index_from_files | — | standard | ⚪ Missing |
 | harbor.core.project_structure._capsule_exists | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._check_git_ignored | — | standard | ⚪ Missing |
+| harbor.core.init_prompt._choice_label | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._classify_git_tracking | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._classify_tests_path | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._collect_advisory | — | standard | ⚪ Missing |
@@ -85,6 +86,7 @@
 | harbor.core.init.ProjectDetector._detect_node | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_python_misc | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._docstring_node | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._emit_detected_summary | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_ide_guidance | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | — | standard | ⚪ Missing |
@@ -93,10 +95,12 @@
 | harbor.core.module_capsule._ensure_within_root | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._ensure_within_root | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._entry_dedupe_key | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._exclude_covers_root | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._extract_code_context | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._extract_functions | — | standard | ⚪ Missing |
 | harbor.core.project_structure._extract_toml_string_block | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._file_hash | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._filter_excludes | — | standard | ⚪ Missing |
 | harbor.core.doctor._filter_safe_next_steps | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._finding_to_dict | — | standard | ⚪ Missing |
 | harbor.core.stale._format_view_lines | 格式化单个视图状态的文本行。 | standard | ⚪ Missing |
@@ -107,9 +111,11 @@
 | harbor.core.index.IndexBuilder._index_entry | — | standard | ⚪ Missing |
 | harbor.core.project_structure._infer_area | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_contract_asserting_test | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._is_dangerous_python_exclude | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_docs_or_rules_path | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._is_filtered_name | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_generated_view_module | — | standard | ⚪ Missing |
+| harbor.core.init_prompt._is_interactive | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_public_cli_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_test_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_to_dict_like | — | standard | ⚪ Missing |
@@ -141,6 +147,7 @@
 | harbor.core.decorator.DecoratorEngine._module_qual_from_path | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
 | harbor.core.stale._normalize_l2_body_for_export_compare | — | standard | ⚪ Missing |
 | harbor.core.stale._normalize_l2_markdown_for_stale | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_path | — | standard | ⚪ Missing |
@@ -203,6 +210,7 @@
 | harbor.core.project_structure._to_project_relative_path | — | standard | ⚪ Missing |
 | harbor.core.l2._to_repo_relative | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._trim_segment | — | standard | ⚪ Missing |
+| harbor.core.init_prompt._try_arrow_select | — | standard | ⚪ Missing |
 | harbor.core.doctor._unique | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._update_managed_block | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._utc_now_iso | — | standard | ⚪ Missing |
@@ -248,6 +256,7 @@
 | harbor.core.l2.L2Generator.compute_meta_hash | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.compute_module_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.compute_source_fingerprint | — | standard | ⚪ Missing |
+| harbor.core.init_prompt.confirm | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.content_without_generated_at_for_compare | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.contract_impact_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
@@ -302,6 +311,7 @@
 | harbor.core.workspace_inspect.sanitize_text | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine.scan | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTScanner.scan_tests | — | standard | ⚪ Missing |
+| harbor.core.init_prompt.select_one | — | standard | ⚪ Missing |
 | harbor.core.module_skill.skill_dir_for_module | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.split_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.stale.stale_report_to_dict | 将 stale 检查结果序列化为 machine-readable JSON 对象。 | standard | ⚪ Missing |
@@ -314,7 +324,7 @@
 | harbor.core.workspace_inspect.WorkspaceLegacyPathStatus.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceGitTrackingStatus.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceGeneratedViewsStatus.to_dict | — | standard | ⚪ Missing |
-| harbor.core.ci.CIFailure.to_dict | — | standard | ⚪ Missing |
+| harbor.core.ci.CIFailure.to_dict | 将通用 CI failure/advisory 项序列化为 machine-readable JSON-compa... | standard | ⚪ Missing |
 | harbor.core.ci.CheckpointCIItem.to_dict | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryEntry.to_json | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTValidator.validate | — | standard | ⚪ Missing |

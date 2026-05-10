@@ -328,12 +328,22 @@ harbor doctor --ci
 * DDT failure
 * missing / untracked function
 * implementation drift
+* contract_gap（`contract_required=true`）
+* contract_parse_error
 * contract changed
 * body + contract changed
 * confirmed contract impact
 
-不会因为 `possible_contract_impact` 直接失败。
-`possible_contract_impact` 是 advisory。
+分类说明（当前实现）：
+
+* `contract_gap`：缺少必需契约源，默认可阻断。
+* `contract_parse_error`：存在契约源但无法可靠解析/分类，默认可阻断。
+* `skipped_no_contract`：目标不要求契约，语义审计跳过，advisory / non-blocking。
+* `possible_semantic_drift`：仅在存在可比较契约时才可能出现。
+* `contract_changed`：契约变化（基线未接受时阻断）。
+* `contract_and_body_changed`：契约与实现同时变化（基线未接受时阻断）。
+* `ddt_version_baseline_missing`：DDT 基线缺失 advisory / non-blocking。
+* `possible_contract_impact`：默认 advisory，除非被状态门禁升级。
 
 ---
 
@@ -781,6 +791,13 @@ def test_sync_engine_drift_detection():
 
 严格目标必须使用显式 `l3_version`，不要使用 `strategy="latest"`。
 
+DDT baseline advisory（新增）：
+
+* `DDT_VERSION_BASELINE_MISSING` / `ddt_version_baseline_missing` 表示绑定结构合法，但未找到 L3 version baseline。
+* 该状态是 advisory，不是 violation。
+* Harbor 不能自动判断是否应 bump `l3_version`，需要人工先复核 baseline 再 `harbor accept`。
+* 这不代表“DDT 永久语义通过”，只代表当前无法完成版本基线核验。
+
 ---
 
 ### 7. Diary：决策记忆
@@ -814,6 +831,25 @@ HARBOR_LANGUAGE=zh
 ```
 
 也可使用其他兼容 OpenAI API 的 provider。
+
+语义审计短路规则（当前实现）：
+
+* 没有可用契约源时，语义审计会被跳过。
+* `CONTRACT_GAP` 与 `SKIPPED_NO_CONTRACT` 场景不会调用 LLM。
+* `harbor check --format jsonl` 在跳过场景会输出 `llm_called=false`。
+* `harbor check --format jsonl` 当前不是“纯 JSONL-only”输出：仍会包含人类可读 DDT 区块，语义审计部分输出 JSONL 行。
+
+---
+
+## Contract Gap vs Semantic Drift
+
+没有契约 ≠ 契约漂移。只有存在可比较契约时，Harbor 才会进入语义漂移判断。
+
+* Missing contract is not semantic drift.
+* Semantic drift requires an existing comparable contract.
+* `CONTRACT_GAP`：目标要求契约，但没有有效契约源。
+* `SKIPPED_NO_CONTRACT`：目标不要求契约，语义审计被跳过。
+* `CONTRACT_PARSE_ERROR`：存在契约源，但无法可靠解析或分类。
 
 ---
 

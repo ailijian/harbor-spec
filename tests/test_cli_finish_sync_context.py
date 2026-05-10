@@ -25,10 +25,22 @@ def run_cmd(argv):
 
 def _status_report_with_changed():
     return SimpleNamespace(
-        counts={"drift": 1, "contract_changed": 0, "modified": 1, "untracked": 0, "missing": 0},
+        counts={
+            "drift": 1,
+            "contract_changed": 0,
+            "modified": 1,
+            "contract_gap": 0,
+            "skipped_no_contract": 0,
+            "contract_parse_error": 0,
+            "untracked": 0,
+            "missing": 0,
+        },
         drift=[SimpleNamespace(id="a", details="x", file_path="harbor/core/sync.py")],
         contract_changed=[],
         modified=[SimpleNamespace(id="b", details="y", file_path=r"harbor\cli\main.py")],
+        contract_gap=[],
+        skipped_no_contract=[],
+        contract_parse_error=[],
         untracked=[],
         missing=[],
     )
@@ -36,10 +48,22 @@ def _status_report_with_changed():
 
 def _empty_status_report():
     return SimpleNamespace(
-        counts={"drift": 0, "contract_changed": 0, "modified": 0, "untracked": 0, "missing": 0},
+        counts={
+            "drift": 0,
+            "contract_changed": 0,
+            "modified": 0,
+            "contract_gap": 0,
+            "skipped_no_contract": 0,
+            "contract_parse_error": 0,
+            "untracked": 0,
+            "missing": 0,
+        },
         drift=[],
         contract_changed=[],
         modified=[],
+        contract_gap=[],
+        skipped_no_contract=[],
+        contract_parse_error=[],
         untracked=[],
         missing=[],
     )
@@ -256,10 +280,22 @@ def test_finish_sync_context_ignores_changed_modules_outside_workspace(monkeypat
         cli_main.SyncEngine,
         "check_status",
         lambda self: SimpleNamespace(
-            counts={"drift": 1, "contract_changed": 0, "modified": 1, "untracked": 0, "missing": 0},
+            counts={
+                "drift": 1,
+                "contract_changed": 0,
+                "modified": 1,
+                "contract_gap": 0,
+                "skipped_no_contract": 0,
+                "contract_parse_error": 0,
+                "untracked": 0,
+                "missing": 0,
+            },
             drift=[SimpleNamespace(id="a", details="x", file_path="harbor/core/sync.py")],
             contract_changed=[],
             modified=[SimpleNamespace(id="b", details="y", file_path="C:/Users/GM/AppData/Local/Temp/outside.py")],
+            contract_gap=[],
+            skipped_no_contract=[],
+            contract_parse_error=[],
             untracked=[],
             missing=[],
         ),

@@ -17,6 +17,43 @@ AI 可以快速写代码，但契约、测试、生成上下文、决策记忆�
 
 ## 1. 发布亮点
 
+### 1.0 P0/P1/P3 契约缺失闭环（2026-05-10）
+
+Added:
+
+```text
+Contract presence evaluation before semantic audit
+CONTRACT_GAP / SKIPPED_NO_CONTRACT / CONTRACT_PARSE_ERROR
+ddt_version_baseline_missing advisory
+checkpoint CI duplicate failure dedupe
+```
+
+Changed:
+
+```text
+Missing contract is no longer reported as POSSIBLE_SEMANTIC_DRIFT
+LLM semantic audit is skipped when no comparable contract exists
+checkpoint --ci separates blocking failures from advisory governance signals
+CI failure dedupe now normalizes paths before comparing targets
+```
+
+Fixed:
+
+```text
+No docstring provided no longer becomes possible semantic drift
+Duplicate confirmed_contract_impact + contract_changed failures for the same target are removed
+```
+
+Migration Notes:
+
+```text
+strict/public Python targets should add Harbor contract docstrings or equivalent contract sources
+users should review ddt_version_baseline_missing before accept
+downstream parsers of checkpoint JSON should handle new categories
+```
+
+---
+
 ### 1.1 Canonical `.harbor/` Workspace
 
 Harbor-spec v1.3.0 正式使用 `.harbor/` 作为 canonical workspace。

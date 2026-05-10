@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import yaml
 from harbor.core.storage import HarborDB
 from harbor.core.workspace import resolve_workspace_config_path
+from harbor.utils.i18n import t
 
 
 @dataclass
@@ -24,7 +25,16 @@ class DDTBinding:
 class DDTReport:
     valid: List[DDTBinding]
     violations: List[Tuple[str, DDTBinding, str]]  # (type, binding, message)
+    advisory: List["DDTAdvisory"]
     counts: Dict[str, int]
+
+
+@dataclass
+class DDTAdvisory:
+    category: str
+    binding: DDTBinding
+    message: str
+    suggested_action: Optional[str] = None
 
 
 class DDTScanner:
@@ -131,6 +141,7 @@ class DDTValidator:
     def validate(self, bindings: List[DDTBinding]) -> DDTReport:
         valid: List[DDTBinding] = []
         violations: List[Tuple[str, DDTBinding, str]] = []
+        advisory: List[DDTAdvisory] = []
         for b in bindings:
             strictness, contract_hash = self._func_meta.get(b.func_id, ("standard", None))
             if strictness == "strict" and b.strategy == "latest":
@@ -153,11 +164,21 @@ class DDTValidator:
                 violations.append(("version_mismatch", b, f"Version Mismatch: Contract changed. Expected v{target_version}, found v{b.l3_version}."))
             else:
                 valid.append(b)
+                if strictness == "strict" and b.strategy != "latest" and v_rec is None:
+                    advisory.append(
+                        DDTAdvisory(
+                            category="ddt_version_baseline_missing",
+                            binding=b,
+                            message=t("cli.check.ddt_advisory.baseline_missing"),
+                            suggested_action=t("cli.ci.checkpoint.action.ddt_baseline_missing"),
+                        )
+                    )
         counts = {
             "valid": len(valid),
             "violations": len(violations),
+            "advisory": len(advisory),
         }
-        return DDTReport(valid=valid, violations=violations, counts=counts)
+        return DDTReport(valid=valid, violations=violations, advisory=advisory, counts=counts)
 
     def _load_index(self, path: Path) -> Dict[str, Any]:
         if path.exists():

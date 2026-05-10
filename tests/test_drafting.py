@@ -35,11 +35,49 @@ class _OKProvider(LLMProvider):
 
 
 def _rep_with(entries: List[StatusEntry]) -> StatusReport:
-    return StatusReport(drift=entries, modified=entries, contract_changed=[], untracked=[], missing=[], counts={"drift": len(entries), "modified": len(entries), "contract_changed": 0, "untracked": 0, "missing": 0})
+    return StatusReport(
+        drift=entries,
+        modified=entries,
+        contract_changed=[],
+        contract_gap=[],
+        skipped_no_contract=[],
+        contract_parse_error=[],
+        untracked=[],
+        missing=[],
+        counts={
+            "drift": len(entries),
+            "modified": len(entries),
+            "contract_changed": 0,
+            "contract_gap": 0,
+            "skipped_no_contract": 0,
+            "contract_parse_error": 0,
+            "untracked": 0,
+            "missing": 0,
+        },
+    )
 
 
 def test_generate_draft_returns_none_when_no_changes():
-    rep = StatusReport(drift=[], modified=[], contract_changed=[], untracked=[], missing=[], counts={"drift": 0, "modified": 0, "contract_changed": 0, "untracked": 0, "missing": 0})
+    rep = StatusReport(
+        drift=[],
+        modified=[],
+        contract_changed=[],
+        contract_gap=[],
+        skipped_no_contract=[],
+        contract_parse_error=[],
+        untracked=[],
+        missing=[],
+        counts={
+            "drift": 0,
+            "modified": 0,
+            "contract_changed": 0,
+            "contract_gap": 0,
+            "skipped_no_contract": 0,
+            "contract_parse_error": 0,
+            "untracked": 0,
+            "missing": 0,
+        },
+    )
     eng = _EngStub(rep=rep)
     drafter = DiaryDrafter(sync_engine=eng, provider=_OKProvider())
     assert drafter.generate_draft() is None
@@ -68,4 +106,3 @@ def test_generate_draft_parses_json(tmp_path: Path):
     assert res.get("type") == "refactor"
     assert res.get("importance") == "normal"
     assert "草稿" in (res.get("details") or "")
-

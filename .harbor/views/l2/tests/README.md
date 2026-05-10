@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0b3"
+harbor_version: "1.3.0b6"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-09T18:49:45Z"
+generated_at: "2026-05-10T11:36:59Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 67
@@ -76,9 +76,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:2965771307e48077bf06f16997d196165fc55956e5ac9d49f612e704daa04121"
-contract_fingerprint: "sha256:6616200886451c8d7033909f0c9315c3ec8014eaa3fca6852abbddd8b3d13c6d"
-generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257d5ea0dec6e7d7a1"
+source_fingerprint: "sha256:7116e98bdd9d6baa4752b1c5ecb963b3630af2ef45e14a5b3d901b7957a3cab9"
+contract_fingerprint: "sha256:a93526132912e9d700548486f16870f0a4a77d176b3544d1ad2ae8fca9a5b6f6"
+generator_fingerprint: "sha256:54afdda2c9382734ebf0442aff9e415ac5580a7c796fce9e51fdac17b86df535"
 ---
 
 # Module: tests
@@ -130,6 +130,7 @@ generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257
 | tests.test_checkpoint_ci._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy._gitignore_entries | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy._is_ignored | — | standard | ⚪ Missing |
+| tests.conftest._isolate_harbor_language_env | 避免外部 CI/发布环境变量污染测试语言分支。 | standard | ⚪ Missing |
 | tests.test_cli_v2._isolate_workspace | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths._month_pair | — | standard | ⚪ Missing |
 | tests.test_drafting_json_parse._parse | — | standard | ⚪ Missing |
@@ -329,6 +330,7 @@ generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257
 | tests.test_diary_workspace_paths.test_dual_read_merge_with_stable_normalized_hash_dedupe | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env.test_env_language_controls_ci_text | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env.test_env_language_overrides_config | — | standard | ⚪ Missing |
+| tests.test_init_detector.test_excludes_do_not_override_code_roots | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_export_options_parsing | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening.test_external_temp_paths_only_land_in_isolated_workspace_index | — | standard | ⚪ Missing |
@@ -359,7 +361,9 @@ generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257
 | tests.test_init_llm_env.test_gitignore_managed_blocks_are_idempotent | — | standard | ⚪ Missing |
 | tests.test_init_detector.test_gitignore_mapping | — | standard | ⚪ Missing |
 | tests.test_gitignore_prune.test_gitignore_prunes_node_modules | — | standard | ⚪ Missing |
+| tests.test_init_detector.test_gitignore_py_pattern_is_skipped_with_warning | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy.test_harbor_canonical_and_runtime_ignore_policy | — | standard | ⚪ Missing |
+| tests.test_cli_init_output.test_harbor_wrapper_output_matches_python_module | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_help_recognizes_core_release_commands | — | standard | ⚪ Missing |
 | tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | — | standard | ⚪ Missing |
 | tests.test_index_builder.test_index_build_incremental_and_docstring_stability | — | standard | ⚪ Missing |
@@ -372,6 +376,7 @@ generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257
 | tests.test_init_governance.test_init_existing_files_are_skipped_unless_force | — | standard | ⚪ Missing |
 | tests.test_init_governance.test_init_governance_creates_starter_files_without_project_rules | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_init_help_lists_wizard_flags | — | standard | ⚪ Missing |
+| tests.test_cli_i18n.test_init_provider_prompt_i18n_text | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_init_templates_package_resources_are_loadable | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | — | standard | ⚪ Missing |
@@ -400,6 +405,8 @@ generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257
 | tests.test_workspace_paths.test_legacy_config_read | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_legacy_exists_but_canonical_missing_is_stale | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_llm_env_append_missing_only_and_force_does_not_overwrite | — | standard | ⚪ Missing |
+| tests.test_init_llm_env.test_llm_provider_alias_custom_writes_env | — | standard | ⚪ Missing |
+| tests.test_init_llm_env.test_llm_provider_alias_openai_writes_env | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_load_active_keeps_recent_two_month_window | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_load_active_reads_legacy_only_without_mutation | — | standard | ⚪ Missing |
 | tests.test_lock_flags.test_lock_no_register_adopted | — | standard | ⚪ Missing |
@@ -453,6 +460,7 @@ generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_no_changed_modules_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_no_records_is_friendly | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_non_tty_does_not_try_arrow_selector | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_normalize_skill_slug_rules_are_stable | — | standard | ⚪ Missing |
@@ -473,14 +481,19 @@ generator_fingerprint: "sha256:0b9501c90b5b7a6b87f92e53ec362035de6c66a462699d257
 | tests.test_cli_project_structure.test_project_structure_write_does_not_overwrite_existing_legacy_docs_when_export_disabled | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_write_dual_writes_when_docs_export_enabled | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_write_updates_canonical_path_by_default | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_provider_fallback_accepts_name_deepseek | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_provider_fallback_accepts_number_2 | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_provider_invalid_input_shows_available_options | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_pyproject_declares_cli_runtime_dependencies | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows stable and pre-release (a/b/rc) ... | standard | ⚪ Missing |
+| tests.test_init_detector.test_python_project_excludes_do_not_contain_py_globs | — | standard | ⚪ Missing |
 | tests.test_drafting.test_raise_when_llm_not_configured | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_contains_release_key_commands | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | — | standard | ⚪ Missing |
-| tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | Backward-compatible alias test name kept to avoid baselin... | standard | ⚪ Missing |
+| tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | — | standard | ⚪ Missing |
+| tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_report_to_dict_is_deterministic_and_sanitized | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | — | standard | ⚪ Missing |

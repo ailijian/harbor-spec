@@ -23,6 +23,9 @@ class FunctionContract:
     strictness: Optional[Literal["strict", "standard", "light"]] = None
     is_method: bool = False
     parent_class: Optional[str] = None
+    contract_presence: Optional[str] = None
+    contract_required: Optional[bool] = None
+    contract_sources: Optional[List[str]] = None
 
 
 class PythonAdapter:
@@ -266,4 +269,3 @@ class PythonAdapter:
         if parts and parts[-1].endswith(".py"):
             parts[-1] = parts[-1][:-3]
         return ".".join([x for x in parts if x and x not in (".", "..")])
-

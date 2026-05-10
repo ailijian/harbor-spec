@@ -12,12 +12,13 @@ except Exception:
     OpenAI = None  # type: ignore
 
 from harbor.adapters.python.parser import FunctionContract, PythonAdapter
+from harbor.core.contract_presence import evaluate_contract_presence
 from harbor.core.utils import find_function_node
 
 
 @dataclass
 class AuditResult:
-    status: Literal["OK", "MISMATCH", "ERROR"]
+    status: Literal["OK", "MISMATCH", "ERROR", "CONTRACT_GAP", "SKIPPED_NO_CONTRACT"]
     reason: Optional[str]
     provider: str
     func_id: str
@@ -112,7 +113,27 @@ class SemanticGuard:
         tmpl = PROMPT_TEMPLATES.get(lang, PROMPT_TEMPLATES["en"])
         return tmpl.format(doc=doc, code=lines)
 
-    def audit(self, contract: FunctionContract, source_text: str, provider: LLMProvider) -> AuditResult:
+    def audit(self, contract: FunctionContract, source_text: str, provider: LLMProvider, file_path: str = "") -> AuditResult:
+        inferred_file = file_path or _infer_file_path_from_contract(contract)
+        presence = evaluate_contract_presence(contract, inferred_file)
+        contract.contract_presence = presence.presence
+        contract.contract_required = presence.required
+        contract.contract_sources = presence.sources
+        if presence.presence != "present":
+            status = "CONTRACT_GAP" if presence.required else "SKIPPED_NO_CONTRACT"
+            reason = (
+                "No contract source found; semantic comparison skipped."
+                if status == "CONTRACT_GAP"
+                else "No contract required for this target; semantic comparison skipped."
+            )
+            return AuditResult(
+                status=status,
+                reason=reason,
+                provider=provider.name,
+                func_id=contract.id,
+                prompt=None,
+                raw_output=None,
+            )
         node = find_function_node(source_text, contract.lineno, contract.name)
         code_seg = ""
         if node is not None:
@@ -161,3 +182,19 @@ class SemanticGuard:
         if "[OK]" in up:
             return AuditResult(status="OK", reason=None, provider=provider.name, func_id=contract.id, prompt=prompt, raw_output=out)
         return AuditResult(status="ERROR", reason="unrecognized output", provider=provider.name, func_id=contract.id, prompt=prompt, raw_output=out)
+
+
+def _infer_file_path_from_contract(contract: FunctionContract) -> str:
+    qn = str(getattr(contract, "qualified_name", "") or "").strip()
+    if not qn:
+        return ""
+    parts = [p for p in qn.split(".") if p]
+    if not parts:
+        return ""
+    if bool(getattr(contract, "is_method", False)) and len(parts) >= 3:
+        module_parts = parts[:-2]
+    else:
+        module_parts = parts[:-1]
+    if not module_parts:
+        return ""
+    return f"{'/'.join(module_parts)}.py"

@@ -327,12 +327,22 @@ It blocks on:
 * DDT failure
 * missing / untracked function
 * implementation drift
+* contract_gap (`contract_required=true`)
+* contract_parse_error
 * contract changed
 * body + contract changed
 * confirmed contract impact
 
-It does not fail just because of `possible_contract_impact`.
-`possible_contract_impact` is advisory.
+Current category behavior:
+
+* `contract_gap`: required contract source is missing, can block by default.
+* `contract_parse_error`: contract source exists but cannot be parsed/classified reliably, can block by default.
+* `skipped_no_contract`: target does not require contract, semantic audit is skipped, advisory / non-blocking.
+* `possible_semantic_drift`: only appears when a comparable contract exists.
+* `contract_changed`: contract changed (blocks before baseline acceptance).
+* `contract_and_body_changed`: both contract and body changed (blocks before baseline acceptance).
+* `ddt_version_baseline_missing`: advisory / non-blocking.
+* `possible_contract_impact`: remains advisory unless promoted by status gate.
 
 ---
 
@@ -781,6 +791,13 @@ def test_sync_engine_drift_detection():
 
 Strict targets must use explicit `l3_version`. Do not use `strategy="latest"` for strict targets.
 
+DDT baseline advisory (new):
+
+* `DDT_VERSION_BASELINE_MISSING` / `ddt_version_baseline_missing` means the binding is structurally valid but no L3 contract version baseline is found.
+* This is advisory, not a violation.
+* Harbor cannot auto-decide whether `l3_version` should be bumped; review baseline state first, then `harbor accept`.
+* This does not mean DDT is semantically verified forever.
+
 ---
 
 ### 7. Diary: decision memory
@@ -814,6 +831,25 @@ HARBOR_LANGUAGE=en
 ```
 
 You may also use other providers compatible with the OpenAI API.
+
+Semantic audit short-circuit behavior (current):
+
+* Semantic audit is skipped when no valid comparable contract source exists.
+* LLM is not called for `CONTRACT_GAP` / `SKIPPED_NO_CONTRACT`.
+* `harbor check --format jsonl` emits `llm_called=false` for skipped cases.
+* `harbor check --format jsonl` is not pure JSONL-only output: it still prints human-readable DDT blocks, while semantic audit rows are JSONL.
+
+---
+
+## Contract Gap vs Semantic Drift
+
+Missing contract is not semantic drift. Harbor only performs semantic drift judgment when a comparable contract exists.
+
+* Missing contract is not semantic drift.
+* Semantic drift requires an existing comparable contract.
+* `CONTRACT_GAP`: contract is required but no valid contract source exists.
+* `SKIPPED_NO_CONTRACT`: contract is not required and semantic audit is skipped.
+* `CONTRACT_PARSE_ERROR`: a contract source exists but cannot be parsed or classified reliably.
 
 ---
 

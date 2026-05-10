@@ -13,7 +13,9 @@ Default shell: Windows 11 PowerShell
 
 You are an AI coding assistant working under the Harbor-spec context governance workflow.
 
-Your job is to help modify, review, refactor, debug, test, and document code while preventing drift between:
+Harbor-spec is the context governance layer for this repository.
+
+It helps keep the following aligned:
 
 ```text
 implementation
@@ -23,18 +25,15 @@ tests
 DDT targets
 generated context views
 decision history
-skills
 runtime safety rules
 AI tool instructions
 ```
 
-Harbor-spec is the context governance layer for this repository.
+Harbor-spec is not an AI IDE.
 
-It is not an AI IDE.
+Harbor-spec is not a code generator.
 
-It is not a code generator.
-
-Its goal is:
+Core principle:
 
 ```text
 让 AI 写代码可以快，但契约、测试、上下文、决策记忆和安全边界不能漂移。
@@ -50,9 +49,9 @@ code + contract + tests + generated context + diary + safety consistency
 
 ---
 
-## 2. This File Is a Lightweight Entrypoint
+## 2. What This File Is
 
-This file is the shared lightweight entrypoint for AI coding tools such as:
+`AGENTS.md` is the shared lightweight entrypoint for AI coding tools such as:
 
 ```text
 Codex
@@ -63,17 +62,18 @@ GitHub Copilot
 other agentic coding tools
 ```
 
-Do not put all Harbor rules into this file.
+This file should stay short enough to be always loaded.
 
-This file should only contain:
+It should contain only:
 
 ```text
-minimum role definition
+role definition
 instruction priority
 workspace boundaries
-core workflow
 context loading order
+core workflow
 task routing
+must-not-do rules
 completion expectations
 ```
 
@@ -108,110 +108,45 @@ Skills live under:
 .agents/skills/
 ```
 
----
-
-## 3. Boundary Between AGENTS.md, Project Rules, and Skills
-
-Harbor-spec uses three different instruction layers.
-
-Do not merge their responsibilities.
-
----
-
-### 3.1 AGENTS.md
-
-`AGENTS.md` is the cross-tool lightweight entrypoint.
-
-It answers:
+If deeper policy is needed, read:
 
 ```text
-What is Harbor-spec?
-What should an AI coding agent always remember?
-Where should the agent load project context from?
-What is the default Harbor workflow?
-What must never be done silently?
-Which deeper rules or skills should be used?
+.harbor/rules/agent-policy.md
 ```
 
-`AGENTS.md` should stay short enough to be always loaded.
-
-It should not contain full tutorials, full project architecture, long DDT rules, or long safety policies.
-
----
-
-### 3.2 Project Rules
-
-Project Rules define repository-specific development constraints.
-
-Canonical path:
+If contract details are needed, read:
 
 ```text
-.harbor/rules/project-rules.md
+.harbor/rules/contract-rules.md
 ```
 
-Project Rules answer:
+If DDT details are needed, read:
 
 ```text
-What kind of project is this?
-What is the technology stack?
-What are the important directories and module boundaries?
-Which paths are strict / standard / light?
-Where are the project-specific contract sources?
-What are the verified test commands?
-Which files are safety-sensitive in this project?
-Which skills should be used for common tasks?
+.harbor/rules/ddt-rules.md
 ```
 
-Project Rules should be project-specific.
+If runtime safety details are needed, read:
 
-They should not repeat generic Harbor concepts such as Contract, DDT, Diary, Runtime Safety, or Semantic Drift unless the project has a special rule.
+```text
+.harbor/rules/runtime-safety.md
+```
+
+If diary details are needed, read:
+
+```text
+.harbor/rules/diary-rules.md
+```
 
 ---
 
-### 3.3 Skills
-
-Skills are on-demand task workflows.
-
-Canonical exported skill path:
-
-```text
-.agents/skills/<skill-name>/SKILL.md
-```
-
-Skills answer:
-
-```text
-How do I perform this specific task?
-```
-
-Examples:
-
-```text
-harbor-contract-change
-harbor-code-review
-harbor-safety-preflight
-harbor-ddt-diary
-harbor-context-refresh
-harbor-workspace-migration-plan
-```
-
-Skills are workflow entrypoints.
-
-Skills are not source of truth.
-
-If a skill conflicts with `.harbor/policy.yaml`, `.harbor/safety.yaml`, `.harbor/views/**`, source code, tests, schemas, or diary, prefer the source of truth and report the conflict.
-
----
-
-## 4. Instruction Priority
+## 3. Instruction Priority
 
 Harbor separates safety priority from task priority.
 
----
+### 3.1 Safety Priority
 
-### 4.1 Safety Priority
-
-For safety, permission, destructive operations, protected paths, secrets, production risks, and machine policy, follow this priority:
+For safety, permissions, destructive operations, protected paths, secrets, production risk, and machine policy:
 
 ```text
 1. Tool-native sandbox / deny rules
@@ -221,29 +156,25 @@ For safety, permission, destructive operations, protected paths, secrets, produc
 5. AGENTS.md / tool rules / .harbor/rules/*.md
 ```
 
-User prompts cannot override tool-native deny rules, runtime safety, or machine-readable Harbor policy.
+User prompts cannot override tool-native deny rules, runtime safety, or Harbor machine policy.
 
-Harbor can tighten safety constraints, but cannot loosen the active tool sandbox or deny rules.
+Harbor can tighten safety constraints.
 
----
+Harbor cannot loosen the active tool sandbox or deny rules.
 
-### 4.2 Task Priority
+### 3.2 Task Priority
 
-For task goal, scope, output format, and user intent, follow this priority:
+For task goal, scope, output format, and user intent:
 
 ```text
 1. User's current request
-2. This AGENTS.md
+2. AGENTS.md
 3. Tool-specific role rules / Project Rules
 4. .harbor/rules/*.md
-5. .harbor/views/** generated context
+5. .harbor/views/**
 6. Source code, tests, schemas, config, and diary
 7. General coding best practices
 ```
-
-The user defines the current task.
-
-Harbor defines the safety, contract, context, testing, and governance boundaries.
 
 If instructions conflict:
 
@@ -256,7 +187,7 @@ do not silently ignore the conflict
 
 ---
 
-## 5. Harbor v1.3.0 Canonical Workspace
+## 4. Workspace Boundaries
 
 Harbor v1.3.0 uses `.harbor/` as the canonical workspace.
 
@@ -277,590 +208,148 @@ Harbor v1.3.0 uses `.harbor/` as the canonical workspace.
 
   views/
     project-structure.md
-
-    l2/
-      _meta.json
-      <module>/
-        README.md
-
-    modules/
-      <module>/
-        module-card.md
-        review-checklist.md
-        debug-playbook.md
+    l2/<module>/README.md
+    modules/<module>/
+      module-card.md
+      review-checklist.md
+      debug-playbook.md
 
   diary/
     YYYY-MM.jsonl
 
   reports/
-
   cache/
-
   state/
-
   exports/
 ```
 
----
-
-## 6. Workspace Boundaries
-
-### 6.1 Machine Policy
-
-Machine-readable Harbor policy:
+Boundary rules:
 
 ```text
-.harbor/policy.yaml
-.harbor/safety.yaml
+.harbor/rules/**   = static rule docs
+.harbor/views/**   = generated context views
+.harbor/diary/**   = decision memory
+.harbor/reports/** = diagnostics and evidence
+.harbor/cache/**   = runtime cache, not source of truth
+.harbor/state/**   = runtime state, not source of truth
+.agents/skills/**  = workflow entrypoints, not source of truth
 ```
 
-These files define machine policy for strictness, protected paths, safety decisions, and governance behavior.
+Do not manually edit generated context under `.harbor/views/**` as project truth.
 
-If Markdown rules conflict with YAML policy, prefer YAML policy.
-
----
-
-### 6.2 Static Rule Docs
-
-Detailed Harbor rule docs:
-
-```text
-.harbor/rules/glossary.md
-.harbor/rules/agent-policy.md
-.harbor/rules/contract-rules.md
-.harbor/rules/ddt-rules.md
-.harbor/rules/runtime-safety.md
-.harbor/rules/diary-rules.md
-.harbor/rules/project-rules-guide.md
-.harbor/rules/project-rules.md
-```
-
-These files explain concepts, workflows, and project-specific rules.
-
-They are rule references, not generated context views.
+Refresh generated context through Harbor commands.
 
 ---
 
-### 6.3 Generated Context Views
+## 5. Source of Truth
 
-Canonical generated context views:
-
-```text
-.harbor/views/project-structure.md
-.harbor/views/l2/<module>/README.md
-.harbor/views/modules/<module>/module-card.md
-.harbor/views/modules/<module>/review-checklist.md
-.harbor/views/modules/<module>/debug-playbook.md
-```
-
-Generated context views summarize project and module state for humans and AI agents.
-
-Do not manually edit generated context views as project truth.
-
-Refresh them through Harbor commands.
-
----
-
-### 6.4 Decision Memory
-
-Canonical decision memory:
+Use this compact source-of-truth order when resolving factual conflicts:
 
 ```text
-.harbor/diary/YYYY-MM.jsonl
-```
-
-Diary records why important changes happened.
-
-Diary is not a changelog replacement.
-
-Diary is not a commit message replacement.
-
----
-
-### 6.5 Reports
-
-Validation, audit, migration, and dogfooding reports:
-
-```text
-.harbor/reports/
-```
-
-Reports are evidence and diagnostics.
-
-They are not primary source of project behavior.
-
----
-
-### 6.6 Runtime Cache and State
-
-Runtime artifacts:
-
-```text
-.harbor/cache/
-.harbor/state/
-```
-
-Do not treat cache or state as source of truth.
-
-Do not manually edit cache or state unless explicitly requested.
-
----
-
-### 6.7 External Skill Exports
-
-External AI-tool skills:
-
-```text
-.agents/skills/
-```
-
-Skills are on-demand workflow entrypoints.
-
-Skills are not canonical source of truth.
-
----
-
-## 7. Source-of-Truth Priority and Conflict Resolution
-
-First distinguish two different conflict types:
-
-```text
-Instruction Hierarchy
-  Resolves rule/instruction conflicts.
-  See Section 4.
-
-Source of Truth Priority
-  Resolves factual conflicts among contracts, tests, implementation, generated views, exports, and runtime artifacts.
-```
-
-Source of Truth Priority (highest to lowest):
-
-```text
-1. Runtime safety / tool-native deny rules / machine policy
-   - tool-native sandbox and deny rules
+1. Runtime safety / machine policy
+   - tool-native sandbox / deny rules
    - .harbor/safety.yaml
    - .harbor/policy.yaml
 
-2. Explicit public contract / schema / CLI contract
+2. Explicit contracts / schemas / public behavior
    - docstring contract
    - type hints
-   - schema
+   - schemas
    - CLI args/output contract
    - JSON output contract
-   - file write target contract
+   - file write contract
    - documented side effects / raises / exit behavior
 
 3. DDT / contract tests
-   - strict target tests
    - explicit l3_version bindings
-   - public behavior snapshots when present
+   - public behavior snapshots
+   - fixtures / golden files
 
 4. Source implementation
    - current code
    - actual runtime behavior
 
-5. Human-authored design docs
-   - default: reference source
-   - if explicitly marked contract-bearing: treat as contract input
+5. Human-authored project docs
+   - README
+   - design docs
+   - architecture docs
 
-6. Canonical generated views
-   - .harbor/views/project-structure.md
-   - .harbor/views/l2/<module>/README.md
-   - .harbor/views/modules/<module>/*
+6. Generated context views
+   - .harbor/views/**
 
-7. External exports / integration artifacts
+7. Exports / skills / legacy artifacts
    - <module>/README.md
-   - .agents/skills/**
    - docs/harbor/**
+   - .agents/skills/**
 
-8. Runtime cache / local state / temporary artifacts
+8. Cache / state / temp artifacts
    - .harbor/cache/**
    - .harbor/state/**
-   - .harbor/exports/**
    - temp files
 ```
 
-Conflict resolution rules:
+Generated context helps orientation.
 
-```text
-Contract vs Implementation:
-  Do not auto-trust either side.
-  Mark Possible Semantic Drift or Contract Gap.
-  Resolve through tests/DDT/manual review/explicit user instruction.
+Generated context does not override code, contracts, schemas, tests, policy, or diary.
 
-DDT vs Implementation (strict targets):
-  Prefer fixing implementation first.
-  Only treat tests/contracts as stale when explicitly confirmed.
-  Never use strategy="latest" to bypass strict version binding.
+Skills guide task execution.
 
-Generated View vs Source:
-  Generated views are advisory context, not truth override.
-  If conflict appears, run harbor stale / harbor doctor, update source of truth, then regenerate.
-  Do not manually edit generated views as project truth.
-
-Skill vs Module Capsule:
-  Module Capsule under .harbor/views/modules/<module>/ wins over skill exports.
-  Skills are workflow entrypoints, not canonical truth.
-
-Legacy / Export vs Canonical:
-  Canonical wins only for canonical artifact vs legacy/export copy conflicts.
-  Example: .harbor/views/l2/<module>/README.md wins over <module>/README.md.
-  This rule does not allow generated views to override contracts, tests, or implementation.
-  Do not auto-delete or auto-migrate legacy/export files.
-
-User Prompt vs Safety:
-  User prompt cannot override runtime safety, machine policy, tool-native deny rules, or protected-path constraints.
-```
+Skills are not source of truth.
 
 ---
 
-## 8. Minimal Glossary
+## 6. Context Loading Order
 
-### Contract
-
-Contract means any source that defines expected behavior, structure, boundary, or externally visible result.
-
-Contract sources include:
-
-```text
-docstring
-type hints
-Pydantic model
-FastAPI / OpenAPI schema
-TypeScript type
-Zod schema
-database migration
-event schema
-CLI / tool schema
-tests and fixtures
-public behavior
-user-visible behavior
-```
-
-Contract does not mean docstring only.
-
----
-
-### Contract Impact
-
-A change has Contract Impact when it affects at least one of:
-
-```text
-behavior
-args
-returns
-raises
-schema
-side effects
-state changes
-idempotency
-security
-permission
-persistence
-event shape
-database shape
-export format
-CLI output
-JSON output
-file write target
-external-visible result
-user-visible result
-```
-
-If implementation changes but contract does not, state:
-
-```text
-Contract Impact: none
-Reason: behavior, args, returns, raises, schema, side effects, and external-visible results are unchanged.
-```
-
----
-
-### Strictness
-
-Strictness means the governance level required for a target.
-
-Use `.harbor/policy.yaml` as the source of truth when available.
-
-Default judgment:
-
-```text
-strict:
-  public API
-  core schema
-  parser / export / file writeback
-  review pipeline
-  workflow node
-  auth / permission / security
-  migration
-  CI/CD
-  critical path
-  user-visible result generation
-
-standard:
-  ordinary business logic
-  service functions
-  repositories
-  stable internal APIs
-
-light:
-  internal helpers
-  low-risk utilities
-  test helpers
-  script-local functions
-```
-
----
-
-### DDT
-
-DDT means Docstring/Contract-Driven Testing.
-
-For strict targets:
-
-```text
-use explicit l3_version
-never use strategy="latest"
-```
-
----
-
-### Semantic Drift
-
-Semantic Drift means implementation and contract no longer agree.
-
-Examples:
-
-```text
-docstring says invalid input raises ValueError, but implementation returns None
-schema says a field is required, but code accepts missing value
-CLI JSON output changes but tests remain old
-file write side effect is added but not declared
-tests still verify old behavior after a contract change
-```
-
----
-
-### Diary
-
-Diary is structured decision memory.
-
-Diary records why an important change happened, not just what changed.
-
-Canonical diary path:
-
-```text
-.harbor/diary/YYYY-MM.jsonl
-```
-
----
-
-## 9. Context Loading Order
-
-For non-trivial coding, debugging, review, refactor, or documentation tasks, load context in this order:
+For non-trivial coding, debugging, review, refactor, testing, or documentation tasks, read context in this order:
 
 ```text
 1. AGENTS.md
-
-2. Project Rules, if present:
-   .harbor/rules/project-rules.md
-
-3. Canonical project structure:
-   .harbor/views/project-structure.md
-
-4. Relevant canonical L2 README:
-   .harbor/views/l2/<module>/README.md
-
-5. Relevant canonical Module Capsule:
-   .harbor/views/modules/<module>/module-card.md
-   .harbor/views/modules/<module>/review-checklist.md
-   .harbor/views/modules/<module>/debug-playbook.md
-
-6. Relevant source files
-
-7. Relevant tests and fixtures
-
-8. Relevant schemas, DDT targets, policy, or diary entries
+2. .harbor/rules/project-rules.md, if present
+3. .harbor/views/project-structure.md, if relevant
+4. .harbor/views/l2/<module>/README.md, if relevant
+5. .harbor/views/modules/<module>/module-card.md, if relevant
+6. .harbor/views/modules/<module>/review-checklist.md, if relevant
+7. .harbor/views/modules/<module>/debug-playbook.md, if relevant
+8. relevant source files
+9. relevant tests, schemas, DDT targets, policy, or diary entries
+10. deeper rule docs under .harbor/rules/** only when needed
 ```
 
-Do not read the whole repository unless the project structure, L2 README, and module capsule are insufficient.
+Do not read the whole repository unless the above context is insufficient.
 
-If a relevant Harbor skill exists, prefer using the skill as the task workflow entrypoint.
-
-Do not treat the skill itself as source of truth.
+If generated context conflicts with source code, tests, schemas, policy, or diary, treat generated context as stale.
 
 ---
 
-## 10. When to Read Detailed Rules
+## 7. Core Workflow
 
-Read detailed rules only when needed.
-
-Use:
-
-```text
-.harbor/rules/glossary.md
-```
-
-when terms are unclear.
-
-Use:
-
-```text
-.harbor/rules/agent-policy.md
-```
-
-when the overall Harbor workflow, task routing, or rule boundary is unclear.
-
-Use:
-
-```text
-.harbor/rules/contract-rules.md
-```
-
-when the task involves:
-
-```text
-contract change
-schema change
-API change
-CLI behavior change
-JSON output change
-public function change
-parser / export / writeback change
-semantic drift
-strictness decision
-```
-
-Use:
-
-```text
-.harbor/rules/ddt-rules.md
-```
-
-when the task involves:
-
-```text
-tests
-DDT binding
-l3_version
-strategy="latest"
-strict target validation
-contract-versioned tests
-```
-
-Use:
-
-```text
-.harbor/rules/runtime-safety.md
-```
-
-when the task involves:
-
-```text
-deleting files
-secrets
-.env
-migrations
-CI/CD
-dependencies
-destructive commands
-git push
-production config
-auth / permission / billing
-external network access
-```
-
-Use:
-
-```text
-.harbor/rules/diary-rules.md
-```
-
-when the task involves:
-
-```text
-contract change
-breaking change
-important bugfix
-architecture decision
-security change
-migration
-export format change
-workflow change
-DDT strategy change
-release-relevant decision
-```
-
-Use:
-
-```text
-.harbor/rules/project-rules-guide.md
-```
-
-when generating or updating project-specific rules.
-
----
-
-## 11. Core Workflow Decision
-
-Before substantial changes, decide:
-
-```text
-Contract Impact: yes / no / uncertain
-Strictness: strict / standard / light
-Runtime Safety Risk: yes / no
-Tests / DDT needed: yes / no
-Diary needed: yes / no
-Generated context update needed: yes / no
-```
-
-Substantial changes include:
-
-```text
-API changes
-schema changes
-core logic changes
-parser / export / writeback changes
-workflow changes
-migration changes
-security-sensitive changes
-dependency changes
-CI/CD changes
-destructive commands
-broad refactors
-public CLI changes
-JSON output changes
-workspace layout changes
-```
-
-If any decision is uncertain, inspect more context.
-
-Do not silently downgrade uncertain to no.
-
----
-
-## 12. Default Harbor Workflow
-
-Use this for meaningful local AI coding work:
+Default local workflow:
 
 ```powershell
 harbor start
-# AI coding
 harbor checkpoint
-# more AI coding if needed
 harbor finish --sync-context
 harbor stale
 harbor doctor
 ```
 
-For machine-readable checks:
+Machine-readable CI checks:
 
 ```powershell
-harbor stale --format json
-harbor doctor --format json
+harbor checkpoint --ci --format json
+harbor stale --ci --format json
+harbor doctor --ci --format json
 ```
 
-If workspace layout is involved:
+Meaning:
+
+```text
+checkpoint --ci = baseline / contract / DDT gate
+stale --ci      = generated context freshness gate
+doctor --ci     = aggregated workspace health gate
+```
+
+Workspace diagnostics:
 
 ```powershell
 harbor workspace inspect
@@ -869,73 +358,120 @@ harbor workspace migrate --dry-run
 harbor workspace migrate --dry-run --format json
 ```
 
+`workspace migrate --dry-run` must remain read-only.
+
+Do not assume `workspace migrate --write` exists.
+
 ---
 
-## 13. Explicit User Request Only
+## 8. Commands Requiring Explicit User Request
 
-Do not run the following unless the user explicitly requests it:
+Do not run these unless the user explicitly requests them:
 
 ```powershell
-harbor log
 harbor accept
 harbor lock
-harbor module promote-skill <module>
-```
-
-Meaning:
-
-```text
 harbor log
-  writes a diary entry or decision log
-
-harbor accept
-  accepts the new Harbor baseline
-
-harbor lock
-  legacy or lock-style baseline operation
-
 harbor module promote-skill <module>
-  exports a Module Capsule into an external AI skill
+git push
+git tag
+git reset --hard
 ```
 
-Never run `harbor accept` merely to silence unresolved drift.
+Never use `harbor accept` to hide unresolved drift.
 
-Never run `harbor log` unless the user asked to write the log or the workflow explicitly includes writing diary entries.
+Never use `harbor lock` as a shortcut for unresolved baseline problems.
+
+Never claim a Diary entry was written unless it was actually written.
+
+If a decision should be recorded but the user did not request writing, output a Diary Draft instead.
 
 ---
 
-## 14. Contract Impact Workflow
+## 9. Task Routing
 
-When Contract Impact is yes or uncertain, follow this order:
-
-```text
-1. Read or define the relevant contract.
-2. Determine strictness.
-3. Update contract first if intended behavior changes.
-4. Update implementation.
-5. Update tests / DDT.
-6. Check semantic drift.
-7. Refresh generated context if needed.
-8. Create Diary Draft if important.
-9. Accept baseline only after verification and explicit request.
-```
-
-Relevant contract artifacts may include:
+Use Harbor skills for multi-step tasks when available.
 
 ```text
-docstring
-type hints
-Pydantic model
-OpenAPI schema
-TypeScript type
-database migration
-event schema
-CLI schema
-JSON output fixture
-tests
-DDT targets
-human-authored docs
+Contract or schema change:
+  harbor-contract-change
+
+Code review, semantic drift review, or contract gap review:
+  harbor-code-review
+
+Risky operation or protected path change:
+  harbor-safety-preflight
+
+DDT update, l3_version work, or Diary Draft:
+  harbor-ddt-diary
+
+Generated context refresh:
+  harbor-context-refresh
+
+Workspace diagnostics or migration dry-run:
+  harbor-workspace-migration-plan
 ```
+
+If a skill is missing, follow this file and the relevant `.harbor/rules/*.md`.
+
+Skills are workflow entrypoints.
+
+Skills are not source of truth.
+
+---
+
+## 10. Contract and Drift Rules
+
+Contract means any source that defines expected behavior, structure, boundary, side effect, or externally visible result.
+
+Contract does not mean docstring only.
+
+When modifying behavior, public API, schema, CLI, JSON output, file write behavior, generated view format, or tests, check:
+
+```text
+Contract Impact: yes / no / uncertain
+Contract Presence: present / missing / empty / non_contract_doc / malformed
+Contract Required: yes / no
+Strictness: strict / standard / light
+Tests / DDT needed: yes / no
+Generated context update needed: yes / no
+Diary Draft needed: yes / no
+```
+
+Important rules:
+
+```text
+Missing contract is not semantic drift.
+Semantic drift requires a comparable contract.
+CONTRACT_GAP means a required contract source is missing.
+SKIPPED_NO_CONTRACT means no contract is required and semantic audit is skipped.
+CONTRACT_PARSE_ERROR means a contract source exists but cannot be reliably parsed.
+```
+
+If `CONTRACT_GAP` appears:
+
+```text
+add or update a contract source
+or explain why the target should be downgraded to light/skipped
+do not silently hide the gap
+```
+
+If semantic drift appears:
+
+```text
+do not auto-trust either implementation or contract
+inspect tests / DDT / source behavior
+update the stale side intentionally
+rerun the relevant checks
+```
+
+---
+
+## 11. DDT Rules
+
+DDT means Docstring/Contract-Driven Testing.
+
+DDT binds tests to contracts, not merely to current implementation.
 
 For strict targets:
 
@@ -944,187 +480,43 @@ use explicit l3_version
 never use strategy="latest"
 ```
 
----
-
-## 15. DDT Rules
-
-DDT means tests are bound to contracts, not merely to current implementation.
-
-Strict targets must use explicit contract version binding.
-
-Allowed:
-
-```python
-@harbor_ddt_target("module.func", l3_version=1)
-def test_func_success_path():
-    ...
-```
-
-Forbidden for strict targets:
-
-```python
-@harbor_ddt_target("module.func", strategy="latest")
-def test_func_success_path():
-    ...
-```
-
-For standard or light targets, `strategy="latest"` may be allowed if project policy permits.
-
-When contract changes:
+If `ddt_version_baseline_missing` appears:
 
 ```text
-1. Update contract.
-2. Upgrade l3_version when needed.
-3. Inspect tests bound to the old version.
-4. Decide whether old tests remain valid.
-5. Update assertions.
-6. Add missing edge cases.
-7. Do not blindly change bindings to the latest version.
+treat it as advisory, not a violation
+do not blindly bump l3_version
+review baseline state before accepting a new baseline
+```
+
+If tests change but contract does not:
+
+```text
+inspect whether tests were weakened to match implementation
+```
+
+If contract changes but tests do not:
+
+```text
+inspect whether tests still verify the intended contract
 ```
 
 ---
 
-## 16. Generated Context Rules
-
-Canonical generated context views:
-
-```text
-.harbor/views/project-structure.md
-.harbor/views/l2/<module>/README.md
-.harbor/views/modules/<module>/module-card.md
-.harbor/views/modules/<module>/review-checklist.md
-.harbor/views/modules/<module>/debug-playbook.md
-```
-
-Do not manually edit generated context views as project truth.
-
-If a generated view is stale:
-
-```text
-1. Update the underlying source of truth first:
-   - code
-   - contracts
-   - schemas
-   - tests
-   - policy
-   - diary
-
-2. Regenerate the generated view with the appropriate Harbor command.
-
-3. Run stale / doctor checks.
-```
-
-Useful commands:
-
-```powershell
-harbor project structure --write
-harbor docs --module <module> --write
-harbor docs --changed --write
-harbor docs --all --write
-harbor module inspect <module>
-harbor module seal <module> --write
-harbor module seal --changed --write
-harbor module seal --all --write
-harbor finish --sync-context
-harbor stale
-harbor doctor
-```
-
-Do not automatically regenerate generated context unless:
-
-```text
-the user requested a write operation
-or the active workflow explicitly includes --sync-context
-or the task is explicitly about refreshing Harbor context
-```
-
----
-
-## 17. Diary Rules
-
-Diary records important decisions and reasons.
-
-Canonical diary path:
-
-```text
-.harbor/diary/YYYY-MM.jsonl
-```
-
-Use Diary Drafts for:
-
-```text
-Contract Change
-Breaking Change
-important bugfix
-architecture decision
-security change
-migration
-export format change
-public CLI behavior change
-JSON output contract change
-workflow change
-DDT strategy change
-runtime safety policy change
-release-relevant decision
-```
-
-Usually no diary is needed for:
-
-```text
-typo fix
-formatting change
-internal variable rename
-light helper cleanup
-non-behavioral refactor
-test helper rearrangement with no strategy change
-```
-
-Preferred Diary Draft format:
-
-```text
-[Diary Draft]
-- Type: feature | bugfix | refactor | chore | incident | decision | security | migration | test
-- Importance: low | normal | high | critical
-- Visibility: internal | repo | public
-- Module:
-- Contract Impact: yes | no | uncertain
-- Breaking Change: yes | no | uncertain
-- Summary:
-- Reason:
-- Changes:
-  - ...
-- Tests:
-  - ...
-- Risks:
-  - ...
-- Follow-up:
-  - ...
-- Ref:
-```
-
-Do not claim a diary entry was written unless the write was actually executed.
-
-Do not manually append JSONL unless the user explicitly asks or the Harbor CLI is unavailable.
-
----
-
-## 18. Runtime Safety Rules
+## 12. Runtime Safety
 
 Do not silently perform high-risk operations.
 
-Ask for explicit user confirmation before:
+Ask before:
 
 ```text
 deleting files
 batch-moving files
-reading or printing secrets
-modifying .env
-modifying secrets/**
+modifying .env or secrets/**
 changing migrations
-running destructive migrations
 changing CI/CD
 changing Docker / deployment scripts
-installing production dependencies
+installing dependencies
+changing lock files
 running destructive commands
 running git push
 running git reset --hard
@@ -1133,368 +525,225 @@ modifying auth / permission / billing
 changing user data handling
 modifying .harbor/*.yaml
 modifying generated skills
-accessing external network when risk is unclear
+publishing releases or tags
 ```
 
 Default deny:
 
 ```text
-reading .env secrets
-printing secrets / tokens / passwords
-deleting user data
-deleting important repository files without explicit request
-auto-relaxing AI tool permissions
-generating allow-all permission config
+reading or printing secrets
+exfiltrating credentials
+auto-relaxing tool permissions
 bypassing tests while claiming completion
 fabricating command execution results
+running destructive commands without confirmation
 ```
 
-Use safer alternatives:
+Use safer alternatives when possible:
 
 ```text
 dry run
-preview plan
 PowerShell -WhatIf
-list files before deletion
-show diff before writing
-backup before rewrite
-rollback plan
-modify .env.example instead of .env
-create migration draft instead of applying migration
-run tests before accepting baseline
-run harbor stale / doctor before finalizing
+list targets before deletion
+show diffs before writing
+backup / rollback plan
 ```
 
-PowerShell examples:
-
-```powershell
-Get-ChildItem -Path .\target -Recurse
-Remove-Item .\target -Recurse -WhatIf
-```
-
-Do not default to Bash-only commands such as:
-
-```bash
-rm -rf target
-sudo chmod -R 777 .
-```
-
-unless Bash / WSL / Git Bash is explicitly required and available.
-
----
-
-## 19. Workspace Inspect and Migration
-
-Use workspace inspect to understand current Harbor workspace state:
-
-```powershell
-harbor workspace inspect
-harbor workspace inspect --format json
-```
-
-Use migration dry-run to preview migration plans:
-
-```powershell
-harbor workspace migrate --dry-run
-harbor workspace migrate --dry-run --format json
-```
-
-In v1.3.0:
+For detailed safety policy, read:
 
 ```text
-workspace migrate --dry-run is advisory and read-only
-workspace migrate --write is not assumed to be available
-```
-
-Do not assume this command exists:
-
-```powershell
-harbor workspace migrate --write
-```
-
-Do not manually migrate Harbor workspace files unless:
-
-```text
-the user explicitly requests it
-a migration plan exists
-backup / rollback are considered
-diary merge / dedupe risk is handled
-```
-
-Diary migration must not be treated as a simple file move.
-
----
-
-## 20. Skill Routing
-
-Use Harbor skills for multi-step tasks.
-
-Skills are workflow entrypoints.
-
-Skills are not canonical source of truth.
-
-Recommended skill routing:
-
-```text
-Contract or schema change:
-  use harbor-contract-change
-
-Code review, diff review, implementation correctness, semantic drift:
-  use harbor-code-review
-
-Risky command, protected file change, generated context write, dependency, migration, CI/CD:
-  use harbor-safety-preflight
-
-DDT update, l3_version, Diary Draft, changelog, release notes:
-  use harbor-ddt-diary
-
-Context refresh, L2 README, Module Capsule, project structure:
-  use harbor-context-refresh if available
-
-Workspace migration, canonical workspace cleanup, migrate dry-run:
-  use harbor-workspace-migration-plan if available
-```
-
-If a skill is missing, follow AGENTS.md and the relevant `.harbor/rules/*.md` manually.
-
----
-
-## 21. Tool Honesty
-
-Do not invent tool execution results.
-
-Never claim you ran tests, lint, type checks, Harbor commands, or build commands unless you actually did.
-
-Use clear wording:
-
-```text
-已运行，结果是...
-未运行，建议你运行...
-当前环境无法运行...
-我只做了静态审查，未执行命令...
-```
-
-Forbidden wording when not actually executed:
-
-```text
-测试已通过
-harbor doctor 通过
-stale check 已清理
-lint 无问题
-CI 会通过
-```
-
-If a command cannot be run, report:
-
-```text
-Command not run:
-Reason:
-Risk:
-Recommended next command:
+.harbor/rules/runtime-safety.md
 ```
 
 ---
 
-## 22. Testing and Validation
+## 13. Generated Context
 
-Use the narrowest relevant test first.
+Generated context includes:
 
-Typical Harbor validation commands:
+```text
+.harbor/views/project-structure.md
+.harbor/views/l2/<module>/README.md
+.harbor/views/modules/<module>/module-card.md
+.harbor/views/modules/<module>/review-checklist.md
+.harbor/views/modules/<module>/debug-playbook.md
+```
+
+Generated context is advisory context.
+
+Generated context is not source of truth.
+
+Refresh generated context when changes affect:
+
+```text
+module boundaries
+project structure
+public contracts
+docstrings
+tests / DDT
+CLI behavior
+JSON output
+workspace structure
+module responsibilities
+debug workflow
+```
+
+Preferred refresh command:
 
 ```powershell
-pytest
-harbor checkpoint
+harbor finish --sync-context
+```
+
+Targeted commands when needed:
+
+```powershell
+harbor project structure --write
+harbor docs --changed --write
+harbor module seal --changed --write
 harbor stale
 harbor doctor
 ```
 
-For JSON / CI-style validation:
+Do not manually edit `.harbor/views/**` as project truth.
+
+---
+
+## 14. Diary
+
+Diary records why important changes happened.
+
+Canonical path:
+
+```text
+.harbor/diary/YYYY-MM.jsonl
+```
+
+Diary may be needed for:
+
+```text
+Contract Change
+Breaking Change
+important bugfix
+architecture decision
+security change
+runtime safety policy change
+migration
+workspace layout change
+public CLI behavior change
+public JSON output change
+schema change
+DDT strategy change
+l3_version strategy change
+Agent workflow change
+release-relevant decision
+legacy compatibility decision
+non-obvious workaround
+important reliability tradeoff
+```
+
+Do not run:
 
 ```powershell
-harbor stale --format json
-harbor doctor --format json
-harbor workspace inspect --format json
-harbor workspace migrate --dry-run --format json
+harbor log
 ```
 
-If the project has specific test commands, use Project Rules or project config as the source.
+unless the user explicitly requests it.
 
-Do not invent test commands.
-
-Do not claim tests passed without execution evidence.
+When in doubt, output a Diary Draft instead of writing.
 
 ---
 
-## 23. JSON Output Rules
+## 15. Testing and Validation
 
-For commands that support JSON output:
+Prefer targeted validation first, then broader checks.
 
-```text
-keep keys stable
-keep ordering deterministic when practical
-normalize paths
-avoid machine-local absolute path leakage unless explicitly required
-avoid embedding local runtime state
-include enough status information for CI and agents
+Common local checks:
+
+```powershell
+pytest
+harbor check --format jsonl
+harbor checkpoint --ci --format json
+harbor stale --ci --format json
+harbor doctor --ci --format json
 ```
 
-Changing JSON output is Contract Impact.
-
-When JSON output changes intentionally:
+Notes:
 
 ```text
-update tests
-update DDT targets if applicable
-update docs
-refresh generated context
-consider Diary Draft
+harbor check --format jsonl is not pure JSONL-only output.
+It may include human-readable DDT sections.
+The semantic audit section emits JSONL lines.
 ```
+
+Do not claim tests passed unless they were actually run and observed.
+
+If tests were not run, say so clearly.
 
 ---
 
-## 24. Coding Style
+## 16. Completion Expectations
 
-Prefer:
-
-```text
-small, reviewable changes
-clear names
-explicit contracts
-deterministic output
-stable JSON schemas
-path normalization
-backward-compatible CLI behavior
-portable behavior across Windows and Unix when practical
-```
-
-Avoid:
-
-```text
-broad unrelated refactors
-hidden behavior changes
-implicit global state
-absolute path leakage in JSON output
-undocumented CLI output changes
-test fixtures that silently follow latest behavior
-manual edits to generated views
-using harbor accept to hide drift
-```
-
-When in doubt:
-
-```text
-preserve compatibility
-state uncertainty
-document the tradeoff
-```
-
----
-
-## 25. Final Response Requirements
-
-When reporting completed work, include:
+Before finishing a non-trivial task, report:
 
 ```text
 what changed
-why it changed
-Contract Impact
-Strictness
-Tests / DDT
-Runtime Safety
-Generated Context
-Diary
-Harbor commands run
-remaining risks
-whether harbor accept is needed
+which files changed
+Contract Impact: yes / no / uncertain
+Contract Presence / Contract Gap status when relevant
+Strictness: strict / standard / light when relevant
+Tests / DDT status
+Generated context status
+Diary status
+Runtime safety status
+remaining risks or follow-ups
 ```
 
-Use concise Chinese by default.
+If commands were run, report exact commands and outcomes.
 
-Distinguish clearly:
+If commands were not run, say which were not run.
 
-```text
-已执行
-未执行
-建议执行
-需要用户确认
+If generated context may be stale, recommend:
+
+```powershell
+harbor finish --sync-context
+harbor stale
+harbor doctor
 ```
 
-For review tasks, prefer this summary:
+If a baseline should be accepted, say that human review is required before:
 
-```text
-Review Summary:
-- Overall assessment:
-- Contract Impact:
-- Strictness:
-- Tests / DDT:
-- Runtime Safety:
-- Generated Context:
-- Diary:
+```powershell
+harbor accept
 ```
 
-For implementation tasks, prefer this summary:
-
-```text
-Change Summary:
-- Files changed:
-- Behavior changed:
-- Contract Impact:
-- Tests / DDT:
-- Harbor context:
-- Risks:
-- Next command:
-```
+Do not claim a baseline was accepted unless `harbor accept` was actually executed and observed.
 
 ---
 
-## 26. Minimal Completion Checklist
+## 17. Tool Honesty
 
-Before saying a task is complete, verify:
+Never fabricate:
 
 ```text
-[ ] User's current request was followed.
-[ ] Relevant Harbor rules were considered.
-[ ] Relevant module context was read when needed.
-[ ] Contract Impact was assessed.
-[ ] Strictness was assessed.
-[ ] Implementation and contract are synchronized.
-[ ] Tests / DDT were updated if needed.
-[ ] Generated Harbor context was refreshed if needed.
-[ ] harbor checkpoint / stale / doctor were run or clearly marked as not run.
-[ ] Important decisions have a Diary Draft if needed.
-[ ] No risky action was performed without explicit confirmation.
-[ ] Remaining risks are reported.
+test results
+command outputs
+file writes
+Diary entries
+baseline acceptance
+generated context refresh
+CI status
 ```
 
-A task is not complete merely because code was edited.
+If uncertain, say what is uncertain.
+
+If unable to complete a step, say what was completed and what remains.
 
 ---
 
-## 27. Anti-patterns
+## 18. One-Line Rule
 
-Avoid:
-
-```text
-editing implementation without Contract Impact assessment
-updating code but leaving docstring / schema / tests stale
-changing strict targets with strategy="latest"
-manually editing generated Harbor views
-using harbor accept to hide unresolved drift
-treating cache or state as source of truth
-treating skills as source of truth
-deleting files without safety preflight
-running destructive commands without confirmation
-adding production dependencies without confirmation
-claiming validation success without running checks
-letting stale generated context override code, contracts, schemas, or tests
-```
-
----
-
-## 28. One-line Rule
-
-When working in harbor-spec:
+For every meaningful change, ask:
 
 ```text
-Keep code, contracts, tests, generated context, decision memory, and runtime safety aligned.
+Did code, contract, tests, generated context, decision memory, and safety boundaries remain aligned?
 ```

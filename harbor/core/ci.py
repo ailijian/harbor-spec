@@ -22,6 +22,25 @@ class CIFailure:
     suggested_command: Optional[str] = None
 
     def to_dict(self) -> dict:
+        """将通用 CI failure/advisory 项序列化为 machine-readable JSON-compatible dict。
+
+        此函数是 Harbor CI JSON 输出序列化契约的一部分（用于 `stale --ci` / `doctor --ci`
+        以及相关 payload 的稳定字段输出）。
+
+        Behavior:
+          - 输出固定包含 `kind`。
+          - `module` / `view` / `check` / `status` / `reason` / `suggested_command`
+            仅在字段值非 None 时输出（None 字段省略）。
+          - 所有文本字段在输出前均进行 sanitize，避免暴露原始绝对路径或未脱敏文本片段。
+
+        Side Effects:
+          - 只读序列化；不写文件、不修改索引、不改变任何运行状态。
+          - `writes_files` 语义不由本函数改变。
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: read-only
+        """
         payload: Dict[str, object] = {"kind": self.kind}
         if self.module is not None:
             payload["module"] = _sanitize_json_text(self.module)
@@ -60,9 +79,28 @@ class CheckpointCIItem:
     suggested_action: Optional[str] = None
 
     def dedupe_key(self) -> Tuple[str, str]:
-        return (self.func_id or "", self.file_path or "")
+        func = str(self.func_id or "").strip()
+        path = _normalize_checkpoint_key_path(self.file_path)
+        return (func, path)
 
     def to_dict(self) -> dict:
+        """将 checkpoint CI failure/advisory 项序列化为 machine-readable JSON-compatible dict。
+
+        此函数输出 shape 是 `harbor checkpoint --ci --format json` 公开契约之一。
+
+        Behavior:
+          - 输出固定包含 `category` 与 `reason`。
+          - `func_id` / `file_path` / `suggested_action` 仅在字段存在且非空时输出。
+          - `file_path` 会进行路径脱敏与规范化，文本字段会执行 sanitize。
+
+        Side Effects:
+          - 只读序列化；不写文件、不触发修复、不刷新上下文、不接受 baseline。
+          - `writes_files` 语义不由本函数改变。
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: read-only
+        """
         payload: Dict[str, object] = {
             "category": _sanitize_json_text(self.category),
             "reason": _sanitize_json_text(self.reason),
@@ -99,6 +137,7 @@ def build_checkpoint_ci_result(
 ) -> CheckpointCIResult:
     check_errors = list(check_errors or [])
     failures: List[CheckpointCIItem] = []
+    advisory: List[CheckpointCIItem] = []
 
     for typ, binding, message in list(getattr(ddt_report, "violations", []) or []):
         failures.append(
@@ -108,6 +147,17 @@ def build_checkpoint_ci_result(
                 file_path=str(getattr(binding, "file_path", "") or ""),
                 reason=f"{typ}: {message}",
                 suggested_action=t("cli.ci.checkpoint.action.ddt_binding"),
+            )
+        )
+    for item in list(getattr(ddt_report, "advisory", []) or []):
+        binding = getattr(item, "binding", None)
+        advisory.append(
+            CheckpointCIItem(
+                category=str(getattr(item, "category", "") or "ddt_binding_advisory"),
+                func_id=str(getattr(binding, "func_id", "") or ""),
+                file_path=str(getattr(binding, "file_path", "") or ""),
+                reason=str(getattr(item, "message", "") or ""),
+                suggested_action=str(getattr(item, "suggested_action", "") or t("cli.ci.checkpoint.action.ddt_baseline_missing")),
             )
         )
 
@@ -131,6 +181,18 @@ def build_checkpoint_ci_result(
     )
     _push_status_failures(
         failures,
+        items=list(getattr(status_report, "contract_gap", []) or []),
+        category="contract_gap",
+        reason=t("cli.ci.checkpoint.failure.contract_gap"),
+    )
+    _push_status_failures(
+        failures,
+        items=list(getattr(status_report, "contract_parse_error", []) or []),
+        category="contract_parse_error",
+        reason=t("cli.ci.checkpoint.failure.contract_parse_error"),
+    )
+    _push_status_failures(
+        failures,
         items=list(getattr(status_report, "contract_changed", []) or []),
         category="contract_changed",
         reason=t("cli.ci.checkpoint.failure.contract_changed"),
@@ -141,8 +203,17 @@ def build_checkpoint_ci_result(
         category="contract_and_body_changed",
         reason=t("cli.ci.checkpoint.failure.contract_and_body_changed"),
     )
+    for entry in list(getattr(status_report, "skipped_no_contract", []) or []):
+        advisory.append(
+            CheckpointCIItem(
+                category="skipped_no_contract",
+                func_id=str(getattr(entry, "id", "") or ""),
+                file_path=str(getattr(entry, "file_path", "") or ""),
+                reason=t("cli.ci.checkpoint.failure.skipped_no_contract"),
+                suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
+            )
+        )
 
-    advisory: List[CheckpointCIItem] = []
     confirmed_contract_impact = 0
     possible_contract_impact = 0
     report_payload = contract_impact_report_to_dict(contract_impact_report)
@@ -198,9 +269,13 @@ def build_checkpoint_ci_result(
         "drift": len(list(getattr(status_report, "drift", []) or [])),
         "modified": len(list(getattr(status_report, "modified", []) or [])),
         "contract_changed": len(list(getattr(status_report, "contract_changed", []) or [])),
+        "contract_gap": len(list(getattr(status_report, "contract_gap", []) or [])),
+        "skipped_no_contract": len(list(getattr(status_report, "skipped_no_contract", []) or [])),
+        "contract_parse_error": len(list(getattr(status_report, "contract_parse_error", []) or [])),
         "untracked": len(list(getattr(status_report, "untracked", []) or [])),
         "missing": len(list(getattr(status_report, "missing", []) or [])),
         "ddt_failures": len(list(getattr(ddt_report, "violations", []) or [])),
+        "ddt_advisory": len(list(getattr(ddt_report, "advisory", []) or [])),
         "confirmed_contract_impact": confirmed_contract_impact,
         "possible_contract_impact": possible_contract_impact,
     }
@@ -311,6 +386,26 @@ def build_doctor_ci_result(report: DoctorReport) -> CIResult:
 
 
 def ci_result_to_dict(result: CIResult) -> dict:
+    """将通用 CIResult 序列化为 checkpoint 之外的公开 CI JSON payload。
+
+    此函数用于 `stale --ci` / `doctor --ci` 等通用 CI 输出契约，返回 JSON-compatible dict。
+
+    Output Contract:
+      - 必含键：`command` / `ci` / `status` / `exit_code` / `writes_files` /
+        `summary` / `ci_failures` / `advisory` / `next_steps`。
+      - `writes_files` 固定为 `false`，表示 CI 门禁输出只读。
+      - `summary`、`next_steps` 与条目文本会执行 sanitize（含路径/文本脱敏）。
+      - `ci_failures` / `advisory` 的 item 形状由对应 `to_dict()` 契约保证；
+        item 内 None 字段会按各自规则省略。
+
+    Side Effects:
+      - 只做序列化，不执行修复、不刷新上下文、不接受 baseline。
+      - 不写文件、不改变运行状态；`writes_files` 不会被动态改写。
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+    """
     return {
         "command": result.command,
         "ci": True,
@@ -436,6 +531,27 @@ def _sanitize_summary(summary: dict) -> dict:
 
 
 def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
+    """将 CheckpointCIResult 序列化为 `checkpoint --ci` 公开 CI JSON payload。
+
+    此函数是 checkpoint CI JSON 输出契约的一部分，返回 JSON-compatible dict。
+
+    Output Contract:
+      - 必含键：`command` / `ci` / `status` / `exit_code` / `writes_files` /
+        `summary` / `ci_failures` / `advisory` / `contract_impact` / `next_steps`。
+      - `writes_files` 固定为 `false`。
+      - `ci_failures` 承载阻断项（如 `contract_gap` / `contract_parse_error` /
+        `possible_semantic_drift` / `contract_and_body_changed` / `modified` 等）。
+      - `advisory` 保留非阻断项（包括 `ddt_version_baseline_missing`）。
+      - 路径与文本字段在输出前会做 sanitize；item 内 None 字段按 item 规则省略。
+
+    Side Effects:
+      - 只做序列化，不执行修复、不刷新上下文、不接受 baseline。
+      - 不写文件、不改变状态；`writes_files` 语义不被本函数改变。
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+    """
     return {
         "command": result.command,
         "ci": True,
@@ -508,9 +624,14 @@ def _dedupe_checkpoint_items(items: Sequence[CheckpointCIItem]) -> List[Checkpoi
         "possible_semantic_drift": 4,
         "missing_function": 5,
         "untracked_function": 6,
-        "confirmed_contract_impact": 7,
-        "possible_contract_impact": 8,
-        "unknown_contract_impact": 9,
+        "contract_gap": 7,
+        "contract_parse_error": 8,
+        "confirmed_contract_impact": 9,
+        "possible_contract_impact": 10,
+        "unknown_contract_impact": 11,
+        "skipped_no_contract": 12,
+        "ddt_version_baseline_missing": 13,
+        "ddt_binding_advisory": 14,
     }
     selected: Dict[Tuple[str, str], CheckpointCIItem] = {}
     out: List[CheckpointCIItem] = []
@@ -551,3 +672,10 @@ def _sanitize_checkpoint_contract_impact(payload: dict) -> dict:
         else:
             out[key] = value
     return out
+
+
+def _normalize_checkpoint_key_path(path_text: Optional[str]) -> str:
+    raw = str(path_text or "").strip()
+    if not raw:
+        return ""
+    return _sanitize_single_path(raw).strip().lower()

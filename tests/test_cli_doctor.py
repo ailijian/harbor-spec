@@ -38,10 +38,22 @@ def run_cmd_with_err(argv):
 
 def _empty_status_report():
     return SimpleNamespace(
-        counts={"drift": 0, "modified": 0, "contract_changed": 0, "untracked": 0, "missing": 0},
+        counts={
+            "drift": 0,
+            "modified": 0,
+            "contract_changed": 0,
+            "contract_gap": 0,
+            "skipped_no_contract": 0,
+            "contract_parse_error": 0,
+            "untracked": 0,
+            "missing": 0,
+        },
         drift=[],
         modified=[],
         contract_changed=[],
+        contract_gap=[],
+        skipped_no_contract=[],
+        contract_parse_error=[],
         untracked=[],
         missing=[],
     )
@@ -66,10 +78,22 @@ def test_doctor_default_is_changed_scope(monkeypatch):
         cli_main.SyncEngine,
         "check_status",
         lambda self: SimpleNamespace(
-            counts={"drift": 1, "modified": 0, "contract_changed": 0, "untracked": 0, "missing": 0},
+            counts={
+                "drift": 1,
+                "modified": 0,
+                "contract_changed": 0,
+                "contract_gap": 0,
+                "skipped_no_contract": 0,
+                "contract_parse_error": 0,
+                "untracked": 0,
+                "missing": 0,
+            },
             drift=[SimpleNamespace(file_path="harbor/core/sync.py")],
             modified=[],
             contract_changed=[],
+            contract_gap=[],
+            skipped_no_contract=[],
+            contract_parse_error=[],
             untracked=[],
             missing=[],
         ),

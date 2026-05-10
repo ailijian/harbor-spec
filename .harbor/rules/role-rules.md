@@ -74,7 +74,7 @@ Skills are workflow entrypoints, not source of truth.
 Use Harbor skills for multi-step tasks:
 
 - Contract or schema change: `harbor-contract-change`
-- Code review or semantic drift review: `harbor-code-review`
+- Code review, semantic drift review, contract gap review: `harbor-code-review`
 - Risky operation or protected path change: `harbor-safety-preflight`
 - DDT update or Diary Draft: `harbor-ddt-diary`
 - Generated context refresh: `harbor-context-refresh`
@@ -99,6 +99,7 @@ harbor doctor
 Machine-readable checks:
 
 ```powershell
+harbor checkpoint --ci --format json
 harbor stale --format json
 harbor doctor --format json
 ```
