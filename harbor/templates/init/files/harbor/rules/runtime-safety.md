@@ -2,7 +2,7 @@
 
 # Harbor Runtime Safety
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Canonical path: `.harbor/rules/runtime-safety.md`  
 Purpose: Runtime safety rules for AI coding agents working under Harbor-spec
 
@@ -533,6 +533,13 @@ describe required environment variable names without values
 ask user to update real .env manually
 ```
 
+Diary Draft / future log-draft safety:
+
+```text
+Do not include secret values in Diary Draft content.
+Do not send .env / credentials / tokens / private user data to LLM for log drafting.
+```
+
 ---
 
 ### 13.3 Database Migrations
@@ -810,6 +817,8 @@ the operation uploads private data without explicit consent
 the operation bypasses project or tool policy
 ```
 
+This includes LLM-assisted log drafting with raw secrets or private user data.
+
 ---
 
 ## 19. User Data Safety
@@ -925,5 +934,7 @@ prefer explicit confirmation
 prefer reversible changes
 prefer honest reporting
 ```
+
+Do not auto-relax tool permissions.
 
 Harbor Runtime Safety exists to make AI coding safer, more reviewable, and more trustworthy.

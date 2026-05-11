@@ -1,6 +1,6 @@
 # TRAE Harbor Rules
 
-Version: Harbor-spec v1.3.0
+Version: Harbor-spec v1.4.x
 
 Follow `AGENTS.md` as the shared Harbor-spec project workflow.
 
@@ -100,8 +100,8 @@ Machine-readable checks:
 
 ```powershell
 harbor checkpoint --ci --format json
-harbor stale --format json
-harbor doctor --format json
+harbor stale --ci --format json
+harbor doctor --ci --format json
 ```
 
 Workspace diagnostics only:
@@ -112,6 +112,31 @@ harbor workspace migrate --dry-run
 ```
 
 `harbor workspace migrate --dry-run` is read-only and is not part of the default coding workflow.
+
+---
+
+## TypeScript contract governance (v1.4.x)
+
+Harbor v1.4+ evolves to language-neutral ContractSubject governance.
+
+TypeScript v1.4.x MVP scope:
+
+- opt-in only (`typescript.enabled=true`)
+- `.ts` only by default
+- supported public targets: exported function / exported async function / exported const arrow / exported class public method
+- contract source focus: nearby JSDoc/TSDoc
+- checkpoint categories: `contract_gap`, `skipped_no_contract`, `unsupported_syntax_advisory`
+- `harbor next` guidance remains deterministic
+
+Rules:
+
+- TypeScript signature alone does not satisfy strict semantic contract requirements.
+- Missing required nearby JSDoc/TSDoc on TypeScript public targets may produce `contract_gap`.
+- Unsupported TypeScript syntax should be advisory (`unsupported_syntax_advisory`), not `contract_parse_error`.
+- JavaScript is not first-class in v1.4.x.
+- `.js/.jsx/.tsx/.d.ts` default scanning is not enabled in v1.4.x.
+- TypeScript semantic audit is not supported in v1.4.x.
+- TypeScript DDT is not supported in v1.4.x.
 
 ---
 
@@ -129,6 +154,8 @@ harbor module promote-skill <module>
 Never use `harbor accept` to hide unresolved drift.
 
 Never claim a Diary entry was written unless it was actually written.
+
+Do not run `harbor log write` automatically.
 
 ---
 
@@ -170,6 +197,17 @@ Use:
 * “未运行，建议你运行...”
 * “当前环境无法运行...”
 * “我只做了静态审查，未执行命令...”
+
+---
+
+## Diary Draft rule
+
+For non-trivial tasks:
+
+- assess and report `Diary Need: yes / no / uncertain`
+- generate a reviewable Diary Draft when needed
+- do not automatically write `.harbor/diary/**`
+- do not run `harbor log` / `harbor log write` without explicit user authorization
 
 ---
 

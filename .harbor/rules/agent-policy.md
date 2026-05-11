@@ -2,7 +2,7 @@
 
 # Harbor Agent Policy
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Canonical path: `.harbor/rules/agent-policy.md`  
 Purpose: Project-level policy guide for AI coding collaboration under Harbor-spec
 
@@ -79,7 +79,7 @@ output expectations
 
 ## 3. Canonical Workspace
 
-Harbor-spec v1.3.0 uses `.harbor/` as the canonical workspace.
+Harbor uses `.harbor/` as canonical workspace.
 
 ```text
 .harbor/
@@ -485,6 +485,8 @@ If generated views conflict with source code, tests, schemas, machine policy, or
 
 Contract defines expected behavior, structure, boundaries, and externally visible results.
 
+From v1.4+, Harbor models governable targets as ContractSubject and contract evidence as ContractSource. `target_id` is the language-neutral identity; `func_id` remains compatibility identity.
+
 Contract sources include:
 
 ```text
@@ -795,6 +797,7 @@ Do not run the following unless the user explicitly requests it:
 
 ```powershell
 harbor log
+harbor log write
 harbor accept
 harbor lock
 harbor module promote-skill <module>
@@ -819,6 +822,8 @@ harbor module promote-skill <module>
 Never run `harbor accept` merely to silence unresolved drift.
 
 Never run `harbor log` unless the user asked to write the log or the workflow explicitly includes writing diary entries.
+
+AI may run read-only checks (for example: `pytest`, `harbor checkpoint --ci --format json`, `harbor stale --ci --format json`, `harbor doctor --ci --format json`) when the task explicitly asks for validation.
 
 ---
 
@@ -1188,6 +1193,8 @@ runtime safety policy change
 release-relevant decision
 ```
 
+AI may generate Diary Drafts.
+
 Usually no diary is needed for:
 
 ```text
@@ -1225,6 +1232,22 @@ Preferred Diary Draft format:
 Do not claim a diary entry was written unless the write was actually executed.
 
 Do not manually append JSONL unless the user explicitly asks or the Harbor CLI is unavailable.
+
+AI must not automatically run:
+
+```powershell
+harbor log
+harbor log write
+harbor accept
+harbor lock
+```
+
+Future safe-command direction:
+
+```text
+harbor log draft may become an AI-safe draft command.
+Diary write operations still require explicit human authorization.
+```
 
 ---
 

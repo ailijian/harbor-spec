@@ -2,7 +2,7 @@
 
 # AGENTS.md
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Purpose: Lightweight cross-tool entrypoint for AI coding agents  
 Default language: Simplified Chinese  
 Default shell: Windows 11 PowerShell
@@ -32,6 +32,8 @@ AI tool instructions
 Harbor-spec is not an AI IDE.
 
 Harbor-spec is not a code generator.
+
+From v1.4+, Harbor evolves from Python FunctionContract/docstring-centric governance to language-neutral ContractSubject governance.
 
 Core principle:
 
@@ -193,7 +195,7 @@ Instruction Hierarchy resolves rule and instruction conflicts.
 
 ## 4. Workspace Boundaries
 
-Harbor v1.3.0 uses `.harbor/` as the canonical workspace.
+Harbor uses `.harbor/` as canonical workspace.
 
 ```text
 .harbor/
@@ -257,7 +259,9 @@ Use this compact source-of-truth order when resolving factual conflicts:
 
 2. Explicit contracts / schemas / public behavior
    - docstring contract
+   - JSDoc / TSDoc contract
    - type hints
+   - TypeScript signature
    - schemas
    - CLI args/output contract
    - JSON output contract
@@ -415,6 +419,8 @@ Never claim a Diary entry was written unless it was actually written.
 
 If a decision should be recorded but the user did not request writing, output a Diary Draft instead.
 
+`harbor log` write behavior still requires explicit user authorization.
+
 ---
 
 ## 9. Task Routing
@@ -455,6 +461,13 @@ Contract means any source that defines expected behavior, structure, boundary, s
 
 Contract does not mean docstring only.
 
+From v1.4+, Harbor uses language-neutral identities:
+
+```text
+target_id = primary cross-language identity
+func_id   = legacy compatibility identity
+```
+
 When modifying behavior, public API, schema, CLI, JSON output, file write behavior, generated view format, or tests, check:
 
 ```text
@@ -492,6 +505,38 @@ do not auto-trust either implementation or contract
 inspect tests / DDT / source behavior
 update the stale side intentionally
 rerun the relevant checks
+```
+
+### 10.1 TypeScript v1.4.x Governance Boundaries
+
+TypeScript is first-class in v1.4.0 as a contract governance MVP.
+
+MVP support:
+
+```text
+opt-in enablement
+.ts-only default scanning
+exported function
+exported async function
+exported const arrow function
+exported class public method
+JSDoc / TSDoc proximity extraction
+contract_gap
+skipped_no_contract
+unsupported_syntax_advisory
+harbor next deterministic guidance
+```
+
+Not supported in v1.4.x:
+
+```text
+JavaScript first-class governance
+.js/.jsx/.tsx/.d.ts default scanning
+TypeScript semantic audit
+TypeScript DDT
+Zod governance
+framework presets
+interface/type blocking gate
 ```
 
 ---
@@ -680,6 +725,15 @@ unless the user explicitly requests it.
 
 When in doubt, output a Diary Draft instead of writing.
 
+Diary Draft workflow for non-trivial tasks:
+
+```text
+Agent must report Diary Need: yes / no / uncertain.
+Agent may generate a Diary Draft for review.
+Agent must not write .harbor/diary/** without explicit user authorization.
+Agent must not run harbor log write / harbor log when it writes Diary without explicit user request.
+```
+
 ---
 
 ## 15. Testing and Validation
@@ -723,6 +777,8 @@ Strictness: strict / standard / light when relevant
 Tests / DDT status
 Generated context status
 Diary status
+Diary Draft: present / not needed / not written
+Diary Need: yes / no / uncertain
 Runtime safety status
 remaining risks or follow-ups
 ```

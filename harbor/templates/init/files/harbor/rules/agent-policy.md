@@ -2,7 +2,7 @@
 
 # Harbor Agent Policy
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Canonical path: `.harbor/rules/agent-policy.md`  
 Purpose: Project-level policy guide for AI coding collaboration under Harbor-spec
 
@@ -79,7 +79,7 @@ output expectations
 
 ## 3. Canonical Workspace
 
-Harbor-spec v1.3.0 uses `.harbor/` as the canonical workspace.
+Harbor uses `.harbor/` as canonical workspace.
 
 ```text
 .harbor/
@@ -355,6 +355,36 @@ do not silently ignore the conflict
 
 ---
 
+## 5.3 Repair Guidance Policy (v1.3.1)
+
+Repair guidance policy:
+
+```text
+guidance is deterministic (rule-table based), not LLM-generated
+guidance is optional additive data and must not change existing CI gate semantics
+guidance can be disabled by --advice off
+advice=basic remains independent from optional LLM semantic audit switches
+```
+
+Conservative requirements:
+
+```text
+for semantic drift, Harbor provides adjudication guidance only
+Harbor does not auto-decide whether implementation or contract is stale
+Harbor does not auto-fix implementation, contract, baseline, or l3_version
+```
+
+`harbor next` policy:
+
+```text
+harbor next is read-only
+it does not write files
+it does not run tests or repair commands
+it does not run harbor accept / harbor log / harbor lock
+```
+
+---
+
 ## 6. Harbor Layer Model
 
 Harbor-spec uses a layered governance model.
@@ -454,6 +484,8 @@ If generated views conflict with source code, tests, schemas, machine policy, or
 ### 6.4 L3 — Contract
 
 Contract defines expected behavior, structure, boundaries, and externally visible results.
+
+From v1.4+, Harbor models governable targets as ContractSubject and contract evidence as ContractSource. `target_id` is the language-neutral identity; `func_id` remains compatibility identity.
 
 Contract sources include:
 
@@ -765,6 +797,7 @@ Do not run the following unless the user explicitly requests it:
 
 ```powershell
 harbor log
+harbor log write
 harbor accept
 harbor lock
 harbor module promote-skill <module>
@@ -789,6 +822,8 @@ harbor module promote-skill <module>
 Never run `harbor accept` merely to silence unresolved drift.
 
 Never run `harbor log` unless the user asked to write the log or the workflow explicitly includes writing diary entries.
+
+AI may run read-only checks (for example: `pytest`, `harbor checkpoint --ci --format json`, `harbor stale --ci --format json`, `harbor doctor --ci --format json`) when the task explicitly asks for validation.
 
 ---
 
@@ -1158,6 +1193,8 @@ runtime safety policy change
 release-relevant decision
 ```
 
+AI may generate Diary Drafts.
+
 Usually no diary is needed for:
 
 ```text
@@ -1195,6 +1232,22 @@ Preferred Diary Draft format:
 Do not claim a diary entry was written unless the write was actually executed.
 
 Do not manually append JSONL unless the user explicitly asks or the Harbor CLI is unavailable.
+
+AI must not automatically run:
+
+```powershell
+harbor log
+harbor log write
+harbor accept
+harbor lock
+```
+
+Future safe-command direction:
+
+```text
+harbor log draft may become an AI-safe draft command.
+Diary write operations still require explicit human authorization.
+```
 
 ---
 

@@ -2,7 +2,7 @@
 
 # Harbor Diary Rules
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Canonical path: `.harbor/rules/diary-rules.md`  
 Purpose: Rules for maintaining structured decision memory under Harbor-spec
 
@@ -13,6 +13,8 @@ Purpose: Rules for maintaining structured decision memory under Harbor-spec
 Harbor Diary is the decision memory layer of a Harbor-managed repository.
 
 It records why important changes happened, not just what changed.
+
+Diary should capture decisions and tradeoffs, not every low-level implementation detail.
 
 Diary helps humans and AI agents understand:
 
@@ -274,6 +276,8 @@ A Diary Draft is text proposed in the final response.
 
 It has not been written to disk.
 
+A Diary Draft is reviewable assistant output, not source-of-truth memory.
+
 Use this when:
 
 ```text
@@ -291,6 +295,12 @@ A Written Diary Entry is actually appended to:
 ```
 
 Do not claim a Diary entry was written unless the write was actually executed and observed.
+
+For non-trivial tasks, agents should always report:
+
+```text
+Diary Need: yes / no / uncertain
+```
 
 ---
 
@@ -311,6 +321,8 @@ and the user accepts manual write behavior
 ```
 
 When in doubt, output a Diary Draft instead of writing.
+
+If `harbor log` cannot generate content in the current flow, output a human-reviewable Diary Draft instead of claiming the Diary was written.
 
 ---
 
@@ -541,6 +553,14 @@ author
 If a value is unknown, use `null` or omit optional fields.
 
 Do not invent commit hashes, PR links, issue links, test results, or user decisions.
+
+Future direction note (not implemented in this task):
+
+```text
+harbor log draft / change window may use checkpoint / accept / finish snapshots, git diff, changed files, and validation results as evidence inputs.
+```
+
+Even after baseline acceptance, agents should still be able to generate Diary Drafts for review.
 
 ---
 

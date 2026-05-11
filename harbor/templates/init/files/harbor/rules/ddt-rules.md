@@ -2,7 +2,7 @@
 
 # Harbor DDT Rules
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Canonical path: `.harbor/rules/ddt-rules.md`  
 Purpose: Rules for Docstring/Contract-Driven Testing under Harbor-spec
 
@@ -29,6 +29,13 @@ Core principle:
 
 ```text
 Tests should verify the intended contract, not blindly follow the newest implementation.
+```
+
+v1.4.x boundary reminder:
+
+```text
+DDT remains Python-first.
+TypeScript DDT is not supported.
 ```
 
 ---
@@ -61,7 +68,19 @@ user-visible behavior
 file write behavior
 ```
 
+The list above describes conceptual contract sources. In v1.4.x implementation, Harbor DDT binding remains Python-first. TypeScript type / Zod / Vitest / Jest binding is future work and must not be claimed as supported.
+
 If multiple contract sources exist, DDT should verify the intended contract across them.
+
+TypeScript DDT boundary in v1.4.x:
+
+```text
+Vitest / Jest are valid test runners but not Harbor DDT binding sources for TypeScript yet.
+comment-based TypeScript binding is not a valid Harbor DDT binding yet.
+target_id-based TypeScript DDT binding is not a valid Harbor DDT binding yet.
+TS DDT-related findings should be advisory with not_supported semantics.
+Do not claim TypeScript DDT coverage.
+```
 
 ---
 
@@ -467,6 +486,8 @@ strict targets still need explicit l3_version
 strict targets still must avoid strategy="latest"
 ddt_version_baseline_missing is advisory, not an auto-pass
 ```
+
+Python strict targets keep this rule unchanged in v1.4.x.
 
 ---
 

@@ -2,7 +2,7 @@
 
 # Harbor Contract Rules
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Canonical path: `.harbor/rules/contract-rules.md`  
 Purpose: Rules for identifying, maintaining, and validating contracts under Harbor-spec
 
@@ -33,6 +33,51 @@ Core principle:
 
 ```text
 Implementation changes must not leave contracts stale.
+```
+
+From v1.4+, Harbor core governance is language-neutral ContractSubject governance rather than Python-only FunctionContract governance.
+
+---
+
+## 1.1 ContractSubject
+
+ContractSubject means a language-neutral contract target that can be governed across adapters.
+
+Typical ContractSubject examples:
+
+```text
+python function
+typescript exported function
+typescript exported const arrow function
+typescript exported class public method
+cli/json/write behavior subject
+```
+
+Identity rules:
+
+```text
+target_id = primary language-neutral identity
+func_id   = legacy compatibility identity (kept for existing Python consumers)
+```
+
+---
+
+## 1.2 ContractSource
+
+ContractSource means a concrete source used to infer or compare expected contract behavior.
+
+ContractSource examples:
+
+```text
+Python docstring
+JSDoc / TSDoc
+type hints
+TypeScript signature
+schema
+interface
+fixture
+snapshot
+public behavior
 ```
 
 ---
@@ -108,6 +153,22 @@ Missing contract is not semantic drift.
 Semantic drift requires an existing comparable contract.
 ```
 
+TypeScript v1.4.x presence mapping:
+
+```text
+high-confidence JSDoc/TSDoc near required target -> present
+ordinary block comment (non-JSDoc/TSDoc contract signals) -> non_contract_doc
+no source -> missing
+unsupported TypeScript syntax -> unsupported_syntax
+```
+
+```text
+For TypeScript v1.4.x, present means usable for presence/checkpoint governance,
+not that TypeScript semantic audit is supported.
+Checkpoint maps unsupported_syntax to unsupported_syntax_advisory.
+Do not map unsupported TypeScript syntax to contract_parse_error.
+```
+
 ---
 
 ## 2.2 Contract Required
@@ -128,6 +189,24 @@ user-visible or external-visible behavior
 ```
 
 如果 target 被判定为 `contract_required=true`，则缺少有效契约源应归类为 `CONTRACT_GAP`。
+
+TypeScript v1.4.x required mapping:
+
+```text
+required:
+  exported function
+  exported async function
+  exported const arrow function
+  exported class public method
+
+not required by default:
+  internal helper
+  tests
+  scripts
+
+not blocking in v1.4.x:
+  interface/type/schema-only targets
+```
 
 ---
 
@@ -150,6 +229,13 @@ or configure an equivalent contract source
 ```
 
 CONTRACT_GAP 的解决方式应优先是补充或更新契约源；只有当该目标确实不应承担契约时，才应调整项目策略或 strictness。
+
+TypeScript v1.4.x CONTRACT_GAP repair guidance:
+
+```text
+add nearby high-confidence JSDoc/TSDoc
+or downgrade the target to internal/light/skipped when appropriate and policy-compliant
+```
 
 ---
 

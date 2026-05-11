@@ -2,7 +2,7 @@
 
 # Harbor Glossary
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Canonical path: `.harbor/rules/glossary.md`  
 Purpose: Shared glossary for Harbor-spec concepts and AI coding governance
 
@@ -126,7 +126,7 @@ The canonical Harbor workspace is:
 .harbor/
 ```
 
-In v1.3.0, `.harbor/` is the primary workspace for Harbor-managed rules, generated context, decision memory, reports, cache, and state.
+Harbor uses `.harbor/` as canonical workspace for Harbor-managed rules, generated context, decision memory, reports, cache, and state.
 
 Canonical layout:
 
@@ -1478,7 +1478,98 @@ Adapters should route to Harbor canonical workspace rather than duplicate all ru
 
 ---
 
-## 70. Final Principle
+## 70. ContractSubject
+
+ContractSubject is the language-neutral governance target in Harbor v1.4+.
+
+It supersedes Python-only FunctionContract as the language-neutral governance model, while Python FunctionContract remains as a compatibility layer.
+
+---
+
+## 71. ContractSource
+
+ContractSource is a concrete source used to infer or compare expected contract behavior.
+
+Examples:
+
+```text
+Python docstring
+JSDoc / TSDoc
+type hints
+TypeScript signature
+schema
+fixture
+snapshot
+public behavior
+```
+
+---
+
+## 72. target_id
+
+`target_id` is Harbor's primary language-neutral target identity.
+
+It is used for cross-language contract governance in v1.4+.
+
+---
+
+## 73. legacy func_id
+
+`func_id` remains for compatibility with existing Python-oriented consumers. `target_id` is the primary neutral identity for new cross-language governance.
+
+---
+
+## 74. TypeScript Contract Governance
+
+TypeScript Contract Governance means Harbor governance applied to TypeScript contract targets.
+
+In v1.4.x, TypeScript support is MVP-scoped:
+
+```text
+opt-in
+.ts-only default scanning
+presence/checkpoint/next guidance
+```
+
+TypeScript semantic audit and TypeScript DDT are not supported in v1.4.x.
+
+---
+
+## 75. unsupported_syntax_advisory
+
+`unsupported_syntax_advisory` means the target was discovered but current parser capability does not fully support the syntax.
+
+It is advisory and should not be treated as `contract_parse_error` by default in TypeScript v1.4.x MVP flow.
+
+---
+
+## 76. Diary Draft
+
+Diary Draft is reviewable text proposed by AI/human and not yet written to `.harbor/diary/YYYY-MM.jsonl`.
+
+Diary Draft is not source-of-truth memory until explicitly written.
+
+---
+
+## 77. Change Window
+
+Change Window means the bounded evidence slice used to summarize meaningful changes.
+
+Typical evidence may include:
+
+```text
+checkpoint snapshots
+accept/finish snapshots
+git diff
+changed files
+validation results
+```
+
+Future `harbor log draft` may use Change Window evidence, but write still requires human authorization.
+
+---
+
+## 78. Final Principle
 
 When Harbor terms are unclear, prefer this interpretation:
 
