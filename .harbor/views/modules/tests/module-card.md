@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-11T03:47:08Z"
+generated_at: "2026-05-11T06:50:25Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 73
+source_path_count: 83
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -15,11 +15,13 @@ source_paths:
   - "tests/core/test_storage_migration.py"
   - "tests/fixtures_sqlite/sample.py"
   - "tests/test_adapter_basic.py"
+  - "tests/test_adapter_registry.py"
   - "tests/test_adopted_roots.py"
   - "tests/test_audit.py"
   - "tests/test_cache_isolation_hardening.py"
   - "tests/test_checkpoint_ci.py"
   - "tests/test_checkpoint_ci_guidance.py"
+  - "tests/test_checkpoint_json_additive_compat.py"
   - "tests/test_ci_mode.py"
   - "tests/test_cli_config.py"
   - "tests/test_cli_decorate.py"
@@ -44,6 +46,7 @@ source_paths:
   - "tests/test_context_integrity.py"
   - "tests/test_contract_impact.py"
   - "tests/test_contract_presence.py"
+  - "tests/test_contract_subject_model.py"
   - "tests/test_ddt_validate.py"
   - "tests/test_ddt_version_baseline.py"
   - "tests/test_decorator_engine.py"
@@ -56,6 +59,7 @@ source_paths:
   - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
   - "tests/test_index_builder_bad_syntax.py"
+  - "tests/test_index_builder_registry_integration.py"
   - "tests/test_index_progress.py"
   - "tests/test_init_detector.py"
   - "tests/test_init_governance.py"
@@ -70,11 +74,17 @@ source_paths:
   - "tests/test_module_capsule_stale.py"
   - "tests/test_module_skill.py"
   - "tests/test_project_structure.py"
+  - "tests/test_python_adapter_compat.py"
   - "tests/test_release_packaging.py"
   - "tests/test_repair_guidance.py"
   - "tests/test_semantic_audit_contract_gap.py"
   - "tests/test_stale.py"
   - "tests/test_sync_engine.py"
+  - "tests/test_sync_engine_registry_integration.py"
+  - "tests/test_typescript_adapter_mvp.py"
+  - "tests/test_typescript_checkpoint_ci.py"
+  - "tests/test_typescript_contract_presence.py"
+  - "tests/test_typescript_next_guidance.py"
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_workspace_gitignore_policy.py"
@@ -82,11 +92,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:9f16575c4aa75b82a26dbe02b033be6003083273b0f67654f2ddd2842bd8287b"
-contract_fingerprint: "sha256:ad02e05ceffca2e7ab612bc7da491856e92c180c20612ffb895880bee6b4f054"
+source_fingerprint: "sha256:45c782d1cf2ef1cd34c6ac60086464232e4c6a86f1e405181a4304b15f811a8a"
+contract_fingerprint: "sha256:8f352061c31ca83ddff8dc6a640e9c51083e77c6d480d259c54e8bb2858fb040"
 generator_fingerprint: "sha256:6633775ec4612993005fe721f29ed17a159d913015ba7775ccd1a2b119fa0b85"
-view_fingerprint: "123a958a85013be64a6b8618d96d64db3882eb844e286b833c46ae7eefbee4b6"
-fingerprint: "123a958a85013be64a6b8618d96d64db3882eb844e286b833c46ae7eefbee4b6"
+view_fingerprint: "6ea13f3e7f9b53c186e40796f07fff901961c8e7e28d29e89e77bb4b817c74e0"
+fingerprint: "6ea13f3e7f9b53c186e40796f07fff901961c8e7e28d29e89e77bb4b817c74e0"
 ---
 
 # Module Card: tests
@@ -113,11 +123,13 @@ tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 tests/fixtures_sqlite/sample.py
 tests/test_adapter_basic.py
+tests/test_adapter_registry.py
 tests/test_adopted_roots.py
 tests/test_audit.py
 tests/test_cache_isolation_hardening.py
 tests/test_checkpoint_ci.py
 tests/test_checkpoint_ci_guidance.py
+tests/test_checkpoint_json_additive_compat.py
 tests/test_ci_mode.py
 tests/test_cli_config.py
 tests/test_cli_decorate.py
@@ -142,6 +154,7 @@ tests/test_config_update.py
 tests/test_context_integrity.py
 tests/test_contract_impact.py
 tests/test_contract_presence.py
+tests/test_contract_subject_model.py
 tests/test_ddt_validate.py
 tests/test_ddt_version_baseline.py
 tests/test_decorator_engine.py
@@ -154,6 +167,7 @@ tests/test_gitignore_prune.py
 tests/test_harbor_next.py
 tests/test_index_builder.py
 tests/test_index_builder_bad_syntax.py
+tests/test_index_builder_registry_integration.py
 tests/test_index_progress.py
 tests/test_init_detector.py
 tests/test_init_governance.py
@@ -168,11 +182,17 @@ tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
+tests/test_python_adapter_compat.py
 tests/test_release_packaging.py
 tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
 tests/test_stale.py
 tests/test_sync_engine.py
+tests/test_sync_engine_registry_integration.py
+tests/test_typescript_adapter_mvp.py
+tests/test_typescript_checkpoint_ci.py
+tests/test_typescript_contract_presence.py
+tests/test_typescript_next_guidance.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_workspace_gitignore_policy.py
@@ -192,6 +212,13 @@ tests/test_workspace_paths.py
 | tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict |
 | tests.test_adapter_basic.test_adapter_parses_itself | tests/test_adapter_basic.py | unknown | standard |
 | tests.test_adapter_basic.test_signature_hash_changes | tests/test_adapter_basic.py | unknown | standard |
+| tests.test_adapter_registry.test_config_can_disable_python | tests/test_adapter_registry.py | unknown | standard |
+| tests.test_adapter_registry.test_default_registry_disables_typescript | tests/test_adapter_registry.py | unknown | standard |
+| tests.test_adapter_registry.test_default_registry_enables_python | tests/test_adapter_registry.py | unknown | standard |
+| tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance | tests/test_adapter_registry.py | unknown | standard |
+| tests.test_adapter_registry.test_get_enabled_languages_output_is_stable | tests/test_adapter_registry.py | unknown | standard |
+| tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior | tests/test_adapter_registry.py | unknown | standard |
+| tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash | tests/test_adapter_registry.py | unknown | standard |
 | tests.test_adopted_roots.test_adopted_roots_write_and_remove | tests/test_adopted_roots.py | unknown | standard |
 | tests.test_audit.test_semantic_guard_contract_gap_without_docstring | tests/test_audit.py | unknown | standard |
 | tests.test_audit.test_semantic_guard_mismatch_parsing | tests/test_audit.py | unknown | standard |
@@ -242,6 +269,16 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci_guidance.test_contract_gap_guidance_in_checkpoint_json | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance.test_ddt_baseline_missing_is_advisory_with_guidance | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance.test_possible_semantic_drift_guidance_is_conservative | tests/test_checkpoint_ci_guidance.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat._contract_report | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat._ddt_report | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat._status_entry | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat._status_report | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat.test_checkpoint_json_additive_shape_is_stable_for_golden_assert | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat.test_non_function_symbol_kind_does_not_enter_blocking_checkpoint_failures | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat.test_python_checkpoint_json_keeps_legacy_fields_and_adds_identity_fields | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat.test_python_checkpoint_pass_fail_semantics_unchanged | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat.test_python_method_symbol_kind_and_func_id_stay_compatible | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat.test_typescript_contract_subject_json_has_task6a_ready_fields | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
 | tests.test_ci_mode._force_en_locale | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode._stale_summary | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.run_cmd | tests/test_ci_mode.py | unknown | standard |
@@ -487,6 +524,11 @@ tests/test_workspace_paths.py
 | tests.test_contract_presence.test_strict_without_docstring_is_contract_gap_required | tests/test_contract_presence.py | unknown | standard |
 | tests.test_contract_presence.test_to_dict_like_without_docstring_is_required | tests/test_contract_presence.py | unknown | standard |
 | tests.test_contract_presence.test_write_function_without_docstring_is_required | tests/test_contract_presence.py | unknown | standard |
+| tests.test_contract_subject_model.test_contract_source_fingerprint_changes_on_text_change | tests/test_contract_subject_model.py | unknown | standard |
+| tests.test_contract_subject_model.test_contract_source_fingerprint_is_stable_for_same_text | tests/test_contract_subject_model.py | unknown | standard |
+| tests.test_contract_subject_model.test_contract_subject_min_serialization_is_stable | tests/test_contract_subject_model.py | unknown | standard |
+| tests.test_contract_subject_model.test_contract_subject_required_fields_are_present | tests/test_contract_subject_model.py | unknown | standard |
+| tests.test_contract_subject_model.test_target_id_rule_is_stable_and_normalized | tests/test_contract_subject_model.py | unknown | standard |
 | tests.test_ddt_validate.test_ddt_validate_matrix | tests/test_ddt_validate.py | unknown | standard |
 | tests.test_ddt_validate.write_test_file | tests/test_ddt_validate.py | unknown | standard |
 | tests.test_ddt_version_baseline._build_strict_target | tests/test_ddt_version_baseline.py | unknown | standard |
@@ -552,6 +594,12 @@ tests/test_workspace_paths.py
 | tests.test_index_builder.test_index_build_incremental_and_docstring_stability | tests/test_index_builder.py | unknown | standard |
 | tests.test_index_builder.write_module | tests/test_index_builder.py | unknown | standard |
 | tests.test_index_builder_bad_syntax.test_index_builder_skips_bad_syntax | tests/test_index_builder_bad_syntax.py | unknown | standard |
+| tests.test_index_builder_registry_integration._write_config | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration._write_file | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | tests/test_index_progress.py | unknown | standard |
 | tests.test_init_detector.test_django_detection | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_detector.test_excludes_do_not_override_code_roots | tests/test_init_detector.py | unknown | standard |
@@ -645,6 +693,13 @@ tests/test_workspace_paths.py
 | tests.test_project_structure.test_generate_markdown_contains_required_sections_and_is_deterministic | tests/test_project_structure.py | unknown | standard |
 | tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | tests/test_project_structure.py | unknown | standard |
 | tests.test_project_structure.test_write_project_structure_returns_canonical_first | tests/test_project_structure.py | unknown | standard |
+| tests.test_python_adapter_compat._sample_contract | tests/test_python_adapter_compat.py | unknown | standard |
+| tests.test_python_adapter_compat.test_docstring_maps_to_docstring_contract_source | tests/test_python_adapter_compat.py | unknown | standard |
+| tests.test_python_adapter_compat.test_function_contract_maps_to_contract_subject | tests/test_python_adapter_compat.py | unknown | standard |
+| tests.test_python_adapter_compat.test_legacy_func_id_keeps_original_function_contract_id | tests/test_python_adapter_compat.py | unknown | standard |
+| tests.test_python_adapter_compat.test_no_docstring_maps_to_empty_contract_sources | tests/test_python_adapter_compat.py | unknown | standard |
+| tests.test_python_adapter_compat.test_python_adapter_parse_file_behavior_unchanged | tests/test_python_adapter_compat.py | unknown | standard |
+| tests.test_python_adapter_compat.test_target_id_uses_python_file_symbol_qualified_name_rule | tests/test_python_adapter_compat.py | unknown | standard |
 | tests.test_release_packaging._force_en_locale | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging._repo_root | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging._run_help | tests/test_release_packaging.py | unknown | standard |
@@ -688,6 +743,55 @@ tests/test_workspace_paths.py
 | tests.test_sync_engine.test_sync_engine_drift_detection | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_skipped_no_contract_for_internal_helper_without_docstring | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.write_module | tests/test_sync_engine.py | unknown | standard |
+| tests.test_sync_engine_registry_integration._write | tests/test_sync_engine_registry_integration.py | unknown | standard |
+| tests.test_sync_engine_registry_integration._write_config | tests/test_sync_engine_registry_integration.py | unknown | standard |
+| tests.test_sync_engine_registry_integration.test_sync_engine_default_registry_python_only | tests/test_sync_engine_registry_integration.py | unknown | standard |
+| tests.test_sync_engine_registry_integration.test_sync_engine_file_discovery_matches_python_only_when_ts_enabled | tests/test_sync_engine_registry_integration.py | unknown | standard |
+| tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status | tests/test_sync_engine_registry_integration.py | unknown | standard |
+| tests.test_typescript_adapter_mvp._fixture_root | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp._to_rel | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_standard_build_directories | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_tsx_js_jsx_dts | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_discover_files_default_only_ts | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_export_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_exported_class_public_method | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_parse_file_does_not_crash_on_unsupported_or_malformed_ts | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_target_id_rule_for_typescript_subject | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_typescript_adapter_does_not_change_python_adapter_parse_file_behavior | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci._checkpoint_payload | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci._empty_contract_report | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci._empty_ddt_report | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci._write | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci._write_config | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci.test_ts_disabled_keeps_typescript_out_of_checkpoint | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_exported_function_without_jsdoc_becomes_contract_gap | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_high_confidence_jsdoc_avoids_contract_gap | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_internal_helper_without_jsdoc_becomes_skipped_advisory | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_medium_block_comment_is_contract_gap | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_unsupported_syntax_emits_non_blocking_advisory | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci.test_typescript_checkpoint_categories_and_identity_fields_are_constrained | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_checkpoint_ci.test_typescript_default_excluded_extensions_do_not_enter_checkpoint | tests/test_typescript_checkpoint_ci.py | unknown | standard |
+| tests.test_typescript_contract_presence._fixture_root | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence._subject_by_name | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_exported_class_public_method_with_tsdoc_is_present_and_required | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_exported_function_without_tsdoc_is_missing_and_required | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_high_confidence_tsdoc_marks_present_and_required | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_internal_helper_is_not_required | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_line_comment_is_not_contract_source | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_malformed_or_unsupported_ts_does_not_emit_contract_parse_error | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_medium_confidence_tsdoc_marks_non_contract_doc | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_script_file_targets_are_not_required | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_signature_only_public_function_remains_missing_required | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_contract_presence.test_tsdoc_with_code_gap_is_not_attached_to_symbol | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_next_guidance._write_report | tests/test_typescript_next_guidance.py | unknown | standard |
+| tests.test_typescript_next_guidance.run_cmd | tests/test_typescript_next_guidance.py | unknown | standard |
+| tests.test_typescript_next_guidance.test_next_explains_typescript_contract_gap | tests/test_typescript_next_guidance.py | unknown | standard |
+| tests.test_typescript_next_guidance.test_next_explains_typescript_skipped_no_contract | tests/test_typescript_next_guidance.py | unknown | standard |
+| tests.test_typescript_next_guidance.test_next_explains_typescript_unsupported_syntax_advisory | tests/test_typescript_next_guidance.py | unknown | standard |
 | tests.test_utils_format.test_format_size_bytes | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_kb | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_mb | tests/test_utils_format.py | unknown | standard |
@@ -743,11 +847,13 @@ tests/test_workspace_paths.py
 tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 tests/test_adapter_basic.py
+tests/test_adapter_registry.py
 tests/test_adopted_roots.py
 tests/test_audit.py
 tests/test_cache_isolation_hardening.py
 tests/test_checkpoint_ci.py
 tests/test_checkpoint_ci_guidance.py
+tests/test_checkpoint_json_additive_compat.py
 tests/test_ci_mode.py
 tests/test_cli_config.py
 tests/test_cli_decorate.py
@@ -772,6 +878,7 @@ tests/test_config_update.py
 tests/test_context_integrity.py
 tests/test_contract_impact.py
 tests/test_contract_presence.py
+tests/test_contract_subject_model.py
 tests/test_ddt_validate.py
 tests/test_ddt_version_baseline.py
 tests/test_decorator_engine.py
@@ -784,6 +891,7 @@ tests/test_gitignore_prune.py
 tests/test_harbor_next.py
 tests/test_index_builder.py
 tests/test_index_builder_bad_syntax.py
+tests/test_index_builder_registry_integration.py
 tests/test_index_progress.py
 tests/test_init_detector.py
 tests/test_init_governance.py
@@ -798,11 +906,17 @@ tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
+tests/test_python_adapter_compat.py
 tests/test_release_packaging.py
 tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
 tests/test_stale.py
 tests/test_sync_engine.py
+tests/test_sync_engine_registry_integration.py
+tests/test_typescript_adapter_mvp.py
+tests/test_typescript_checkpoint_ci.py
+tests/test_typescript_contract_presence.py
+tests/test_typescript_next_guidance.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_workspace_gitignore_policy.py

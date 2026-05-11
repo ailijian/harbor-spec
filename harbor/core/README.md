@@ -8,8 +8,8 @@
 | harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
 | harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
-| harbor.core.ci.checkpoint_ci_result_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci` 公开 CI JSON pa... | strict | ❌ Missing |
-| harbor.core.ci.ci_result_to_dict | 将通用 CIResult 序列化为 checkpoint 之外的公开 CI JSON payload。 | strict | ❌ Missing |
+| harbor.core.ci.checkpoint_ci_result_to_dict | — | strict | ❌ Missing |
+| harbor.core.ci.ci_result_to_dict | — | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
 | harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
@@ -66,6 +66,7 @@
 | harbor.core.project_structure._build_transient_index_from_files | — | standard | ⚪ Missing |
 | harbor.core.project_structure._capsule_exists | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._check_git_ignored | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_reason_for_entry | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._choice_label | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._classify_git_tracking | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._classify_tests_path | — | standard | ⚪ Missing |
@@ -86,6 +87,8 @@
 | harbor.core.ci._dedupe_checkpoint_items | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_language | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_project | — | standard | ⚪ Missing |
+| harbor.core.ci._derive_checkpoint_identity | — | standard | ⚪ Missing |
+| harbor.core.ci._derive_qualified_name_and_symbol_kind | — | standard | ⚪ Missing |
 | harbor.core.doctor._derived_view_detail_status | 将内部 view status 归一化为可展示文本。 | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_django | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_go | — | standard | ⚪ Missing |
@@ -118,6 +121,7 @@
 | harbor.core.index.IndexBuilder._index_entry | — | standard | ⚪ Missing |
 | harbor.core.project_structure._infer_area | — | standard | ⚪ Missing |
 | harbor.core.audit._infer_file_path_from_contract | — | standard | ⚪ Missing |
+| harbor.core.ci._is_blocking_checkpoint_target | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_contract_asserting_test | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._is_dangerous_python_exclude | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_docs_or_rules_path | — | standard | ⚪ Missing |
@@ -128,7 +132,11 @@
 | harbor.core.contract_impact._is_test_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_to_dict_like | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._is_tty | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._is_typescript_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_write_like | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._iter_code_roots | — | standard | ⚪ Missing |
+| harbor.core.index.IndexBuilder._iter_files_by_enabled_adapters | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._iter_files_by_enabled_adapters | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._iter_function_nodes | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTScanner._iter_py_files | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._iter_py_files | — | standard | ⚪ Missing |
@@ -154,6 +162,7 @@
 | harbor.core.contract_impact._max_level | — | standard | ⚪ Missing |
 | harbor.core.doctor._merge_status | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate._module_dir_has_python_files | — | standard | ⚪ Missing |
+| harbor.core.ci._module_qual_from_file_path | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._module_qual_from_path | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
@@ -173,6 +182,7 @@
 | harbor.core.context_integrity._now_iso | — | standard | ⚪ Missing |
 | harbor.core.doctor._parse_generated_frontmatter_safely | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._parse_gitignore | — | standard | ⚪ Missing |
+| harbor.core.ci._parse_target_id | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._parse_ts | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._posix_rel | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |

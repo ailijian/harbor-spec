@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.1"
+harbor_version: "1.3.2"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-10T16:07:40Z"
+generated_at: "2026-05-11T06:50:23Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 30
@@ -39,9 +39,9 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:16628e2b6fac23d14244326955e312af88d8dd4e82a84c42bbdb5992abc1c906"
-contract_fingerprint: "sha256:3cce59eb53d5c7cc39e5e745ca25b499565df961d5fc9796f25e5d542c5b515b"
-generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177fb2fe34b0b75a150"
+source_fingerprint: "sha256:e255045d7df7039c3e3f0851eb8deeac863afa9b03f58386882a8559b973b462"
+contract_fingerprint: "sha256:e83ae40bb2df80e718301ac30c438cd89df5483dbd7face7376ef49494e050b0"
+generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae883d5e242207648"
 ---
 
 # Module: harbor/core
@@ -54,8 +54,8 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
 | harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
-| harbor.core.ci.checkpoint_ci_result_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci` 公开 CI JSON pa... | strict | ❌ Missing |
-| harbor.core.ci.ci_result_to_dict | 将通用 CIResult 序列化为 checkpoint 之外的公开 CI JSON payload。 | strict | ❌ Missing |
+| harbor.core.ci.checkpoint_ci_result_to_dict | — | strict | ❌ Missing |
+| harbor.core.ci.ci_result_to_dict | — | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
 | harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
@@ -112,6 +112,7 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | harbor.core.project_structure._build_transient_index_from_files | — | standard | ⚪ Missing |
 | harbor.core.project_structure._capsule_exists | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._check_git_ignored | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_reason_for_entry | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._choice_label | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._classify_git_tracking | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._classify_tests_path | — | standard | ⚪ Missing |
@@ -132,6 +133,8 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | harbor.core.ci._dedupe_checkpoint_items | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_language | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_project | — | standard | ⚪ Missing |
+| harbor.core.ci._derive_checkpoint_identity | — | standard | ⚪ Missing |
+| harbor.core.ci._derive_qualified_name_and_symbol_kind | — | standard | ⚪ Missing |
 | harbor.core.doctor._derived_view_detail_status | 将内部 view status 归一化为可展示文本。 | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_django | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_go | — | standard | ⚪ Missing |
@@ -164,6 +167,7 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | harbor.core.index.IndexBuilder._index_entry | — | standard | ⚪ Missing |
 | harbor.core.project_structure._infer_area | — | standard | ⚪ Missing |
 | harbor.core.audit._infer_file_path_from_contract | — | standard | ⚪ Missing |
+| harbor.core.ci._is_blocking_checkpoint_target | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_contract_asserting_test | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._is_dangerous_python_exclude | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_docs_or_rules_path | — | standard | ⚪ Missing |
@@ -174,7 +178,11 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | harbor.core.contract_impact._is_test_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_to_dict_like | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._is_tty | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._is_typescript_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_write_like | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._iter_code_roots | — | standard | ⚪ Missing |
+| harbor.core.index.IndexBuilder._iter_files_by_enabled_adapters | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._iter_files_by_enabled_adapters | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._iter_function_nodes | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTScanner._iter_py_files | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._iter_py_files | — | standard | ⚪ Missing |
@@ -200,6 +208,7 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | harbor.core.contract_impact._max_level | — | standard | ⚪ Missing |
 | harbor.core.doctor._merge_status | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate._module_dir_has_python_files | — | standard | ⚪ Missing |
+| harbor.core.ci._module_qual_from_file_path | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._module_qual_from_path | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
@@ -219,6 +228,7 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | harbor.core.context_integrity._now_iso | — | standard | ⚪ Missing |
 | harbor.core.doctor._parse_generated_frontmatter_safely | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._parse_gitignore | — | standard | ⚪ Missing |
+| harbor.core.ci._parse_target_id | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._parse_ts | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._posix_rel | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |

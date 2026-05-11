@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.2"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-11T03:47:08Z"
+generated_at: "2026-05-11T06:50:25Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
-source_path_count: 73
+source_path_count: 83
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -15,11 +15,13 @@ source_paths:
   - "tests/core/test_storage_migration.py"
   - "tests/fixtures_sqlite/sample.py"
   - "tests/test_adapter_basic.py"
+  - "tests/test_adapter_registry.py"
   - "tests/test_adopted_roots.py"
   - "tests/test_audit.py"
   - "tests/test_cache_isolation_hardening.py"
   - "tests/test_checkpoint_ci.py"
   - "tests/test_checkpoint_ci_guidance.py"
+  - "tests/test_checkpoint_json_additive_compat.py"
   - "tests/test_ci_mode.py"
   - "tests/test_cli_config.py"
   - "tests/test_cli_decorate.py"
@@ -44,6 +46,7 @@ source_paths:
   - "tests/test_context_integrity.py"
   - "tests/test_contract_impact.py"
   - "tests/test_contract_presence.py"
+  - "tests/test_contract_subject_model.py"
   - "tests/test_ddt_validate.py"
   - "tests/test_ddt_version_baseline.py"
   - "tests/test_decorator_engine.py"
@@ -56,6 +59,7 @@ source_paths:
   - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
   - "tests/test_index_builder_bad_syntax.py"
+  - "tests/test_index_builder_registry_integration.py"
   - "tests/test_index_progress.py"
   - "tests/test_init_detector.py"
   - "tests/test_init_governance.py"
@@ -70,11 +74,17 @@ source_paths:
   - "tests/test_module_capsule_stale.py"
   - "tests/test_module_skill.py"
   - "tests/test_project_structure.py"
+  - "tests/test_python_adapter_compat.py"
   - "tests/test_release_packaging.py"
   - "tests/test_repair_guidance.py"
   - "tests/test_semantic_audit_contract_gap.py"
   - "tests/test_stale.py"
   - "tests/test_sync_engine.py"
+  - "tests/test_sync_engine_registry_integration.py"
+  - "tests/test_typescript_adapter_mvp.py"
+  - "tests/test_typescript_checkpoint_ci.py"
+  - "tests/test_typescript_contract_presence.py"
+  - "tests/test_typescript_next_guidance.py"
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_workspace_gitignore_policy.py"
@@ -82,8 +92,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:9f16575c4aa75b82a26dbe02b033be6003083273b0f67654f2ddd2842bd8287b"
-contract_fingerprint: "sha256:d6b0e432b5487b3da559214cfff9654014edd23a69779540edb4f3be564a1386"
+source_fingerprint: "sha256:45c782d1cf2ef1cd34c6ac60086464232e4c6a86f1e405181a4304b15f811a8a"
+contract_fingerprint: "sha256:2faf28afd6440c349023e911ddc6a6d4864536b3535e16998d51d393c8ca041c"
 generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae883d5e242207648"
 ---
 
@@ -101,10 +111,15 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
 | tests.test_ddt_version_baseline._build_strict_target | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci._checkpoint_payload | — | standard | ⚪ Missing |
 | tests.test_cli_v2._clean_status_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._contract_report | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat._contract_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._ddt_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._ddt_report | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat._ddt_report | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci._empty_contract_report | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci._empty_ddt_report | — | standard | ⚪ Missing |
 | tests.test_cli_doctor._empty_status_report | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._empty_status_report | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_stale._empty_status_report | — | standard | ⚪ Missing |
@@ -117,6 +132,8 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_contract_presence._fc | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening._fingerprint | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._fingerprint_tree | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence._fixture_root | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp._fixture_root | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_doctor._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule._force_en_locale | — | standard | ⚪ Missing |
@@ -153,6 +170,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_workspace_gitignore_policy._repo_root | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening._run_cmd | — | standard | ⚪ Missing |
 | tests.test_release_packaging._run_help | — | standard | ⚪ Missing |
+| tests.test_python_adapter_compat._sample_contract | — | standard | ⚪ Missing |
 | tests.test_cli_json_output._sample_doctor_report | — | standard | ⚪ Missing |
 | tests.test_cli_json_output._sample_stale_summary | — | standard | ⚪ Missing |
 | tests.test_cli_stale._sample_summary | — | standard | ⚪ Missing |
@@ -162,11 +180,21 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_init_governance._starter_targets | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._status_entry | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._status_entry | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat._status_entry | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._status_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._status_report | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat._status_report | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._status_report_with_changed | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence._subject_by_name | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp._to_rel | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect._touch | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._touch | — | standard | ⚪ Missing |
+| tests.test_sync_engine_registry_integration._write | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci._write | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration._write_config | — | standard | ⚪ Missing |
+| tests.test_sync_engine_registry_integration._write_config | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci._write_config | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration._write_file | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule._write_index | — | standard | ⚪ Missing |
 | tests.test_cli_module_skill._write_index | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_stale._write_index | — | standard | ⚪ Missing |
@@ -178,6 +206,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_project_structure._write_index | — | standard | ⚪ Missing |
 | tests.test_stale._write_index | — | standard | ⚪ Missing |
 | tests.test_stale._write_l2_export_config | — | standard | ⚪ Missing |
+| tests.test_typescript_next_guidance._write_report | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_batch._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths._write_workspace_config | — | standard | ⚪ Missing |
@@ -215,6 +244,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_workspace_i18n.run_cmd | — | standard | ⚪ Missing |
 | tests.test_harbor_next.run_cmd | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.run_cmd | — | standard | ⚪ Missing |
+| tests.test_typescript_next_guidance.run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env.run_cmd_with_code | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.run_cmd_with_err | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.run_cmd_with_err | — | standard | ⚪ Missing |
@@ -228,6 +258,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_checkpoint_ci_guidance.test_advice_off_removes_guidance_field | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_aggressive_inserts_todo_docstring | — | standard | ⚪ Missing |
 | tests.test_doctor.test_build_doctor_report_is_read_only | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_capsule_stale_uses_view_fingerprint_not_source_fingerprint | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_changed_modules_detect_and_generate_each | — | standard | ⚪ Missing |
@@ -266,6 +297,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat.test_checkpoint_json_additive_shape_is_stable_for_golden_assert | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.test_checkpoint_json_output_is_single_json_object | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_prints_contract_impact_summary_when_dirty | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_fields_use_ci_failures_and_advisory | — | standard | ⚪ Missing |
@@ -296,6 +328,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_cli_v2.test_commit_alias_unchanged_maps_to_lock | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_compute_module_fingerprint_is_stable_and_normalized | — | standard | ⚪ Missing |
 | tests.test_cli_config.test_config_add_list_remove | — | standard | ⚪ Missing |
+| tests.test_adapter_registry.test_config_can_disable_python | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_config_list_zh | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_configured_diary_root_within_repo_is_used | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_chinese_yes_no | — | standard | ⚪ Missing |
@@ -304,12 +337,18 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_context_integrity.test_content_without_generated_at_for_compare_ignores_only_timestamp | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_contract_gap_guidance_defaults | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.test_contract_gap_guidance_in_checkpoint_json | — | standard | ⚪ Missing |
+| tests.test_contract_subject_model.test_contract_source_fingerprint_changes_on_text_change | — | standard | ⚪ Missing |
+| tests.test_contract_subject_model.test_contract_source_fingerprint_is_stable_for_same_text | — | standard | ⚪ Missing |
+| tests.test_contract_subject_model.test_contract_subject_min_serialization_is_stable | — | standard | ⚪ Missing |
+| tests.test_contract_subject_model.test_contract_subject_required_fields_are_present | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.test_ddt_baseline_missing_is_advisory_with_guidance | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_ddt_validate_maps_to_check_fast | — | standard | ⚪ Missing |
 | tests.test_ddt_validate.test_ddt_validate_matrix | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_ddt_version_baseline_missing_guidance_is_manual | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_decorate_maps_to_adopt_dry_run | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_default_paths | — | standard | ⚪ Missing |
+| tests.test_adapter_registry.test_default_registry_disables_typescript | — | standard | ⚪ Missing |
+| tests.test_adapter_registry.test_default_registry_enables_python | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_default_text_output_for_stale_and_doctor_is_unchanged | — | standard | ⚪ Missing |
 | tests.test_derive_adopted_roots.test_derive_adopted_roots_basic | — | standard | ⚪ Missing |
 | tests.test_doctor.test_derived_views_check_legacy_diary_coexistence_single_advisory_and_no_mutation | — | standard | ⚪ Missing |
@@ -325,6 +364,9 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_initializer.test_detect_script_layout | — | standard | ⚪ Missing |
 | tests.test_initializer.test_detect_src_layout | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_diary_export_maps_to_log_export | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_standard_build_directories | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_tsx_js_jsx_dts | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_discover_files_default_only_ts | — | standard | ⚪ Missing |
 | tests.test_init_detector.test_django_detection | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening.test_docs_all_external_only_index_is_isolated | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_docs_all_preview_does_not_write | — | standard | ⚪ Missing |
@@ -343,6 +385,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_cli_docs_modes.test_docs_module_write_canonical_first_and_filters_meta | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_docs_module_write_canonical_has_frontmatter_export_plain | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_docs_module_write_rejects_explicit_unsafe_module | — | standard | ⚪ Missing |
+| tests.test_python_adapter_compat.test_docstring_maps_to_docstring_contract_source | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_changed_and_all_args_are_recognized | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_ci_arg_is_recognized | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_doctor_ci_fail_on_fail_check | — | standard | ⚪ Missing |
@@ -369,6 +412,8 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_init_detector.test_excludes_do_not_override_code_roots | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_export_options_parsing | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_exported_class_public_method_with_tsdoc_is_present_and_required | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_exported_function_without_tsdoc_is_missing_and_required | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening.test_external_temp_paths_only_land_in_isolated_workspace_index | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_filters_out_internal_and_testlike_names | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_finish_command_recognized | — | standard | ⚪ Missing |
@@ -383,6 +428,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_utils_format.test_format_size_mb | — | standard | ⚪ Missing |
 | tests.test_utils_format.test_format_size_negative_raises | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_frontmatter_render_parse_roundtrip | — | standard | ⚪ Missing |
+| tests.test_python_adapter_compat.test_function_contract_maps_to_contract_subject | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_gen_l2_maps_to_docs | — | standard | ⚪ Missing |
 | tests.test_drafting.test_generate_draft_parses_json | — | standard | ⚪ Missing |
 | tests.test_drafting.test_generate_draft_returns_none_when_no_changes | — | standard | ⚪ Missing |
@@ -390,6 +436,8 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_module_skill.test_generate_module_skill_contains_thin_template | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_generated_view_modules_hit_generated_view_format | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_generators_include_required_sections | — | standard | ⚪ Missing |
+| tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance | — | standard | ⚪ Missing |
+| tests.test_adapter_registry.test_get_enabled_languages_output_is_stable | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_gitignore_does_not_ignore_harbor_views_modules_in_repo | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy.test_gitignore_does_not_use_broad_harbor_ignore | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_gitignore_has_separate_managed_blocks | — | standard | ⚪ Missing |
@@ -401,8 +449,11 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_workspace_gitignore_policy.test_harbor_canonical_and_runtime_ignore_policy | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_harbor_wrapper_output_matches_python_module | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_help_recognizes_core_release_commands | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_high_confidence_tsdoc_marks_present_and_required | — | standard | ⚪ Missing |
 | tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | — | standard | ⚪ Missing |
 | tests.test_index_builder.test_index_build_incremental_and_docstring_stability | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | — | standard | ⚪ Missing |
 | tests.test_index_builder_bad_syntax.test_index_builder_skips_bad_syntax | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening.test_index_builder_uses_isolated_cache_dir_without_touching_repo_cache | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_infer_module_from_path_supports_windows_and_posix | — | standard | ⚪ Missing |
@@ -419,6 +470,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_init_wizard.test_init_wizard_repair_guidance_mode_prompt_is_localized | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_init_wizard_source_removes_legacy_yes_no_brackets | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_internal_helper_is_not_required | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | — | standard | ⚪ Missing |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_json_output_does_not_include_absolute_paths | — | standard | ⚪ Missing |
@@ -444,6 +496,8 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_legacy_config_read | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_legacy_exists_but_canonical_missing_is_stale | — | standard | ⚪ Missing |
+| tests.test_python_adapter_compat.test_legacy_func_id_keeps_original_function_contract_id | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_line_comment_is_not_contract_source | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_llm_env_append_missing_only_and_force_does_not_overwrite | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_llm_provider_alias_custom_writes_env | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_llm_provider_alias_number_2_writes_deepseek_env | — | standard | ⚪ Missing |
@@ -455,6 +509,8 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_lock_flags.test_lock_register_scan | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_log_message_keeps_json_first_line_and_prints_canonical_target | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_log_writes_only_canonical_path | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_malformed_or_unsupported_ts_does_not_emit_contract_parse_error | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_medium_confidence_tsdoc_marks_non_contract_doc | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_merge_generated_at_keeps_old_when_fingerprints_and_body_same | — | standard | ⚪ Missing |
 | tests.test_doctor.test_merge_status_never_downgrades_fail | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_metadata_has_no_absolute_paths | — | standard | ⚪ Missing |
@@ -500,16 +556,27 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_workspace_paths.test_new_config_read | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_can_read_utf16_report | — | standard | ⚪ Missing |
+| tests.test_typescript_next_guidance.test_next_explains_typescript_contract_gap | — | standard | ⚪ Missing |
+| tests.test_typescript_next_guidance.test_next_explains_typescript_skipped_no_contract | — | standard | ⚪ Missing |
+| tests.test_typescript_next_guidance.test_next_explains_typescript_unsupported_syntax_advisory | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_json_items_include_blocking_and_status_is_ok_even_for_fail_report | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_json_output_contract | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_reads_checkpoint_report_and_groups_output | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_unknown_category_graceful_degrade | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_no_changed_modules_prints_friendly_message | — | standard | ⚪ Missing |
+| tests.test_python_adapter_compat.test_no_docstring_maps_to_empty_contract_sources | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_no_records_is_friendly | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat.test_non_function_symbol_kind_does_not_enter_blocking_checkpoint_failures | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_non_tty_does_not_try_arrow_selector | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_normalize_skill_slug_rules_are_stable | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_export_function | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_exported_class_public_method | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_parse_file_does_not_crash_on_unsupported_or_malformed_ts | — | standard | ⚪ Missing |
 | tests.test_drafting_json_parse.test_parse_single_quotes_fallback | — | standard | ⚪ Missing |
 | tests.test_drafting_json_parse.test_parse_with_code_fence | — | standard | ⚪ Missing |
 | tests.test_drafting_json_parse.test_parse_with_noise_prefix_suffix | — | standard | ⚪ Missing |
@@ -537,6 +604,10 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_release_packaging.test_pyproject_declares_cli_runtime_dependencies | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows stable and pre-release (a/b/rc) ... | standard | ⚪ Missing |
 | tests.test_init_wizard.test_pytest_env_does_not_try_arrow_selector | — | standard | ⚪ Missing |
+| tests.test_python_adapter_compat.test_python_adapter_parse_file_behavior_unchanged | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat.test_python_checkpoint_json_keeps_legacy_fields_and_adds_identity_fields | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat.test_python_checkpoint_pass_fail_semantics_unchanged | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat.test_python_method_symbol_kind_and_func_id_stay_compatible | — | standard | ⚪ Missing |
 | tests.test_init_detector.test_python_project_excludes_do_not_contain_py_globs | — | standard | ⚪ Missing |
 | tests.test_drafting.test_raise_when_llm_not_configured | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | — | standard | ⚪ Missing |
@@ -544,12 +615,15 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_release_packaging.test_readme_contains_release_key_commands | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled | — | standard | ⚪ Missing |
+| tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | Backward-compatible alias test name kept to avoid baselin... | standard | ⚪ Missing |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_repair_guidance_has_no_llm_integration_symbols | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_report_to_dict_is_deterministic_and_sanitized | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_does_not_duplicate_tag | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_script_file_targets_are_not_required | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_selector_fallback_does_not_repeat_selector_block | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_selector_source_does_not_use_full_screen_dialog | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_contract_gap_without_docstring | — | standard | ⚪ Missing |
@@ -559,6 +633,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_audit.test_semantic_guard_ok | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_skipped_no_contract_for_internal_helper | — | standard | ⚪ Missing |
 | tests.test_adapter_basic.test_signature_hash_changes | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_signature_only_public_function_remains_missing_required | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_single_write_new_config_target | — | standard | ⚪ Missing |
 | tests.test_doctor.test_skill_reference_check_legacy_existing_passes_when_export_enabled | — | standard | ⚪ Missing |
 | tests.test_doctor.test_skill_reference_check_legacy_existing_warns_when_export_disabled | — | standard | ⚪ Missing |
@@ -602,8 +677,13 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_contract_presence.test_strict_without_docstring_is_contract_gap_required | — | standard | ⚪ Missing |
 | tests.test_sync_engine.test_sync_engine_contract_gap_for_required_target_without_docstring | — | standard | ⚪ Missing |
 | tests.test_sync_engine.test_sync_engine_contract_parse_error_when_contract_presence_is_malformed | — | standard | ⚪ Missing |
+| tests.test_sync_engine_registry_integration.test_sync_engine_default_registry_python_only | — | standard | ⚪ Missing |
 | tests.test_sync_engine.test_sync_engine_drift_detection | — | standard | ⚪ Missing |
+| tests.test_sync_engine_registry_integration.test_sync_engine_file_discovery_matches_python_only_when_ts_enabled | — | standard | ⚪ Missing |
 | tests.test_sync_engine.test_sync_engine_skipped_no_contract_for_internal_helper_without_docstring | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_target_id_rule_for_typescript_subject | — | standard | ⚪ Missing |
+| tests.test_contract_subject_model.test_target_id_rule_is_stable_and_normalized | — | standard | ⚪ Missing |
+| tests.test_python_adapter_compat.test_target_id_uses_python_file_symbol_qualified_name_rule | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_tests_cli_snapshot_signal_remains_possible | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_tests_ddt_binding_signal_remains_possible | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_tests_generated_view_frontmatter_signal_remains_possible | — | standard | ⚪ Missing |
@@ -611,6 +691,20 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | tests.test_contract_impact.test_tests_helper_keyword_noise_stays_no_contract_impact | — | standard | ⚪ Missing |
 | tests.test_contract_presence.test_to_dict_like_without_docstring_is_required | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_to_dict_symbol_hits_cli_json_output | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci.test_ts_disabled_keeps_typescript_out_of_checkpoint | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_exported_function_without_jsdoc_becomes_contract_gap | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_high_confidence_jsdoc_avoids_contract_gap | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_internal_helper_without_jsdoc_becomes_skipped_advisory | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_medium_block_comment_is_contract_gap | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci.test_ts_enabled_unsupported_syntax_emits_non_blocking_advisory | — | standard | ⚪ Missing |
+| tests.test_typescript_contract_presence.test_tsdoc_with_code_gap_is_not_attached_to_symbol | — | standard | ⚪ Missing |
+| tests.test_typescript_adapter_mvp.test_typescript_adapter_does_not_change_python_adapter_parse_file_behavior | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci.test_typescript_checkpoint_categories_and_identity_fields_are_constrained | — | standard | ⚪ Missing |
+| tests.test_checkpoint_json_additive_compat.test_typescript_contract_subject_json_has_task6a_ready_fields | — | standard | ⚪ Missing |
+| tests.test_typescript_checkpoint_ci.test_typescript_default_excluded_extensions_do_not_enter_checkpoint | — | standard | ⚪ Missing |
+| tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index | — | standard | ⚪ Missing |
+| tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_unknown_checkpoint_category_graceful_degrade | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule.test_unknown_module_does_not_crash_and_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale | — | standard | ⚪ Missing |

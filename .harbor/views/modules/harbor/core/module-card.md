@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.1"
+harbor_version: "1.3.2"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-10T16:07:41Z"
+generated_at: "2026-05-11T06:50:25Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 30
@@ -39,11 +39,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:16628e2b6fac23d14244326955e312af88d8dd4e82a84c42bbdb5992abc1c906"
-contract_fingerprint: "sha256:86994d8932d2147e016175a74505f215dd913a49aad5108df294a9a2de2e1047"
-generator_fingerprint: "sha256:074be0a5b63ac214e37c151a854974866ff3aeefc9fcea3a50b722645556821b"
-view_fingerprint: "e6e3644add3f16137d8df2aa40e11fb8f97222e51455b22bbcd9aeb7f066317a"
-fingerprint: "e6e3644add3f16137d8df2aa40e11fb8f97222e51455b22bbcd9aeb7f066317a"
+source_fingerprint: "sha256:e255045d7df7039c3e3f0851eb8deeac863afa9b03f58386882a8559b973b462"
+contract_fingerprint: "sha256:b3131c1f453174396914e282ba8611d9988aebead73ec05b6823827e41ed78a4"
+generator_fingerprint: "sha256:6633775ec4612993005fe721f29ed17a159d913015ba7775ccd1a2b119fa0b85"
+view_fingerprint: "232e0d04cf703b4c95e2b4c701020600cc4e12eb4431d576f29d93ba5c319172"
+fingerprint: "232e0d04cf703b4c95e2b4c701020600cc4e12eb4431d576f29d93ba5c319172"
 ---
 
 # Module Card: harbor/core
@@ -118,10 +118,16 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci.CheckpointCIItem.dedupe_key | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.CheckpointCIItem.to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci._append_checkpoint_guidance_lines | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._checkpoint_reason_for_entry | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._collect_checkpoint_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._collect_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._dedupe_checkpoint_items | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._derive_checkpoint_identity | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._derive_qualified_name_and_symbol_kind | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._is_blocking_checkpoint_target | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._module_qual_from_file_path | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._normalize_checkpoint_key_path | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._parse_target_id | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._push_status_failures | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_checkpoint_contract_impact | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_json_text | harbor/core/ci.py | unknown | standard |
@@ -249,6 +255,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.index.IndexBuilder.__init__ | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._file_hash | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._index_entry | harbor/core/index.py | unknown | standard |
+| harbor.core.index.IndexBuilder._iter_files_by_enabled_adapters | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._iter_py_files | harbor/core/index.py | public | strict |
 | harbor.core.index.IndexBuilder._load_cache | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._load_config | harbor/core/index.py | unknown | standard |
@@ -406,6 +413,9 @@ harbor/core/workspace_migrate.py
 | harbor.core.storage.HarborDB.upsert_entry | harbor/core/storage.py | public | strict |
 | harbor.core.storage.HarborDB.upsert_file | harbor/core/storage.py | public | strict |
 | harbor.core.sync.SyncEngine.__init__ | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine._is_typescript_path | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine._iter_code_roots | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine._iter_files_by_enabled_adapters | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine._iter_py_files | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine._load_config | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine.check_status | harbor/core/sync.py | public | strict |
@@ -478,6 +488,7 @@ tests/test_drafting.py
 tests/test_drafting_json_parse.py
 tests/test_index_builder.py
 tests/test_index_builder_bad_syntax.py
+tests/test_index_builder_registry_integration.py
 tests/test_index_progress.py
 tests/test_init_detector.py
 tests/test_init_governance.py
@@ -489,10 +500,15 @@ tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
+tests/test_python_audit_regression.py
+tests/test_python_ddt_regression.py
 tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
 tests/test_stale.py
 tests/test_sync_engine.py
+tests/test_sync_engine_registry_integration.py
+tests/test_typescript_checkpoint_ci.py
+tests/test_typescript_contract_presence.py
 tests/test_utils_format.py
 tests/test_workspace_gitignore_policy.py
 tests/test_workspace_i18n.py

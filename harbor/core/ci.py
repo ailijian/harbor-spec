@@ -204,12 +204,13 @@ def build_checkpoint_ci_result(
     advisory: List[CheckpointCIItem] = []
 
     for typ, binding, message in list(getattr(ddt_report, "violations", []) or []):
+        defaults = _ddt_identity_defaults(str(getattr(binding, "func_id", "") or ""))
         identity = _derive_checkpoint_identity(
             func_id=str(getattr(binding, "func_id", "") or ""),
             file_path=str(getattr(binding, "file_path", "") or ""),
             source=binding,
-            default_language="python",
-            default_adapter="python",
+            default_language=defaults["language"],
+            default_adapter=defaults["adapter"],
         )
         failures.append(
             CheckpointCIItem(
@@ -227,12 +228,13 @@ def build_checkpoint_ci_result(
         )
     for item in list(getattr(ddt_report, "advisory", []) or []):
         binding = getattr(item, "binding", None)
+        defaults = _ddt_identity_defaults(str(getattr(binding, "func_id", "") or ""))
         identity = _derive_checkpoint_identity(
             func_id=str(getattr(binding, "func_id", "") or ""),
             file_path=str(getattr(binding, "file_path", "") or ""),
             source=binding,
-            default_language="python",
-            default_adapter="python",
+            default_language=defaults["language"],
+            default_adapter=defaults["adapter"],
         )
         advisory.append(
             CheckpointCIItem(
@@ -956,6 +958,13 @@ def _normalize_checkpoint_key_path(path_text: Optional[str]) -> str:
     if not raw:
         return ""
     return _sanitize_single_path(raw).strip().lower()
+
+
+def _ddt_identity_defaults(func_id: str) -> Dict[str, str]:
+    normalized = str(func_id or "").strip().lower()
+    if normalized.startswith("typescript:"):
+        return {"language": "typescript", "adapter": "typescript"}
+    return {"language": "python", "adapter": "python"}
 
 
 def _is_blocking_checkpoint_target(symbol_kind: Optional[str]) -> bool:

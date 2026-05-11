@@ -143,6 +143,16 @@ class DDTValidator:
         violations: List[Tuple[str, DDTBinding, str]] = []
         advisory: List[DDTAdvisory] = []
         for b in bindings:
+            if str(b.func_id or "").strip().lower().startswith("typescript:"):
+                advisory.append(
+                    DDTAdvisory(
+                        category="ddt_not_supported",
+                        binding=b,
+                        message="TypeScript DDT is not supported in v1.4.0",
+                        suggested_action="Keep TypeScript targets out of DDT binding; Python DDT remains supported.",
+                    )
+                )
+                continue
             strictness, contract_hash = self._func_meta.get(b.func_id, ("standard", None))
             if strictness == "strict" and b.strategy == "latest":
                 violations.append(("strict_forbid_latest", b, "Strict function forbids strategy=latest"))

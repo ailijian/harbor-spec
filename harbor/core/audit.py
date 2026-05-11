@@ -18,7 +18,7 @@ from harbor.core.utils import find_function_node
 
 @dataclass
 class AuditResult:
-    status: Literal["OK", "MISMATCH", "ERROR", "CONTRACT_GAP", "SKIPPED_NO_CONTRACT"]
+    status: Literal["OK", "MISMATCH", "ERROR", "CONTRACT_GAP", "SKIPPED_NO_CONTRACT", "NOT_SUPPORTED"]
     reason: Optional[str]
     provider: str
     func_id: str
@@ -114,6 +114,15 @@ class SemanticGuard:
         return tmpl.format(doc=doc, code=lines)
 
     def audit(self, contract: FunctionContract, source_text: str, provider: LLMProvider, file_path: str = "") -> AuditResult:
+        if _is_typescript_target(contract):
+            return AuditResult(
+                status="SKIPPED_NO_CONTRACT",
+                reason="TypeScript semantic audit is not supported in v1.4.0",
+                provider=provider.name,
+                func_id=contract.id,
+                prompt=None,
+                raw_output=None,
+            )
         inferred_file = file_path or _infer_file_path_from_contract(contract)
         presence = evaluate_contract_presence(contract, inferred_file)
         contract.contract_presence = presence.presence
@@ -198,3 +207,11 @@ def _infer_file_path_from_contract(contract: FunctionContract) -> str:
     if not module_parts:
         return ""
     return f"{'/'.join(module_parts)}.py"
+
+
+def _is_typescript_target(contract: FunctionContract) -> bool:
+    ident = str(getattr(contract, "id", "") or "").strip().lower()
+    if ident.startswith("typescript:"):
+        return True
+    file_path = str(getattr(contract, "file_path", "") or "").strip().lower()
+    return file_path.endswith(".ts")
