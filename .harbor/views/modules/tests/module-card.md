@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.2"
+harbor_version: "1.4.0"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-11T10:24:35Z"
+generated_at: "2026-05-11T12:03:53Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 87
+source_path_count: 89
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -70,6 +70,8 @@ source_paths:
   - "tests/test_l2_paths.py"
   - "tests/test_lock_flags.py"
   - "tests/test_lock_register_adopted.py"
+  - "tests/test_log_draft.py"
+  - "tests/test_log_draft_cli.py"
   - "tests/test_min_count_one.py"
   - "tests/test_module_capsule.py"
   - "tests/test_module_capsule_stale.py"
@@ -96,11 +98,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:26a2932ccb1f35054e92a9cc2ced592e04642ee9014b156414aecd7f4206bee9"
-contract_fingerprint: "sha256:ccd959339f435f76a89c3aac8b11e344ba68465726f5603c88f90ecdf7709ebd"
-generator_fingerprint: "sha256:6633775ec4612993005fe721f29ed17a159d913015ba7775ccd1a2b119fa0b85"
-view_fingerprint: "ad65bfe713c0d4a47abe28f6a0ca43d47ab56bce9804467d086dd206690d0e67"
-fingerprint: "ad65bfe713c0d4a47abe28f6a0ca43d47ab56bce9804467d086dd206690d0e67"
+source_fingerprint: "sha256:a6d6c83fcf8ef8e8d6443c43c556bbc5b2bb46622566ab9e6793d61826a8c1e9"
+contract_fingerprint: "sha256:3d4090b0de56705a0b8e677e71ef49547d513af69844b6e95b5c5c04d99a06b3"
+generator_fingerprint: "sha256:5c6acb61bff1b611776fe8b153f3d47871bdf2802fda61a69b011a0f64ce0fde"
+view_fingerprint: "a28d1c590e1ac96191d9107b33d34f947709dee9e9734d64e98e1c6c06d8a95a"
+fingerprint: "a28d1c590e1ac96191d9107b33d34f947709dee9e9734d64e98e1c6c06d8a95a"
 ---
 
 # Module Card: tests
@@ -182,6 +184,8 @@ tests/test_initializer.py
 tests/test_l2_paths.py
 tests/test_lock_flags.py
 tests/test_lock_register_adopted.py
+tests/test_log_draft.py
+tests/test_log_draft_cli.py
 tests/test_min_count_one.py
 tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
@@ -239,17 +243,29 @@ tests/test_workspace_paths.py
 | tests.test_cache_isolation_hardening.test_docs_all_external_only_index_is_isolated | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening.test_external_temp_paths_only_land_in_isolated_workspace_index | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening.test_index_builder_uses_isolated_cache_dir_without_touching_repo_cache | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_change_window_snapshot._FakeDDTScanner.scan_tests | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._FakeDDTValidator.validate | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._FakeSyncEngine.__init__ | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._FakeSyncEngine.check_status | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._configure_accept_cli | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._configure_finish_cli | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot._contract_report | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot._ddt_report | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot._init_git_repo | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._read_runtime_diagnostics | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot._run_cli | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot._run_git | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot._status_entry | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot._status_report | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_accept_and_finish_invoke_snapshot_events | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_accept_snapshot_write_failure_does_not_change_exit_code | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_accept_writes_accept_snapshot_and_can_be_read | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_bad_json_snapshot_is_skipped_with_warning | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_checkpoint_ci_snapshot_write_failure_does_not_change_exit_code | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_checkpoint_ci_writes_snapshot_without_changing_pass_semantics | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_finish_snapshot_write_failure_does_not_change_exit_code | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_finish_sync_context_writes_finish_snapshot_and_can_be_read | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_finish_writes_finish_snapshot_and_can_be_read | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_list_change_windows_sorts_newest_first_and_get_latest_filters_event | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_retention_keeps_latest_fifty_snapshots | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_snapshot_does_not_store_file_content_or_diff_body | tests/test_change_window_snapshot.py | unknown | standard |
@@ -682,6 +698,27 @@ tests/test_workspace_paths.py
 | tests.test_lock_flags.test_lock_no_register_adopted | tests/test_lock_flags.py | unknown | standard |
 | tests.test_lock_flags.test_lock_register_scan | tests/test_lock_flags.py | unknown | standard |
 | tests.test_lock_register_adopted.test_lock_register_adopted | tests/test_lock_register_adopted.py | unknown | standard |
+| tests.test_log_draft._write_report | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft._write_snapshot | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_bad_snapshot_json_is_skipped_without_crashing | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_build_diary_draft_collects_required_fields_and_evidence | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_from_report_requires_valid_json | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_since_last_accept_falls_back_when_accept_snapshot_is_missing | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_since_last_accept_filters_older_snapshots | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_since_last_log_without_marker_falls_back_to_recent_snapshots | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_write_diary_draft_output_writes_reports_and_rejects_diary_root | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft_cli._force_en_locale | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli._isolate_workspace | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli._seed_draft_evidence | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli._write_report | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli._write_snapshot | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.run_cmd | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_default_outputs_markdown_and_does_not_call_log_write | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_from_report_bad_json_returns_clear_error | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_json_output_is_stable | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_output_rejects_diary_path | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_output_writes_reports_file_and_keeps_stdout | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_since_last_accept_filters_to_post_accept_evidence | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_min_count_one.test_min_count_one_includes_single_file_dir | tests/test_min_count_one.py | unknown | standard |
 | tests.test_module_capsule._write_index | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | tests/test_module_capsule.py | unknown | standard |
@@ -943,6 +980,8 @@ tests/test_initializer.py
 tests/test_l2_paths.py
 tests/test_lock_flags.py
 tests/test_lock_register_adopted.py
+tests/test_log_draft.py
+tests/test_log_draft_cli.py
 tests/test_min_count_one.py
 tests/test_module_capsule.py
 tests/test_module_capsule_stale.py

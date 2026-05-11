@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.2"
+harbor_version: "1.4.0"
 view_type: "debug_playbook"
 module: "tests"
-generated_at: "2026-05-11T10:24:35Z"
+generated_at: "2026-05-11T12:03:53Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 87
+source_path_count: 89
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -70,6 +70,8 @@ source_paths:
   - "tests/test_l2_paths.py"
   - "tests/test_lock_flags.py"
   - "tests/test_lock_register_adopted.py"
+  - "tests/test_log_draft.py"
+  - "tests/test_log_draft_cli.py"
   - "tests/test_min_count_one.py"
   - "tests/test_module_capsule.py"
   - "tests/test_module_capsule_stale.py"
@@ -96,9 +98,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:26a2932ccb1f35054e92a9cc2ced592e04642ee9014b156414aecd7f4206bee9"
-contract_fingerprint: "sha256:ccd959339f435f76a89c3aac8b11e344ba68465726f5603c88f90ecdf7709ebd"
-generator_fingerprint: "sha256:a2c1380dafac0b0368e15e107b95d1b11a2059054d9af3003939122f8e5815a1"
+source_fingerprint: "sha256:a6d6c83fcf8ef8e8d6443c43c556bbc5b2bb46622566ab9e6793d61826a8c1e9"
+contract_fingerprint: "sha256:3d4090b0de56705a0b8e677e71ef49547d513af69844b6e95b5c5c04d99a06b3"
+generator_fingerprint: "sha256:60c0998d7649ad3b089e56528574b378ebd82b1d71616f19b071bdc813258a15"
 ---
 
 # Debug Playbook: tests

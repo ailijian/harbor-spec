@@ -1,17 +1,18 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.2"
+harbor_version: "1.4.0"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-11T07:32:15Z"
+generated_at: "2026-05-11T12:03:52Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 30
+source_path_count: 32
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
   - "harbor/core/advice_config.py"
   - "harbor/core/audit.py"
+  - "harbor/core/change_window.py"
   - "harbor/core/ci.py"
   - "harbor/core/context_integrity.py"
   - "harbor/core/contract_impact.py"
@@ -27,6 +28,7 @@ source_paths:
   - "harbor/core/init_prompt.py"
   - "harbor/core/init_wizard.py"
   - "harbor/core/l2.py"
+  - "harbor/core/log_draft.py"
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
   - "harbor/core/project_structure.py"
@@ -39,11 +41,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:3c1c94068e3462fc9927b5dc2fad43df4a88c610747165baf07e9a29f193bca2"
-contract_fingerprint: "sha256:b3131c1f453174396914e282ba8611d9988aebead73ec05b6823827e41ed78a4"
-generator_fingerprint: "sha256:6633775ec4612993005fe721f29ed17a159d913015ba7775ccd1a2b119fa0b85"
-view_fingerprint: "232e0d04cf703b4c95e2b4c701020600cc4e12eb4431d576f29d93ba5c319172"
-fingerprint: "232e0d04cf703b4c95e2b4c701020600cc4e12eb4431d576f29d93ba5c319172"
+source_fingerprint: "sha256:d275096035c582d1073ede2f28e53c7d732b50086fcac7b1817cbd83cda6f9d8"
+contract_fingerprint: "sha256:f31abef208a90857422aea7c0fa7dcd46b35275a39814070b1db2bd281b13069"
+generator_fingerprint: "sha256:5c6acb61bff1b611776fe8b153f3d47871bdf2802fda61a69b011a0f64ce0fde"
+view_fingerprint: "035b9b11e2d75e4054e87d43de13d78a45f156ad7cdeaaeaa790e12a6b761c69"
+fingerprint: "035b9b11e2d75e4054e87d43de13d78a45f156ad7cdeaaeaa790e12a6b761c69"
 ---
 
 # Module Card: harbor/core
@@ -67,6 +69,7 @@ If this summary is too generic, update the underlying contracts or module docume
 harbor/core/__init__.py
 harbor/core/advice_config.py
 harbor/core/audit.py
+harbor/core/change_window.py
 harbor/core/ci.py
 harbor/core/context_integrity.py
 harbor/core/contract_impact.py
@@ -82,6 +85,7 @@ harbor/core/init.py
 harbor/core/init_prompt.py
 harbor/core/init_wizard.py
 harbor/core/l2.py
+harbor/core/log_draft.py
 harbor/core/module_capsule.py
 harbor/core/module_skill.py
 harbor/core/project_structure.py
@@ -113,7 +117,23 @@ harbor/core/workspace_migrate.py
 | harbor.core.audit.SemanticGuard.audit | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.SemanticGuard.build_prompt | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit._infer_file_path_from_contract | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._is_typescript_target | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.resolve_provider | harbor/core/audit.py | unknown | standard |
+| harbor.core.change_window.ChangeWindowSnapshot.to_dict | harbor/core/change_window.py | public | strict |
+| harbor.core.change_window._coerce_changed_files | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window._coerce_mapping | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window._format_iso8601_utc | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window._format_snapshot_stamp | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window._git_status_lines | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window._parse_git_status_line | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window._run_git | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window._snapshot_from_payload | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window.change_window_dir | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window.collect_git_workspace_state | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window.get_latest_change_window | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window.list_change_windows | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window.prune_change_windows | harbor/core/change_window.py | unknown | standard |
+| harbor.core.change_window.write_change_window_snapshot | harbor/core/change_window.py | public | strict |
 | harbor.core.ci.CIFailure.to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.CheckpointCIItem.to_dict | harbor/core/ci.py | public | strict |
@@ -121,6 +141,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci._checkpoint_reason_for_entry | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._collect_checkpoint_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._collect_next_steps | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._ddt_identity_defaults | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._dedupe_checkpoint_items | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._derive_checkpoint_identity | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._derive_qualified_name_and_symbol_kind | harbor/core/ci.py | unknown | standard |
@@ -260,6 +281,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.index.IndexBuilder._load_cache | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._load_config | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._save_cache | harbor/core/index.py | unknown | standard |
+| harbor.core.index.IndexBuilder.adapter | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder.build | harbor/core/index.py | public | strict |
 | harbor.core.index.IndexBuilder.iter_build | harbor/core/index.py | public | strict |
 | harbor.core.index.process_file_worker | harbor/core/index.py | public | strict |
@@ -329,6 +351,36 @@ harbor/core/workspace_migrate.py
 | harbor.core.l2.collect_modules_from_paths | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.infer_module_from_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.normalize_indexed_module_candidate | harbor/core/l2.py | unknown | standard |
+| harbor.core.log_draft._bucket_for_path | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._build_risks | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._build_suggested_diary_entry | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._build_summary | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._build_why | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._classify_affected_areas | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._coerce_validation_status | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._derive_validation_statuses | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._discover_report_summaries | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._format_area_list | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._format_changed_files | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._format_reports | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._format_snapshot_group | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._format_snapshot_line | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._infer_contract_impact | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._latest_accept_snapshot | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._load_report_summary | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._merge_changed_files | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._normalize_changed_file | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._normalize_report_status | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._read_last_log_marker_timestamp | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._reject_diary_output_path | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._resolve_output_path | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._select_snapshots | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._snapshot_summary | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._to_repo_relative_display | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft.build_diary_draft | harbor/core/log_draft.py | public | strict |
+| harbor.core.log_draft.render_diary_draft_markdown | harbor/core/log_draft.py | public | strict |
+| harbor.core.log_draft.serialize_diary_draft | harbor/core/log_draft.py | public | strict |
+| harbor.core.log_draft.write_diary_draft_output | harbor/core/log_draft.py | public | strict |
 | harbor.core.module_capsule._belongs_to_module | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._ensure_within_root | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._load_index | harbor/core/module_capsule.py | unknown | standard |
@@ -418,6 +470,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.sync.SyncEngine._iter_files_by_enabled_adapters | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine._iter_py_files | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine._load_config | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine.adapter | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine.check_status | harbor/core/sync.py | public | strict |
 | harbor.core.utils.compute_body_hash | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.derive_adopted_roots | harbor/core/utils.py | unknown | standard |
@@ -462,6 +515,7 @@ harbor/core/workspace_migrate.py
 tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 tests/test_audit.py
+tests/test_change_window_snapshot.py
 tests/test_checkpoint_ci.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_ci_mode.py
@@ -496,6 +550,8 @@ tests/test_init_llm_env.py
 tests/test_init_wizard.py
 tests/test_initializer.py
 tests/test_l2_paths.py
+tests/test_log_draft.py
+tests/test_log_draft_cli.py
 tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py

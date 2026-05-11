@@ -73,6 +73,12 @@ from harbor.core.contract_impact import (
     format_contract_impact_report,
 )
 from harbor.core.change_window import write_change_window_snapshot
+from harbor.core.log_draft import (
+    LogDraftError,
+    build_diary_draft,
+    serialize_diary_draft,
+    write_diary_draft_output,
+)
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -101,6 +107,16 @@ def main():
         normal CLI output.
       - Change-window snapshots do not write Diary entries and do not
         automatically execute `harbor log`.
+      - `harbor log draft` is a safe read-only draft generator:
+        it summarizes existing evidence to stdout / optional non-diary output
+        paths and does not write `.harbor/diary/**`.
+      - `harbor log draft` supports `--since-last-accept`,
+        `--since-last-log`, `--from-report <path>`,
+        `--format markdown|json`, and `--output <path>`.
+      - `harbor log draft --output` may write one non-diary file such as
+        `.harbor/reports/*.md` or `.harbor/reports/*.json`.
+      - `harbor log draft` never executes `harbor log`, never writes
+        `.harbor/diary/**`, never writes `last_log_marker`, and never calls LLM.
       - `init` supports `--advice off|basic` and writes advice defaults into
         `.harbor/config/harbor.yaml` through initializer logic.
       - `checkpoint --ci` may emit TypeScript MVP advisory category
@@ -132,11 +148,17 @@ def main():
       are additive runtime state only and do not change the original command
       exit semantics. Snapshot write failures may append runtime-only
       diagnostics under `.harbor/state/change-window-diagnostics.jsonl`.
+      `harbor log draft` emits a reviewable markdown/json draft only, may write
+      one non-diary output file such as `.harbor/reports/*.md` or
+      `.harbor/reports/*.json`, does not write `.harbor/diary/**`, does not
+      update log markers, does not read or print file bodies / diff bodies, and
+      does not call LLM.
 
     Raises:
       SystemExit: Propagates CLI parse failures and CI/gate exit codes from the
       primary command flow. Snapshot write failures must not raise a different
-      exit outcome and must not surface as normal CLI output.
+      exit outcome and must not surface as normal CLI output. `harbor log draft`
+      argument / path / report-parse errors fail clearly without writing Diary.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
@@ -566,6 +588,41 @@ def main():
     p_log.add_argument("--ts", type=str, default=None)
     p_log.add_argument("--export", action="store_true")
     p_log.add_argument("--since", type=str, default=None)
+    p_log_sub = p_log.add_subparsers(dest="log_cmd", required=False)
+    p_log_draft = p_log_sub.add_parser(
+        "draft",
+        help="Generate a reviewable diary draft from existing change-window evidence",
+    )
+    p_log_draft_boundary = p_log_draft.add_mutually_exclusive_group()
+    p_log_draft_boundary.add_argument(
+        "--since-last-accept",
+        action="store_true",
+        help="Use change-window evidence after the latest accept snapshot",
+    )
+    p_log_draft_boundary.add_argument(
+        "--since-last-log",
+        action="store_true",
+        help="Use change-window evidence after `.harbor/state/log/last_log_marker.json` when available",
+    )
+    p_log_draft_boundary.add_argument(
+        "--from-report",
+        type=str,
+        default=None,
+        help="Use one explicit checkpoint/stale/doctor JSON report as draft evidence",
+    )
+    p_log_draft.add_argument(
+        "--format",
+        type=str,
+        choices=["markdown", "json"],
+        default="markdown",
+        help="Draft output format",
+    )
+    p_log_draft.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help="Optional output path for the rendered draft; `.harbor/diary/**` is forbidden",
+    )
 
     p_init = sub.add_parser("init", help="Initialize Harbor via interactive setup wizard")
     p_init.add_argument("--force", action="store_true")
@@ -2053,6 +2110,26 @@ def main():
             print(f"- {updated_display}")
         if not context.has_indexed_modules:
             print(t("cli.project.structure.no_index"))
+    elif args.command == "log" and getattr(args, "log_cmd", None) == "draft":
+        try:
+            payload = build_diary_draft(
+                repo_root=Path.cwd(),
+                since_last_accept=bool(getattr(args, "since_last_accept", False)),
+                since_last_log=bool(getattr(args, "since_last_log", False)),
+                from_report=Path(args.from_report) if getattr(args, "from_report", None) else None,
+            )
+            rendered = serialize_diary_draft(payload, args.format)
+            if args.output:
+                write_diary_draft_output(
+                    payload,
+                    Path(args.output),
+                    output_format=args.format,
+                    repo_root=Path.cwd(),
+                )
+            print(rendered, end="")
+        except LogDraftError as exc:
+            print(str(exc), file=sys.stderr)
+            raise SystemExit(1)
     elif args.command == "log" and args.export:
         mgr = DiaryManager()
         md = mgr.export_markdown(since=args.since, min_visibility=args.visibility or "repo")
