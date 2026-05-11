@@ -124,10 +124,10 @@ def test_source_of_truth_priority_and_conflict_docs_are_present():
     agents_text = (repo / "AGENTS.md").read_text(encoding="utf-8")
     assert "Instruction Hierarchy" in agents_text
     assert "Source of Truth Priority (highest to lowest)" in agents_text
-    assert "Contract vs Implementation" in agents_text
-    assert "Generated View vs Source" in agents_text
-    assert "Skill vs Module Capsule" in agents_text
-    assert "Legacy / Export vs Canonical" in agents_text
+    assert "Conflict reminders:" in agents_text
+    assert "Do not auto-trust either implementation or contract when they conflict." in agents_text
+    assert "Generated views and skills are advisory; they do not override code, contracts, tests, policy, or diary." in agents_text
+    assert "Prefer canonical .harbor/** artifacts over legacy/export copies." in agents_text
 
     role_rules = (repo / ".harbor/rules/role-rules.md").read_text(encoding="utf-8")
     assert "Follow `AGENTS.md`" in role_rules
