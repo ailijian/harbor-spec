@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.1"
+harbor_version: "1.3.2"
 view_type: "review_checklist"
 module: "tests"
-generated_at: "2026-05-10T16:16:18Z"
+generated_at: "2026-05-11T03:47:08Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 73
@@ -82,9 +82,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:02be6fc0b9443db85dd48b41cf316fc8b9aa9f03a890a5f5a5e40e2f6cfb59be"
-contract_fingerprint: "sha256:6cf102a1ff9105ba293df4365d9ecec7a074c0bc2920e7dd765bd3beb5d518eb"
-generator_fingerprint: "sha256:89fbe1d7c10db1aa46b216b12102cc88da8aa9f315cd63f5b330c96a533e3551"
+source_fingerprint: "sha256:9f16575c4aa75b82a26dbe02b033be6003083273b0f67654f2ddd2842bd8287b"
+contract_fingerprint: "sha256:ad02e05ceffca2e7ab612bc7da491856e92c180c20612ffb895880bee6b4f054"
+generator_fingerprint: "sha256:39b22994e4567862e058a296a2654dd46097982bc7ab5b727ed2e9c79717889b"
 ---
 
 # Review Checklist: tests

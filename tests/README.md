@@ -146,6 +146,8 @@
 | tests.test_module_skill.test_check_capsule_ready_missing_capsule | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_check_capsule_ready_stale_capsule | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_check_capsule_ready_unknown_module | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_check_ddt_baseline_missing_default_aggregated | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_check_ddt_baseline_missing_verbose_lists_bindings | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect.test_check_git_ignored_directory_rule_uses_nested_probe | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | — | standard | ⚪ Missing |
@@ -161,6 +163,7 @@
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_missing_function | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_untracked_function | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_failure_dedupe_keeps_readable_ci_failures | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_checkpoint_ci_json_advisory_unchanged_with_advice_modes | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_includes_ddt_baseline_missing_advisory_without_blocking | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_ci_json_recognized | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | — | standard | ⚪ Missing |
@@ -500,6 +503,8 @@
 | tests.test_module_capsule_stale.test_stale_when_module_card_missing | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_start_command_recognized | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_status_alias_st | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_status_skipped_no_contract_default_summary | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_status_skipped_no_contract_verbose_lists_targets | — | standard | ⚪ Missing |
 | tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline.test_strict_binding_missing_l3_version_still_fails | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline.test_strict_binding_reports_baseline_missing_advisory | — | standard | ⚪ Missing |

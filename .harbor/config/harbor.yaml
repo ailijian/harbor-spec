@@ -4,7 +4,7 @@ code_roots:
 - harbor/**
 - tests/**
 exclude_paths: []
-language: auto
+language: zh
 adopted_roots:
 - harbor/**
 advice:

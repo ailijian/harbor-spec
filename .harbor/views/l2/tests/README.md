@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.1"
+harbor_version: "1.3.2"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-10T16:16:18Z"
+generated_at: "2026-05-11T03:47:08Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 73
@@ -82,9 +82,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:02be6fc0b9443db85dd48b41cf316fc8b9aa9f03a890a5f5a5e40e2f6cfb59be"
-contract_fingerprint: "sha256:53246bc2bdb3419d64e3b7b73d2b008b3dfaee5d36cde3b543ae2127eb47c7bc"
-generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177fb2fe34b0b75a150"
+source_fingerprint: "sha256:9f16575c4aa75b82a26dbe02b033be6003083273b0f67654f2ddd2842bd8287b"
+contract_fingerprint: "sha256:d6b0e432b5487b3da559214cfff9654014edd23a69779540edb4f3be564a1386"
+generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae883d5e242207648"
 ---
 
 # Module: tests
@@ -235,6 +235,8 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | tests.test_module_skill.test_check_capsule_ready_missing_capsule | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_check_capsule_ready_stale_capsule | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_check_capsule_ready_unknown_module | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_check_ddt_baseline_missing_default_aggregated | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_check_ddt_baseline_missing_verbose_lists_bindings | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect.test_check_git_ignored_directory_rule_uses_nested_probe | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | — | standard | ⚪ Missing |
@@ -250,6 +252,7 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_missing_function | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_untracked_function | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_failure_dedupe_keeps_readable_ci_failures | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_checkpoint_ci_json_advisory_unchanged_with_advice_modes | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_includes_ddt_baseline_missing_advisory_without_blocking | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_ci_json_recognized | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | — | standard | ⚪ Missing |
@@ -589,6 +592,8 @@ generator_fingerprint: "sha256:f5fdf92649564f2b9223d28f4191a9deef9f9224fc252177f
 | tests.test_module_capsule_stale.test_stale_when_module_card_missing | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_start_command_recognized | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_status_alias_st | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_status_skipped_no_contract_default_summary | — | standard | ⚪ Missing |
+| tests.test_cli_v2.test_status_skipped_no_contract_verbose_lists_targets | — | standard | ⚪ Missing |
 | tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline.test_strict_binding_missing_l3_version_still_fails | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline.test_strict_binding_reports_baseline_missing_advisory | — | standard | ⚪ Missing |

@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.1"
+harbor_version: "1.3.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-10T16:16:18Z"
+generated_at: "2026-05-11T03:47:08Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 73
@@ -82,11 +82,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:02be6fc0b9443db85dd48b41cf316fc8b9aa9f03a890a5f5a5e40e2f6cfb59be"
-contract_fingerprint: "sha256:6cf102a1ff9105ba293df4365d9ecec7a074c0bc2920e7dd765bd3beb5d518eb"
-generator_fingerprint: "sha256:074be0a5b63ac214e37c151a854974866ff3aeefc9fcea3a50b722645556821b"
-view_fingerprint: "0c2f786837d2372139f714729ae5f75ff5d1f61503bef830ea8357f13cd68e20"
-fingerprint: "0c2f786837d2372139f714729ae5f75ff5d1f61503bef830ea8357f13cd68e20"
+source_fingerprint: "sha256:9f16575c4aa75b82a26dbe02b033be6003083273b0f67654f2ddd2842bd8287b"
+contract_fingerprint: "sha256:ad02e05ceffca2e7ab612bc7da491856e92c180c20612ffb895880bee6b4f054"
+generator_fingerprint: "sha256:6633775ec4612993005fe721f29ed17a159d913015ba7775ccd1a2b119fa0b85"
+view_fingerprint: "123a958a85013be64a6b8618d96d64db3882eb844e286b833c46ae7eefbee4b6"
+fingerprint: "123a958a85013be64a6b8618d96d64db3882eb844e286b833c46ae7eefbee4b6"
 ---
 
 # Module Card: tests
@@ -426,6 +426,9 @@ tests/test_workspace_paths.py
 | tests.test_cli_v2._isolate_workspace | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.run_cmd | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_accept_maps_to_lock_logic | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_check_ddt_baseline_missing_default_aggregated | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_check_ddt_baseline_missing_verbose_lists_bindings | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_checkpoint_ci_json_advisory_unchanged_with_advice_modes | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_checkpoint_ci_json_recognized | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_checkpoint_command_recognized | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit | tests/test_cli_v2.py | unknown | standard |
@@ -440,6 +443,8 @@ tests/test_workspace_paths.py
 | tests.test_cli_v2.test_log_message_keeps_json_first_line_and_prints_canonical_target | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_start_command_recognized | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_status_alias_st | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_status_skipped_no_contract_default_summary | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2.test_status_skipped_no_contract_verbose_lists_targets | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_workspace_inspect._force_en_locale | tests/test_cli_workspace_inspect.py | unknown | standard |
 | tests.test_cli_workspace_inspect._write_workspace_fixture | tests/test_cli_workspace_inspect.py | unknown | standard |
 | tests.test_cli_workspace_inspect.run_cmd | tests/test_cli_workspace_inspect.py | unknown | standard |
