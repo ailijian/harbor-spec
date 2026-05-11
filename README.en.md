@@ -113,16 +113,24 @@ Harbor-spec v1.4.1 introduces a safe Diary Draft workflow for summarizing change
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report .harbor/reports/checkpoint.json
 harbor log draft --output .harbor/reports/log-draft.md
 ```
 
 ### Safety boundaries
 
+* `harbor log draft` only generates a reviewable Diary Draft and does not write a Written Diary Entry
 * `harbor log draft` does not write `.harbor/diary/**`
-* `harbor log draft` does not call LLM
+* `harbor log draft --output` may write to `.harbor/reports/**`
+* `harbor log draft --output` targeting `.harbor/diary/**` must be rejected
+* `harbor log draft` does not call LLM in v1.4.1
+* LLM-assisted draft is future work, not a v1.4.1 capability
+* Any future LLM-assisted draft must be explicit opt-in and must not send secrets, credentials, private data, `.env` contents, file bodies, or diff bodies to an LLM
 * `harbor log draft` does not output file bodies or diff bodies
 * writing a real Diary entry still requires explicit human authorization
-* a Draft is reviewable output, not source-of-truth memory
+* change-window snapshots are runtime evidence, not source-of-truth memory
+* a Written Diary Entry under `.harbor/diary/**` remains the source-of-truth decision memory
 
 ---
 
@@ -398,13 +406,19 @@ If you only need a reviewable Diary Draft first, you may run:
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report .harbor/reports/checkpoint.json
 harbor log draft --output .harbor/reports/log-draft.md
 ```
 
 Boundaries:
 
+* `harbor log draft` only generates a reviewable Diary Draft and does not write a Written Diary Entry
 * `harbor log draft` does not write `.harbor/diary/**`
-* `harbor log draft` does not call LLM
+* `harbor log draft --output` may write to `.harbor/reports/**`
+* `harbor log draft --output` targeting `.harbor/diary/**` must be rejected
+* `harbor log draft` does not call LLM in v1.4.1
+* LLM-assisted draft is future work, not a v1.4.1 capability
 * `harbor log draft` does not output file bodies or diff bodies
 * `harbor log` / Diary write still require human authorization
 
@@ -749,6 +763,8 @@ harbor finish --sync-context
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report .harbor/reports/checkpoint.json
 harbor log draft --output .harbor/reports/log-draft.md
 ```
 
@@ -777,7 +793,9 @@ Why:
 
 * it generates reviewable Diary Draft output only
 * it does not write `.harbor/diary/**`
-* it does not call LLM
+* `--output` is limited to `.harbor/reports/**`; `.harbor/diary/**` targets must be rejected
+* it does not call LLM in v1.4.1
+* LLM-assisted draft is future work and must remain explicit opt-in
 * it does not output file bodies or diff bodies
 
 ---
@@ -1131,7 +1149,10 @@ No.
 ```text
 harbor log draft only generates a reviewable Diary Draft
 harbor log draft does not write .harbor/diary/**
-harbor log draft does not call LLM
+harbor log draft --output may write to .harbor/reports/**
+harbor log draft --output targeting .harbor/diary/** must be rejected
+harbor log draft does not call LLM in v1.4.1
+LLM-assisted draft is future work, not a v1.4.1 capability
 harbor log draft does not output file bodies or diff bodies
 ```
 

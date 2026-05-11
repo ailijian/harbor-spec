@@ -537,11 +537,13 @@ Diary Draft / future log-draft safety:
 
 ```text
 Do not include secret values in Diary Draft content.
-Do not send .env / credentials / tokens / private user data to LLM for log drafting.
+harbor log draft does not call LLM in v1.4.1.
+LLM-assisted draft is future work only and must be explicit opt-in.
+Do not send secrets / credentials / tokens / private user data / .env contents to an LLM for log drafting.
 harbor log draft must not read or output secrets.
 harbor log draft must not output .env contents.
 harbor log draft must not output file content bodies or diff bodies.
-If future LLM-assisted draft mode exists, it must be explicit opt-in and must not send secrets / credentials / private data.
+If future LLM-assisted draft mode exists, it must not send secrets / credentials / private data / .env contents / file bodies / diff bodies to an LLM.
 --output targeting .harbor/diary/** must be rejected.
 ```
 

@@ -19,10 +19,14 @@
 
 ## Safety
 
+- `harbor log draft` generates a reviewable draft only; it does not write a Written Diary Entry.
 - `harbor log draft` does not write `.harbor/diary/**`.
-- `harbor log draft` does not call LLM.
+- `harbor log draft --output` may write to `.harbor/reports/**`.
 - `harbor log draft` does not output file content or diff body.
 - `--output` to `.harbor/diary/**` is rejected.
+- `harbor log draft` does not call LLM in v1.4.1.
+- LLM-assisted draft is future work only and must be explicit opt-in.
+- Any future LLM-assisted draft must not send secrets, credentials, private data, `.env` contents, file bodies, or diff bodies to an LLM.
 
 ## Validation
 

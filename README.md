@@ -114,16 +114,24 @@ Harbor-spec v1.4.1 引入安全的 Diary Draft 工作流，用于在不写入 so
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report .harbor/reports/checkpoint.json
 harbor log draft --output .harbor/reports/log-draft.md
 ```
 
 ### 安全边界
 
+* `harbor log draft` 只生成 reviewable Diary Draft，不写 Written Diary Entry
 * `harbor log draft` 不写 `.harbor/diary/**`
-* `harbor log draft` 不调用 LLM
+* `harbor log draft` 的 `--output` 可写 `.harbor/reports/**`
+* `harbor log draft` 的 `--output` 指向 `.harbor/diary/**` 必须拒绝
+* `harbor log draft` 在 v1.4.1 不调用 LLM
+* LLM-assisted draft 属于 future work，不是 v1.4.1 当前能力
+* 任何未来的 LLM-assisted draft 都必须显式 opt-in，且不得向 LLM 发送 secrets、credentials、private data、`.env` contents、file bodies 或 diff bodies
 * `harbor log draft` 不输出文件正文或 diff 正文
 * 真正写 Diary 仍需人工明确授权
-* Draft 只是 reviewable output，不是 source-of-truth memory
+* change-window snapshots 属于 runtime evidence，不是 source-of-truth memory
+* Written Diary Entry under `.harbor/diary/**` 才是 source-of-truth decision memory
 
 ---
 
@@ -399,13 +407,19 @@ harbor log
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report .harbor/reports/checkpoint.json
 harbor log draft --output .harbor/reports/log-draft.md
 ```
 
 边界：
 
+* `harbor log draft` 只生成 reviewable Diary Draft，不写 Written Diary Entry
 * `harbor log draft` 不写 `.harbor/diary/**`
-* `harbor log draft` 不调用 LLM
+* `harbor log draft` 的 `--output` 可写 `.harbor/reports/**`
+* `harbor log draft` 的 `--output` 指向 `.harbor/diary/**` 必须拒绝
+* `harbor log draft` 在 v1.4.1 不调用 LLM
+* LLM-assisted draft 属于 future work，不是 v1.4.1 当前能力
 * `harbor log draft` 不输出文件正文或 diff 正文
 * `harbor log` / Diary write 仍需人工授权
 
@@ -749,6 +763,8 @@ harbor finish --sync-context
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report .harbor/reports/checkpoint.json
 harbor log draft --output .harbor/reports/log-draft.md
 ```
 
@@ -777,7 +793,9 @@ git push
 
 * 只生成 reviewable Diary Draft
 * 不写 `.harbor/diary/**`
-* 不调用 LLM
+* `--output` 仅允许写 `.harbor/reports/**`，指向 `.harbor/diary/**` 必须拒绝
+* 在 v1.4.1 不调用 LLM
+* LLM-assisted draft 属于 future work，且未来也必须显式 opt-in
 * 不输出文件正文或 diff 正文
 
 ---
@@ -1131,7 +1149,10 @@ doctor = health check
 ```text
 harbor log draft 只生成 reviewable Diary Draft
 harbor log draft 不写 .harbor/diary/**
-harbor log draft 不调用 LLM
+harbor log draft 的 --output 可写 .harbor/reports/**
+harbor log draft 的 --output 指向 .harbor/diary/** 必须拒绝
+harbor log draft 在 v1.4.1 不调用 LLM
+LLM-assisted draft 属于 future work，不是 v1.4.1 当前能力
 harbor log draft 不输出文件正文或 diff 正文
 ```
 

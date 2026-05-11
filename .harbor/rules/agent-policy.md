@@ -829,6 +829,8 @@ AI may run these safe draft commands:
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report <path>
 harbor log draft --output .harbor/reports/<name>.md
 ```
 
@@ -1206,11 +1208,21 @@ AI may generate Diary Drafts.
 
 AI may run `harbor log draft` as a safe draft command.
 
-`harbor log draft` is read-only with respect to source-of-truth memory.
+`harbor log draft` generates a reviewable Diary Draft only and is read-only with respect to source-of-truth memory.
 
 `harbor log draft` may write to `.harbor/reports/**` only when explicitly requested through `--output`.
 
+`harbor log draft --output` targeting `.harbor/diary/**` must be rejected.
+
 `harbor log draft` must not write to `.harbor/diary/**`.
+
+`harbor log draft` does not call LLM in v1.4.1.
+
+LLM-assisted draft is future work only and must be explicit opt-in.
+
+Any future LLM-assisted draft must not send secrets, credentials, private data, `.env` contents, file bodies, or diff bodies to an LLM.
+
+`harbor log` / Diary write still require explicit human authorization.
 
 Usually no diary is needed for:
 

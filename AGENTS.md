@@ -402,6 +402,8 @@ Diary Draft workflow:
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report <path>
 harbor log draft --output .harbor/reports/<name>.md
 ```
 
@@ -410,7 +412,12 @@ Rules:
 ```text
 harbor log draft generates a reviewable Diary Draft only.
 harbor log draft does not write .harbor/diary/**.
-harbor log draft does not call LLM.
+harbor log draft may write reviewable output to .harbor/reports/** through --output.
+harbor log draft --output targeting .harbor/diary/** must be rejected.
+harbor log draft does not call LLM in v1.4.1.
+LLM-assisted draft is future work only.
+Any future LLM-assisted draft must be explicit opt-in.
+Any future LLM-assisted draft must not send secrets, credentials, private data, .env contents, file bodies, or diff bodies to an LLM.
 harbor log draft does not read or output file content or diff body.
 harbor log draft may summarize evidence from change-window snapshots, reports, and git status.
 Diary Draft is not source-of-truth memory.
@@ -439,6 +446,8 @@ Agents may run these safe draft commands without diary-write authorization:
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report <path>
 harbor log draft --output .harbor/reports/<name>.md
 ```
 
@@ -764,7 +773,11 @@ Agent may generate a Diary Draft for review.
 Agent may run harbor log draft as a safe draft command.
 harbor log draft may use change-window snapshots / reports / git status as evidence input.
 harbor log draft must not write .harbor/diary/**.
-harbor log draft must not call LLM.
+harbor log draft may write reviewable output to .harbor/reports/** through --output.
+harbor log draft --output targeting .harbor/diary/** must be rejected.
+harbor log draft must not call LLM in v1.4.1.
+LLM-assisted draft is future work only and must be explicit opt-in.
+Any future LLM-assisted draft must not send secrets, credentials, private data, .env contents, file bodies, or diff bodies to an LLM.
 harbor log draft must not read or output file content or diff body.
 Agent must not write .harbor/diary/** without explicit user authorization.
 Agent must not run harbor log write / harbor log when it writes Diary without explicit user request.

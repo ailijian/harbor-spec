@@ -1601,7 +1601,9 @@ Rules:
 
 ```text
 Log Draft does not write .harbor/diary/**.
-Log Draft does not call LLM by default.
+Log Draft does not call LLM in v1.4.1.
+LLM-assisted draft is future work only and must be explicit opt-in.
+Any future LLM-assisted draft must not send secrets, credentials, private data, .env contents, file bodies, or diff bodies to an LLM.
 Log Draft does not output file content bodies or diff bodies.
 Log Draft may write reviewable output to .harbor/reports/** when explicitly requested.
 ```
