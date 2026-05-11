@@ -646,7 +646,7 @@ Example:
 ```yaml
 ---
 generated_by: harbor-spec
-harbor_version: 1.3.0
+harbor_version: 1.4.1
 view_type: l2_readme
 module: harbor/core
 generation_command: harbor docs --module harbor/core --write

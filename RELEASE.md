@@ -5,7 +5,7 @@
 
 ## Added
 
-- Change-window snapshots for `checkpoint` / `finish` / `accept`.
+- Change Window Snapshot MVP for `checkpoint` / `finish` / `accept`.
 - `harbor log draft` command.
 - Markdown / JSON Diary Draft output.
 - Latest draft runtime cache:
@@ -27,6 +27,7 @@
 - Log workflow is documented as `Evidence -> Draft Cache / Save -> Controlled Write`.
 - CLI user-facing log prompts/errors follow Harbor i18n; JSON schema keys remain stable English identifiers.
 - Log draft skips invalid / non-UTF-8 report evidence safely.
+- TypeScript boundaries remain unchanged from v1.4.0 in v1.4.1.
 
 ## Safety
 
