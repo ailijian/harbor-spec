@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 from harbor.adapters.python.parser import PythonAdapter
+from harbor.adapters.typescript.adapter import TypeScriptAdapter
 
 
 class AdapterRegistry:
@@ -28,7 +29,7 @@ class AdapterRegistry:
 
         availability = {
             "python": True,
-            "typescript": False,  # v1.4.0 Task 2A: not implemented yet.
+            "typescript": True,
         }
 
         enabled = {
@@ -39,6 +40,8 @@ class AdapterRegistry:
         adapters: Dict[str, object] = {}
         if enabled["python"]:
             adapters["python"] = PythonAdapter()
+        if enabled["typescript"]:
+            adapters["typescript"] = TypeScriptAdapter()
         return cls(enabled=enabled, adapters=adapters)
 
     @staticmethod

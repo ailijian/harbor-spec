@@ -59,7 +59,7 @@ def test_index_builder_file_discovery_matches_python_only_when_ts_enabled(tmp_pa
     files = builder._iter_files_by_enabled_adapters()
 
     assert builder.registry.is_enabled("python") is True
-    assert builder.registry.is_enabled("typescript") is False
+    assert builder.registry.is_enabled("typescript") is True
     assert len(files) == 1
     assert files[0].suffix == ".py"
 
@@ -125,6 +125,7 @@ def test_typescript_enabled_unavailable_does_not_affect_python_index(tmp_path: P
     )
     report = builder.build(incremental=False)
 
+    assert builder.registry.is_enabled("typescript") is True
     assert report.scanned_files == 1
     assert report.updated_files == 1
     assert report.skipped_files == 0

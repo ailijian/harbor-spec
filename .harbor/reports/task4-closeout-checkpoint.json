@@ -1,0 +1,2048 @@
+﻿{
+  "advisory": [
+    {
+      "category": "ddt_version_baseline_missing",
+      "file_path": "tests/test_sync_engine.py",
+      "func_id": "harbor.core.sync.SyncEngine.check_status",
+      "guidance": {
+        "anti_action": "Do not blindly bump l3_version. Do not run harbor accept automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review baseline state before deciding whether l3_version should be changed.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-ddt-diary",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": true,
+        "what_happened": "Strict DDT binding is structurally valid, but no L3 contract version baseline was found."
+      },
+      "reason": "严格 DDT 绑定格式有效，但未找到 L3 契约版本基线，无法判断 l3_version 是否需要升级。请在人工复核后建立或接受基线。",
+      "suggested_action": "请先初始化并复核基线后运行 harbor checkpoint，再确认是否需要升级 l3_version，最后再考虑 harbor accept。"
+    },
+    {
+      "category": "ddt_version_baseline_missing",
+      "file_path": "tests/test_utils_format.py",
+      "func_id": "harbor.utils.formatting.format_size",
+      "guidance": {
+        "anti_action": "Do not blindly bump l3_version. Do not run harbor accept automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review baseline state before deciding whether l3_version should be changed.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-ddt-diary",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": true,
+        "what_happened": "Strict DDT binding is structurally valid, but no L3 contract version baseline was found."
+      },
+      "reason": "严格 DDT 绑定格式有效，但未找到 L3 契约版本基线，无法判断 l3_version 是否需要升级。请在人工复核后建立或接受基线。",
+      "suggested_action": "请先初始化并复核基线后运行 harbor checkpoint，再确认是否需要升级 l3_version，最后再考虑 harbor accept。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/adapters/typescript/parser.py",
+      "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser.__init__",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser.__init__; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/adapters/typescript/parser.py",
+      "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_arrow_functions",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser._parse_export_arrow_functions; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/adapters/typescript/parser.py",
+      "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_class_methods",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser._parse_export_class_methods; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/adapters/typescript/parser.py",
+      "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_functions",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser._parse_export_functions; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/adapters/typescript/parser.py",
+      "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser.parse",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser.parse; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/adapters/typescript/parser.py",
+      "func_id": "harbor.adapters.typescript.parser._extract_arrow_body",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser._extract_arrow_body; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/adapters/typescript/parser.py",
+      "func_id": "harbor.adapters.typescript.parser._find_matching",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser._find_matching; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/adapters/typescript/parser.py",
+      "func_id": "harbor.adapters.typescript.parser._skip_ws",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser._skip_ws; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/adapters/typescript/parser.py",
+      "func_id": "harbor.adapters.typescript.parser._to_lineno",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser._to_lineno; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_adapter_registry.py",
+      "func_id": "tests.test_adapter_registry.test_config_can_disable_python",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_config_can_disable_python; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_adapter_registry.py",
+      "func_id": "tests.test_adapter_registry.test_default_registry_disables_typescript",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_default_registry_disables_typescript; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_adapter_registry.py",
+      "func_id": "tests.test_adapter_registry.test_default_registry_enables_python",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_default_registry_enables_python; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_adapter_registry.py",
+      "func_id": "tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_adapter_registry.py",
+      "func_id": "tests.test_adapter_registry.test_get_enabled_languages_output_is_stable",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_get_enabled_languages_output_is_stable; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_adapter_registry.py",
+      "func_id": "tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_adapter_registry.py",
+      "func_id": "tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_index_builder_registry_integration.py",
+      "func_id": "tests.test_index_builder_registry_integration._write_config",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration._write_config; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_index_builder_registry_integration.py",
+      "func_id": "tests.test_index_builder_registry_integration._write_file",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration._write_file; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_index_builder_registry_integration.py",
+      "func_id": "tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_index_builder_registry_integration.py",
+      "func_id": "tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_index_builder_registry_integration.py",
+      "func_id": "tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_index_builder_registry_integration.py",
+      "func_id": "tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_sync_engine_registry_integration.py",
+      "func_id": "tests.test_sync_engine_registry_integration._write",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration._write; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_sync_engine_registry_integration.py",
+      "func_id": "tests.test_sync_engine_registry_integration._write_config",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration._write_config; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_sync_engine_registry_integration.py",
+      "func_id": "tests.test_sync_engine_registry_integration.test_sync_engine_default_registry_python_only",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration.test_sync_engine_default_registry_python_only; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_sync_engine_registry_integration.py",
+      "func_id": "tests.test_sync_engine_registry_integration.test_sync_engine_file_discovery_matches_python_only_when_ts_enabled",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration.test_sync_engine_file_discovery_matches_python_only_when_ts_enabled; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_sync_engine_registry_integration.py",
+      "func_id": "tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp._fixture_root",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp._fixture_root; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp._to_rel",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp._to_rel; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_standard_build_directories",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_standard_build_directories; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_tsx_js_jsx_dts",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_tsx_js_jsx_dts; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_discover_files_default_only_ts",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_discover_files_default_only_ts; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_export_function",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_export_function; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_exported_class_public_method",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_exported_class_public_method; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_does_not_crash_on_unsupported_or_malformed_ts",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_does_not_crash_on_unsupported_or_malformed_ts; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_target_id_rule_for_typescript_subject",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_target_id_rule_for_typescript_subject; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_typescript_adapter_mvp.py",
+      "func_id": "tests.test_typescript_adapter_mvp.test_typescript_adapter_does_not_change_python_adapter_parse_file_behavior",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_typescript_adapter_does_not_change_python_adapter_parse_file_behavior; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/registry.py",
+      "func_id": "harbor.adapters.registry.AdapterRegistry.__init__",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/registry.py",
+      "func_id": "harbor.adapters.registry.AdapterRegistry._read_enabled_flag",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/registry.py",
+      "func_id": "harbor.adapters.registry.AdapterRegistry._read_languages_config",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/registry.py",
+      "func_id": "harbor.adapters.registry.AdapterRegistry.default",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/registry.py",
+      "func_id": "harbor.adapters.registry.AdapterRegistry.from_config",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/registry.py",
+      "func_id": "harbor.adapters.registry.AdapterRegistry.get_adapter",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/registry.py",
+      "func_id": "harbor.adapters.registry.AdapterRegistry.get_adapters",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/registry.py",
+      "func_id": "harbor.adapters.registry.AdapterRegistry.get_enabled_languages",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/registry.py",
+      "func_id": "harbor.adapters.registry.AdapterRegistry.is_enabled",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/typescript/adapter.py",
+      "func_id": "harbor.adapters.typescript.adapter.TypeScriptAdapter._collect_file",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/typescript/adapter.py",
+      "func_id": "harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/typescript/adapter.py",
+      "func_id": "harbor.adapters.typescript.adapter.TypeScriptAdapter.parse_file",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/typescript/adapter.py",
+      "func_id": "harbor.adapters.typescript.adapter._to_posix_path",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/typescript/hashing.py",
+      "func_id": "harbor.adapters.typescript.hashing.normalize_text",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/typescript/hashing.py",
+      "func_id": "harbor.adapters.typescript.hashing.normalized_sha256",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    },
+    {
+      "category": "skipped_no_contract",
+      "file_path": "harbor/adapters/typescript/hashing.py",
+      "func_id": "harbor.adapters.typescript.hashing.sha256_text",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。"
+    }
+  ],
+  "ci": true,
+  "ci_failures": [],
+  "command": "checkpoint",
+  "contract_impact": {
+    "advisory": true,
+    "categories": [
+      "cli_args",
+      "source_of_truth_rule"
+    ],
+    "deterministic": true,
+    "findings": [
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser.__init__",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser.__init__; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_arrow_functions",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser._parse_export_arrow_functions; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_class_methods",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser._parse_export_class_methods; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_functions",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser._parse_export_functions; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser.parse",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser.parse; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser._extract_arrow_body",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser._extract_arrow_body; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser._find_matching",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser._find_matching; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser._skip_ws",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser._skip_ws; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser._to_lineno",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser._to_lineno; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_adapter_registry.py",
+        "func_id": "tests.test_adapter_registry.test_config_can_disable_python",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_config_can_disable_python; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_adapter_registry.py",
+        "func_id": "tests.test_adapter_registry.test_default_registry_disables_typescript",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_default_registry_disables_typescript; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_adapter_registry.py",
+        "func_id": "tests.test_adapter_registry.test_default_registry_enables_python",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_default_registry_enables_python; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_adapter_registry.py",
+        "func_id": "tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_adapter_registry.py",
+        "func_id": "tests.test_adapter_registry.test_get_enabled_languages_output_is_stable",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_get_enabled_languages_output_is_stable; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_adapter_registry.py",
+        "func_id": "tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_adapter_registry.py",
+        "func_id": "tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_index_builder_registry_integration.py",
+        "func_id": "tests.test_index_builder_registry_integration._write_config",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration._write_config; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_index_builder_registry_integration.py",
+        "func_id": "tests.test_index_builder_registry_integration._write_file",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration._write_file; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_index_builder_registry_integration.py",
+        "func_id": "tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_index_builder_registry_integration.py",
+        "func_id": "tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_index_builder_registry_integration.py",
+        "func_id": "tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_index_builder_registry_integration.py",
+        "func_id": "tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_sync_engine_registry_integration.py",
+        "func_id": "tests.test_sync_engine_registry_integration._write",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration._write; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_sync_engine_registry_integration.py",
+        "func_id": "tests.test_sync_engine_registry_integration._write_config",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration._write_config; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_sync_engine_registry_integration.py",
+        "func_id": "tests.test_sync_engine_registry_integration.test_sync_engine_default_registry_python_only",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration.test_sync_engine_default_registry_python_only; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_sync_engine_registry_integration.py",
+        "func_id": "tests.test_sync_engine_registry_integration.test_sync_engine_file_discovery_matches_python_only_when_ts_enabled",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration.test_sync_engine_file_discovery_matches_python_only_when_ts_enabled; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_sync_engine_registry_integration.py",
+        "func_id": "tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp._fixture_root",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp._fixture_root; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp._to_rel",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp._to_rel; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_standard_build_directories",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_standard_build_directories; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_tsx_js_jsx_dts",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_tsx_js_jsx_dts; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_discover_files_default_only_ts",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_discover_files_default_only_ts; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_export_function",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_export_function; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_detects_exported_class_public_method",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_detects_exported_class_public_method; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_parse_file_does_not_crash_on_unsupported_or_malformed_ts",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_parse_file_does_not_crash_on_unsupported_or_malformed_ts; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_target_id_rule_for_typescript_subject",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_target_id_rule_for_typescript_subject; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_typescript_adapter_mvp.py",
+        "func_id": "tests.test_typescript_adapter_mvp.test_typescript_adapter_does_not_change_python_adapter_parse_file_behavior",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_typescript_adapter_mvp.test_typescript_adapter_does_not_change_python_adapter_parse_file_behavior; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/registry.py",
+        "func_id": "harbor.adapters.registry.AdapterRegistry.__init__",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.registry.adapterregistry.__init__; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/registry.py",
+        "func_id": "harbor.adapters.registry.AdapterRegistry._read_enabled_flag",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.registry.adapterregistry._read_enabled_flag; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/registry.py",
+        "func_id": "harbor.adapters.registry.AdapterRegistry._read_languages_config",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.registry.adapterregistry._read_languages_config; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/registry.py",
+        "func_id": "harbor.adapters.registry.AdapterRegistry.default",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.registry.adapterregistry.default; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/registry.py",
+        "func_id": "harbor.adapters.registry.AdapterRegistry.from_config",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.registry.adapterregistry.from_config; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/registry.py",
+        "func_id": "harbor.adapters.registry.AdapterRegistry.get_adapter",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.registry.adapterregistry.get_adapter; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/registry.py",
+        "func_id": "harbor.adapters.registry.AdapterRegistry.get_adapters",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.registry.adapterregistry.get_adapters; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/registry.py",
+        "func_id": "harbor.adapters.registry.AdapterRegistry.get_enabled_languages",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.registry.adapterregistry.get_enabled_languages; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/registry.py",
+        "func_id": "harbor.adapters.registry.AdapterRegistry.is_enabled",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.registry.adapterregistry.is_enabled; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/adapter.py",
+        "func_id": "harbor.adapters.typescript.adapter.TypeScriptAdapter._collect_file",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.adapter.typescriptadapter._collect_file; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/adapter.py",
+        "func_id": "harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.adapter.typescriptadapter.discover_files; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/adapter.py",
+        "func_id": "harbor.adapters.typescript.adapter.TypeScriptAdapter.parse_file",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.adapter.typescriptadapter.parse_file; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/adapter.py",
+        "func_id": "harbor.adapters.typescript.adapter._to_posix_path",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.adapter._to_posix_path; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/hashing.py",
+        "func_id": "harbor.adapters.typescript.hashing.normalize_text",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.hashing.normalize_text; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/hashing.py",
+        "func_id": "harbor.adapters.typescript.hashing.normalized_sha256",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.hashing.normalized_sha256; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/hashing.py",
+        "func_id": "harbor.adapters.typescript.hashing.sha256_text",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.hashing.sha256_text; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      }
+    ],
+    "level": "possible_contract_impact",
+    "notable_findings": [
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser.__init__",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser.__init__; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_arrow_functions",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser._parse_export_arrow_functions; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_class_methods",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser._parse_export_class_methods; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_functions",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser._parse_export_functions; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/adapters/typescript/parser.py",
+        "func_id": "harbor.adapters.typescript.parser.TypeScriptLightweightParser.parse",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.adapters.typescript.parser.typescriptlightweightparser.parse; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      }
+    ],
+    "summary_counts": {
+      "confirmed_contract_impact": 0,
+      "no_contract_impact": 16,
+      "possible_contract_impact": 41,
+      "unknown": 0
+    }
+  },
+  "exit_code": 0,
+  "next_steps": [
+    "Checkpoint CI 门禁已通过。",
+    "请重新运行 harbor checkpoint --ci。"
+  ],
+  "status": "pass",
+  "summary": {
+    "confirmed_contract_impact": 0,
+    "contract_changed": 0,
+    "contract_gap": 0,
+    "contract_parse_error": 0,
+    "ddt_advisory": 5,
+    "ddt_failures": 0,
+    "drift": 0,
+    "missing": 0,
+    "modified": 0,
+    "possible_contract_impact": 41,
+    "skipped_no_contract": 57,
+    "untracked": 0
+  },
+  "writes_files": false
+}

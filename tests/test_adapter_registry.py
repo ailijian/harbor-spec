@@ -42,9 +42,9 @@ def test_typescript_enabled_in_config_but_not_implemented_does_not_crash():
         }
     )
 
-    assert registry.is_enabled("typescript") is False
-    assert registry.get_adapter("typescript") is None
-    assert "typescript" not in registry.get_enabled_languages()
+    assert registry.is_enabled("typescript") is True
+    assert registry.get_adapter("typescript") is not None
+    assert "typescript" in registry.get_enabled_languages()
 
 
 def test_get_adapter_python_returns_python_adapter_instance():

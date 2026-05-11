@@ -51,7 +51,7 @@ def test_sync_engine_file_discovery_matches_python_only_when_ts_enabled(tmp_path
     files = eng._iter_files_by_enabled_adapters()
 
     assert eng.registry.is_enabled("python") is True
-    assert eng.registry.is_enabled("typescript") is False
+    assert eng.registry.is_enabled("typescript") is True
     assert len(files) == 1
     assert files[0].suffix == ".py"
 
@@ -89,6 +89,7 @@ def test_typescript_enabled_unavailable_does_not_affect_python_status(tmp_path: 
     eng.code_roots = [str(code_root)]
     report = eng.check_status()
 
+    assert eng.registry.is_enabled("typescript") is True
     assert report.counts["drift"] == 0
     assert report.counts["modified"] == 0
     assert report.counts["contract_changed"] == 0
