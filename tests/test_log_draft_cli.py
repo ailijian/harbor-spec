@@ -104,9 +104,11 @@ def test_log_draft_default_outputs_markdown_and_does_not_call_log_write(monkeypa
     code, out, err = run_cmd(["log", "draft"])
 
     assert code == 0
-    assert err == ""
     assert "# Diary Draft" in out
     assert "## Suggested Diary Entry" in out
+    assert "Latest draft cache updated:" in err
+    assert (tmp_path / ".harbor" / "state" / "log" / "latest-draft.md").exists()
+    assert (tmp_path / ".harbor" / "state" / "log" / "latest-draft.json").exists()
     assert not (tmp_path / ".harbor" / "diary").exists()
 
 
@@ -122,7 +124,7 @@ def test_log_draft_json_output_is_stable(monkeypatch, tmp_path: Path):
     payload = json.loads(out)
 
     assert code == 0
-    assert err == ""
+    assert "Latest draft cache updated:" in err
     assert payload["schema_version"] == "1.0"
     assert payload["kind"] == "diary_draft"
     assert set(payload.keys()) == {
@@ -155,10 +157,76 @@ def test_log_draft_output_writes_reports_file_and_keeps_stdout(monkeypatch, tmp_
     code, out, err = run_cmd(["log", "draft", "--output", ".harbor/reports/draft.md"])
 
     assert code == 0
-    assert err == ""
     assert "# Diary Draft" in out
+    assert "Latest draft cache updated:" in err
+    assert "Draft saved to: .harbor/reports/draft.md" in err
     assert (tmp_path / ".harbor" / "reports" / "draft.md").exists()
     assert not (tmp_path / ".harbor" / "diary").exists()
+
+
+def test_log_draft_save_writes_timestamped_markdown_copy(monkeypatch, tmp_path: Path):
+    _seed_draft_evidence(tmp_path)
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "build_saved_diary_draft_output_path",
+        lambda **kwargs: tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.md",
+    )
+
+    code, out, err = run_cmd(["log", "draft", "--save"])
+
+    assert code == 0
+    assert "# Diary Draft" in out
+    assert "Draft saved to: .harbor/reports/log-draft-20260511-123456.md" in err
+    assert (tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.md").exists()
+
+
+def test_log_draft_save_json_writes_timestamped_json_copy_without_polluting_stdout(monkeypatch, tmp_path: Path):
+    _seed_draft_evidence(tmp_path)
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "build_saved_diary_draft_output_path",
+        lambda **kwargs: tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.json",
+    )
+
+    code, out, err = run_cmd(["log", "draft", "--save", "--format", "json"])
+    payload = json.loads(out)
+
+    assert code == 0
+    assert payload["kind"] == "diary_draft"
+    assert "Draft saved to: .harbor/reports/log-draft-20260511-123456.json" in err
+    assert (tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.json").exists()
+
+
+def test_log_draft_output_path_takes_precedence_over_save(monkeypatch, tmp_path: Path):
+    _seed_draft_evidence(tmp_path)
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "build_saved_diary_draft_output_path",
+        lambda **kwargs: tmp_path / ".harbor" / "reports" / "should-not-exist.md",
+    )
+
+    code, out, err = run_cmd(["log", "draft", "--save", "--output", ".harbor/reports/explicit.md"])
+
+    assert code == 0
+    assert "# Diary Draft" in out
+    assert "Explicit output path takes precedence over --save: .harbor/reports/explicit.md" in err
+    assert (tmp_path / ".harbor" / "reports" / "explicit.md").exists()
+    assert not (tmp_path / ".harbor" / "reports" / "should-not-exist.md").exists()
 
 
 def test_log_draft_output_rejects_diary_path(monkeypatch, tmp_path: Path):
@@ -204,7 +272,7 @@ def test_log_draft_since_last_accept_filters_to_post_accept_evidence(monkeypatch
     changed_paths = {item["path"] for item in payload["evidence"]["changed_files"]}
 
     assert code == 0
-    assert err == ""
+    assert "Latest draft cache updated:" in err
     assert "harbor/core/new.py" in changed_paths
     assert "harbor/core/old.py" not in changed_paths
 
@@ -224,3 +292,29 @@ def test_log_draft_from_report_bad_json_returns_clear_error(monkeypatch, tmp_pat
     assert code == 1
     assert out == ""
     assert "Failed to parse JSON report" in err
+
+
+def test_log_draft_cache_warning_does_not_fail_command(monkeypatch, tmp_path: Path):
+    _seed_draft_evidence(tmp_path)
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "write_latest_diary_draft_cache",
+        lambda payload, **kwargs: {
+            "markdown_path": None,
+            "json_path": None,
+            "markdown_path_display": ".harbor/state/log/latest-draft.md",
+            "json_path_display": ".harbor/state/log/latest-draft.json",
+            "warnings": ["disk full"],
+        },
+    )
+
+    code, out, err = run_cmd(["log", "draft"])
+
+    assert code == 0
+    assert "# Diary Draft" in out
+    assert "Latest draft cache warning: disk full" in err

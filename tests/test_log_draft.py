@@ -6,7 +6,14 @@ import pytest
 
 import harbor.core.log_draft as log_draft
 from harbor.core.change_window import change_window_dir, write_change_window_snapshot
-from harbor.core.log_draft import LogDraftError, build_diary_draft, serialize_diary_draft, write_diary_draft_output
+from harbor.core.log_draft import (
+    LogDraftError,
+    build_diary_draft,
+    build_saved_diary_draft_output_path,
+    serialize_diary_draft,
+    write_diary_draft_output,
+    write_latest_diary_draft_cache,
+)
 
 
 def _write_report(repo_root: Path, relative_path: str, payload: dict) -> Path:
@@ -276,3 +283,89 @@ def test_write_diary_draft_output_writes_reports_and_rejects_diary_root(monkeypa
             output_format="json",
             repo_root=tmp_path,
         )
+
+
+def test_write_latest_diary_draft_cache_writes_markdown_and_json_wrapper(monkeypatch, tmp_path: Path):
+    _write_snapshot(
+        tmp_path,
+        "checkpoint",
+        datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc),
+        changed_files=[{"path": "harbor/core/log_draft.py", "status": "M"}],
+        summary={"status": "pass"},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+    payload = build_diary_draft(repo_root=tmp_path)
+
+    result = write_latest_diary_draft_cache(
+        payload,
+        repo_root=tmp_path,
+        created_at=datetime(2026, 5, 11, 12, 30, tzinfo=timezone.utc),
+    )
+
+    markdown_path = tmp_path / ".harbor" / "state" / "log" / "latest-draft.md"
+    json_path = tmp_path / ".harbor" / "state" / "log" / "latest-draft.json"
+    wrapper = json.loads(json_path.read_text(encoding="utf-8"))
+
+    assert result["warnings"] == []
+    assert result["markdown_path"] == markdown_path
+    assert result["json_path"] == json_path
+    assert "# Diary Draft" in markdown_path.read_text(encoding="utf-8")
+    assert wrapper["schema_version"] == "1.0"
+    assert wrapper["kind"] == "diary_draft"
+    assert wrapper["created_at"] == "2026-05-11T12:30:00Z"
+    assert wrapper["source"] == "harbor log draft"
+    assert wrapper["markdown_path"] == ".harbor/state/log/latest-draft.md"
+    assert wrapper["draft"]["kind"] == "diary_draft"
+    assert set(wrapper.keys()) == {"created_at", "draft", "kind", "markdown_path", "schema_version", "source"}
+
+
+def test_write_latest_diary_draft_cache_failure_is_warning_only(monkeypatch, tmp_path: Path):
+    _write_snapshot(
+        tmp_path,
+        "checkpoint",
+        datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc),
+        changed_files=[{"path": "harbor/core/log_draft.py", "status": "M"}],
+        summary={"status": "pass"},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+    payload = build_diary_draft(repo_root=tmp_path)
+    original_write_text = Path.write_text
+
+    def _failing_write_text(self, data, *args, **kwargs):
+        if self.name in {"latest-draft.md", "latest-draft.json"}:
+            raise OSError("disk full")
+        return original_write_text(self, data, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", _failing_write_text)
+
+    result = write_latest_diary_draft_cache(payload, repo_root=tmp_path)
+
+    assert result["markdown_path"] is None
+    assert result["json_path"] is None
+    assert len(result["warnings"]) == 2
+    assert any("latest draft markdown cache" in warning for warning in result["warnings"])
+    assert any("latest draft JSON cache" in warning for warning in result["warnings"])
+
+
+def test_build_saved_diary_draft_output_path_uses_reports_root_and_format(tmp_path: Path):
+    path_md = build_saved_diary_draft_output_path(
+        output_format="markdown",
+        repo_root=tmp_path,
+        created_at=datetime(2026, 5, 11, 12, 34, 56, tzinfo=timezone.utc),
+    )
+    path_json = build_saved_diary_draft_output_path(
+        output_format="json",
+        repo_root=tmp_path,
+        created_at=datetime(2026, 5, 11, 12, 34, 56, tzinfo=timezone.utc),
+    )
+
+    assert path_md == tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.md"
+    assert path_json == tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.json"

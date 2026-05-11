@@ -337,6 +337,8 @@ Allowed examples:
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report <path>
 harbor log draft --output .harbor/reports/<name>.md
 ```
 

@@ -75,8 +75,10 @@ from harbor.core.contract_impact import (
 from harbor.core.change_window import write_change_window_snapshot
 from harbor.core.log_draft import (
     LogDraftError,
+    build_saved_diary_draft_output_path,
     build_diary_draft,
     serialize_diary_draft,
+    write_latest_diary_draft_cache,
     write_diary_draft_output,
 )
 from harbor.core.diary import DiaryManager
@@ -112,9 +114,18 @@ def main():
         paths and does not write `.harbor/diary/**`.
       - `harbor log draft` supports `--since-last-accept`,
         `--since-last-log`, `--from-report <path>`,
-        `--format markdown|json`, and `--output <path>`.
+        `--format markdown|json`, `--output <path>`, and `--save`.
       - `harbor log draft --output` may write one non-diary file such as
         `.harbor/reports/*.md` or `.harbor/reports/*.json`.
+      - `harbor log draft` also attempts to refresh latest draft runtime cache
+        under `.harbor/state/log/latest-draft.md` and
+        `.harbor/state/log/latest-draft.json`.
+      - Latest draft cache writes are runtime state only, may overwrite prior
+        cache files, and must not change stdout draft content or exit semantics
+        if cache write fails.
+      - `harbor log draft --save` may write one timestamped non-diary report
+        copy under `.harbor/reports/`; if both `--save` and `--output` are
+        present, explicit `--output` takes precedence.
       - `harbor log draft` never executes `harbor log`, never writes
         `.harbor/diary/**`, never writes `last_log_marker`, and never calls LLM.
       - `init` supports `--advice off|basic` and writes advice defaults into
@@ -149,16 +160,18 @@ def main():
       exit semantics. Snapshot write failures may append runtime-only
       diagnostics under `.harbor/state/change-window-diagnostics.jsonl`.
       `harbor log draft` emits a reviewable markdown/json draft only, may write
-      one non-diary output file such as `.harbor/reports/*.md` or
-      `.harbor/reports/*.json`, does not write `.harbor/diary/**`, does not
-      update log markers, does not read or print file bodies / diff bodies, and
-      does not call LLM.
+      latest draft runtime cache under `.harbor/state/log/latest-draft.*`, may
+      write one non-diary output file such as `.harbor/reports/*.md` or
+      `.harbor/reports/*.json` via `--output` or `--save`, does not write
+      `.harbor/diary/**`, does not update log markers, does not read or print
+      file bodies / diff bodies, and does not call LLM.
 
     Raises:
       SystemExit: Propagates CLI parse failures and CI/gate exit codes from the
       primary command flow. Snapshot write failures must not raise a different
       exit outcome and must not surface as normal CLI output. `harbor log draft`
-      argument / path / report-parse errors fail clearly without writing Diary.
+      argument / path / report-parse errors fail clearly without writing Diary;
+      latest draft cache write failures remain non-fatal warnings only.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
@@ -622,6 +635,11 @@ def main():
         type=str,
         default=None,
         help="Optional output path for the rendered draft; `.harbor/diary/**` is forbidden",
+    )
+    p_log_draft.add_argument(
+        "--save",
+        action="store_true",
+        help="Save one timestamped report copy under `.harbor/reports/` unless `--output` is provided",
     )
 
     p_init = sub.add_parser("init", help="Initialize Harbor via interactive setup wizard")
@@ -2118,15 +2136,50 @@ def main():
                 since_last_log=bool(getattr(args, "since_last_log", False)),
                 from_report=Path(args.from_report) if getattr(args, "from_report", None) else None,
             )
+            cache_result = write_latest_diary_draft_cache(payload, repo_root=Path.cwd())
             rendered = serialize_diary_draft(payload, args.format)
-            if args.output:
-                write_diary_draft_output(
+            output_target = None
+            explicit_output = bool(getattr(args, "output", None))
+            save_requested = bool(getattr(args, "save", False))
+            if explicit_output:
+                output_target = write_diary_draft_output(
                     payload,
                     Path(args.output),
                     output_format=args.format,
                     repo_root=Path.cwd(),
                 )
+            elif save_requested:
+                output_target = write_diary_draft_output(
+                    payload,
+                    build_saved_diary_draft_output_path(output_format=args.format, repo_root=Path.cwd()),
+                    output_format=args.format,
+                    repo_root=Path.cwd(),
+                )
             print(rendered, end="")
+            if cache_result.get("markdown_path_display"):
+                print(
+                    t(
+                        "cli.log.draft.cached",
+                        markdown_path=cache_result["markdown_path_display"],
+                        json_path=cache_result["json_path_display"],
+                    ),
+                    file=sys.stderr,
+                )
+            for warning in list(cache_result.get("warnings") or []):
+                print(t("cli.log.draft.cache_warning", message=str(warning)), file=sys.stderr)
+            if explicit_output and save_requested:
+                print(
+                    t(
+                        "cli.log.draft.output_preferred",
+                        path=_to_repo_relative_display(output_target) if output_target is not None else str(args.output),
+                    ),
+                    file=sys.stderr,
+                )
+            elif output_target is not None:
+                print(
+                    t("cli.log.draft.saved", path=_to_repo_relative_display(output_target)),
+                    file=sys.stderr,
+                )
         except LogDraftError as exc:
             print(str(exc), file=sys.stderr)
             raise SystemExit(1)

@@ -344,7 +344,6 @@ Default local workflow:
 ```powershell
 harbor start
 harbor checkpoint
-harbor log draft
 harbor finish --sync-context
 harbor stale
 harbor doctor
@@ -396,7 +395,7 @@ guidance does not change CI pass/fail semantics.
 harbor next is read-only and never repairs, writes files, or accepts baselines.
 ```
 
-Diary Draft workflow:
+Decision-memory workflow:
 
 ```powershell
 harbor log draft

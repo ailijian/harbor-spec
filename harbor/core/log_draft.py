@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
@@ -10,7 +11,9 @@ from harbor.core.workspace import load_workspace_paths
 
 DIARY_DRAFT_SCHEMA_VERSION = "1.0"
 DIARY_DRAFT_KIND = "diary_draft"
+LATEST_DRAFT_WRAPPER_SCHEMA_VERSION = "1.0"
 DEFAULT_SNAPSHOT_LIMIT = 12
+DEFAULT_LOG_DRAFT_SAVE_PREFIX = "log-draft"
 KNOWN_REPORT_COMMANDS = {"checkpoint", "stale", "doctor"}
 VALIDATION_KEYS = ("pytest", "checkpoint", "stale", "doctor")
 LOG_MARKER_TIMESTAMP_KEYS = (
@@ -299,6 +302,132 @@ def write_diary_draft_output(
     resolved.parent.mkdir(parents=True, exist_ok=True)
     resolved.write_text(serialize_diary_draft(payload, output_format), encoding="utf-8")
     return resolved
+
+
+def build_saved_diary_draft_output_path(
+    *,
+    output_format: str,
+    repo_root: Optional[Path] = None,
+    created_at: Optional[datetime] = None,
+) -> Path:
+    """Build a timestamped safe reports path for `harbor log draft --save`.
+
+    Behavior:
+      - Uses the canonical reports root from workspace config.
+      - Uses `log-draft-YYYYMMDD-HHMMSS.<ext>` where ext follows the draft format.
+      - Returns only the computed path; does not write files.
+
+    Side Effects:
+      - Pure path calculation only.
+    """
+    root = Path(repo_root or Path.cwd()).resolve()
+    workspace_paths = load_workspace_paths(root, enforce_write_safety=True)
+    normalized_format = str(output_format or "markdown").strip().lower()
+    extension = "json" if normalized_format == "json" else "md"
+    stamp = (created_at or datetime.now(timezone.utc)).strftime("%Y%m%d-%H%M%S")
+    return workspace_paths.reports_root / f"{DEFAULT_LOG_DRAFT_SAVE_PREFIX}-{stamp}.{extension}"
+
+
+def write_latest_diary_draft_cache(
+    payload: Dict[str, Any],
+    *,
+    repo_root: Optional[Path] = None,
+    created_at: Optional[datetime] = None,
+) -> Dict[str, Any]:
+    """Best-effort write of latest diary draft runtime cache under `.harbor/state/log/`.
+
+    Behavior:
+      - Always attempts to write both `latest-draft.md` and `latest-draft.json`.
+      - JSON cache uses a stable wrapper schema that embeds the raw draft payload.
+      - Markdown cache always stores the rendered markdown preview even if the
+        caller requested JSON stdout elsewhere.
+      - JSON cache wrapper uses stable English keys:
+        `schema_version`, `kind`, `created_at`, `source`, `draft`,
+        `markdown_path`.
+      - Cache writes target runtime state only and may overwrite previous
+        latest-draft cache files.
+      - Cache write failures are downgraded to warnings and never raise.
+      - Cache writes do not write `.harbor/reports/**`, do not write
+        `.harbor/diary/**`, do not update `last_log_marker`, and do not change
+        the primary draft stdout / exit semantics.
+
+    Side Effects:
+      - May create `.harbor/state/log/` and write up to two runtime cache files.
+      - May overwrite existing latest-draft runtime cache files.
+
+    Returns:
+      Dict[str, Any]: Best-effort cache result with:
+      - `markdown_path`: absolute `Path` when markdown cache write succeeded,
+        else `None`
+      - `json_path`: absolute `Path` when JSON cache write succeeded, else
+        `None`
+      - `markdown_path_display`: repo-relative display path for CLI messages
+      - `json_path_display`: repo-relative display path for CLI messages
+      - `warnings`: list of non-fatal cache write diagnostics
+
+    Raises:
+      None: Cache failures are converted to warnings so callers can preserve
+      successful draft generation output.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: overwrite-runtime-state
+    @harbor.behavior: writes latest draft runtime cache only; safe additive
+      helper for `harbor log draft`; does not write reports/diary and does not
+      change caller exit semantics on cache failure
+    """
+    root = Path(repo_root or Path.cwd()).resolve()
+    workspace_paths = load_workspace_paths(root, enforce_write_safety=True)
+    log_root = workspace_paths.state_root / "log"
+    markdown_path = log_root / "latest-draft.md"
+    json_path = log_root / "latest-draft.json"
+    timestamp = created_at or datetime.now(timezone.utc)
+    markdown_display = _to_repo_relative_display(markdown_path, repo_root=root)
+    json_display = _to_repo_relative_display(json_path, repo_root=root)
+
+    result: Dict[str, Any] = {
+        "markdown_path": None,
+        "json_path": None,
+        "markdown_path_display": markdown_display,
+        "json_path_display": json_display,
+        "warnings": [],
+    }
+
+    try:
+        log_root.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        result["warnings"].append(
+            f"Failed to create latest draft cache directory '{_to_repo_relative_display(log_root, repo_root=root)}': {exc}"
+        )
+        return result
+
+    markdown_text = render_diary_draft_markdown(payload)
+    latest_wrapper = {
+        "schema_version": LATEST_DRAFT_WRAPPER_SCHEMA_VERSION,
+        "kind": DIARY_DRAFT_KIND,
+        "created_at": timestamp.replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "source": "harbor log draft",
+        "draft": payload,
+        "markdown_path": markdown_display,
+    }
+
+    try:
+        markdown_path.write_text(markdown_text, encoding="utf-8")
+        result["markdown_path"] = markdown_path
+    except OSError as exc:
+        result["warnings"].append(
+            f"Failed to write latest draft markdown cache '{markdown_display}': {exc}"
+        )
+
+    try:
+        json_path.write_text(json.dumps(latest_wrapper, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        result["json_path"] = json_path
+    except OSError as exc:
+        result["warnings"].append(
+            f"Failed to write latest draft JSON cache '{json_display}': {exc}"
+        )
+
+    return result
 
 
 def _latest_accept_snapshot(repo_root: Path) -> Optional[ChangeWindowSnapshot]:
