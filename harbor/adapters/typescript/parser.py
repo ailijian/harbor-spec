@@ -10,6 +10,10 @@ _EXPORT_FUNCTION_RE = re.compile(r"export\s+(async\s+)?function\s+([A-Za-z_$][\w
 _EXPORT_ARROW_RE = re.compile(r"export\s+const\s+([A-Za-z_$][\w$]*)\s*=\s*(async\s+)?\(")
 _EXPORT_CLASS_RE = re.compile(r"export\s+class\s+([A-Za-z_$][\w$]*)\s*\{")
 _PUBLIC_METHOD_RE = re.compile(r"(?m)^\s*public\s+(?:async\s+)?([A-Za-z_$][\w$]*)\s*\(")
+_INTERNAL_FUNCTION_RE = re.compile(
+    r"(?m)^\s*(?!export\b)(async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\("
+)
+_INTERNAL_ARROW_RE = re.compile(r"(?m)^\s*(?!export\b)const\s+([A-Za-z_$][\w$]*)\s*=\s*(async\s+)?\(")
 
 
 def _to_lineno(source: str, offset: int) -> int:
@@ -132,6 +136,8 @@ class TypeScriptLightweightParser:
         symbols.extend(self._parse_export_functions(source))
         symbols.extend(self._parse_export_arrow_functions(source))
         symbols.extend(self._parse_export_class_methods(source))
+        symbols.extend(self._parse_internal_functions(source))
+        symbols.extend(self._parse_internal_arrow_functions(source))
         symbols.sort(key=lambda item: (item.lineno, item.qualified_name))
         return symbols
 
@@ -163,6 +169,7 @@ class TypeScriptLightweightParser:
                     symbol_kind="function",
                     qualified_name=name,
                     export_kind="export_function_async" if async_kw else "export_function",
+                    is_exported=True,
                     lineno=_to_lineno(source, match.start()),
                     end_lineno=_to_lineno(source, body_end),
                     signature_text=signature_text,
@@ -204,6 +211,7 @@ class TypeScriptLightweightParser:
                     symbol_kind="function",
                     qualified_name=name,
                     export_kind="export_const_async_arrow" if async_kw else "export_const_arrow",
+                    is_exported=True,
                     lineno=_to_lineno(source, match.start()),
                     end_lineno=_to_lineno(source, body_end),
                     signature_text=signature_text,
@@ -259,6 +267,7 @@ class TypeScriptLightweightParser:
                         symbol_kind="method",
                         qualified_name=f"{class_name}.{method_name}",
                         export_kind="export_class_public_method",
+                        is_exported=True,
                         lineno=_to_lineno(source, global_start),
                         end_lineno=_to_lineno(source, method_body_end),
                         signature_text=signature_text,
@@ -266,4 +275,83 @@ class TypeScriptLightweightParser:
                         class_name=class_name,
                     )
                 )
+        return symbols
+
+    def _parse_internal_functions(self, source: str) -> List[TypeScriptSymbol]:
+        symbols: List[TypeScriptSymbol] = []
+        for match in _INTERNAL_FUNCTION_RE.finditer(source):
+            async_kw = (match.group(1) or "").strip()
+            name = match.group(2)
+            paren_start = match.end() - 1
+            paren_end = _find_matching(source, paren_start, "(", ")")
+            if paren_end is None:
+                self.diagnostics.append(f"skip internal function `{name}`: unmatched parentheses")
+                continue
+            i = _skip_ws(source, paren_end + 1)
+            while i < len(source) and source[i] != "{":
+                i += 1
+            if i >= len(source):
+                self.diagnostics.append(f"skip internal function `{name}`: missing body")
+                continue
+            body_end = _find_matching(source, i, "{", "}")
+            if body_end is None:
+                self.diagnostics.append(f"skip internal function `{name}`: unmatched braces")
+                continue
+            symbols.append(
+                TypeScriptSymbol(
+                    name=name,
+                    symbol_kind="function",
+                    qualified_name=name,
+                    export_kind="internal_function_async" if async_kw else "internal_function",
+                    is_exported=False,
+                    lineno=_to_lineno(source, match.start()),
+                    end_lineno=_to_lineno(source, body_end),
+                    signature_text=source[match.start() : i].strip(),
+                    body_text=source[i : body_end + 1],
+                    visibility="internal",
+                )
+            )
+        return symbols
+
+    def _parse_internal_arrow_functions(self, source: str) -> List[TypeScriptSymbol]:
+        symbols: List[TypeScriptSymbol] = []
+        for match in _INTERNAL_ARROW_RE.finditer(source):
+            name = match.group(1)
+            async_kw = (match.group(2) or "").strip()
+            paren_start = match.end() - 1
+            paren_end = _find_matching(source, paren_start, "(", ")")
+            if paren_end is None:
+                self.diagnostics.append(f"skip internal const `{name}`: unmatched parentheses")
+                continue
+
+            i = _skip_ws(source, paren_end + 1)
+            if i < len(source) and source[i] == ":":
+                i += 1
+                while i < len(source):
+                    if source[i] == "=" and i + 1 < len(source) and source[i + 1] == ">":
+                        break
+                    i += 1
+            i = _skip_ws(source, i)
+            if not (i + 1 < len(source) and source[i] == "=" and source[i + 1] == ">"):
+                self.diagnostics.append(f"skip internal const `{name}`: missing arrow")
+                continue
+            body_text, body_end = _extract_arrow_body(source, i + 2)
+            if body_text is None:
+                self.diagnostics.append(f"skip internal const `{name}`: malformed body")
+                continue
+
+            symbols.append(
+                TypeScriptSymbol(
+                    name=name,
+                    symbol_kind="function",
+                    qualified_name=name,
+                    export_kind="internal_const_async_arrow" if async_kw else "internal_const_arrow",
+                    is_exported=False,
+                    lineno=_to_lineno(source, match.start()),
+                    end_lineno=_to_lineno(source, body_end),
+                    signature_text=source[match.start() : i + 2].strip(),
+                    body_text=body_text,
+                    visibility="internal",
+                )
+            )
         return symbols

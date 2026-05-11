@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, List, Sequence, Union
+from typing import Dict, List, Sequence, Tuple, Union
 
 from harbor.adapters.base import ContractSubject
+from harbor.adapters.typescript.jsdoc import extract_adjacent_tsdoc
 from harbor.adapters.typescript.hashing import normalized_sha256
 from harbor.adapters.typescript.parser import TypeScriptLightweightParser
+from harbor.adapters.typescript.symbols import TypeScriptSymbol
 
 
 _EXCLUDED_DIRS = {
@@ -52,6 +54,17 @@ class TypeScriptAdapter:
 
         subjects: List[ContractSubject] = []
         for symbol in symbols:
+            contract_source = extract_adjacent_tsdoc(
+                source=source,
+                symbol_lineno=symbol.lineno,
+                file_path=normalized_path,
+            )
+            contract_required, required_reason = _is_contract_required(symbol, normalized_path)
+            unsupported_for_symbol = any(f"`{symbol.name}`" in msg for msg in parser.diagnostics)
+            contract_presence = _resolve_contract_presence(
+                contract_source_confidence=contract_source.confidence if contract_source else None,
+                unsupported_for_symbol=unsupported_for_symbol,
+            )
             target_id = ContractSubject.make_target_id(
                 language="typescript",
                 file_path=normalized_path,
@@ -66,6 +79,8 @@ class TypeScriptAdapter:
                 metadata["class_name"] = symbol.class_name
             if parser.diagnostics:
                 metadata["diagnostics"] = tuple(parser.diagnostics)
+            metadata["jsdoc_confidence"] = contract_source.confidence if contract_source else None
+            metadata["contract_required_reason"] = required_reason
 
             subjects.append(
                 ContractSubject(
@@ -83,10 +98,10 @@ class TypeScriptAdapter:
                     signature_hash=normalized_sha256(symbol.signature_text),
                     body_hash=normalized_sha256(symbol.body_text) if symbol.body_text else None,
                     contract_hash=None,
-                    contract_presence=None,
-                    contract_required=None,
+                    contract_presence=contract_presence,
+                    contract_required=contract_required,
                     metadata=metadata,
-                    contract_sources=(),
+                    contract_sources=(contract_source,) if contract_source else (),
                 )
             )
         return subjects
@@ -102,3 +117,43 @@ class TypeScriptAdapter:
         if any(part in _EXCLUDED_DIRS for part in path.parts):
             return
         discovered[path.resolve().as_posix()] = path.resolve()
+
+
+def _is_contract_required(symbol: TypeScriptSymbol, normalized_path: str) -> Tuple[bool, str]:
+    path_lower = normalized_path.lower()
+    if _is_test_file(path_lower):
+        return False, "test_file"
+    if _is_script_file(path_lower):
+        return False, "script_file"
+    if symbol.is_exported and symbol.visibility == "public":
+        return True, "exported_public_symbol"
+    return False, "internal_helper_or_non_exported"
+
+
+def _is_test_file(path_lower: str) -> bool:
+    if "/tests/fixtures/" in path_lower:
+        return False
+    return (
+        path_lower.startswith("tests/")
+        or "/tests/" in path_lower
+        or path_lower.endswith(".test.ts")
+        or path_lower.endswith(".spec.ts")
+        or "__tests__" in path_lower
+    )
+
+
+def _is_script_file(path_lower: str) -> bool:
+    return "/scripts/" in path_lower or path_lower.endswith("/script.ts")
+
+
+def _resolve_contract_presence(
+    contract_source_confidence: Union[str, None],
+    unsupported_for_symbol: bool,
+) -> str:
+    if contract_source_confidence == "high":
+        return "present"
+    if contract_source_confidence == "medium":
+        return "non_contract_doc"
+    if unsupported_for_symbol:
+        return "unsupported_syntax"
+    return "missing"

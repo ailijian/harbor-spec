@@ -10,6 +10,7 @@ class TypeScriptSymbol:
     symbol_kind: str  # function | method
     qualified_name: str
     export_kind: str
+    is_exported: bool
     lineno: int
     end_lineno: int
     signature_text: str

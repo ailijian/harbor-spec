@@ -20,7 +20,13 @@ def test_discover_files_default_only_ts():
     files = adapter.discover_files([root])
 
     assert {path.suffix for path in files} == {".ts"}
-    assert _to_rel(files, root) == {"exports.ts", "malformed.ts", "nested/keep.ts"}
+    assert _to_rel(files, root) == {
+        "contract_presence.ts",
+        "exports.ts",
+        "malformed.ts",
+        "nested/keep.ts",
+        "scripts/runner.ts",
+    }
 
 
 def test_discover_files_default_excludes_tsx_js_jsx_dts():
