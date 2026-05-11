@@ -3,8 +3,9 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
+from harbor.adapters.base import ContractSubject
 from harbor.core.contract_impact import ContractImpactLevel, contract_impact_report_to_dict
 from harbor.core.advice_config import AdviceSettings
 from harbor.core.doctor import FAIL, DoctorReport
@@ -102,6 +103,10 @@ class CheckpointCIItem:
     reason: str
     func_id: Optional[str] = None
     file_path: Optional[str] = None
+    target_id: Optional[str] = None
+    language: Optional[str] = None
+    symbol_kind: Optional[str] = None
+    adapter: Optional[str] = None
     suggested_action: Optional[str] = None
     guidance: Optional[RepairGuidance] = None
 
@@ -118,6 +123,8 @@ class CheckpointCIItem:
         Behavior:
           - 输出固定包含 `category` 与 `reason`。
           - `func_id` / `file_path` / `suggested_action` 仅在字段存在且非空时输出。
+          - `target_id` / `language` / `symbol_kind` / `adapter` 为 additive 字段：
+            仅在条目具备对应 identity 信息时输出，不改变既有 gate 语义。
           - `file_path` 会进行路径脱敏与规范化，文本字段会执行 sanitize。
           - `guidance` 为 optional additive field：
             仅在 `include_guidance=True` 且 guidance 存在时输出；
@@ -139,8 +146,9 @@ class CheckpointCIItem:
 
         Returns:
           dict: JSON-compatible checkpoint item dict；None/空字段按规则省略；
-            guidance 仅为 deterministic advisory metadata，不改变
-            exit_code/blocking/advisory 语义。
+            additive identity 字段（`target_id`/`language`/`symbol_kind`/`adapter`）
+            仅在可用时输出，guidance 仅为 deterministic advisory metadata，
+            不改变 exit_code/blocking/advisory 语义。
         """
         payload: Dict[str, object] = {
             "category": _sanitize_json_text(self.category),
@@ -150,6 +158,14 @@ class CheckpointCIItem:
             payload["func_id"] = _sanitize_json_text(self.func_id)
         if self.file_path:
             payload["file_path"] = _sanitize_single_path(self.file_path)
+        if self.target_id:
+            payload["target_id"] = _sanitize_json_text(self.target_id)
+        if self.language:
+            payload["language"] = _sanitize_json_text(self.language)
+        if self.symbol_kind:
+            payload["symbol_kind"] = _sanitize_json_text(self.symbol_kind)
+        if self.adapter:
+            payload["adapter"] = _sanitize_json_text(self.adapter)
         if self.suggested_action:
             payload["suggested_action"] = _sanitize_json_text(self.suggested_action)
         if include_guidance and self.guidance is not None:
@@ -188,11 +204,22 @@ def build_checkpoint_ci_result(
     advisory: List[CheckpointCIItem] = []
 
     for typ, binding, message in list(getattr(ddt_report, "violations", []) or []):
+        identity = _derive_checkpoint_identity(
+            func_id=str(getattr(binding, "func_id", "") or ""),
+            file_path=str(getattr(binding, "file_path", "") or ""),
+            source=binding,
+            default_language="python",
+            default_adapter="python",
+        )
         failures.append(
             CheckpointCIItem(
                 category="ddt_binding",
                 func_id=str(getattr(binding, "func_id", "") or ""),
                 file_path=str(getattr(binding, "file_path", "") or ""),
+                target_id=identity["target_id"],
+                language=identity["language"],
+                symbol_kind=identity["symbol_kind"],
+                adapter=identity["adapter"],
                 reason=f"{typ}: {message}",
                 suggested_action=t("cli.ci.checkpoint.action.ddt_binding"),
                 guidance=guidance_for_checkpoint_category("ddt_binding") if settings.enabled else None,
@@ -200,11 +227,22 @@ def build_checkpoint_ci_result(
         )
     for item in list(getattr(ddt_report, "advisory", []) or []):
         binding = getattr(item, "binding", None)
+        identity = _derive_checkpoint_identity(
+            func_id=str(getattr(binding, "func_id", "") or ""),
+            file_path=str(getattr(binding, "file_path", "") or ""),
+            source=binding,
+            default_language="python",
+            default_adapter="python",
+        )
         advisory.append(
             CheckpointCIItem(
                 category=str(getattr(item, "category", "") or "ddt_binding_advisory"),
                 func_id=str(getattr(binding, "func_id", "") or ""),
                 file_path=str(getattr(binding, "file_path", "") or ""),
+                target_id=identity["target_id"],
+                language=identity["language"],
+                symbol_kind=identity["symbol_kind"],
+                adapter=identity["adapter"],
                 reason=str(getattr(item, "message", "") or ""),
                 suggested_action=str(getattr(item, "suggested_action", "") or t("cli.ci.checkpoint.action.ddt_baseline_missing")),
                 guidance=(
@@ -265,11 +303,22 @@ def build_checkpoint_ci_result(
         include_guidance=settings.enabled,
     )
     for entry in list(getattr(status_report, "skipped_no_contract", []) or []):
+        identity = _derive_checkpoint_identity(
+            func_id=str(getattr(entry, "id", "") or ""),
+            file_path=str(getattr(entry, "file_path", "") or ""),
+            source=entry,
+            default_language="python",
+            default_adapter="python",
+        )
         advisory.append(
             CheckpointCIItem(
                 category="skipped_no_contract",
                 func_id=str(getattr(entry, "id", "") or ""),
                 file_path=str(getattr(entry, "file_path", "") or ""),
+                target_id=identity["target_id"],
+                language=identity["language"],
+                symbol_kind=identity["symbol_kind"],
+                adapter=identity["adapter"],
                 reason=t("cli.ci.checkpoint.failure.skipped_no_contract"),
                 suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
                 guidance=guidance_for_checkpoint_category("skipped_no_contract") if settings.enabled else None,
@@ -288,6 +337,10 @@ def build_checkpoint_ci_result(
                     category="confirmed_contract_impact",
                     func_id=str(getattr(finding, "func_id", "") or ""),
                     file_path=str(getattr(finding, "file_path", "") or ""),
+                    target_id=str(getattr(finding, "target_id", "") or ""),
+                    language=str(getattr(finding, "language", "") or ""),
+                    symbol_kind=str(getattr(finding, "symbol_kind", "") or ""),
+                    adapter=str(getattr(finding, "adapter", "") or ""),
                     reason=str(getattr(finding, "reason", "") or t("cli.ci.checkpoint.failure.confirmed_contract_impact")),
                     suggested_action=t("cli.ci.checkpoint.action.confirmed_contract_impact"),
                     guidance=guidance_for_checkpoint_category("confirmed_contract_impact") if settings.enabled else None,
@@ -300,6 +353,10 @@ def build_checkpoint_ci_result(
                     category="possible_contract_impact",
                     func_id=str(getattr(finding, "func_id", "") or ""),
                     file_path=str(getattr(finding, "file_path", "") or ""),
+                    target_id=str(getattr(finding, "target_id", "") or ""),
+                    language=str(getattr(finding, "language", "") or ""),
+                    symbol_kind=str(getattr(finding, "symbol_kind", "") or ""),
+                    adapter=str(getattr(finding, "adapter", "") or ""),
                     reason=str(getattr(finding, "reason", "") or t("cli.ci.checkpoint.failure.possible_contract_impact")),
                     suggested_action=t("cli.ci.checkpoint.action.possible_contract_impact"),
                     guidance=guidance_for_checkpoint_category("possible_contract_impact") if settings.enabled else None,
@@ -311,6 +368,10 @@ def build_checkpoint_ci_result(
                     category="unknown_contract_impact",
                     func_id=str(getattr(finding, "func_id", "") or ""),
                     file_path=str(getattr(finding, "file_path", "") or ""),
+                    target_id=str(getattr(finding, "target_id", "") or ""),
+                    language=str(getattr(finding, "language", "") or ""),
+                    symbol_kind=str(getattr(finding, "symbol_kind", "") or ""),
+                    adapter=str(getattr(finding, "adapter", "") or ""),
                     reason=str(getattr(finding, "reason", "") or t("cli.ci.checkpoint.failure.unknown_contract_impact")),
                     suggested_action=t("cli.ci.checkpoint.action.unknown_contract_impact"),
                     guidance=guidance_for_checkpoint_category("unknown_contract_impact") if settings.enabled else None,
@@ -749,11 +810,24 @@ def _push_status_failures(
     include_guidance: bool,
 ) -> None:
     for entry in items:
+        identity = _derive_checkpoint_identity(
+            func_id=str(getattr(entry, "id", "") or ""),
+            file_path=str(getattr(entry, "file_path", "") or ""),
+            source=entry,
+            default_language="python",
+            default_adapter="python",
+        )
+        if not _is_blocking_checkpoint_target(identity["symbol_kind"]):
+            continue
         failures.append(
             CheckpointCIItem(
                 category=category,
                 func_id=str(getattr(entry, "id", "") or ""),
                 file_path=str(getattr(entry, "file_path", "") or ""),
+                target_id=identity["target_id"],
+                language=identity["language"],
+                symbol_kind=identity["symbol_kind"],
+                adapter=identity["adapter"],
                 reason=reason,
                 suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
                 guidance=guidance_for_checkpoint_category(category) if include_guidance else None,
@@ -825,3 +899,106 @@ def _normalize_checkpoint_key_path(path_text: Optional[str]) -> str:
     if not raw:
         return ""
     return _sanitize_single_path(raw).strip().lower()
+
+
+def _is_blocking_checkpoint_target(symbol_kind: Optional[str]) -> bool:
+    normalized = str(symbol_kind or "").strip().lower()
+    if not normalized:
+        return True
+    return normalized in {"function", "method"}
+
+
+def _derive_checkpoint_identity(
+    *,
+    func_id: str,
+    file_path: str,
+    source: Any,
+    default_language: str,
+    default_adapter: str,
+) -> Dict[str, Optional[str]]:
+    source_target_id = str(getattr(source, "target_id", "") or "").strip()
+    source_language = str(getattr(source, "language", "") or "").strip().lower() or default_language
+    source_symbol_kind = str(getattr(source, "symbol_kind", "") or "").strip().lower()
+    source_adapter = str(getattr(source, "adapter", "") or "").strip().lower() or source_language or default_adapter
+    normalized_path = _sanitize_single_path(file_path or "").strip()
+    func_id_text = str(func_id or "").strip()
+
+    if source_target_id:
+        return {
+            "target_id": source_target_id,
+            "language": source_language or None,
+            "symbol_kind": source_symbol_kind or None,
+            "adapter": source_adapter or None,
+        }
+
+    if func_id_text.startswith("typescript:") or func_id_text.startswith("python:"):
+        parsed = _parse_target_id(func_id_text)
+        return {
+            "target_id": func_id_text,
+            "language": parsed["language"] or source_language or None,
+            "symbol_kind": parsed["symbol_kind"] or source_symbol_kind or None,
+            "adapter": (parsed["language"] or source_adapter or default_adapter) or None,
+        }
+
+    qualified_name, symbol_kind = _derive_qualified_name_and_symbol_kind(
+        func_id=func_id_text,
+        file_path=normalized_path,
+        fallback_symbol_kind=source_symbol_kind,
+    )
+    if not normalized_path or not qualified_name:
+        return {
+            "target_id": None,
+            "language": source_language or None,
+            "symbol_kind": source_symbol_kind or None,
+            "adapter": source_adapter or None,
+        }
+
+    target_id = ContractSubject.make_target_id(
+        language=source_language or default_language,
+        file_path=normalized_path,
+        symbol_kind=symbol_kind,
+        qualified_name=qualified_name,
+    )
+    return {
+        "target_id": target_id,
+        "language": source_language or None,
+        "symbol_kind": symbol_kind,
+        "adapter": source_adapter or None,
+    }
+
+
+def _parse_target_id(target_id: str) -> Dict[str, str]:
+    parts = str(target_id or "").split(":", 3)
+    if len(parts) != 4:
+        return {"language": "", "symbol_kind": ""}
+    return {"language": parts[0].strip().lower(), "symbol_kind": parts[2].strip().lower()}
+
+
+def _derive_qualified_name_and_symbol_kind(
+    *,
+    func_id: str,
+    file_path: str,
+    fallback_symbol_kind: str,
+) -> Tuple[str, str]:
+    normalized_symbol_kind = str(fallback_symbol_kind or "").strip().lower()
+    if normalized_symbol_kind:
+        symbol_kind = normalized_symbol_kind
+    else:
+        symbol_kind = "function"
+
+    module_qual = _module_qual_from_file_path(file_path)
+    qualified_name = func_id
+    if module_qual and func_id.startswith(module_qual + "."):
+        qualified_name = func_id[len(module_qual) + 1 :]
+    if "." in qualified_name and not normalized_symbol_kind:
+        symbol_kind = "method"
+    return qualified_name, symbol_kind
+
+
+def _module_qual_from_file_path(file_path: str) -> str:
+    normalized = str(file_path or "").strip().replace("\\", "/")
+    if not normalized:
+        return ""
+    if normalized.endswith(".py"):
+        normalized = normalized[:-3]
+    return ".".join(part for part in normalized.split("/") if part)
