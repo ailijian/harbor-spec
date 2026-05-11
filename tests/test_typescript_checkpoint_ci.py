@@ -193,6 +193,7 @@ def test_typescript_checkpoint_categories_and_identity_fields_are_constrained(tm
     assert {row["category"] for row in ts_rows}.issubset(
         {"contract_gap", "skipped_no_contract", "unsupported_syntax_advisory"}
     )
+    assert all(row["category"] != "contract_parse_error" for row in payload["ci_failures"])
     for row in ts_rows:
         assert row.get("target_id", "").startswith("typescript:")
         assert row.get("language") == "typescript"

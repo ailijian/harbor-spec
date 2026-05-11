@@ -119,6 +119,16 @@ def test_parse_file_does_not_crash_on_unsupported_or_malformed_ts():
     assert isinstance(items, list)
 
 
+def test_malformed_parse_does_not_poison_followup_file_parse():
+    adapter = TypeScriptAdapter()
+    malformed_items = adapter.parse_file(_fixture_root() / "malformed.ts")
+    exports_items = adapter.parse_file(_fixture_root() / "exports.ts")
+
+    assert isinstance(malformed_items, list)
+    assert any(item.qualified_name == "foo" for item in exports_items)
+    assert all(item.contract_presence != "contract_parse_error" for item in exports_items)
+
+
 def test_target_id_rule_for_typescript_subject():
     adapter = TypeScriptAdapter()
     path = _fixture_root() / "exports.ts"
