@@ -1,3 +1,38 @@
+# Harbor-spec v1.4.1 — Log Draft Workflow MVP
+
+状态：正式版  
+发布类型：Log Draft Workflow MVP
+
+## Added
+
+- Change-window snapshots for `checkpoint` / `finish` / `accept`.
+- `harbor log draft` command.
+- Markdown / JSON Diary Draft output.
+- `--since-last-accept` / `--since-last-log` / `--from-report` / `--output` support.
+- Runtime diagnostics for snapshot write failure.
+
+## Changed
+
+- Agent rules now distinguish Diary Draft from Written Diary Entry.
+- Rules now allow AI agents to generate drafts but not write Diary entries automatically.
+- Log draft skips invalid / non-UTF-8 report evidence safely.
+
+## Safety
+
+- `harbor log draft` does not write `.harbor/diary/**`.
+- `harbor log draft` does not call LLM.
+- `harbor log draft` does not output file content or diff body.
+- `--output` to `.harbor/diary/**` is rejected.
+
+## Validation
+
+- `pytest`: `529 passed`
+- `harbor checkpoint --ci --format json`: `pass`
+- `harbor stale --ci --format json`: `pass`
+- `harbor doctor --ci --format json`: `pass`
+
+---
+
 # Harbor-spec v1.4.0 — TypeScript Contract Governance MVP
 
 状态：正式版  

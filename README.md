@@ -98,6 +98,35 @@ languages:
 
 ---
 
+## 🚀 v1.4.1：Log Draft Workflow MVP
+
+Harbor-spec v1.4.1 引入安全的 Diary Draft 工作流，用于在不写入 source-of-truth memory 的前提下整理 change-window evidence。
+
+### v1.4.1 引入内容
+
+* change-window snapshots
+* `harbor log draft`
+* 安全的 Diary Draft workflow
+
+### 示例命令
+
+```powershell
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/log-draft.md
+```
+
+### 安全边界
+
+* `harbor log draft` 不写 `.harbor/diary/**`
+* `harbor log draft` 不调用 LLM
+* `harbor log draft` 不输出文件正文或 diff 正文
+* 真正写 Diary 仍需人工明确授权
+* Draft 只是 reviewable output，不是 source-of-truth memory
+
+---
+
 ## HarborSpec 解决的问题
 
 ### 1. Contract Drift
@@ -363,6 +392,22 @@ harbor log
 
 `harbor finish --sync-context` 不会自动写 Diary。
 `harbor log` 必须由人类明确授权。
+
+如果你只是想先起草 reviewable Diary Draft，可以运行：
+
+```powershell
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/log-draft.md
+```
+
+边界：
+
+* `harbor log draft` 不写 `.harbor/diary/**`
+* `harbor log draft` 不调用 LLM
+* `harbor log draft` 不输出文件正文或 diff 正文
+* `harbor log` / Diary write 仍需人工授权
 
 ---
 
@@ -701,6 +746,10 @@ harbor doctor --ci
 
 ```powershell
 harbor finish --sync-context
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/log-draft.md
 ```
 
 ### AI 不应自动执行的命令
@@ -723,6 +772,13 @@ git push
 * `lock` 更新底层基线
 * `promote-skill` 生成外部 integration artifact
 * `git tag/push` 属于发布动作
+
+`harbor log draft` 属于安全草稿命令：
+
+* 只生成 reviewable Diary Draft
+* 不写 `.harbor/diary/**`
+* 不调用 LLM
+* 不输出文件正文或 diff 正文
 
 ---
 
@@ -880,6 +936,14 @@ canonical 写入路径：
 ```
 
 `specs/diary/**` 仅 legacy read-compatible。
+
+如果只需要 reviewable draft 而不是写入 Diary，可使用：
+
+```powershell
+harbor log draft
+```
+
+它会基于 change-window snapshots / reports / git status 汇总 evidence，但不会写 `.harbor/diary/**`。
 
 ---
 
@@ -1057,6 +1121,21 @@ doctor = health check
 它只刷新 changed modules 的 L2 README 与 Module Capsule，并做收尾检查。
 
 `harbor log` 必须手动执行。
+
+---
+
+### `harbor log draft` 会写 Diary 或调用 LLM 吗？
+
+不会。
+
+```text
+harbor log draft 只生成 reviewable Diary Draft
+harbor log draft 不写 .harbor/diary/**
+harbor log draft 不调用 LLM
+harbor log draft 不输出文件正文或 diff 正文
+```
+
+如果需要真正写入 Diary，仍然要由人类明确授权执行 `harbor log`。
 
 ---
 

@@ -157,6 +157,10 @@ Never claim a Diary entry was written unless it was actually written.
 
 Do not run `harbor log write` automatically.
 
+`harbor log draft` is allowed as a safe draft command.
+
+`harbor log` / Diary write still require explicit user request.
+
 ---
 
 ## Safety

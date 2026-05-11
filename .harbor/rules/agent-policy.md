@@ -823,6 +823,15 @@ Never run `harbor accept` merely to silence unresolved drift.
 
 Never run `harbor log` unless the user asked to write the log or the workflow explicitly includes writing diary entries.
 
+AI may run these safe draft commands:
+
+```powershell
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/<name>.md
+```
+
 AI may run read-only checks (for example: `pytest`, `harbor checkpoint --ci --format json`, `harbor stale --ci --format json`, `harbor doctor --ci --format json`) when the task explicitly asks for validation.
 
 ---
@@ -1195,6 +1204,14 @@ release-relevant decision
 
 AI may generate Diary Drafts.
 
+AI may run `harbor log draft` as a safe draft command.
+
+`harbor log draft` is read-only with respect to source-of-truth memory.
+
+`harbor log draft` may write to `.harbor/reports/**` only when explicitly requested through `--output`.
+
+`harbor log draft` must not write to `.harbor/diary/**`.
+
 Usually no diary is needed for:
 
 ```text
@@ -1242,12 +1259,7 @@ harbor accept
 harbor lock
 ```
 
-Future safe-command direction:
-
-```text
-harbor log draft may become an AI-safe draft command.
 Diary write operations still require explicit human authorization.
-```
 
 ---
 

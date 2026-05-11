@@ -97,6 +97,35 @@ languages:
 
 ---
 
+## 🚀 v1.4.1: Log Draft Workflow MVP
+
+Harbor-spec v1.4.1 introduces a safe Diary Draft workflow for summarizing change-window evidence without writing source-of-truth memory.
+
+### What v1.4.1 introduces
+
+* change-window snapshots
+* `harbor log draft`
+* a safe Diary Draft workflow
+
+### Example commands
+
+```powershell
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/log-draft.md
+```
+
+### Safety boundaries
+
+* `harbor log draft` does not write `.harbor/diary/**`
+* `harbor log draft` does not call LLM
+* `harbor log draft` does not output file bodies or diff bodies
+* writing a real Diary entry still requires explicit human authorization
+* a Draft is reviewable output, not source-of-truth memory
+
+---
+
 ## Problems HarborSpec Solves
 
 ### 1. Contract Drift
@@ -362,6 +391,22 @@ Good cases include:
 
 `harbor finish --sync-context` does not automatically write Diary entries.
 `harbor log` requires explicit human authorization.
+
+If you only need a reviewable Diary Draft first, you may run:
+
+```powershell
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/log-draft.md
+```
+
+Boundaries:
+
+* `harbor log draft` does not write `.harbor/diary/**`
+* `harbor log draft` does not call LLM
+* `harbor log draft` does not output file bodies or diff bodies
+* `harbor log` / Diary write still require human authorization
 
 ---
 
@@ -701,6 +746,10 @@ Allowed in an explicit finishing workflow:
 
 ```powershell
 harbor finish --sync-context
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/log-draft.md
 ```
 
 ### Commands AI should not run automatically
@@ -723,6 +772,13 @@ Why:
 * `lock` updates the low-level baseline
 * `promote-skill` creates an external integration artifact
 * `git tag/push` are release actions
+
+`harbor log draft` is a safe draft command:
+
+* it generates reviewable Diary Draft output only
+* it does not write `.harbor/diary/**`
+* it does not call LLM
+* it does not output file bodies or diff bodies
 
 ---
 
@@ -880,6 +936,14 @@ Canonical write path:
 ```
 
 `specs/diary/**` is legacy read-compatible only.
+
+If you only need a reviewable draft instead of a real Diary write, use:
+
+```powershell
+harbor log draft
+```
+
+It may summarize evidence from change-window snapshots / reports / git status, but it does not write `.harbor/diary/**`.
 
 ---
 
@@ -1057,6 +1121,21 @@ No.
 It only refreshes changed modules' L2 README and Module Capsule, then runs final checks.
 
 `harbor log` must be executed manually.
+
+---
+
+### Does `harbor log draft` write Diary or call an LLM?
+
+No.
+
+```text
+harbor log draft only generates a reviewable Diary Draft
+harbor log draft does not write .harbor/diary/**
+harbor log draft does not call LLM
+harbor log draft does not output file bodies or diff bodies
+```
+
+If you want a real Diary write, a human must explicitly authorize `harbor log`.
 
 ---
 

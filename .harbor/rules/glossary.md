@@ -1560,16 +1560,106 @@ Typical evidence may include:
 ```text
 checkpoint snapshots
 accept/finish snapshots
-git diff
+reports
+git status
 changed files
 validation results
 ```
 
-Future `harbor log draft` may use Change Window evidence, but write still requires human authorization.
+`harbor log draft` may use Change Window evidence, but Draft does not become source-of-truth memory until a real Diary write happens.
 
 ---
 
-## 78. Final Principle
+## 78. Change Window Snapshot
+
+Change Window Snapshot is a runtime evidence artifact captured for a bounded change window.
+
+It is runtime evidence, not source of truth.
+
+Typical examples:
+
+```text
+checkpoint snapshot
+finish snapshot
+accept snapshot
+report-derived snapshot metadata
+```
+
+---
+
+## 79. Log Draft
+
+Log Draft means a reviewable Diary Draft generated from bounded evidence.
+
+Typical command:
+
+```powershell
+harbor log draft
+```
+
+Rules:
+
+```text
+Log Draft does not write .harbor/diary/**.
+Log Draft does not call LLM by default.
+Log Draft does not output file content bodies or diff bodies.
+Log Draft may write reviewable output to .harbor/reports/** when explicitly requested.
+```
+
+---
+
+## 80. Written Diary Entry
+
+Written Diary Entry means a Diary record actually written to `.harbor/diary/YYYY-MM.jsonl`.
+
+Written Diary Entry is source-of-truth decision memory.
+
+Draft does not equal Written Diary Entry.
+
+---
+
+## 81. Evidence Boundary
+
+Evidence Boundary means the limit on what inputs and outputs may be used when generating a Diary Draft or Log Draft.
+
+Typical allowed evidence:
+
+```text
+change-window snapshots
+reports
+git status
+validation outcomes
+bounded metadata
+```
+
+Typical excluded content:
+
+```text
+secret values
+.env contents
+raw file bodies
+raw diff bodies
+private credentials
+```
+
+---
+
+## 82. last_log_marker
+
+`last_log_marker` is the marker used to identify the evidence boundary since the last meaningful log point.
+
+It helps bound Log Draft generation for flows such as:
+
+```text
+--since-last-log
+--since-last-accept
+```
+
+It is runtime control metadata, not source-of-truth decision memory.
+
+---
+
+## 83. Final Principle
 
 When Harbor terms are unclear, prefer this interpretation:
 

@@ -344,6 +344,7 @@ Default local workflow:
 ```powershell
 harbor start
 harbor checkpoint
+harbor log draft
 harbor finish --sync-context
 harbor stale
 harbor doctor
@@ -395,6 +396,27 @@ guidance does not change CI pass/fail semantics.
 harbor next is read-only and never repairs, writes files, or accepts baselines.
 ```
 
+Diary Draft workflow:
+
+```powershell
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/<name>.md
+```
+
+Rules:
+
+```text
+harbor log draft generates a reviewable Diary Draft only.
+harbor log draft does not write .harbor/diary/**.
+harbor log draft does not call LLM.
+harbor log draft does not read or output file content or diff body.
+harbor log draft may summarize evidence from change-window snapshots, reports, and git status.
+Diary Draft is not source-of-truth memory.
+Written Diary Entry is source-of-truth memory only after actual write to .harbor/diary/**.
+```
+
 ---
 
 ## 8. Commands Requiring Explicit User Request
@@ -409,6 +431,15 @@ harbor module promote-skill <module>
 git push
 git tag
 git reset --hard
+```
+
+Agents may run these safe draft commands without diary-write authorization:
+
+```powershell
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/<name>.md
 ```
 
 Never use `harbor accept` to hide unresolved drift.
@@ -730,6 +761,11 @@ Diary Draft workflow for non-trivial tasks:
 ```text
 Agent must report Diary Need: yes / no / uncertain.
 Agent may generate a Diary Draft for review.
+Agent may run harbor log draft as a safe draft command.
+harbor log draft may use change-window snapshots / reports / git status as evidence input.
+harbor log draft must not write .harbor/diary/**.
+harbor log draft must not call LLM.
+harbor log draft must not read or output file content or diff body.
 Agent must not write .harbor/diary/** without explicit user authorization.
 Agent must not run harbor log write / harbor log when it writes Diary without explicit user request.
 ```
@@ -777,8 +813,10 @@ Strictness: strict / standard / light when relevant
 Tests / DDT status
 Generated context status
 Diary status
-Diary Draft: present / not needed / not written
+Diary Draft: generated / not needed / not written
 Diary Need: yes / no / uncertain
+Log Draft Command: run / not run
+Diary Write: not performed unless explicitly requested
 Runtime safety status
 remaining risks or follow-ups
 ```
