@@ -129,6 +129,43 @@ class DiaryManager:
             f.write(line + "\n")
         return entry
 
+    def append_json_line(self, payload: Dict[str, Any], ts: Optional[str] = None) -> Path:
+        """Append one structured JSON line to canonical diary storage.
+
+        Behavior:
+          - Reuses canonical `.harbor/diary/YYYY-MM.jsonl` monthly rotation.
+          - Writes the provided payload transparently as one JSON line with
+            `ensure_ascii=False`.
+          - Preserves existing `DiaryManager.log()` behavior for legacy entry
+            construction and validation.
+
+        Side Effects:
+          - Creates the canonical diary directory/file when needed.
+          - Appends exactly one JSON line to the current month diary file.
+
+        Returns:
+          Path: final canonical diary JSONL path.
+
+        Raises:
+          ValueError: when payload is not a dict or timestamp is missing.
+          OSError: when the canonical diary file cannot be written.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: once
+        """
+        if not isinstance(payload, dict):
+            raise ValueError("payload must be a dict")
+        resolved_ts = str(ts or payload.get("ts") or payload.get("timestamp") or "").strip()
+        if not resolved_ts:
+            raise ValueError("structured diary entry requires ts or timestamp")
+        target = self._current_file_path(resolved_ts)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        line = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        with target.open("a", encoding="utf-8") as f:
+            f.write(line + "\n")
+        return target
+
     def load_active(self, min_visibility: str = "internal") -> List[DiaryEntry]:
         now = datetime.utcnow()
         prev_month = (now.replace(day=1) - timedelta(days=1)).replace(day=1)

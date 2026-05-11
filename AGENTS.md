@@ -398,29 +398,52 @@ harbor next is read-only and never repairs, writes files, or accepts baselines.
 Decision-memory workflow:
 
 ```powershell
+harbor checkpoint
+harbor finish
+harbor accept
 harbor log draft
 harbor log draft --format json
 harbor log draft --since-last-accept
 harbor log draft --since-last-log
 harbor log draft --from-report <path>
+harbor log draft --save
 harbor log draft --output .harbor/reports/<name>.md
+harbor log write
+harbor log write --yes
+harbor log write --from-latest-draft
+harbor log write --from-draft .harbor/reports/<name>.md
 ```
 
 Rules:
 
 ```text
+checkpoint / finish / accept write change-window snapshots under .harbor/state/change-windows/**.
+change-window snapshots are runtime evidence, not source-of-truth memory.
 harbor log draft generates a reviewable Diary Draft only.
 harbor log draft does not write .harbor/diary/**.
+harbor log draft prints the draft to stdout.
+harbor log draft writes latest draft cache to .harbor/state/log/latest-draft.md and .harbor/state/log/latest-draft.json.
+harbor log draft --save writes a reviewable report copy to .harbor/reports/log-draft-YYYYMMDD-HHMMSS.md or .json.
 harbor log draft may write reviewable output to .harbor/reports/** through --output.
+explicit --output wins over --save; do not silently create a second saved copy.
 harbor log draft --output targeting .harbor/diary/** must be rejected.
+harbor log write reads latest draft by default.
+harbor log write without --yes requires interactive confirmation before writing.
+harbor log write without --yes must be rejected in non-interactive environments.
+harbor log write --yes is explicit authorization to write source-of-truth decision memory.
+harbor log write --from-latest-draft explicitly reads the latest draft cache.
+harbor log write --from-draft only allows .harbor/reports/** or latest draft cache paths as draft sources.
+harbor log write must reject .harbor/diary/**, .env, .env.*, secrets/**, repo-external paths, and other unallowlisted draft sources.
+successful harbor log write appends to .harbor/diary/YYYY-MM.jsonl and updates .harbor/state/log/last_log_marker.json.
 harbor log draft does not call LLM in v1.4.1.
 LLM-assisted draft is future work only.
 Any future LLM-assisted draft must be explicit opt-in.
 Any future LLM-assisted draft must not send secrets, credentials, private data, .env contents, file bodies, or diff bodies to an LLM.
-harbor log draft does not read or output file content or diff body.
+harbor log draft / harbor log write do not read or output file body or diff body.
 harbor log draft may summarize evidence from change-window snapshots, reports, and git status.
 Diary Draft is not source-of-truth memory.
 Written Diary Entry is source-of-truth memory only after actual write to .harbor/diary/**.
+CLI user-facing messages follow Harbor i18n / language settings; JSON schema keys remain stable English identifiers.
 ```
 
 ---
@@ -433,6 +456,7 @@ Do not run these unless the user explicitly requests them:
 harbor accept
 harbor lock
 harbor log
+harbor log write
 harbor module promote-skill <module>
 git push
 git tag
@@ -447,6 +471,7 @@ harbor log draft --format json
 harbor log draft --since-last-accept
 harbor log draft --since-last-log
 harbor log draft --from-report <path>
+harbor log draft --save
 harbor log draft --output .harbor/reports/<name>.md
 ```
 
@@ -458,7 +483,7 @@ Never claim a Diary entry was written unless it was actually written.
 
 If a decision should be recorded but the user did not request writing, output a Diary Draft instead.
 
-`harbor log` write behavior still requires explicit user authorization.
+`harbor log` / `harbor log write` still require explicit user authorization for Diary writes.
 
 ---
 
@@ -770,8 +795,10 @@ Diary Draft workflow for non-trivial tasks:
 Agent must report Diary Need: yes / no / uncertain.
 Agent may generate a Diary Draft for review.
 Agent may run harbor log draft as a safe draft command.
+Agent may run harbor log draft --save or write draft reports under .harbor/reports/**.
 harbor log draft may use change-window snapshots / reports / git status as evidence input.
 harbor log draft must not write .harbor/diary/**.
+harbor log draft latest-draft cache under .harbor/state/** is runtime state, not source-of-truth memory.
 harbor log draft may write reviewable output to .harbor/reports/** through --output.
 harbor log draft --output targeting .harbor/diary/** must be rejected.
 harbor log draft must not call LLM in v1.4.1.
@@ -779,6 +806,7 @@ LLM-assisted draft is future work only and must be explicit opt-in.
 Any future LLM-assisted draft must not send secrets, credentials, private data, .env contents, file bodies, or diff bodies to an LLM.
 harbor log draft must not read or output file content or diff body.
 Agent must not write .harbor/diary/** without explicit user authorization.
+Agent must not automatically run harbor log write or harbor log write --yes.
 Agent must not run harbor log write / harbor log when it writes Diary without explicit user request.
 ```
 

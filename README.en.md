@@ -97,40 +97,89 @@ languages:
 
 ---
 
-## 🚀 v1.4.1: Log Draft Workflow MVP
+## 🚀 v1.4.1: Log Draft + Controlled Write Workflow MVP
 
-Harbor-spec v1.4.1 introduces a safe Diary Draft workflow for summarizing change-window evidence without writing source-of-truth memory.
+Harbor-spec v1.4.1 makes the log workflow explicit as three layers:
 
-### What v1.4.1 introduces
+```text
+Evidence -> Draft Cache / Save -> Controlled Write
+```
 
-* change-window snapshots
-* `harbor log draft`
-* a safe Diary Draft workflow
+### 1. Evidence
 
-### Example commands
+These commands produce runtime evidence for the current change window:
+
+```powershell
+harbor checkpoint
+harbor finish
+harbor accept
+```
+
+Rules:
+
+* change-window snapshots are written under `.harbor/state/change-windows/**`
+* snapshots are runtime evidence, not source-of-truth memory
+* this evidence may be summarized by `harbor log draft`, but it does not become a Written Diary Entry by itself
+
+### 2. Draft
 
 ```powershell
 harbor log draft
-harbor log draft --format json
+harbor log draft --save
 harbor log draft --since-last-accept
-harbor log draft --since-last-log
-harbor log draft --from-report .harbor/reports/checkpoint.json
 harbor log draft --output .harbor/reports/log-draft.md
 ```
 
-### Safety boundaries
+Rules:
 
-* `harbor log draft` only generates a reviewable Diary Draft and does not write a Written Diary Entry
+* `harbor log draft` prints a reviewable draft to stdout by default
+* `harbor log draft` also writes:
+  * `.harbor/state/log/latest-draft.md`
+  * `.harbor/state/log/latest-draft.json`
+* `harbor log draft --save` creates:
+  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.md`
+  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.json`
+* `harbor log draft --output <path>` uses the explicit output path and takes priority over `--save`
 * `harbor log draft` does not write `.harbor/diary/**`
-* `harbor log draft --output` may write to `.harbor/reports/**`
 * `harbor log draft --output` targeting `.harbor/diary/**` must be rejected
-* `harbor log draft` does not call LLM in v1.4.1
-* LLM-assisted draft is future work, not a v1.4.1 capability
-* Any future LLM-assisted draft must be explicit opt-in and must not send secrets, credentials, private data, `.env` contents, file bodies, or diff bodies to an LLM
-* `harbor log draft` does not output file bodies or diff bodies
+
+### 3. Write
+
+```powershell
+harbor log write
+harbor log write --yes
+harbor log write --from-latest-draft
+harbor log write --from-draft .harbor/reports/log-draft.md
+```
+
+Rules:
+
+* `harbor log write` reads the latest draft by default
+* without `--yes`, it requires interactive confirmation
+* in non-interactive environments, write without `--yes` must be rejected
+* `--yes` is explicit authorization to write source-of-truth decision memory
+* `--from-draft` only allows controlled sources: `.harbor/reports/**` or the latest draft cache
+* `.harbor/diary/**`, `.env`, `.env.*`, `secrets/**`, and repo-external paths must be rejected as draft sources
+* after a successful write to `.harbor/diary/YYYY-MM.jsonl`, Harbor updates `.harbor/state/log/last_log_marker.json`
+
+### Safety Boundaries
+
+* `harbor log draft` never writes Diary; only `harbor log write` writes Diary
+* `.harbor/state/**` and `.harbor/reports/**` are not source of truth
+* `.harbor/diary/**` is the source-of-truth decision memory
+* v1.4.1 does not call LLM
+* LLM-assisted draft/write remains future work and must be explicit opt-in
+* Harbor does not read or output file bodies, diff bodies, or secret values in this workflow
+* AI may run `harbor log draft` and `harbor log draft --save`
+* AI must not automatically run `harbor log write` or `harbor log write --yes`
 * writing a real Diary entry still requires explicit human authorization
-* change-window snapshots are runtime evidence, not source-of-truth memory
-* a Written Diary Entry under `.harbor/diary/**` remains the source-of-truth decision memory
+
+### Language and i18n
+
+* Harbor may be used with Chinese or English working language, depending on configuration
+* CLI user-facing messages follow Harbor's i18n / language mechanism
+* JSON schema keys remain stable English identifiers
+* v1.4.1 adds zh/en message keys for log write prompts and errors
 
 ---
 

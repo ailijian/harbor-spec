@@ -98,40 +98,89 @@ languages:
 
 ---
 
-## 🚀 v1.4.1：Log Draft Workflow MVP
+## 🚀 v1.4.1：Log Draft + Controlled Write Workflow MVP
 
-Harbor-spec v1.4.1 引入安全的 Diary Draft 工作流，用于在不写入 source-of-truth memory 的前提下整理 change-window evidence。
+Harbor-spec v1.4.1 将日志工作流明确分为三层：
 
-### v1.4.1 引入内容
+```text
+Evidence -> Draft Cache / Save -> Controlled Write
+```
 
-* change-window snapshots
-* `harbor log draft`
-* 安全的 Diary Draft workflow
+### 1. Evidence
 
-### 示例命令
+这些命令会为当前 change window 产生运行时证据：
+
+```powershell
+harbor checkpoint
+harbor finish
+harbor accept
+```
+
+规则：
+
+* change-window snapshots 写入 `.harbor/state/change-windows/**`
+* snapshots 属于 runtime evidence，不是 source-of-truth memory
+* 这些证据可以被后续 `harbor log draft` 总结，但不会直接成为 Written Diary Entry
+
+### 2. Draft
 
 ```powershell
 harbor log draft
-harbor log draft --format json
+harbor log draft --save
 harbor log draft --since-last-accept
-harbor log draft --since-last-log
-harbor log draft --from-report .harbor/reports/checkpoint.json
 harbor log draft --output .harbor/reports/log-draft.md
 ```
 
+规则：
+
+* `harbor log draft` 默认在 stdout 展示 reviewable draft
+* `harbor log draft` 默认写：
+  * `.harbor/state/log/latest-draft.md`
+  * `.harbor/state/log/latest-draft.json`
+* `harbor log draft --save` 会生成：
+  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.md`
+  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.json`
+* `harbor log draft --output <path>` 使用显式输出路径，且优先于 `--save`
+* `harbor log draft` 不写 `.harbor/diary/**`
+* `harbor log draft --output` 指向 `.harbor/diary/**` 必须拒绝
+
+### 3. Write
+
+```powershell
+harbor log write
+harbor log write --yes
+harbor log write --from-latest-draft
+harbor log write --from-draft .harbor/reports/log-draft.md
+```
+
+规则：
+
+* `harbor log write` 默认读取 latest draft
+* 不带 `--yes` 时必须交互确认
+* 非交互环境不带 `--yes` 必须拒绝
+* `--yes` 是显式授权写入 source-of-truth decision memory
+* `--from-draft` 只允许受控来源：`.harbor/reports/**` 或 latest draft cache
+* `.harbor/diary/**`、`.env`、`.env.*`、`secrets/**`、repo 外路径必须拒绝为 draft source
+* 成功写入 `.harbor/diary/YYYY-MM.jsonl` 后，更新 `.harbor/state/log/last_log_marker.json`
+
 ### 安全边界
 
-* `harbor log draft` 只生成 reviewable Diary Draft，不写 Written Diary Entry
-* `harbor log draft` 不写 `.harbor/diary/**`
-* `harbor log draft` 的 `--output` 可写 `.harbor/reports/**`
-* `harbor log draft` 的 `--output` 指向 `.harbor/diary/**` 必须拒绝
-* `harbor log draft` 在 v1.4.1 不调用 LLM
-* LLM-assisted draft 属于 future work，不是 v1.4.1 当前能力
-* 任何未来的 LLM-assisted draft 都必须显式 opt-in，且不得向 LLM 发送 secrets、credentials、private data、`.env` contents、file bodies 或 diff bodies
-* `harbor log draft` 不输出文件正文或 diff 正文
+* `harbor log draft` 不写 Diary，`harbor log write` 才会写 Diary
+* `.harbor/state/**` 和 `.harbor/reports/**` 都不是 source of truth
+* `.harbor/diary/**` 才是 source-of-truth decision memory
+* v1.4.1 不调用 LLM
+* LLM-assisted draft/write 属于 future work，且必须显式 opt-in
+* 不读取或输出文件正文、diff 正文或 secret 值
+* AI 可以运行 `harbor log draft` / `harbor log draft --save`
+* AI 不得自动运行 `harbor log write` 或 `harbor log write --yes`
 * 真正写 Diary 仍需人工明确授权
-* change-window snapshots 属于 runtime evidence，不是 source-of-truth memory
-* Written Diary Entry under `.harbor/diary/**` 才是 source-of-truth decision memory
+
+### 语言与 i18n
+
+* Harbor 工作语言可按配置使用中文或英文
+* CLI 面向用户的提示文案遵循 Harbor i18n / language 机制
+* JSON schema keys 保持稳定英文标识符
+* v1.4.1 为 log write 的提示与错误补充了 zh/en message keys
 
 ---
 

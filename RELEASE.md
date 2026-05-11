@@ -1,36 +1,54 @@
-# Harbor-spec v1.4.1 — Log Draft Workflow MVP
+# Harbor-spec v1.4.1 — Log Draft + Controlled Write Workflow MVP
 
 状态：正式版  
-发布类型：Log Draft Workflow MVP
+发布类型：Log Draft + Controlled Write Workflow MVP
 
 ## Added
 
 - Change-window snapshots for `checkpoint` / `finish` / `accept`.
 - `harbor log draft` command.
 - Markdown / JSON Diary Draft output.
+- Latest draft runtime cache:
+  - `.harbor/state/log/latest-draft.md`
+  - `.harbor/state/log/latest-draft.json`
+- `harbor log draft --save`.
+- `harbor log write`.
+- `harbor log write --yes`.
+- `harbor log write --from-latest-draft`.
+- `harbor log write --from-draft`.
+- `last_log_marker`.
 - `--since-last-accept` / `--since-last-log` / `--from-report` / `--output` support.
 - Runtime diagnostics for snapshot write failure.
 
 ## Changed
 
 - Agent rules now distinguish Diary Draft from Written Diary Entry.
-- Rules now allow AI agents to generate drafts but not write Diary entries automatically.
+- Rules now allow AI agents to generate drafts and prepare report copies, but not write Diary entries automatically.
+- Log workflow is documented as `Evidence -> Draft Cache / Save -> Controlled Write`.
+- CLI user-facing log prompts/errors follow Harbor i18n; JSON schema keys remain stable English identifiers.
 - Log draft skips invalid / non-UTF-8 report evidence safely.
 
 ## Safety
 
 - `harbor log draft` generates a reviewable draft only; it does not write a Written Diary Entry.
 - `harbor log draft` does not write `.harbor/diary/**`.
+- `harbor log write` writes Diary only through the explicit write path.
+- `harbor log write --yes` is explicit authorization.
+- non-interactive write without `--yes` is rejected.
+- draft sources are allowlisted.
+- `.harbor/diary/**`, `.env`, `.env.*`, `secrets/**`, and repo-external paths are rejected as draft sources.
 - `harbor log draft --output` may write to `.harbor/reports/**`.
+- `harbor log draft --save` writes a reviewable report copy only.
 - `harbor log draft` does not output file content or diff body.
 - `--output` to `.harbor/diary/**` is rejected.
 - `harbor log draft` does not call LLM in v1.4.1.
-- LLM-assisted draft is future work only and must be explicit opt-in.
-- Any future LLM-assisted draft must not send secrets, credentials, private data, `.env` contents, file bodies, or diff bodies to an LLM.
+- `harbor log write` does not introduce LLM usage in v1.4.1.
+- LLM-assisted draft/write is future work only and must be explicit opt-in.
+- Any future LLM-assisted draft/write must not send secrets, credentials, private data, `.env` contents, file bodies, or diff bodies to an LLM.
 
 ## Validation
 
-- `pytest`: `529 passed`
+- `pytest`: `554 passed`
 - `harbor checkpoint --ci --format json`: `pass`
 - `harbor stale --ci --format json`: `pass`
 - `harbor doctor --ci --format json`: `pass`

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
@@ -12,10 +13,13 @@ from harbor.core.workspace import load_workspace_paths
 DIARY_DRAFT_SCHEMA_VERSION = "1.0"
 DIARY_DRAFT_KIND = "diary_draft"
 LATEST_DRAFT_WRAPPER_SCHEMA_VERSION = "1.0"
+WRITTEN_DIARY_ENTRY_SCHEMA_VERSION = "1.0"
+WRITTEN_DIARY_ENTRY_KIND = "written_diary_entry"
 DEFAULT_SNAPSHOT_LIMIT = 12
 DEFAULT_LOG_DRAFT_SAVE_PREFIX = "log-draft"
 KNOWN_REPORT_COMMANDS = {"checkpoint", "stale", "doctor"}
 VALIDATION_KEYS = ("pytest", "checkpoint", "stale", "doctor")
+SAFE_EXCERPT_MAX_LEN = 1000
 LOG_MARKER_TIMESTAMP_KEYS = (
     "timestamp",
     "ts",
@@ -428,6 +432,299 @@ def write_latest_diary_draft_cache(
         )
 
     return result
+
+
+def resolve_draft_source(
+    *,
+    repo_root: Optional[Path] = None,
+    from_draft: Optional[Path] = None,
+    from_latest_draft: bool = False,
+) -> Dict[str, Any]:
+    """Resolve and parse one authorized draft source for `harbor log write`.
+
+    Behavior:
+      - Default source and `--from-latest-draft` both use latest draft runtime
+        cache:
+          1) `.harbor/state/log/latest-draft.json`
+          2) fallback `.harbor/state/log/latest-draft.md`
+      - `--from-draft <path>` accepts only:
+          - `.harbor/reports/**`
+          - `.harbor/state/log/latest-draft.md`
+          - `.harbor/state/log/latest-draft.json`
+      - Rejects:
+          - `.harbor/diary/**`
+          - `.env`, `.env.*`
+          - `secrets/**`
+          - paths outside repo root
+          - traversal/unauthorized paths
+      - JSON source supports both latest-draft wrapper schema and direct draft
+        payload object.
+      - Markdown source is returned as text for summary-level extraction only.
+
+    Side Effects:
+      - Read-only file access only.
+      - Does not write diary, reports, cache, or marker files.
+
+    Returns:
+      Dict[str, Any] with stable keys:
+      - `source_path`: absolute source path
+      - `source_path_display`: repo-relative source path when possible
+      - `source_kind`: `json` or `markdown`
+      - `draft_payload`: parsed draft object when available, else `None`
+      - `markdown_text`: markdown text when source is markdown, else `None`
+    """
+    root = Path(repo_root or Path.cwd()).resolve()
+    workspace_paths = load_workspace_paths(root, enforce_write_safety=True)
+    log_root = workspace_paths.state_root / "log"
+    latest_json = log_root / "latest-draft.json"
+    latest_md = log_root / "latest-draft.md"
+
+    if from_draft is not None and from_latest_draft:
+        raise LogDraftError("Choose only one draft source: --from-draft or --from-latest-draft.")
+
+    if from_draft is not None:
+        source_path = _resolve_allowed_from_draft_path(
+            Path(from_draft),
+            repo_root=root,
+            reports_root=workspace_paths.reports_root,
+            latest_md=latest_md,
+            latest_json=latest_json,
+            diary_root=workspace_paths.diary_root,
+        )
+    else:
+        source_path = _resolve_latest_draft_source(latest_json=latest_json, latest_md=latest_md, repo_root=root)
+
+    return _read_draft_source_file(source_path, repo_root=root)
+
+
+def build_written_diary_entry(
+    *,
+    repo_root: Optional[Path] = None,
+    from_draft: Optional[Path] = None,
+    from_latest_draft: bool = False,
+    write_source: str = "harbor log write",
+    now: Optional[datetime] = None,
+) -> Dict[str, Any]:
+    """Build one structured written diary entry payload from an authorized draft.
+
+    Behavior:
+      - Resolves exactly one approved draft source using the same allowlist rules
+        as `harbor log write`.
+      - Builds one mixed-schema payload that keeps legacy reader fields
+        (`ver/ts/author/type/importance/visibility/summary/details`) alongside
+        new structured governance fields.
+      - Never embeds full markdown bodies, source file bodies, diff bodies, or
+        secret-like env values in the returned entry payload.
+      - Sanitizes `evidence.changed_files` down to path/status summaries.
+
+    Side Effects:
+      - Pure data assembly only; does not write diary files or markers.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: pure
+    """
+    resolved = resolve_draft_source(
+        repo_root=repo_root,
+        from_draft=from_draft,
+        from_latest_draft=from_latest_draft,
+    )
+    root = Path(repo_root or Path.cwd()).resolve()
+    timestamp = (now or datetime.now(timezone.utc)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    draft_payload = dict(resolved.get("draft_payload") or {})
+    markdown_text = str(resolved.get("markdown_text") or "")
+
+    if draft_payload:
+        summary = _safe_excerpt(str(draft_payload.get("summary") or ""), max_len=300)
+        why = _safe_excerpt(str(draft_payload.get("why") or ""), max_len=SAFE_EXCERPT_MAX_LEN)
+        suggested = _safe_excerpt(str(draft_payload.get("suggested_diary_entry") or ""), max_len=SAFE_EXCERPT_MAX_LEN)
+        details = suggested or why or summary
+        if not summary:
+            summary = _safe_excerpt(details, max_len=240) or "Written diary entry from latest draft."
+        affected_areas = _sanitize_affected_areas(draft_payload.get("affected_areas"))
+        contract_impact = _normalize_contract_impact(draft_payload.get("contract_impact"))
+        validation = _sanitize_validation(draft_payload.get("validation"))
+        evidence = _sanitize_evidence(draft_payload.get("evidence"))
+        risks = _sanitize_risks(draft_payload.get("risks"))
+    else:
+        sections = _extract_markdown_summary_sections(markdown_text)
+        summary = (
+            sections.get("suggested_diary_entry")
+            or sections.get("summary")
+            or sections.get("why")
+            or sections.get("fallback")
+            or "Written diary entry from markdown draft."
+        )
+        details = sections.get("suggested_diary_entry") or sections.get("summary") or sections.get("fallback") or summary
+        affected_areas = {}
+        contract_impact = "uncertain"
+        validation = {}
+        evidence = {"changed_files": []}
+        risks = []
+
+    entry: Dict[str, Any] = {
+        "schema_version": WRITTEN_DIARY_ENTRY_SCHEMA_VERSION,
+        "kind": WRITTEN_DIARY_ENTRY_KIND,
+        "timestamp": timestamp,
+        "source": str(write_source or "harbor log write"),
+        "source_draft": _to_repo_relative_display(Path(resolved["source_path"]), repo_root=root),
+        "affected_areas": affected_areas,
+        "contract_impact": contract_impact,
+        "validation": validation,
+        "evidence": evidence,
+        "risks": risks,
+        "ver": 1,
+        "ts": timestamp,
+        "author": "harbor",
+        "type": "decision",
+        "importance": "medium",
+        "visibility": "repo",
+        "summary": _safe_excerpt(summary, max_len=240) or "Written diary entry from draft.",
+        "details": _safe_excerpt(details, max_len=SAFE_EXCERPT_MAX_LEN) or "No additional details.",
+    }
+    return {"entry": entry, "source": resolved}
+
+
+def write_diary_entry_from_draft(
+    *,
+    repo_root: Optional[Path] = None,
+    from_draft: Optional[Path] = None,
+    from_latest_draft: bool = False,
+    write_source: str = "harbor log write",
+    now: Optional[datetime] = None,
+) -> Dict[str, Any]:
+    """Write one structured diary entry from an approved draft source.
+
+    Behavior:
+      - Uses the same approved draft source resolution as `harbor log write`.
+      - Appends exactly one structured JSON line to canonical
+        `.harbor/diary/YYYY-MM.jsonl`.
+      - Attempts a best-effort `last_log_marker.json` refresh after diary write.
+      - Marker write failure must not roll back the already-written diary entry
+        and is returned as a warning instead.
+
+    Side Effects:
+      - Writes canonical diary JSONL.
+      - May write runtime marker state under `.harbor/state/log/`.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: once
+    """
+    root = Path(repo_root or Path.cwd()).resolve()
+    built = build_written_diary_entry(
+        repo_root=root,
+        from_draft=from_draft,
+        from_latest_draft=from_latest_draft,
+        write_source=write_source,
+        now=now,
+    )
+    entry_payload = dict(built["entry"])
+    source_meta = dict(built["source"])
+
+    from harbor.core.diary import DiaryManager
+
+    diary_manager = DiaryManager(repo_root=root)
+    diary_path = diary_manager.append_json_line(entry_payload, ts=entry_payload["ts"])
+    marker_result = write_last_log_marker(
+        entry_payload=entry_payload,
+        diary_path=diary_path,
+        draft_source_path=Path(source_meta["source_path"]),
+        repo_root=root,
+    )
+    return {
+        "entry": entry_payload,
+        "diary_path": diary_path,
+        "diary_path_display": _to_repo_relative_display(diary_path, repo_root=root),
+        "source_draft_display": _to_repo_relative_display(Path(source_meta["source_path"]), repo_root=root),
+        "marker_path": marker_result.get("marker_path"),
+        "marker_path_display": marker_result.get("marker_path_display"),
+        "warnings": list(marker_result.get("warnings") or []),
+    }
+
+
+def write_last_log_marker(
+    *,
+    entry_payload: Dict[str, Any],
+    diary_path: Path,
+    draft_source_path: Path,
+    repo_root: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """Best-effort update of `.harbor/state/log/last_log_marker.json`.
+
+    Behavior:
+      - Writes one stable English-key JSON object describing the most recent
+        successful diary write.
+      - Uses runtime state only; marker data is not source-of-truth memory.
+      - Marker write failure is downgraded to a warning so callers do not roll
+        back the already-written diary entry.
+
+    Side Effects:
+      - May create `.harbor/state/log/` and overwrite `last_log_marker.json`.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: overwrite-runtime-state
+    """
+    root = Path(repo_root or Path.cwd()).resolve()
+    workspace_paths = load_workspace_paths(root, enforce_write_safety=True)
+    marker_path = workspace_paths.state_root / "log" / "last_log_marker.json"
+    marker_display = _to_repo_relative_display(marker_path, repo_root=root)
+    warnings: List[str] = []
+
+    evidence = dict(entry_payload.get("evidence") or {})
+    last_git_head = _extract_latest_git_head(evidence)
+    last_snapshot = _extract_latest_snapshot_timestamp(evidence)
+    payload = {
+        "schema_version": "1.0",
+        "last_log_at": str(entry_payload.get("ts") or entry_payload.get("timestamp") or ""),
+        "last_draft_path": _to_repo_relative_display(draft_source_path, repo_root=root),
+        "last_git_head": last_git_head or "",
+        "last_snapshot": last_snapshot or "",
+        "diary_path": _to_repo_relative_display(diary_path, repo_root=root),
+    }
+    try:
+        marker_path.parent.mkdir(parents=True, exist_ok=True)
+        marker_path.write_text(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    except OSError as exc:
+        warnings.append(f"Failed to write last log marker '{marker_display}': {exc}")
+    return {"marker_path": marker_path, "marker_path_display": marker_display, "warnings": warnings}
+
+
+def build_log_write_preview(
+    *,
+    repo_root: Optional[Path] = None,
+    from_draft: Optional[Path] = None,
+    from_latest_draft: bool = False,
+) -> Dict[str, str]:
+    """Build summary-level preview data for interactive `harbor log write`.
+
+    Behavior:
+      - Resolves one approved draft source and derives summary-level preview
+        fields only.
+      - Returns summary/details/source metadata suitable for confirmation UI.
+      - Does not expose full markdown bodies, file bodies, or diff bodies.
+
+    Side Effects:
+      - Read-only draft source access only.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+    """
+    built = build_written_diary_entry(
+        repo_root=repo_root,
+        from_draft=from_draft,
+        from_latest_draft=from_latest_draft,
+        write_source="harbor log write",
+    )
+    entry = dict(built["entry"])
+    source = dict(built["source"])
+    return {
+        "summary": str(entry.get("summary") or ""),
+        "details": str(entry.get("details") or ""),
+        "source_draft": str(source.get("source_path_display") or ""),
+    }
 
 
 def _latest_accept_snapshot(repo_root: Path) -> Optional[ChangeWindowSnapshot]:
@@ -848,6 +1145,296 @@ def _reject_diary_output_path(path: Path, *, diary_root: Path) -> None:
     raise LogDraftError(
         "Refusing to write diary draft under `.harbor/diary/**`; use `.harbor/reports/**` or another non-diary repo path."
     )
+
+
+def _resolve_latest_draft_source(*, latest_json: Path, latest_md: Path, repo_root: Path) -> Path:
+    if latest_json.exists():
+        return latest_json.resolve()
+    if latest_md.exists():
+        return latest_md.resolve()
+    raise LogDraftError(
+        "No latest draft found. Run `harbor log draft` first (or `harbor log draft --since-last-accept`)."
+    )
+
+
+def _resolve_allowed_from_draft_path(
+    path: Path,
+    *,
+    repo_root: Path,
+    reports_root: Path,
+    latest_md: Path,
+    latest_json: Path,
+    diary_root: Path,
+) -> Path:
+    candidate = path if path.is_absolute() else (repo_root / path)
+    resolved = candidate.resolve()
+    try:
+        rel = resolved.relative_to(repo_root.resolve())
+    except ValueError as exc:
+        raise LogDraftError(f"Unsafe --from-draft path (outside repo): '{resolved.as_posix()}'.") from exc
+    rel_posix = rel.as_posix()
+    rel_lower = rel_posix.lower()
+
+    if _is_within(resolved, diary_root.resolve()):
+        raise LogDraftError("Unsafe --from-draft path: `.harbor/diary/**` is not allowed.")
+    if _is_env_or_secrets_path(rel_lower):
+        raise LogDraftError("Unsafe --from-draft path: env/secrets paths are not allowed.")
+
+    allowed = (
+        _is_within(resolved, reports_root.resolve())
+        or resolved == latest_md.resolve()
+        or resolved == latest_json.resolve()
+    )
+    if not allowed:
+        raise LogDraftError(
+            "Unsafe --from-draft path: only `.harbor/reports/**` or `.harbor/state/log/latest-draft.md|json` are allowed."
+        )
+    if not resolved.exists() or not resolved.is_file():
+        raise LogDraftError(f"Draft source file not found: '{rel_posix}'.")
+    return resolved
+
+
+def _read_draft_source_file(path: Path, *, repo_root: Path) -> Dict[str, Any]:
+    suffix = path.suffix.lower()
+    display = _to_repo_relative_display(path, repo_root=repo_root)
+    if suffix == ".json":
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except UnicodeDecodeError as exc:
+            raise LogDraftError(f"Failed to decode draft JSON '{display}' as UTF-8: {exc}") from exc
+        except json.JSONDecodeError as exc:
+            raise LogDraftError(f"Failed to parse draft JSON '{display}': {exc}") from exc
+        if not isinstance(payload, dict):
+            raise LogDraftError(f"Draft JSON '{display}' must contain an object.")
+        if isinstance(payload.get("draft"), dict):
+            draft_payload = dict(payload.get("draft") or {})
+        else:
+            draft_payload = dict(payload)
+        return {
+            "source_path": path,
+            "source_path_display": display,
+            "source_kind": "json",
+            "draft_payload": draft_payload,
+            "markdown_text": None,
+        }
+    if suffix in {".md", ".markdown"}:
+        try:
+            markdown_text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError as exc:
+            raise LogDraftError(f"Failed to decode markdown draft '{display}' as UTF-8: {exc}") from exc
+        except OSError as exc:
+            raise LogDraftError(f"Unable to read markdown draft '{display}': {exc}") from exc
+        return {
+            "source_path": path,
+            "source_path_display": display,
+            "source_kind": "markdown",
+            "draft_payload": None,
+            "markdown_text": markdown_text,
+        }
+    raise LogDraftError(f"Unsupported draft source format for '{display}'. Use .json or .md.")
+
+
+def _extract_markdown_summary_sections(markdown_text: str) -> Dict[str, str]:
+    sections = {
+        "suggested_diary_entry": _safe_excerpt(_extract_markdown_section(markdown_text, "Suggested Diary Entry"), max_len=SAFE_EXCERPT_MAX_LEN),
+        "summary": _safe_excerpt(_extract_markdown_section(markdown_text, "Summary"), max_len=SAFE_EXCERPT_MAX_LEN),
+        "why": _safe_excerpt(_extract_markdown_section(markdown_text, "Why"), max_len=SAFE_EXCERPT_MAX_LEN),
+    }
+    fallback = _extract_first_safe_text_block(markdown_text)
+    if fallback:
+        sections["fallback"] = fallback
+    return sections
+
+
+def _extract_markdown_section(markdown_text: str, heading: str) -> str:
+    lines = str(markdown_text or "").splitlines()
+    target = heading.strip().lower()
+    in_section = False
+    collected: List[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            normalized = stripped.lstrip("#").strip().lower()
+            if in_section:
+                break
+            in_section = normalized == target
+            continue
+        if in_section:
+            collected.append(line)
+    return "\n".join(collected).strip()
+
+
+def _extract_first_safe_text_block(markdown_text: str) -> str:
+    sanitized = _sanitize_markdown_text(markdown_text)
+    if not sanitized:
+        return ""
+    block: List[str] = []
+    for raw_line in sanitized.splitlines():
+        line = raw_line.strip()
+        if not line:
+            if block:
+                break
+            continue
+        if line.startswith("#"):
+            continue
+        block.append(line)
+        if len(" ".join(block)) >= SAFE_EXCERPT_MAX_LEN:
+            break
+    return _safe_excerpt(" ".join(block), max_len=SAFE_EXCERPT_MAX_LEN)
+
+
+def _sanitize_markdown_text(markdown_text: str) -> str:
+    out: List[str] = []
+    in_fence = False
+    for raw_line in str(markdown_text or "").splitlines():
+        line = raw_line.rstrip()
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        lower = stripped.lower()
+        if lower.startswith("diff --git") or lower.startswith("index ") or lower.startswith("@@"):
+            continue
+        if lower.startswith("--- ") or lower.startswith("+++ "):
+            continue
+        if re.match(r"^[A-Z0-9_]{2,}\s*=\s*.+$", stripped):
+            continue
+        stripped = re.sub(
+            r"(?i)\b(secret|token|password|passwd|api[_-]?key|credential)\b\s*[:=]\s*[^\s]+",
+            r"\1=[REDACTED]",
+            stripped,
+        )
+        out.append(stripped)
+    return "\n".join(out).strip()
+
+
+def _safe_excerpt(text: str, *, max_len: int = SAFE_EXCERPT_MAX_LEN) -> str:
+    cleaned = " ".join(_sanitize_markdown_text(text).split())
+    if len(cleaned) <= max_len:
+        return cleaned
+    return cleaned[: max_len - 3].rstrip() + "..."
+
+
+def _sanitize_affected_areas(value: Any) -> Dict[str, Any]:
+    if not isinstance(value, dict):
+        return {}
+    output: Dict[str, Any] = {}
+    for key, val in value.items():
+        key_s = str(key)
+        if isinstance(val, list):
+            output[key_s] = [str(item) for item in val]
+        elif isinstance(val, dict):
+            output[key_s] = {str(k): str(v) for k, v in val.items()}
+        else:
+            output[key_s] = str(val)
+    return output
+
+
+def _normalize_contract_impact(value: Any) -> str:
+    normalized = str(value or "").strip().lower()
+    if normalized in {"yes", "no", "uncertain"}:
+        return normalized
+    return "uncertain"
+
+
+def _sanitize_validation(value: Any) -> Dict[str, str]:
+    if not isinstance(value, dict):
+        return {}
+    output: Dict[str, str] = {}
+    for key, val in value.items():
+        output[str(key)] = str(val)
+    return output
+
+
+def _sanitize_evidence(value: Any) -> Dict[str, Any]:
+    if not isinstance(value, dict):
+        return {"changed_files": []}
+    changed_files: List[Dict[str, str]] = []
+    for item in list(value.get("changed_files") or []):
+        if not isinstance(item, dict):
+            continue
+        path = str(item.get("path") or "").replace("\\", "/").strip()
+        if not path:
+            continue
+        changed_files.append({"path": path, "status": str(item.get("status") or "").strip()})
+    output: Dict[str, Any] = {"changed_files": changed_files}
+    snapshots: List[Dict[str, Any]] = []
+    for item in list(value.get("snapshots") or []):
+        if not isinstance(item, dict):
+            continue
+        snapshots.append(
+            {
+                "event": str(item.get("event") or ""),
+                "timestamp": str(item.get("timestamp") or ""),
+                "git_head": str(item.get("git_head") or ""),
+            }
+        )
+    if snapshots:
+        output["snapshots"] = snapshots
+    reports: List[Dict[str, Any]] = []
+    for item in list(value.get("reports") or []):
+        if not isinstance(item, dict):
+            continue
+        reports.append(
+            {
+                "command": str(item.get("command") or ""),
+                "status": str(item.get("status") or ""),
+                "path": str(item.get("path") or ""),
+            }
+        )
+    if reports:
+        output["reports"] = reports
+    return output
+
+
+def _sanitize_risks(value: Any) -> List[str]:
+    if not isinstance(value, list):
+        return []
+    risks: List[str] = []
+    for item in value:
+        excerpt = _safe_excerpt(str(item), max_len=200)
+        if excerpt:
+            risks.append(excerpt)
+    return risks
+
+
+def _extract_latest_git_head(evidence: Dict[str, Any]) -> Optional[str]:
+    snapshots = list(evidence.get("snapshots") or [])
+    for snapshot in snapshots:
+        if not isinstance(snapshot, dict):
+            continue
+        git_head = str(snapshot.get("git_head") or "").strip()
+        if git_head:
+            return git_head
+    return None
+
+
+def _extract_latest_snapshot_timestamp(evidence: Dict[str, Any]) -> Optional[str]:
+    snapshots = [item for item in list(evidence.get("snapshots") or []) if isinstance(item, dict)]
+    snapshots = sorted(snapshots, key=lambda item: str(item.get("timestamp") or ""), reverse=True)
+    if not snapshots:
+        return None
+    stamp = str(snapshots[0].get("timestamp") or "").strip()
+    return stamp or None
+
+
+def _is_within(candidate: Path, parent: Path) -> bool:
+    try:
+        candidate.resolve().relative_to(parent.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def _is_env_or_secrets_path(rel_lower: str) -> bool:
+    normalized = rel_lower.replace("\\", "/")
+    parts = [part for part in normalized.split("/") if part]
+    name = parts[-1] if parts else normalized
+    if name == ".env" or name.startswith(".env."):
+        return True
+    return bool(parts and parts[0] == "secrets")
 
 
 def _to_repo_relative_display(path: Path, *, repo_root: Path) -> str:

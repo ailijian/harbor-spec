@@ -302,6 +302,78 @@ For non-trivial tasks, agents should always report:
 Diary Need: yes / no / uncertain
 ```
 
+### 9.3 Artifact Layers
+
+Harbor v1.4.1 distinguishes three different log artifacts:
+
+```text
+Latest Draft Cache
+Saved Draft Report
+Written Diary Entry
+```
+
+Latest Draft Cache:
+
+```text
+.harbor/state/log/latest-draft.md
+.harbor/state/log/latest-draft.json
+```
+
+Rules:
+
+```text
+Latest Draft Cache is runtime state.
+Latest Draft Cache may be overwritten by later draft runs.
+Latest Draft Cache is reviewable working state, not source-of-truth memory.
+```
+
+Saved Draft Report:
+
+```text
+.harbor/reports/log-draft-*.md
+.harbor/reports/log-draft-*.json
+```
+
+Rules:
+
+```text
+Saved Draft Report is a reviewable report artifact.
+Saved Draft Report may be produced by --save or explicit --output.
+Saved Draft Report is not source-of-truth decision memory.
+```
+
+Written Diary Entry:
+
+```text
+.harbor/diary/YYYY-MM.jsonl
+```
+
+Rules:
+
+```text
+Written Diary Entry is source-of-truth decision memory.
+Only an explicitly authorized write path may append it.
+Draft cache and saved reports never become source of truth by themselves.
+```
+
+### 9.4 `harbor log write`
+
+`harbor log write` is the controlled write path from a reviewable draft into source-of-truth decision memory.
+
+Rules:
+
+```text
+harbor log write reads latest draft by default.
+harbor log write --from-latest-draft explicitly reads the latest draft cache.
+harbor log write without --yes requires interactive confirmation.
+harbor log write without --yes must be rejected in non-interactive environments.
+harbor log write --yes is explicit authorization to write.
+harbor log write --from-draft only allows .harbor/reports/** or latest draft cache paths as sources.
+harbor log write must reject .harbor/diary/**, .env, .env.*, secrets/**, repo-external paths, and other unallowlisted sources.
+successful harbor log write updates .harbor/state/log/last_log_marker.json after writing .harbor/diary/YYYY-MM.jsonl.
+last_log_marker is runtime state, not source-of-truth memory.
+```
+
 ---
 
 ## 10. When Writing Requires Explicit Request
@@ -339,6 +411,7 @@ harbor log draft --format json
 harbor log draft --since-last-accept
 harbor log draft --since-last-log
 harbor log draft --from-report <path>
+harbor log draft --save
 harbor log draft --output .harbor/reports/<name>.md
 ```
 
@@ -349,6 +422,9 @@ Diary Draft is reviewable assistant output / report output, not written Diary.
 harbor log draft is safe with respect to source-of-truth memory.
 harbor log draft may be used after accept to draft a Diary from change-window evidence.
 harbor log draft must not write .harbor/diary/** by default.
+harbor log draft writes latest draft cache to .harbor/state/log/latest-draft.md and .harbor/state/log/latest-draft.json.
+harbor log draft --save writes a timestamped reviewable report copy under .harbor/reports/**.
+explicit --output wins over --save; do not silently create a second saved copy.
 --output targeting .harbor/diary/** must be rejected.
 harbor log / harbor log write still require explicit human authorization.
 If evidence is insufficient, output evidence insufficient or no meaningful change window.
@@ -377,21 +453,31 @@ harbor log draft does not call LLM.
 
 ---
 
-## 12. Preferred Write Command
+## 12. Write Paths
 
-Preferred command:
+Preferred draft-to-memory write path:
+
+```powershell
+harbor log write
+harbor log write --yes
+harbor log write --from-latest-draft
+harbor log write --from-draft .harbor/reports/log-draft.md --yes
+```
+
+Rules:
+
+```text
+harbor log write is the controlled source-of-truth write path for draft-based workflow.
+Use it only after review and explicit authorization.
+Do not run it automatically.
+Do not claim success unless the write was actually executed and observed.
+```
+
+Legacy direct write path remains available when the user explicitly wants a manual message-based write:
 
 ```powershell
 harbor log -m "<message>" --type <type> --importance <importance> --visibility <visibility>
 ```
-
-Example:
-
-```powershell
-harbor log -m "Adopt .harbor as canonical workspace for v1.3.0" --type decision --importance high --visibility repo
-```
-
-If the command supports additional structured fields, include them when appropriate.
 
 ---
 

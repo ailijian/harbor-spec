@@ -75,9 +75,11 @@ from harbor.core.contract_impact import (
 from harbor.core.change_window import write_change_window_snapshot
 from harbor.core.log_draft import (
     LogDraftError,
+    build_log_write_preview,
     build_saved_diary_draft_output_path,
     build_diary_draft,
     serialize_diary_draft,
+    write_diary_entry_from_draft,
     write_latest_diary_draft_cache,
     write_diary_draft_output,
 )
@@ -87,6 +89,10 @@ from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
 from harbor.core.init_wizard import InitWizard, InitWizardOptions
 from harbor.core.decorator import DecoratorEngine
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, write_workspace_config
+
+
+def _is_log_write_interactive() -> bool:
+    return bool(sys.stdin.isatty() and sys.stdout.isatty())
 
 
 def main():
@@ -128,6 +134,17 @@ def main():
         present, explicit `--output` takes precedence.
       - `harbor log draft` never executes `harbor log`, never writes
         `.harbor/diary/**`, never writes `last_log_marker`, and never calls LLM.
+      - `harbor log write` writes source-of-truth Diary memory only after
+        explicit authorization through `--yes` or interactive confirmation.
+      - `harbor log write` reads the latest draft cache by default, supports
+        `--from-latest-draft` and approved `--from-draft <path>` sources, and
+        rejects `.harbor/diary/**`, `.env*`, `secrets/**`, outside-repo paths,
+        and traversal attempts.
+      - Successful `harbor log write` appends one structured JSON line to
+        `.harbor/diary/YYYY-MM.jsonl` and then attempts a best-effort
+        `.harbor/state/log/last_log_marker.json` update.
+      - Non-interactive `harbor log write` requires `--yes`; cancel/deny paths
+        must not write `.harbor/diary/**`.
       - `init` supports `--advice off|basic` and writes advice defaults into
         `.harbor/config/harbor.yaml` through initializer logic.
       - `checkpoint --ci` may emit TypeScript MVP advisory category
@@ -164,14 +181,18 @@ def main():
       write one non-diary output file such as `.harbor/reports/*.md` or
       `.harbor/reports/*.json` via `--output` or `--save`, does not write
       `.harbor/diary/**`, does not update log markers, does not read or print
-      file bodies / diff bodies, and does not call LLM.
+      file bodies / diff bodies, and does not call LLM. `harbor log write` may
+      append one structured JSON line to `.harbor/diary/YYYY-MM.jsonl` and may
+      update `.harbor/state/log/last_log_marker.json` after successful write.
 
     Raises:
       SystemExit: Propagates CLI parse failures and CI/gate exit codes from the
       primary command flow. Snapshot write failures must not raise a different
       exit outcome and must not surface as normal CLI output. `harbor log draft`
       argument / path / report-parse errors fail clearly without writing Diary;
-      latest draft cache write failures remain non-fatal warnings only.
+      latest draft cache write failures remain non-fatal warnings only. `harbor
+      log write` read/authorization/path errors fail clearly without writing
+      Diary; marker update failures do not roll back a completed Diary write.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
@@ -640,6 +661,27 @@ def main():
         "--save",
         action="store_true",
         help="Save one timestamped report copy under `.harbor/reports/` unless `--output` is provided",
+    )
+    p_log_write = p_log_sub.add_parser(
+        "write",
+        help="Write one structured diary entry from the latest or an approved draft source",
+    )
+    p_log_write.add_argument(
+        "--yes",
+        action="store_true",
+        help="Skip confirmation and treat this as explicit write authorization",
+    )
+    p_log_write_source = p_log_write.add_mutually_exclusive_group()
+    p_log_write_source.add_argument(
+        "--from-draft",
+        type=str,
+        default=None,
+        help="Read one approved draft file from `.harbor/reports/**` or `.harbor/state/log/latest-draft.*`",
+    )
+    p_log_write_source.add_argument(
+        "--from-latest-draft",
+        action="store_true",
+        help="Explicitly read the latest draft cache under `.harbor/state/log/`",
     )
 
     p_init = sub.add_parser("init", help="Initialize Harbor via interactive setup wizard")
@@ -1177,6 +1219,35 @@ def main():
         target = mgr._current_file_path(entry.ts)
         print(t("cli.log.write_target", path=_to_repo_relative_display(target)))
         print(t("cli.log.path_policy"))
+
+    def _render_log_write_error(exc: LogDraftError) -> str:
+        message = str(exc)
+        if "No latest draft found." in message:
+            return t("cli.log.write.latest_missing")
+        if "Unsafe --from-draft path" in message:
+            return t("cli.log.write.unsafe_draft_path", message=message)
+        return t("cli.log.write.from_draft_read_error", message=message)
+
+    def _print_log_write_from_draft_result(result: dict) -> None:
+        print(json.dumps(result["entry"], ensure_ascii=False, sort_keys=True))
+        print(
+            t(
+                "cli.log.write.success",
+                diary_path=result["diary_path_display"],
+                source_draft=result["source_draft_display"],
+                marker_path=result["marker_path_display"],
+            )
+        )
+        print(t("cli.log.write.diary_path", path=result["diary_path_display"]))
+        for warning in list(result.get("warnings") or []):
+            print(
+                t(
+                    "cli.log.write.marker_warning",
+                    marker_path=result["marker_path_display"],
+                    message=str(warning),
+                ),
+                file=sys.stderr,
+            )
 
     def _sanitize_module_for_display(module: str, *, repo_root: Path) -> str:
         raw = str(module or "").strip()
@@ -2182,6 +2253,42 @@ def main():
                 )
         except LogDraftError as exc:
             print(str(exc), file=sys.stderr)
+            raise SystemExit(1)
+    elif args.command == "log" and getattr(args, "log_cmd", None) == "write":
+        try:
+            preview = build_log_write_preview(
+                repo_root=Path.cwd(),
+                from_draft=Path(args.from_draft) if getattr(args, "from_draft", None) else None,
+                from_latest_draft=bool(getattr(args, "from_latest_draft", False)),
+            )
+            if not getattr(args, "yes", False):
+                if not _is_log_write_interactive():
+                    print(t("cli.log.write.non_interactive_requires_yes"), file=sys.stderr)
+                    raise SystemExit(1)
+                print(
+                    t(
+                        "cli.log.write.preview",
+                        summary=preview["summary"],
+                        source_draft=preview["source_draft"],
+                    )
+                )
+                choice = Prompt.ask(t("cli.log.write.confirm"), choices=["y", "n", "Y", "N"], default="N")
+                if choice.upper() != "Y":
+                    print(t("cli.log.write.canceled"))
+                    return
+            result = write_diary_entry_from_draft(
+                repo_root=Path.cwd(),
+                from_draft=Path(args.from_draft) if getattr(args, "from_draft", None) else None,
+                from_latest_draft=bool(getattr(args, "from_latest_draft", False)),
+                write_source="harbor log write --from-draft"
+                if getattr(args, "from_draft", None)
+                else "harbor log write --from-latest-draft"
+                if bool(getattr(args, "from_latest_draft", False))
+                else "harbor log write",
+            )
+            _print_log_write_from_draft_result(result)
+        except LogDraftError as exc:
+            print(_render_log_write_error(exc), file=sys.stderr)
             raise SystemExit(1)
     elif args.command == "log" and args.export:
         mgr = DiaryManager()

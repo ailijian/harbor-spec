@@ -1,0 +1,3496 @@
+﻿{
+  "advisory": [
+    {
+      "adapter": "python",
+      "category": "ddt_version_baseline_missing",
+      "file_path": "tests/test_sync_engine.py",
+      "func_id": "harbor.core.sync.SyncEngine.check_status",
+      "guidance": {
+        "anti_action": "Do not blindly bump l3_version. Do not run harbor accept automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review baseline state before deciding whether l3_version should be changed.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-ddt-diary",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": true,
+        "what_happened": "Strict DDT binding is structurally valid, but no L3 contract version baseline was found."
+      },
+      "language": "python",
+      "reason": "严格 DDT 绑定格式有效，但未找到 L3 契约版本基线，无法判断 l3_version 是否需要升级。请在人工复核后建立或接受基线。",
+      "suggested_action": "请先初始化并复核基线后运行 harbor checkpoint，再确认是否需要升级 l3_version，最后再考虑 harbor accept。",
+      "symbol_kind": "method",
+      "target_id": "python:tests/test_sync_engine.py:method:harbor.core.sync.SyncEngine.check_status"
+    },
+    {
+      "adapter": "python",
+      "category": "ddt_version_baseline_missing",
+      "file_path": "tests/test_utils_format.py",
+      "func_id": "harbor.utils.formatting.format_size",
+      "guidance": {
+        "anti_action": "Do not blindly bump l3_version. Do not run harbor accept automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review baseline state before deciding whether l3_version should be changed.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-ddt-diary",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": true,
+        "what_happened": "Strict DDT binding is structurally valid, but no L3 contract version baseline was found."
+      },
+      "language": "python",
+      "reason": "严格 DDT 绑定格式有效，但未找到 L3 契约版本基线，无法判断 l3_version 是否需要升级。请在人工复核后建立或接受基线。",
+      "suggested_action": "请先初始化并复核基线后运行 harbor checkpoint，再确认是否需要升级 l3_version，最后再考虑 harbor accept。",
+      "symbol_kind": "method",
+      "target_id": "python:tests/test_utils_format.py:method:harbor.utils.formatting.format_size"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/cli/main.py",
+      "func_id": "harbor.cli.main._is_log_write_interactive",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "public CLI path changed; symbol matched: harbor.cli.main._is_log_write_interactive; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/cli/main.py",
+      "func_id": "harbor.cli.main.main",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "public CLI path changed; symbol matched: harbor.cli.main.main; details: body + contract changed",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._format_reports",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._format_reports; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft.build_log_write_preview",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.build_log_write_preview; details: new function",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft.write_diary_entry_from_draft",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.write_diary_entry_from_draft; details: new function",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft.write_last_log_marker",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.write_last_log_marker; details: new function",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_cli_i18n.py",
+      "func_id": "tests.test_cli_i18n.run_cmd",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.run_cmd; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_cli_i18n.py",
+      "func_id": "tests.test_cli_i18n.run_cmd_with_err",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.run_cmd_with_err; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_cli_i18n.py",
+      "func_id": "tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_cli_i18n.py",
+      "func_id": "tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_cli_i18n.py",
+      "func_id": "tests.test_cli_i18n.test_config_list_zh",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_config_list_zh; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_cli_i18n.py",
+      "func_id": "tests.test_cli_i18n.test_init_provider_prompt_i18n_text",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_init_provider_prompt_i18n_text; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_cli_i18n.py",
+      "func_id": "tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft._force_en_locale",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._force_en_locale; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft._isolate_workspace",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._isolate_workspace; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft._read_last_marker",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._read_last_marker; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft._read_single_diary_entry",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._read_single_diary_entry; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft._sample_draft_payload",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._sample_draft_payload; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft._write_json_draft",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._write_json_draft; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft._write_markdown_draft",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._write_markdown_draft; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.run_cmd",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.run_cmd; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.test_log_write_from_draft_path_policy",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_from_draft_path_policy; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.test_log_write_from_latest_draft_flag_writes_successfully",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_from_latest_draft_flag_writes_successfully; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.test_log_write_interactive_no_cancels_without_writing",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_interactive_no_cancels_without_writing; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.test_log_write_interactive_yes_writes_diary",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_interactive_yes_writes_diary; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.test_log_write_markdown_fallback_uses_safe_excerpt_only",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_markdown_fallback_uses_safe_excerpt_only; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.test_log_write_non_interactive_without_yes_is_rejected",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_non_interactive_without_yes_is_rejected; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.test_log_write_requires_latest_draft_by_default",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_requires_latest_draft_by_default; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "category": "possible_contract_impact",
+      "file_path": "tests/test_log_write_from_draft.py",
+      "func_id": "tests.test_log_write_from_draft.test_log_write_yes_writes_from_latest_json_and_updates_marker",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Inspect whether the change affects public behavior, schema, CLI, JSON output, file write target, or generated view format.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A possible public contract impact was detected."
+      },
+      "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_yes_writes_from_latest_json_and_updates_marker; details: no contract required for this target",
+      "suggested_action": "请确认公开行为是否有意变更，并按需更新契约与测试。"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryEntry.to_json",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryEntry.to_json"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager.__init__",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager.__init__"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._current_file_path",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._current_file_path"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._ensure_within_repo",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._ensure_within_repo"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._entry_dedupe_key",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._entry_dedupe_key"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._from_dict",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._from_dict"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._iter_read_dirs",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._iter_read_dirs"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._normalize_for_hash",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._normalize_for_hash"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._parse_ts",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._parse_ts"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._resolve_author",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._resolve_author"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._resolve_legacy_diary_dirs",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._resolve_legacy_diary_dirs"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._resolve_repo_root",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._resolve_repo_root"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._utc_now_iso",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._utc_now_iso"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager.export_markdown",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager.export_markdown"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager.load_active",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager.load_active"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._bucket_for_path",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_bucket_for_path"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._build_risks",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_build_risks"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._build_suggested_diary_entry",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_build_suggested_diary_entry"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._build_summary",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_build_summary"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._build_why",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_build_why"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._classify_affected_areas",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_classify_affected_areas"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._coerce_validation_status",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_coerce_validation_status"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._derive_validation_statuses",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_derive_validation_statuses"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._discover_report_summaries",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_discover_report_summaries"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._extract_first_safe_text_block",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_extract_first_safe_text_block"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._extract_latest_git_head",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_extract_latest_git_head"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._extract_latest_snapshot_timestamp",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_extract_latest_snapshot_timestamp"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._extract_markdown_section",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_extract_markdown_section"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._extract_markdown_summary_sections",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_extract_markdown_summary_sections"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._format_area_list",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_format_area_list"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._format_changed_files",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_format_changed_files"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._format_snapshot_group",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_format_snapshot_group"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._format_snapshot_line",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_format_snapshot_line"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._infer_contract_impact",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_infer_contract_impact"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._is_env_or_secrets_path",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_is_env_or_secrets_path"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._is_within",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_is_within"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._latest_accept_snapshot",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_latest_accept_snapshot"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._load_report_summary",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_load_report_summary"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._merge_changed_files",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_merge_changed_files"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._normalize_changed_file",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_normalize_changed_file"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._normalize_contract_impact",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_normalize_contract_impact"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._normalize_report_status",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_normalize_report_status"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._read_draft_source_file",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_read_draft_source_file"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._read_last_log_marker_timestamp",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_read_last_log_marker_timestamp"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._reject_diary_output_path",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_reject_diary_output_path"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._resolve_allowed_from_draft_path",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_resolve_allowed_from_draft_path"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._resolve_latest_draft_source",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_resolve_latest_draft_source"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._resolve_output_path",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_resolve_output_path"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._safe_excerpt",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_safe_excerpt"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._sanitize_affected_areas",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_sanitize_affected_areas"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._sanitize_evidence",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_sanitize_evidence"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._sanitize_markdown_text",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_sanitize_markdown_text"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._sanitize_risks",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_sanitize_risks"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._sanitize_validation",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_sanitize_validation"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._select_snapshots",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_select_snapshots"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._snapshot_summary",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_snapshot_summary"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft._to_repo_relative_display",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:_to_repo_relative_display"
+    },
+    {
+      "adapter": "python",
+      "category": "skipped_no_contract",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft.build_saved_diary_draft_output_path",
+      "guidance": {
+        "automation_policy": "plan_only",
+        "decision_required": false,
+        "notes": [],
+        "recommended_action": "Usually no action is required. Review only if strictness or contract_required classification looks wrong.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "This target does not require a contract, so semantic audit was skipped."
+      },
+      "language": "python",
+      "reason": "非必需契约目标缺少契约源；已跳过语义审计",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:build_saved_diary_draft_output_path"
+    }
+  ],
+  "ci": true,
+  "ci_failures": [
+    {
+      "adapter": "python",
+      "category": "contract_and_body_changed",
+      "file_path": "harbor/cli/main.py",
+      "func_id": "harbor.cli.main.main",
+      "guidance": {
+        "anti_action": "Do not accept baseline automatically. Do not assume body and contract changed consistently.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review implementation, contract, tests, and DDT together. Confirm this is an intentional synchronized change.",
+        "risk_level": "high",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-contract-change",
+        "suggested_validation": [
+          "run targeted tests",
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": true,
+        "what_happened": "Implementation and contract changed, but baseline has not been accepted yet."
+      },
+      "language": "python",
+      "reason": "实现与契约均已变更且尚未接受新基线",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/cli/main.py:function:main"
+    },
+    {
+      "adapter": "python",
+      "category": "missing_function",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager._resolve_diary_dir",
+      "guidance": {
+        "anti_action": "Do not accept baseline automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review whether the function removal is intentional. If intentional, update contracts/tests/generated context; otherwise restore it.",
+        "risk_level": "high",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A baseline function is missing from implementation."
+      },
+      "language": "python",
+      "reason": "基线函数在实现中缺失",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager._resolve_diary_dir"
+    },
+    {
+      "adapter": "python",
+      "category": "untracked_function",
+      "file_path": "harbor/core/diary.py",
+      "func_id": "harbor.core.diary.DiaryManager.append_json_line",
+      "guidance": {
+        "anti_action": "Do not accept baseline automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review whether the new function should be added to Harbor baseline and whether it needs a contract.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A new function is not tracked in Harbor baseline."
+      },
+      "language": "python",
+      "reason": "新函数尚未纳入 Harbor 基线",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "method",
+      "target_id": "python:harbor/core/diary.py:method:DiaryManager.append_json_line"
+    },
+    {
+      "adapter": "python",
+      "category": "untracked_function",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft.build_log_write_preview",
+      "guidance": {
+        "anti_action": "Do not accept baseline automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review whether the new function should be added to Harbor baseline and whether it needs a contract.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A new function is not tracked in Harbor baseline."
+      },
+      "language": "python",
+      "reason": "新函数尚未纳入 Harbor 基线",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:build_log_write_preview"
+    },
+    {
+      "adapter": "python",
+      "category": "untracked_function",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft.build_written_diary_entry",
+      "guidance": {
+        "anti_action": "Do not accept baseline automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review whether the new function should be added to Harbor baseline and whether it needs a contract.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A new function is not tracked in Harbor baseline."
+      },
+      "language": "python",
+      "reason": "新函数尚未纳入 Harbor 基线",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:build_written_diary_entry"
+    },
+    {
+      "adapter": "python",
+      "category": "untracked_function",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft.resolve_draft_source",
+      "guidance": {
+        "anti_action": "Do not accept baseline automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review whether the new function should be added to Harbor baseline and whether it needs a contract.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A new function is not tracked in Harbor baseline."
+      },
+      "language": "python",
+      "reason": "新函数尚未纳入 Harbor 基线",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:resolve_draft_source"
+    },
+    {
+      "adapter": "python",
+      "category": "untracked_function",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft.write_diary_entry_from_draft",
+      "guidance": {
+        "anti_action": "Do not accept baseline automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review whether the new function should be added to Harbor baseline and whether it needs a contract.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A new function is not tracked in Harbor baseline."
+      },
+      "language": "python",
+      "reason": "新函数尚未纳入 Harbor 基线",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:write_diary_entry_from_draft"
+    },
+    {
+      "adapter": "python",
+      "category": "untracked_function",
+      "file_path": "harbor/core/log_draft.py",
+      "func_id": "harbor.core.log_draft.write_last_log_marker",
+      "guidance": {
+        "anti_action": "Do not accept baseline automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review whether the new function should be added to Harbor baseline and whether it needs a contract.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-code-review",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "A new function is not tracked in Harbor baseline."
+      },
+      "language": "python",
+      "reason": "新函数尚未纳入 Harbor 基线",
+      "suggested_action": "请审查基线漂移并按需更新实现/契约/测试，然后重新运行 harbor checkpoint --ci。",
+      "symbol_kind": "function",
+      "target_id": "python:harbor/core/log_draft.py:function:write_last_log_marker"
+    }
+  ],
+  "command": "checkpoint",
+  "contract_impact": {
+    "advisory": true,
+    "categories": [
+      "cli_args",
+      "cli_text_output",
+      "file_write_target",
+      "source_of_truth_rule",
+      "writes_files"
+    ],
+    "deterministic": true,
+    "findings": [
+      {
+        "categories": [
+          "cli_args",
+          "cli_text_output"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Modified",
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main.main",
+        "level": "possible_contract_impact",
+        "reason": "public CLI path changed; symbol matched: harbor.cli.main.main; details: body + contract changed",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args",
+          "cli_text_output",
+          "file_write_target",
+          "writes_files"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main._is_log_write_interactive",
+        "level": "possible_contract_impact",
+        "reason": "public CLI path changed; symbol matched: harbor.cli.main._is_log_write_interactive; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_text_output"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._format_reports",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._format_reports; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "file_write_target",
+          "writes_files"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Untracked",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft.build_log_write_preview",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.build_log_write_preview; details: new function",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "file_write_target",
+          "writes_files"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Untracked",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft.write_diary_entry_from_draft",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.write_diary_entry_from_draft; details: new function",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "file_write_target",
+          "writes_files"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Untracked",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft.write_last_log_marker",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.write_last_log_marker; details: new function",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_cli_i18n.py",
+        "func_id": "tests.test_cli_i18n.run_cmd",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.run_cmd; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_cli_i18n.py",
+        "func_id": "tests.test_cli_i18n.run_cmd_with_err",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.run_cmd_with_err; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_cli_i18n.py",
+        "func_id": "tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_cli_i18n.py",
+        "func_id": "tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_cli_i18n.py",
+        "func_id": "tests.test_cli_i18n.test_config_list_zh",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_config_list_zh; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_cli_i18n.py",
+        "func_id": "tests.test_cli_i18n.test_init_provider_prompt_i18n_text",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_init_provider_prompt_i18n_text; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_cli_i18n.py",
+        "func_id": "tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft._force_en_locale",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._force_en_locale; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft._isolate_workspace",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._isolate_workspace; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft._read_last_marker",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._read_last_marker; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft._read_single_diary_entry",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._read_single_diary_entry; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft._sample_draft_payload",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._sample_draft_payload; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft._write_json_draft",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._write_json_draft; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft._write_markdown_draft",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft._write_markdown_draft; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.run_cmd",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.run_cmd; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.test_log_write_from_draft_path_policy",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_from_draft_path_policy; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.test_log_write_from_latest_draft_flag_writes_successfully",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_from_latest_draft_flag_writes_successfully; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.test_log_write_interactive_no_cancels_without_writing",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_interactive_no_cancels_without_writing; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.test_log_write_interactive_yes_writes_diary",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_interactive_yes_writes_diary; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.test_log_write_markdown_fallback_uses_safe_excerpt_only",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_markdown_fallback_uses_safe_excerpt_only; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.test_log_write_non_interactive_without_yes_is_rejected",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_non_interactive_without_yes_is_rejected; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.test_log_write_requires_latest_draft_by_default",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_requires_latest_draft_by_default; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "source_of_truth_rule"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "tests/test_log_write_from_draft.py",
+        "func_id": "tests.test_log_write_from_draft.test_log_write_yes_writes_from_latest_json_and_updates_marker",
+        "level": "possible_contract_impact",
+        "reason": "explicit contract test signal matched; symbol matched: tests.test_log_write_from_draft.test_log_write_yes_writes_from_latest_json_and_updates_marker; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryEntry.to_json",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diaryentry.to_json; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager.__init__",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager.__init__; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._current_file_path",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._current_file_path; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._ensure_within_repo",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._ensure_within_repo; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._entry_dedupe_key",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._entry_dedupe_key; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._from_dict",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._from_dict; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._iter_read_dirs",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._iter_read_dirs; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._normalize_for_hash",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._normalize_for_hash; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._parse_ts",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._parse_ts; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._resolve_author",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._resolve_author; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Missing",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._resolve_diary_dir",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._resolve_diary_dir; details: function removed",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._resolve_legacy_diary_dirs",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._resolve_legacy_diary_dirs; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._resolve_repo_root",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._resolve_repo_root; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager._utc_now_iso",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager._utc_now_iso; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Untracked",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager.append_json_line",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager.append_json_line; details: new function",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager.export_markdown",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager.export_markdown; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/diary.py",
+        "func_id": "harbor.core.diary.DiaryManager.load_active",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.diary.diarymanager.load_active; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._bucket_for_path",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._bucket_for_path; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._build_risks",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._build_risks; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._build_suggested_diary_entry",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._build_suggested_diary_entry; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._build_summary",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._build_summary; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._build_why",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._build_why; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._classify_affected_areas",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._classify_affected_areas; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._coerce_validation_status",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._coerce_validation_status; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._derive_validation_statuses",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._derive_validation_statuses; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._discover_report_summaries",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._discover_report_summaries; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._extract_first_safe_text_block",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._extract_first_safe_text_block; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._extract_latest_git_head",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._extract_latest_git_head; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._extract_latest_snapshot_timestamp",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._extract_latest_snapshot_timestamp; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._extract_markdown_section",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._extract_markdown_section; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._extract_markdown_summary_sections",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._extract_markdown_summary_sections; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._format_area_list",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._format_area_list; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._format_changed_files",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._format_changed_files; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._format_snapshot_group",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._format_snapshot_group; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._format_snapshot_line",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._format_snapshot_line; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._infer_contract_impact",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._infer_contract_impact; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._is_env_or_secrets_path",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._is_env_or_secrets_path; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._is_within",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._is_within; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._latest_accept_snapshot",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._latest_accept_snapshot; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._load_report_summary",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._load_report_summary; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._merge_changed_files",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._merge_changed_files; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._normalize_changed_file",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._normalize_changed_file; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._normalize_contract_impact",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._normalize_contract_impact; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._normalize_report_status",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._normalize_report_status; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._read_draft_source_file",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._read_draft_source_file; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._read_last_log_marker_timestamp",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._read_last_log_marker_timestamp; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._reject_diary_output_path",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._reject_diary_output_path; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._resolve_allowed_from_draft_path",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._resolve_allowed_from_draft_path; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._resolve_latest_draft_source",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._resolve_latest_draft_source; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._resolve_output_path",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._resolve_output_path; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._safe_excerpt",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._safe_excerpt; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._sanitize_affected_areas",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._sanitize_affected_areas; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._sanitize_evidence",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._sanitize_evidence; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._sanitize_markdown_text",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._sanitize_markdown_text; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._sanitize_risks",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._sanitize_risks; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._sanitize_validation",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._sanitize_validation; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._select_snapshots",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._select_snapshots; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._snapshot_summary",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._snapshot_summary; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._to_repo_relative_display",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._to_repo_relative_display; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft.build_saved_diary_draft_output_path",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.build_saved_diary_draft_output_path; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Untracked",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft.build_written_diary_entry",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.build_written_diary_entry; details: new function",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [],
+        "confidence": "high",
+        "evidence": "change_type=Untracked",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft.resolve_draft_source",
+        "level": "no_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.resolve_draft_source; details: new function",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      }
+    ],
+    "level": "possible_contract_impact",
+    "notable_findings": [
+      {
+        "categories": [
+          "cli_args",
+          "cli_text_output"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Modified",
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main.main",
+        "level": "possible_contract_impact",
+        "reason": "public CLI path changed; symbol matched: harbor.cli.main.main; details: body + contract changed",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_args",
+          "cli_text_output",
+          "file_write_target",
+          "writes_files"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main._is_log_write_interactive",
+        "level": "possible_contract_impact",
+        "reason": "public CLI path changed; symbol matched: harbor.cli.main._is_log_write_interactive; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "cli_text_output"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Skipped No Contract",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft._format_reports",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft._format_reports; details: no contract required for this target",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "file_write_target",
+          "writes_files"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Untracked",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft.build_log_write_preview",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.build_log_write_preview; details: new function",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      },
+      {
+        "categories": [
+          "file_write_target",
+          "writes_files"
+        ],
+        "confidence": "medium",
+        "evidence": "change_type=Untracked",
+        "file_path": "harbor/core/log_draft.py",
+        "func_id": "harbor.core.log_draft.write_diary_entry_from_draft",
+        "level": "possible_contract_impact",
+        "reason": "no contract-impact pattern matched; symbol matched: harbor.core.log_draft.write_diary_entry_from_draft; details: new function",
+        "source": "status_record",
+        "suggested_action": "review contract surface and update tests/docs when behavior is intended"
+      }
+    ],
+    "summary_counts": {
+      "confirmed_contract_impact": 0,
+      "no_contract_impact": 62,
+      "possible_contract_impact": 30,
+      "unknown": 0
+    }
+  },
+  "exit_code": 1,
+  "next_steps": [
+    "请处理阻断失败项；若行为有意变更，请同步更新实现/契约/测试。",
+    "请运行受影响函数或模块的定向测试。",
+    "请重新运行 harbor checkpoint --ci。"
+  ],
+  "status": "fail",
+  "summary": {
+    "confirmed_contract_impact": 0,
+    "contract_changed": 0,
+    "contract_gap": 0,
+    "contract_parse_error": 0,
+    "ddt_advisory": 5,
+    "ddt_failures": 0,
+    "drift": 0,
+    "missing": 1,
+    "modified": 1,
+    "possible_contract_impact": 30,
+    "skipped_no_contract": 84,
+    "unsupported_syntax_advisory": 0,
+    "untracked": 6
+  },
+  "writes_files": false
+}

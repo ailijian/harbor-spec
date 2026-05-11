@@ -215,6 +215,8 @@ Reports provide evidence and diagnostics.
 
 Reports are not primary source of project behavior.
 
+Saved Draft Report under `.harbor/reports/log-draft-*.md` or `.json` is reviewable report output, not source-of-truth decision memory.
+
 ---
 
 ## 10. `.harbor/cache/`
@@ -234,6 +236,8 @@ AI agents should not manually edit cache unless explicitly requested.
 State files are not source of truth.
 
 AI agents should not manually edit state unless explicitly requested.
+
+Latest Draft Cache and `last_log_marker` are runtime state artifacts under `.harbor/state/log/**`, not source-of-truth memory.
 
 ---
 
@@ -1605,12 +1609,61 @@ Log Draft does not call LLM in v1.4.1.
 LLM-assisted draft is future work only and must be explicit opt-in.
 Any future LLM-assisted draft must not send secrets, credentials, private data, .env contents, file bodies, or diff bodies to an LLM.
 Log Draft does not output file content bodies or diff bodies.
+Log Draft writes latest draft cache under .harbor/state/log/latest-draft.md and .harbor/state/log/latest-draft.json.
+Log Draft --save writes a Saved Draft Report under .harbor/reports/**.
 Log Draft may write reviewable output to .harbor/reports/** when explicitly requested.
 ```
 
 ---
 
-## 80. Written Diary Entry
+## 80. Latest Draft Cache
+
+Latest Draft Cache means the most recent reviewable draft cache stored under:
+
+```text
+.harbor/state/log/latest-draft.md
+.harbor/state/log/latest-draft.json
+```
+
+It is runtime state.
+
+It may be overwritten by later draft runs.
+
+It is not source-of-truth decision memory.
+
+---
+
+## 81. Saved Draft Report
+
+Saved Draft Report means a reviewable draft artifact stored under:
+
+```text
+.harbor/reports/log-draft-*.md
+.harbor/reports/log-draft-*.json
+```
+
+It is not source of truth.
+
+It may be created by `harbor log draft --save` or explicit `--output`.
+
+---
+
+## 82. Log Write
+
+`harbor log write` is the controlled write path that reads an allowlisted draft source and appends a Written Diary Entry to `.harbor/diary/YYYY-MM.jsonl`.
+
+Rules:
+
+```text
+Log Write reads latest draft by default.
+Log Write --yes is explicit authorization for write flow.
+Log Write without --yes requires interactive confirmation and is rejected in non-interactive environments.
+Log Write updates last_log_marker after a successful Diary write.
+```
+
+---
+
+## 83. Written Diary Entry
 
 Written Diary Entry means a Diary record actually written to `.harbor/diary/YYYY-MM.jsonl`.
 
@@ -1620,7 +1673,50 @@ Draft does not equal Written Diary Entry.
 
 ---
 
-## 81. Evidence Boundary
+## 84. Source-of-truth Decision Memory
+
+Source-of-truth Decision Memory means the canonical written decision record stored under:
+
+```text
+.harbor/diary/YYYY-MM.jsonl
+```
+
+In v1.4.1, Draft Cache and Saved Draft Report are not source-of-truth decision memory.
+
+---
+
+## 85. Runtime State
+
+Runtime State means local control metadata or cached workflow state under `.harbor/state/**`.
+
+It may help Harbor resume, bound, or summarize work.
+
+It is not source of truth.
+
+Examples:
+
+```text
+change-window snapshots
+latest-draft cache
+last_log_marker
+```
+
+---
+
+## 86. Explicit Authorization / --yes
+
+Explicit Authorization means the user or operator deliberately authorizes a write or other high-impact action.
+
+For log workflow:
+
+```text
+harbor log write --yes is explicit authorization for non-interactive or direct write flow.
+without --yes, harbor log write requires interactive confirmation.
+```
+
+---
+
+## 87. Evidence Boundary
 
 Evidence Boundary means the limit on what inputs and outputs may be used when generating a Diary Draft or Log Draft.
 
@@ -1646,7 +1742,7 @@ private credentials
 
 ---
 
-## 82. last_log_marker
+## 88. last_log_marker
 
 `last_log_marker` is the marker used to identify the evidence boundary since the last meaningful log point.
 
@@ -1661,7 +1757,7 @@ It is runtime control metadata, not source-of-truth decision memory.
 
 ---
 
-## 83. Final Principle
+## 89. Final Principle
 
 When Harbor terms are unclear, prefer this interpretation:
 

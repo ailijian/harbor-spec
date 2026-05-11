@@ -135,3 +135,32 @@ def test_init_provider_prompt_i18n_text(tmp_path: Path, monkeypatch):
     en_out = en_stream.getvalue()
     assert "Choose LLM provider" in en_out
     assert "输入无效" not in en_out
+
+
+def test_log_write_non_interactive_requires_yes_uses_zh_i18n(tmp_path: Path):
+    harbor_state = tmp_path / ".harbor" / "state" / "log"
+    harbor_state.mkdir(parents=True, exist_ok=True)
+    (harbor_state / "latest-draft.json").write_text(
+        "{\n"
+        '  "schema_version": "1.0",\n'
+        '  "kind": "diary_draft",\n'
+        '  "summary": "摘要",\n'
+        '  "why": "原因"\n'
+        "}\n",
+        encoding="utf-8",
+    )
+    old = Path.cwd()
+    old_env = os.environ.get("HARBOR_LANGUAGE")
+    try:
+        os.environ["HARBOR_LANGUAGE"] = "zh"
+        os.chdir(tmp_path)
+        code, out, err = run_cmd_with_err(["log", "write"])
+        assert code == 1
+        assert out == ""
+        assert "非交互环境执行 `harbor log write` 必须显式传入 `--yes`。" in err
+    finally:
+        if old_env is None:
+            os.environ.pop("HARBOR_LANGUAGE", None)
+        else:
+            os.environ["HARBOR_LANGUAGE"] = old_env
+        os.chdir(old)

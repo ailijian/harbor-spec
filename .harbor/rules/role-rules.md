@@ -146,6 +146,8 @@ Do not run these unless the user explicitly requests it:
 
 ```powershell
 harbor log
+harbor log write
+harbor log write --yes
 harbor accept
 harbor lock
 harbor module promote-skill <module>
@@ -157,7 +159,9 @@ Never claim a Diary entry was written unless it was actually written.
 
 Do not run `harbor log write` automatically.
 
-`harbor log draft` is allowed as a safe draft command.
+Do not run `harbor log write --yes` automatically.
+
+`harbor log draft` and `harbor log draft --save` are allowed as safe draft commands.
 
 `harbor log` / Diary write still require explicit user request.
 
