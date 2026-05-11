@@ -1,3 +1,52 @@
+# Harbor-spec v1.4.0 — TypeScript Contract Governance MVP
+
+状态：正式版  
+发布类型：Core Neutralization + TypeScript Contract Governance MVP
+
+## Added
+
+- Language-neutral core contract model: `ContractSubject` / `ContractSource` / `LanguageAdapter`
+- `AdapterRegistry` for language-aware discovery and parsing routing
+- TypeScriptAdapter MVP (`.ts` scope, exported symbol discovery, JSDoc/TSDoc presence extraction)
+- TypeScript checkpoint MVP categories:
+  - `contract_gap`
+  - `skipped_no_contract`
+  - `unsupported_syntax_advisory`
+- TypeScript `harbor next` deterministic guidance for MVP categories
+- JSON additive identity fields: `target_id` / `language` / `symbol_kind` / `adapter`
+
+## Changed
+
+- `IndexBuilder` / `SyncEngine` route through `AdapterRegistry` while preserving Python behavior.
+- `checkpoint --ci --format json` keeps `func_id` compatibility and adds additive target identity fields.
+- `harbor next --from <checkpoint.json>` is language-aware for TypeScript MVP categories.
+
+## Not Supported Yet
+
+- JavaScript first-class support
+- TypeScript semantic audit
+- TypeScript DDT
+- TSX/JS/JSX/`.d.ts` default scanning
+- Zod schema governance
+- framework presets (Next.js / Express / React)
+- interface/type blocking gate
+- TypeScript Compiler API / tree-sitter backend
+
+## Compatibility
+
+- Python behavior remains zero-regression-compatible.
+- Existing `func_id` consumers remain supported.
+- TypeScript support is opt-in (`enabled: true`) and `.ts`-only by default.
+
+## Validation
+
+- `pytest`: `502 passed`
+- `harbor checkpoint --ci --format json`: `pass`
+- `harbor stale --ci --format json`: `pass`
+- `harbor doctor --ci --format json`: `pass`（工作区变更 `WARN` advisory）
+
+---
+
 # Harbor-spec v1.3.1 — Repair Guidance & AI IDE Feedback Loop
 
 状态：正式版  

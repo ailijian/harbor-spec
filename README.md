@@ -41,6 +41,63 @@ HarborSpec 的目标是：
 
 ---
 
+## 🚀 v1.4.0：Core Neutralization + TypeScript Contract Governance MVP
+
+Harbor-spec v1.4.0 引入 **first-class TypeScript contract governance**。  
+这不是“仅增加 TS 文件扫描”，而是 Harbor 从 Python `FunctionContract` / docstring-centric 治理，演进到 language-neutral `ContractSubject` 模型的第一步。
+
+### v1.4.0 当前支持（MVP）
+
+* language-neutral 核心模型：`ContractSubject` / `ContractSource` / `LanguageAdapter`
+* `AdapterRegistry`：统一语言适配器入口
+* TypeScript `.ts` 文件发现（需显式启用）
+* symbol 识别：
+  * `export function`
+  * `export async function`
+  * `export const` arrow / async arrow
+  * `export class` public method
+* JSDoc/TSDoc proximity extraction
+* `contract_presence` / `contract_required`
+* `checkpoint --ci` TypeScript MVP category：
+  * `contract_gap`
+  * `skipped_no_contract`
+  * `unsupported_syntax_advisory`
+* `harbor next` 对 TypeScript MVP category 的 deterministic guidance
+
+### v1.4.0 明确不支持（Not Supported Yet）
+
+* JavaScript first-class governance
+* `.js/.jsx/.tsx/.d.ts` 默认扫描
+* TypeScript semantic audit
+* TypeScript DDT
+* Zod schema governance
+* `interface/type` blocking gate
+* Next.js / Express / React framework preset
+* TypeScript Compiler API / tree-sitter backend
+
+### 启用示例
+
+```yaml
+languages:
+  python:
+    enabled: true
+  typescript:
+    enabled: true
+```
+
+### 默认策略与兼容性
+
+* Python 默认 `enabled=true`
+* TypeScript 默认 `enabled=false`，需要显式启用
+* 启用 TypeScript 后默认仅扫描 `.ts`
+* `.tsx/.js/.jsx/.d.ts` 默认不扫描
+* Python 行为保持 zero regression：
+  * Python checkpoint / DDT / semantic audit 语义保持兼容
+  * `func_id` 保留兼容
+  * `target_id/language/symbol_kind/adapter` 以 additive identity fields 方式新增
+
+---
+
 ## HarborSpec 解决的问题
 
 ### 1. Contract Drift

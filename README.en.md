@@ -40,6 +40,63 @@ It is a repo-local **context governance layer**.
 
 ---
 
+## 🚀 v1.4.0: Core Neutralization + TypeScript Contract Governance MVP
+
+Harbor-spec v1.4.0 introduces **first-class TypeScript contract governance**.  
+This is not a narrow “TS file scanner” feature. It is the first production step from Python `FunctionContract` / docstring-centric governance to a language-neutral `ContractSubject` core.
+
+### What v1.4.0 includes
+
+* Language-neutral core model: `ContractSubject`, `ContractSource`, `LanguageAdapter`
+* `AdapterRegistry` for language routing
+* TypeScript `.ts` discovery (opt-in)
+* TypeScript symbol coverage:
+  * `export function`
+  * `export async function`
+  * exported const arrow / async arrow functions
+  * exported class public methods
+* JSDoc/TSDoc proximity-based contract-source extraction
+* `contract_presence` and `contract_required` for TypeScript targets
+* TypeScript MVP categories in `checkpoint --ci`:
+  * `contract_gap`
+  * `skipped_no_contract`
+  * `unsupported_syntax_advisory`
+* Deterministic TypeScript guidance in `harbor next`
+
+### Not supported in v1.4.0
+
+* JavaScript as first-class governance target
+* default scanning of `.js/.jsx/.tsx/.d.ts`
+* TypeScript semantic audit
+* TypeScript DDT
+* Zod schema governance
+* interface/type blocking gate
+* Next.js / Express / React framework presets
+* TypeScript Compiler API / tree-sitter backend
+
+### Configuration example
+
+```yaml
+languages:
+  python:
+    enabled: true
+  typescript:
+    enabled: true
+```
+
+### Defaults and compatibility
+
+* Python is enabled by default
+* TypeScript is disabled by default and requires explicit enablement
+* When enabled, TypeScript scans `.ts` only by default
+* `.tsx/.js/.jsx/.d.ts` remain excluded by default
+* Python behavior remains zero-regression-compatible:
+  * checkpoint / DDT / semantic audit semantics remain stable
+  * `func_id` remains preserved for compatibility
+  * `target_id/language/symbol_kind/adapter` are additive identity fields
+
+---
+
 ## Problems HarborSpec Solves
 
 ### 1. Contract Drift
