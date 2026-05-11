@@ -15,6 +15,7 @@ from typing import Any, Dict, List, Optional, Tuple, Iterator, Literal
 import yaml
 
 from harbor.adapters.python.parser import PythonAdapter, FunctionContract
+from harbor.adapters.registry import AdapterRegistry
 from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
 from harbor.core.git_utils import GitIgnoreMatcher
 from harbor.core.storage import HarborDB
@@ -122,6 +123,7 @@ class IndexBuilder:
             cache_base = Path(".harbor") / "cache"
             cache_dir = cache_dir or cache_base
         self.code_roots = code_roots
+        self.registry = AdapterRegistry.from_config(cfg)
         self.cache_dir = cache_dir
         self.cache_file = self.cache_dir / "l3_index.json"
         self.adapter = PythonAdapter()
@@ -197,15 +199,18 @@ class IndexBuilder:
         """以生成器方式构建索引，逐文件产出进度事件。
 
         功能:
+          - 通过 AdapterRegistry 的启用语言门控获取待扫描文件；v1.4.0 默认仅启用 Python。
           - 改为 Producer-Consumer 并行架构：子进程执行 Parse & Hash，主进程写入 SQLite。
           - 每个文件会在提交任务时产出一次 `scanning` 事件；完成后产出 `parsed/skipped/error` 事件。
           - 事件包含总数、当前序号、是否增量跳过、状态与产生条目数；构建完成后写入缓存快照。
+          - 本阶段仅完成 registry skeleton 接入，保持 Python-only index 语义与既有 entry schema（id/signature_hash/body_hash/contract_hash 等）不变。
 
         使用场景:
           - CLI 层的 Rich 进度条渲染。
 
         依赖:
-          - harbor.adapters.python.PythonAdapter
+          - harbor.adapters.registry.AdapterRegistry（文件发现门控）
+          - harbor.adapters.python.PythonAdapter（worker 解析与 FunctionContract 产出保持不变）
           - .harbor/config.yaml 中的 code_roots
           - concurrent.futures.ProcessPoolExecutor（Windows 兼容：顶层函数序列化）
 
@@ -214,10 +219,12 @@ class IndexBuilder:
         @harbor.idempotency: once
 
         Args:
-          incremental (bool): 是否启用增量构建，默认为 True。
+          incremental (bool): 是否启用增量构建，默认为 True；文件来源通过 AdapterRegistry 门控获取，
+            且 v1.4.0 默认仅启用 Python，因此保持 Python-only 索引行为。
 
         Returns:
-          Iterator[ProgressEvent]: 逐文件的进度事件。
+          Iterator[ProgressEvent]: 逐文件的进度事件；worker 解析路径与 HarborDB entry schema 维持兼容，
+            不引入 TypeScript entry 或变更既有 body_hash/contract_hash 语义。
         """
         t0 = time.time()
         self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -225,7 +232,7 @@ class IndexBuilder:
         updated = 0
         skipped = 0
         items_total = 0
-        files = self._iter_py_files()
+        files = self._iter_files_by_enabled_adapters()
         total = len(files)
         index_map: Dict[str, int] = {}
         to_process: List[Tuple[str, float]] = []
@@ -352,6 +359,12 @@ class IndexBuilder:
         @harbor.idempotency: read-only
         """
         return iter_project_files(self.code_roots, self.exclude_paths)
+
+    def _iter_files_by_enabled_adapters(self) -> List[Path]:
+        # Task 2B keeps Python-only behavior while routing discovery through registry.
+        if not self.registry.is_enabled("python"):
+            return []
+        return self._iter_py_files()
 
     def _load_config(self, path: Path) -> Dict[str, Any]:
         if not path.exists():

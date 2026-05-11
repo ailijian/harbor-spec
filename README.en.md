@@ -941,6 +941,7 @@ HarborSpec follows these principles by default:
 * `.harbor/rules/role-rules.md`: TRAE / IDE lightweight entrypoint
 * `.harbor/rules/project-rules.md`: project-specific rules
 * `docs/design/harbor-workspace-layout-v1.md`: workspace layout design
+* [Case Study: Code Changed, Contract Static (IndexBuilder.iter_build Drift Triage)](docs/examples/代码变了，契约没变：一次%20IndexBuilder.iter_build%20的真实漂移治理.md): a concise real-world drift governance walkthrough
 * `.harbor/views/project-structure.md`: canonical project structure view
 * `.harbor/views/l2/**`: canonical L2 README
 * `.harbor/views/modules/**`: canonical Module Capsule

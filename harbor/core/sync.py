@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import yaml
 
 from harbor.adapters.python.parser import PythonAdapter, FunctionContract
+from harbor.adapters.registry import AdapterRegistry
 from harbor.core.contract_presence import evaluate_contract_presence
 from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
 from harbor.core.storage import HarborDB
@@ -47,8 +48,9 @@ class StatusReport:
 class SyncEngine:
     def __init__(self, config_path: Optional[Path] = None) -> None:
         self.config_path = config_path or resolve_workspace_config_path(Path.cwd())
-        self.adapter = PythonAdapter()
         self.config = self._load_config(self.config_path)
+        self.registry = AdapterRegistry.from_config(self.config)
+        self.adapter = PythonAdapter()
         self.code_roots = self.config.get("code_roots", ["harbor/**"])
         self.exclude_paths = self.config.get("exclude_paths", [])
         self.db = HarborDB(project_root=Path.cwd())
@@ -63,18 +65,22 @@ class SyncEngine:
 
         功能:
           - 基于 HarborDB 快照进行比对（初始化阶段会尝试从 `.harbor/cache/l3_index.json` 迁移旧索引）。
+          - 通过 AdapterRegistry 的启用语言门控获取待扫描文件；v1.4.0 默认仅启用 Python。
           - 实时解析 `code_roots` 下的 Python 文件，计算 `body_hash` 与 `contract_hash`。
           - 按照状态矩阵分类差异:
             - Drift/Modified/Contract Changed
             - Contract Gap/Skipped No Contract/Contract Parse Error
             - Untracked/Missing
+          - 本阶段仅完成 registry skeleton 接入，不改变 `evaluate_contract_presence` 调用语义、
+            old/new item 比较规则、StatusReport/StatusEntry 字段或 checkpoint 分类语义。
 
         使用场景:
           - CLI `harbor status`。
           - 本地开发时快速查看上下文一致性。
 
         依赖:
-          - PythonAdapter
+          - AdapterRegistry（文件发现门控）
+          - PythonAdapter（仍返回 FunctionContract，保持 Python 状态比较路径兼容）
           - 与 IndexBuilder 一致的 body_hash 算法（harbor.core.utils.compute_body_hash）
 
         @harbor.scope: public
@@ -82,7 +88,9 @@ class SyncEngine:
         @harbor.idempotency: read-only
 
         Returns:
-          StatusReport: 包含各类状态分组与计数。
+          StatusReport: 包含各类状态分组与计数；文件集合经 AdapterRegistry 门控后仍按 Python-only
+            语义生成 drift/modified/contract_changed/contract_gap/skipped_no_contract/
+            contract_parse_error/untracked/missing 分类。
 
         Raises:
           Exception: 可能透传文件系统读取、源码解析或存储层异常；该方法不会统一包装异常类型。
@@ -97,7 +105,7 @@ class SyncEngine:
         missing: List[StatusEntry] = []
 
         current_paths: List[str] = []
-        files = self._iter_py_files()
+        files = self._iter_files_by_enabled_adapters()
         for p in files:
             fp = str(p.as_posix())
             current_paths.append(fp)
@@ -237,3 +245,9 @@ class SyncEngine:
 
     def _iter_py_files(self) -> List[Path]:
         return iter_project_files(self.code_roots, self.exclude_paths)
+
+    def _iter_files_by_enabled_adapters(self) -> List[Path]:
+        # Task 2C keeps Python-only behavior while routing discovery through registry.
+        if not self.registry.is_enabled("python"):
+            return []
+        return self._iter_py_files()
