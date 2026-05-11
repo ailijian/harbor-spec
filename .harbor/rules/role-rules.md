@@ -138,6 +138,12 @@ Rules:
 - TypeScript semantic audit is not supported in v1.4.x.
 - TypeScript DDT is not supported in v1.4.x.
 
+Contract authoring trigger:
+
+- For public or strict Python targets, write or update the Harbor Contract Docstring before checkpoint.
+- For TypeScript exported public targets, write or update nearby high-confidence `JSDoc/TSDoc` before checkpoint.
+- Read `.harbor/rules/contract-rules.md` for the full authoring templates.
+
 ---
 
 ## Explicit user request only

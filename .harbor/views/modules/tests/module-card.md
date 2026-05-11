@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.0"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-11T12:03:53Z"
+generated_at: "2026-05-11T17:38:58Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 89
+source_path_count: 90
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -72,6 +72,7 @@ source_paths:
   - "tests/test_lock_register_adopted.py"
   - "tests/test_log_draft.py"
   - "tests/test_log_draft_cli.py"
+  - "tests/test_log_write_from_draft.py"
   - "tests/test_min_count_one.py"
   - "tests/test_module_capsule.py"
   - "tests/test_module_capsule_stale.py"
@@ -98,11 +99,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:a6d6c83fcf8ef8e8d6443c43c556bbc5b2bb46622566ab9e6793d61826a8c1e9"
-contract_fingerprint: "sha256:3d4090b0de56705a0b8e677e71ef49547d513af69844b6e95b5c5c04d99a06b3"
+source_fingerprint: "sha256:d89e8e58bd893ab97ce6b53a28f5ae452e96300b23e3e03e1444e07c980d6247"
+contract_fingerprint: "sha256:8cde4855398831ac4ce062573bb3dd4545dab5b01685bf8c940888cb0f5b4249"
 generator_fingerprint: "sha256:5c6acb61bff1b611776fe8b153f3d47871bdf2802fda61a69b011a0f64ce0fde"
-view_fingerprint: "a28d1c590e1ac96191d9107b33d34f947709dee9e9734d64e98e1c6c06d8a95a"
-fingerprint: "a28d1c590e1ac96191d9107b33d34f947709dee9e9734d64e98e1c6c06d8a95a"
+view_fingerprint: "b96962be2754f18c6a2fb00044250ec5225e0ea18c9f6401ca8bc22617676227"
+fingerprint: "b96962be2754f18c6a2fb00044250ec5225e0ea18c9f6401ca8bc22617676227"
 ---
 
 # Module Card: tests
@@ -186,6 +187,7 @@ tests/test_lock_flags.py
 tests/test_lock_register_adopted.py
 tests/test_log_draft.py
 tests/test_log_draft_cli.py
+tests/test_log_write_from_draft.py
 tests/test_min_count_one.py
 tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
@@ -402,6 +404,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.test_config_list_zh | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.test_init_provider_prompt_i18n_text | tests/test_cli_i18n.py | unknown | standard |
+| tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n_env.run_cmd | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.run_cmd_with_code | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_env_language_controls_ci_text | tests/test_cli_i18n_env.py | unknown | standard |
@@ -700,25 +703,50 @@ tests/test_workspace_paths.py
 | tests.test_lock_register_adopted.test_lock_register_adopted | tests/test_lock_register_adopted.py | unknown | standard |
 | tests.test_log_draft._write_report | tests/test_log_draft.py | unknown | standard |
 | tests.test_log_draft._write_snapshot | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_auto_discovery_skips_non_utf8_reports | tests/test_log_draft.py | unknown | standard |
 | tests.test_log_draft.test_bad_snapshot_json_is_skipped_without_crashing | tests/test_log_draft.py | unknown | standard |
 | tests.test_log_draft.test_build_diary_draft_collects_required_fields_and_evidence | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_build_saved_diary_draft_output_path_uses_reports_root_and_format | tests/test_log_draft.py | unknown | standard |
 | tests.test_log_draft.test_from_report_requires_valid_json | tests/test_log_draft.py | unknown | standard |
 | tests.test_log_draft.test_since_last_accept_falls_back_when_accept_snapshot_is_missing | tests/test_log_draft.py | unknown | standard |
 | tests.test_log_draft.test_since_last_accept_filters_older_snapshots | tests/test_log_draft.py | unknown | standard |
 | tests.test_log_draft.test_since_last_log_without_marker_falls_back_to_recent_snapshots | tests/test_log_draft.py | unknown | standard |
 | tests.test_log_draft.test_write_diary_draft_output_writes_reports_and_rejects_diary_root | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_write_latest_diary_draft_cache_failure_is_warning_only | tests/test_log_draft.py | unknown | standard |
+| tests.test_log_draft.test_write_latest_diary_draft_cache_writes_markdown_and_json_wrapper | tests/test_log_draft.py | unknown | standard |
 | tests.test_log_draft_cli._force_en_locale | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli._isolate_workspace | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli._seed_draft_evidence | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli._write_report | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli._write_snapshot | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli.run_cmd | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_cache_warning_does_not_fail_command | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli.test_log_draft_default_outputs_markdown_and_does_not_call_log_write | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli.test_log_draft_from_report_bad_json_returns_clear_error | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli.test_log_draft_json_output_is_stable | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_output_path_takes_precedence_over_save | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli.test_log_draft_output_rejects_diary_path | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli.test_log_draft_output_writes_reports_file_and_keeps_stdout | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_save_json_writes_timestamped_json_copy_without_polluting_stdout | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_draft_cli.test_log_draft_save_writes_timestamped_markdown_copy | tests/test_log_draft_cli.py | unknown | standard |
 | tests.test_log_draft_cli.test_log_draft_since_last_accept_filters_to_post_accept_evidence | tests/test_log_draft_cli.py | unknown | standard |
+| tests.test_log_write_from_draft._force_en_locale | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft._isolate_workspace | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft._read_last_marker | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft._read_single_diary_entry | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft._sample_draft_payload | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft._write_json_draft | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft._write_markdown_draft | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.run_cmd | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_from_draft_path_policy | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_from_latest_draft_flag_writes_successfully | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_interactive_no_cancels_without_writing | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_interactive_yes_writes_diary | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_markdown_fallback_uses_safe_excerpt_only | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_non_interactive_without_yes_is_rejected | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_requires_latest_draft_by_default | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_yes_writes_from_latest_json_and_updates_marker | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_min_count_one.test_min_count_one_includes_single_file_dir | tests/test_min_count_one.py | unknown | standard |
 | tests.test_module_capsule._write_index | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | tests/test_module_capsule.py | unknown | standard |
@@ -982,6 +1010,7 @@ tests/test_lock_flags.py
 tests/test_lock_register_adopted.py
 tests/test_log_draft.py
 tests/test_log_draft_cli.py
+tests/test_log_write_from_draft.py
 tests/test_min_count_one.py
 tests/test_module_capsule.py
 tests/test_module_capsule_stale.py

@@ -1,4 +1,4 @@
-<!-- harbor-spec:managed version=1.3.0 kind=rule -->
+<!-- harbor-spec:managed version=1.4.x kind=rule -->
 
 # Harbor Agent Policy
 
@@ -798,6 +798,7 @@ Do not run the following unless the user explicitly requests it:
 ```powershell
 harbor log
 harbor log write
+harbor log write --yes
 harbor accept
 harbor lock
 harbor module promote-skill <module>
@@ -822,6 +823,18 @@ harbor module promote-skill <module>
 Never run `harbor accept` merely to silence unresolved drift.
 
 Never run `harbor log` unless the user asked to write the log or the workflow explicitly includes writing diary entries.
+
+AI may run these safe draft commands:
+
+```powershell
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report <path>
+harbor log draft --save
+harbor log draft --output .harbor/reports/<name>.md
+```
 
 AI may run read-only checks (for example: `pytest`, `harbor checkpoint --ci --format json`, `harbor stale --ci --format json`, `harbor doctor --ci --format json`) when the task explicitly asks for validation.
 
@@ -1195,6 +1208,40 @@ release-relevant decision
 
 AI may generate Diary Drafts.
 
+AI may run `harbor log draft` as a safe draft command.
+
+AI may run `harbor log draft --save` and prepare draft reports under `.harbor/reports/**`.
+
+`harbor log draft` generates a reviewable Diary Draft only and is read-only with respect to source-of-truth memory.
+
+`harbor log draft` writes latest draft cache under `.harbor/state/log/latest-draft.md` and `.harbor/state/log/latest-draft.json` as runtime state, not source-of-truth memory.
+
+`harbor log draft` may write to `.harbor/reports/**` only when explicitly requested through `--output`.
+
+`harbor log draft --output` targeting `.harbor/diary/**` must be rejected.
+
+`harbor log draft` must not write to `.harbor/diary/**`.
+
+`harbor log write` is a source-of-truth write operation.
+
+`harbor log write` reads latest draft by default and writes `.harbor/diary/YYYY-MM.jsonl` only through an explicitly authorized write path.
+
+`harbor log write --yes` is explicit authorization for non-interactive or confirmed write flow.
+
+AI must not run `harbor log write` unless explicitly requested.
+
+AI must not run `harbor log write --yes` unless explicitly requested.
+
+AI must not write `.harbor/diary/**` without explicit user authorization.
+
+`harbor log draft` does not call LLM in v1.4.1.
+
+LLM-assisted draft is future work only and must be explicit opt-in.
+
+Any future LLM-assisted draft must not send secrets, credentials, private data, `.env` contents, file bodies, or diff bodies to an LLM.
+
+`harbor log` / Diary write still require explicit human authorization.
+
 Usually no diary is needed for:
 
 ```text
@@ -1242,12 +1289,7 @@ harbor accept
 harbor lock
 ```
 
-Future safe-command direction:
-
-```text
-harbor log draft may become an AI-safe draft command.
 Diary write operations still require explicit human authorization.
-```
 
 ---
 

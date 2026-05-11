@@ -1,4 +1,4 @@
-<!-- harbor-spec:managed version=1.3.0 kind=rule -->
+<!-- harbor-spec:managed version=1.4.x kind=rule -->
 
 # Harbor Runtime Safety
 
@@ -184,6 +184,8 @@ deleting files
 batch-moving files
 modifying .env
 modifying secrets/**
+running harbor log write
+running harbor log write --yes
 changing migrations
 running migrations
 changing CI/CD
@@ -299,6 +301,7 @@ installing dependencies
 changing lock files
 changing JSON output contract
 changing public CLI behavior
+writing source-of-truth decision memory with harbor log write
 changing .harbor/*.yaml
 changing generated skills
 broad rewrite
@@ -537,7 +540,21 @@ Diary Draft / future log-draft safety:
 
 ```text
 Do not include secret values in Diary Draft content.
-Do not send .env / credentials / tokens / private user data to LLM for log drafting.
+harbor log draft does not call LLM in v1.4.1.
+harbor log write is a high-impact write because it writes source-of-truth decision memory.
+harbor log write without --yes must be rejected in non-interactive environments.
+harbor log write --from-draft must use an allowlisted source.
+harbor log write must reject .harbor/diary/**, .env, .env.*, secrets/**, and repo-external paths as draft sources.
+harbor log draft / harbor log write must not read or write raw file bodies, diff bodies, or secrets.
+LLM-assisted draft is future work only and must be explicit opt-in.
+LLM-assisted draft/write is future work only and must be explicit opt-in.
+Do not send secrets / credentials / tokens / private user data / .env contents to an LLM for log drafting.
+harbor log draft must not read or output secrets.
+harbor log draft must not output .env contents.
+harbor log draft must not output file content bodies or diff bodies.
+If future LLM-assisted draft mode exists, it must not send secrets / credentials / private data / .env contents / file bodies / diff bodies to an LLM.
+If future LLM-assisted write mode exists, it must not send secrets / credentials / private data / .env contents / file bodies / diff bodies to an LLM.
+--output targeting .harbor/diary/** must be rejected.
 ```
 
 ---

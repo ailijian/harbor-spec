@@ -122,12 +122,27 @@ def test_source_of_truth_priority_and_conflict_docs_are_present():
     assert "not implemented" in readme_en.lower()
 
     agents_text = (repo / "AGENTS.md").read_text(encoding="utf-8")
-    assert "Instruction Hierarchy" in agents_text
-    assert "Source of Truth Priority (highest to lowest)" in agents_text
-    assert "Conflict reminders:" in agents_text
+    assert "lightweight entrypoint" in agents_text.lower()
+    assert "## 3. Priority Rules" in agents_text
+    assert "### 3.1 Safety Priority" in agents_text
+    assert "### 3.2 Task Priority" in agents_text
+    assert "## 5. Source of Truth Priority" in agents_text
+    assert "prefer the more specific and local instruction" in agents_text
+    assert "choose the safer path" in agents_text
+    assert "state the conflict clearly" in agents_text
+    assert "do not silently ignore the conflict" in agents_text
     assert "Do not auto-trust either implementation or contract when they conflict." in agents_text
-    assert "Generated views and skills are advisory; they do not override code, contracts, tests, policy, or diary." in agents_text
-    assert "Prefer canonical .harbor/** artifacts over legacy/export copies." in agents_text
+    assert "Generated views help orientation but do not override code, contracts, schemas, tests, policy, or diary." in agents_text
+    assert "Skills are not source of truth." in agents_text
+    assert "Detailed rules live here:" in agents_text
+    assert ".harbor/rules/project-rules-guide.md" in agents_text
+    assert "## 11. Contract Authoring Triggers" in agents_text
+    assert "## 12. Compact Python Contract Docstring Template" in agents_text
+    assert "## 13. Compact TypeScript Contract Template" in agents_text
+    assert ".harbor/state/**" in agents_text
+    assert ".harbor/reports/**" in agents_text
+    assert ".harbor/diary/**" in agents_text
+    assert "All harbor log write variants, including --from-draft and --from-latest-draft, are Diary write paths and require explicit user authorization." in agents_text
 
     role_rules = (repo / ".harbor/rules/role-rules.md").read_text(encoding="utf-8")
     assert "Follow `AGENTS.md`" in role_rules

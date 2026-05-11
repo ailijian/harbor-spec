@@ -1,4 +1,4 @@
-<!-- harbor-spec:managed version=1.3.0 kind=rule -->
+<!-- harbor-spec:managed version=1.4.x kind=rule -->
 
 # Harbor Diary Rules
 

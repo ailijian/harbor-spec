@@ -1,4 +1,4 @@
-<!-- harbor-spec:managed version=1.3.0 kind=rule -->
+<!-- harbor-spec:managed version=1.4.x kind=rule -->
 
 # Harbor Diary Rules
 
@@ -276,7 +276,7 @@ A Diary Draft is text proposed in the final response.
 
 It has not been written to disk.
 
-A Diary Draft is reviewable assistant output, not source-of-truth memory.
+A Diary Draft is reviewable assistant output or report output, not source-of-truth memory.
 
 Use this when:
 
@@ -302,6 +302,78 @@ For non-trivial tasks, agents should always report:
 Diary Need: yes / no / uncertain
 ```
 
+### 9.3 Artifact Layers
+
+Harbor v1.4.1 distinguishes three different log artifacts:
+
+```text
+Latest Draft Cache
+Saved Draft Report
+Written Diary Entry
+```
+
+Latest Draft Cache:
+
+```text
+.harbor/state/log/latest-draft.md
+.harbor/state/log/latest-draft.json
+```
+
+Rules:
+
+```text
+Latest Draft Cache is runtime state.
+Latest Draft Cache may be overwritten by later draft runs.
+Latest Draft Cache is reviewable working state, not source-of-truth memory.
+```
+
+Saved Draft Report:
+
+```text
+.harbor/reports/log-draft-*.md
+.harbor/reports/log-draft-*.json
+```
+
+Rules:
+
+```text
+Saved Draft Report is a reviewable report artifact.
+Saved Draft Report may be produced by --save or explicit --output.
+Saved Draft Report is not source-of-truth decision memory.
+```
+
+Written Diary Entry:
+
+```text
+.harbor/diary/YYYY-MM.jsonl
+```
+
+Rules:
+
+```text
+Written Diary Entry is source-of-truth decision memory.
+Only an explicitly authorized write path may append it.
+Draft cache and saved reports never become source of truth by themselves.
+```
+
+### 9.4 `harbor log write`
+
+`harbor log write` is the controlled write path from a reviewable draft into source-of-truth decision memory.
+
+Rules:
+
+```text
+harbor log write reads latest draft by default.
+harbor log write --from-latest-draft explicitly reads the latest draft cache.
+harbor log write without --yes requires interactive confirmation.
+harbor log write without --yes must be rejected in non-interactive environments.
+harbor log write --yes is explicit authorization to write.
+harbor log write --from-draft only allows .harbor/reports/** or latest draft cache paths as sources.
+harbor log write must reject .harbor/diary/**, .env, .env.*, secrets/**, repo-external paths, and other unallowlisted sources.
+successful harbor log write updates .harbor/state/log/last_log_marker.json after writing .harbor/diary/YYYY-MM.jsonl.
+last_log_marker is runtime state, not source-of-truth memory.
+```
+
 ---
 
 ## 10. When Writing Requires Explicit Request
@@ -310,6 +382,7 @@ Do not run the following unless the user explicitly requests it:
 
 ```powershell
 harbor log
+harbor log write
 ```
 
 Do not manually append JSONL unless:
@@ -326,25 +399,89 @@ If `harbor log` cannot generate content in the current flow, output a human-revi
 
 ---
 
-## 11. Preferred Write Command
+## 11. `harbor log draft` Safe Draft Command
 
-Preferred command:
+`harbor log draft` is a safe draft command for generating reviewable Diary Draft output.
+
+Allowed examples:
+
+```powershell
+harbor log draft
+harbor log draft --format json
+harbor log draft --since-last-accept
+harbor log draft --since-last-log
+harbor log draft --from-report <path>
+harbor log draft --save
+harbor log draft --output .harbor/reports/<name>.md
+```
+
+Rules:
+
+```text
+Diary Draft is reviewable assistant output / report output, not written Diary.
+harbor log draft is safe with respect to source-of-truth memory.
+harbor log draft may be used after accept to draft a Diary from change-window evidence.
+harbor log draft must not write .harbor/diary/** by default.
+harbor log draft writes latest draft cache to .harbor/state/log/latest-draft.md and .harbor/state/log/latest-draft.json.
+harbor log draft --save writes a timestamped reviewable report copy under .harbor/reports/**.
+explicit --output wins over --save; do not silently create a second saved copy.
+--output targeting .harbor/diary/** must be rejected.
+harbor log / harbor log write still require explicit human authorization.
+If evidence is insufficient, output evidence insufficient or no meaningful change window.
+Do not fabricate missing decisions, risks, tests, or reasons.
+non-UTF-8 reports and bad JSON reports must be skipped as unusable evidence or reported clearly.
+Unusable evidence must not cause an incorrect Diary write or invented Diary Draft content.
+```
+
+Evidence sources may include:
+
+```text
+change-window snapshots
+checkpoint / stale / doctor reports
+git status
+accepted baseline markers
+other Harbor-generated evidence within the current change window
+```
+
+Evidence boundaries:
+
+```text
+harbor log draft does not read or output file content bodies.
+harbor log draft does not output diff bodies.
+harbor log draft does not call LLM.
+```
+
+---
+
+## 12. Write Paths
+
+Preferred draft-to-memory write path:
+
+```powershell
+harbor log write
+harbor log write --yes
+harbor log write --from-latest-draft
+harbor log write --from-draft .harbor/reports/log-draft.md --yes
+```
+
+Rules:
+
+```text
+harbor log write is the controlled source-of-truth write path for draft-based workflow.
+Use it only after review and explicit authorization.
+Do not run it automatically.
+Do not claim success unless the write was actually executed and observed.
+```
+
+Legacy direct write path remains available when the user explicitly wants a manual message-based write:
 
 ```powershell
 harbor log -m "<message>" --type <type> --importance <importance> --visibility <visibility>
 ```
 
-Example:
-
-```powershell
-harbor log -m "Adopt .harbor as canonical workspace for v1.3.0" --type decision --importance high --visibility repo
-```
-
-If the command supports additional structured fields, include them when appropriate.
-
 ---
 
-## 12. Diary Entry Types
+## 13. Diary Entry Types
 
 Allowed `type` values:
 
@@ -393,7 +530,7 @@ test
 
 ---
 
-## 13. Importance Levels
+## 14. Importance Levels
 
 Allowed `importance` values:
 
@@ -422,7 +559,7 @@ critical
 
 ---
 
-## 14. Visibility Levels
+## 15. Visibility Levels
 
 Allowed `visibility` values:
 
@@ -449,7 +586,7 @@ Do not put secrets, tokens, private customer data, or sensitive internal data in
 
 ---
 
-## 15. Diary Draft Format
+## 16. Diary Draft Format
 
 Use this format in final responses when Diary is needed but not written:
 
@@ -484,7 +621,7 @@ Reason:
 
 ---
 
-## 16. JSONL Recommended Structure
+## 17. JSONL Recommended Structure
 
 A written Diary entry should be one JSON object per line.
 
@@ -523,7 +660,7 @@ Recommended structure:
 
 ---
 
-## 17. Required Fields
+## 18. Required Fields
 
 A written Diary entry should include:
 
@@ -554,17 +691,13 @@ If a value is unknown, use `null` or omit optional fields.
 
 Do not invent commit hashes, PR links, issue links, test results, or user decisions.
 
-Future direction note (not implemented in this task):
+`harbor log draft` may use checkpoint / accept / finish snapshots, reports, changed files, and validation results as evidence inputs.
 
-```text
-harbor log draft / change window may use checkpoint / accept / finish snapshots, git diff, changed files, and validation results as evidence inputs.
-```
-
-Even after baseline acceptance, agents should still be able to generate Diary Drafts for review.
+Even after baseline acceptance, agents should still be able to generate Diary Drafts for review without writing `.harbor/diary/**`.
 
 ---
 
-## 18. Contract Impact in Diary
+## 19. Contract Impact in Diary
 
 When `contract_impact` is true, include which contract sources are affected.
 
@@ -595,7 +728,7 @@ Do not hide uncertain contract impact.
 
 ---
 
-## 19. Breaking Change in Diary
+## 20. Breaking Change in Diary
 
 When `breaking_change` is true, explain:
 
@@ -621,7 +754,7 @@ Breaking Change: uncertain
 
 ---
 
-## 20. Diary and DDT
+## 21. Diary and DDT
 
 Create or recommend a Diary Draft when DDT strategy changes.
 
@@ -654,7 +787,7 @@ for DDT + Diary workflow.
 
 ---
 
-## 21. Diary and Runtime Safety
+## 22. Diary and Runtime Safety
 
 Create or recommend a Diary Draft when safety policy changes.
 
@@ -683,7 +816,7 @@ If a safety policy is loosened, the Diary entry should explain why and what miti
 
 ---
 
-## 22. Diary and Generated Context
+## 23. Diary and Generated Context
 
 Generated context lives under:
 
@@ -708,7 +841,7 @@ Generated context is not a Diary substitute.
 
 ---
 
-## 23. Diary and Workspace Migration
+## 24. Diary and Workspace Migration
 
 Create or recommend a Diary Draft when workspace layout decisions change.
 
@@ -733,7 +866,7 @@ Do not write, move, or delete workspace files without explicit user confirmation
 
 ---
 
-## 24. Diary and Release Notes
+## 25. Diary and Release Notes
 
 A Diary entry may imply a changelog or release note, but it does not replace it.
 
@@ -757,7 +890,7 @@ Release notes explain what users need to know.
 
 ---
 
-## 25. Diary Quality Standard
+## 26. Diary Quality Standard
 
 A good Diary entry is:
 
@@ -790,7 +923,7 @@ copying full code diffs
 
 ---
 
-## 26. Privacy and Secret Safety
+## 27. Privacy and Secret Safety
 
 Do not write the following into Diary:
 
@@ -816,7 +949,7 @@ Do not include actual secret values.
 
 ---
 
-## 27. Tool Honesty
+## 28. Tool Honesty
 
 Do not claim Diary was written unless it was actually written.
 
@@ -840,7 +973,7 @@ unless the write actually happened.
 
 ---
 
-## 28. Final Response Requirements
+## 29. Final Response Requirements
 
 When Diary is relevant, include:
 
@@ -865,7 +998,7 @@ Change Summary:
 
 ---
 
-## 29. Common Mistakes
+## 30. Common Mistakes
 
 Avoid:
 
@@ -876,6 +1009,10 @@ using Diary as changelog only
 using changelog as Diary
 using commit message as Diary
 claiming Diary was written when only a draft was generated
+writing `.harbor/diary/**` through harbor log draft
+using `--output .harbor/diary/**` for draft generation
+inventing decision content when evidence is insufficient
+letting broken or non-UTF-8 reports become false evidence
 including secrets or private data
 inventing PR links, commit hashes, or test results
 omitting risks
@@ -886,7 +1023,7 @@ manually appending malformed JSONL
 
 ---
 
-## 30. Final Principle
+## 31. Final Principle
 
 When a future human or AI agent asks:
 

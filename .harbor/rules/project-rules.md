@@ -1,4 +1,4 @@
-<!-- harbor-spec:managed version=1.3.0 kind=project-rules -->
+<!-- harbor-spec:managed version=1.4.x kind=project-rules -->
 
 # Project Rules
 

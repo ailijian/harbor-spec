@@ -122,6 +122,8 @@ compatible with .harbor/policy.yaml and .harbor/safety.yaml
 
 Project Rules should not repeat generic Harbor definitions unless the project has a special local exception.
 
+Project Rules should define the local public API / CLI / JSON / file-write / TypeScript export surfaces that require contract authoring in that repository.
+
 ---
 
 ### 2.3 Skills
@@ -1332,11 +1334,9 @@ letting stale generated context override code, contracts, schemas, or tests
 duplicating generic Harbor rules inside Project Rules
 ```
 
-```
-
 ---
 
-## 11. How to Update Project Rules
+## 16. How to Update Project Rules
 
 Update Project Rules when:
 
@@ -1370,7 +1370,7 @@ Project Rules should remain stable.
 
 ---
 
-## 12. Validation Checklist for Project Rules
+## 17. Validation Checklist for Project Rules
 
 Before accepting generated Project Rules, check:
 
@@ -1390,7 +1390,7 @@ Before accepting generated Project Rules, check:
 
 ---
 
-## 13. Common Mistakes
+## 18. Common Mistakes
 
 Avoid:
 
@@ -1410,7 +1410,7 @@ letting skills become source of truth
 
 ---
 
-## 14. Final Principle
+## 19. Final Principle
 
 A good Project Rules file is:
 

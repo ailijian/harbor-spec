@@ -1,8 +1,8 @@
-<!-- harbor-spec:managed version=1.3.0 kind=rule -->
+<!-- harbor-spec:managed version=1.4.x kind=rule -->
 
 # Harbor Project Rules Guide
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Canonical path: `.harbor/rules/project-rules-guide.md`  
 Purpose: Guide for generating and maintaining project-specific rules under Harbor-spec
 
@@ -121,6 +121,8 @@ compatible with .harbor/policy.yaml and .harbor/safety.yaml
 ```
 
 Project Rules should not repeat generic Harbor definitions unless the project has a special local exception.
+
+Project Rules should define the local public API / CLI / JSON / file-write / TypeScript export surfaces that require contract authoring in that repository.
 
 ---
 
@@ -287,6 +289,19 @@ A complete Project Rules file should include:
 17. strict target contract requirements
 18. DDT baseline handling
 19. CI gate expectations for contract_gap and ddt_version_baseline_missing
+20. Diary Draft / log draft boundaries, including when harbor log draft is allowed
+21. change-window evidence boundaries vs source-of-truth decision memory
+22. TypeScript governance boundaries, including opt-in enablement and supported target scope
+```
+
+建议补充的 v1.4.x 边界：
+
+```text
+- Project Rules should state when Diary Draft is appropriate and when Written Diary Entry still requires explicit human authorization.
+- Project Rules should document the local harbor log draft command surface if the repository relies on it, including allowed output targets such as .harbor/reports/** and rejection of .harbor/diary/** targets.
+- Project Rules should treat change-window snapshots and similar evidence as runtime evidence, not source-of-truth memory.
+- Project Rules should state that Written Diary Entry under .harbor/diary/** remains the source-of-truth decision memory.
+- If TypeScript governance is enabled, Project Rules should state the repository's opt-in scope, supported target shapes, accepted contract sources, and unsupported syntax boundaries for the current Harbor release line.
 ```
 
 ---
@@ -682,11 +697,11 @@ Use the following template.
 ---
 
 ```markdown
-<!-- harbor-spec:managed version=1.3.0 kind=project-rules -->
+<!-- harbor-spec:managed version=1.4.x kind=project-rules -->
 
 # Project Rules
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x  
 Canonical path: `.harbor/rules/project-rules.md`  
 Purpose: Project-specific rules for AI coding agents
 
@@ -1319,11 +1334,9 @@ letting stale generated context override code, contracts, schemas, or tests
 duplicating generic Harbor rules inside Project Rules
 ```
 
-```
-
 ---
 
-## 11. How to Update Project Rules
+## 16. How to Update Project Rules
 
 Update Project Rules when:
 
@@ -1357,7 +1370,7 @@ Project Rules should remain stable.
 
 ---
 
-## 12. Validation Checklist for Project Rules
+## 17. Validation Checklist for Project Rules
 
 Before accepting generated Project Rules, check:
 
@@ -1377,7 +1390,7 @@ Before accepting generated Project Rules, check:
 
 ---
 
-## 13. Common Mistakes
+## 18. Common Mistakes
 
 Avoid:
 
@@ -1397,7 +1410,7 @@ letting skills become source of truth
 
 ---
 
-## 14. Final Principle
+## 19. Final Principle
 
 A good Project Rules file is:
 

@@ -138,6 +138,12 @@ Rules:
 - TypeScript semantic audit is not supported in v1.4.x.
 - TypeScript DDT is not supported in v1.4.x.
 
+Contract authoring trigger:
+
+- For public or strict Python targets, write or update the Harbor Contract Docstring before checkpoint.
+- For TypeScript exported public targets, write or update nearby high-confidence `JSDoc/TSDoc` before checkpoint.
+- Read `.harbor/rules/contract-rules.md` for the full authoring templates.
+
 ---
 
 ## Explicit user request only
@@ -146,6 +152,8 @@ Do not run these unless the user explicitly requests it:
 
 ```powershell
 harbor log
+harbor log write
+harbor log write --yes
 harbor accept
 harbor lock
 harbor module promote-skill <module>
@@ -156,6 +164,12 @@ Never use `harbor accept` to hide unresolved drift.
 Never claim a Diary entry was written unless it was actually written.
 
 Do not run `harbor log write` automatically.
+
+Do not run `harbor log write --yes` automatically.
+
+`harbor log draft` and `harbor log draft --save` are allowed as safe draft commands.
+
+`harbor log` / Diary write still require explicit user request.
 
 ---
 

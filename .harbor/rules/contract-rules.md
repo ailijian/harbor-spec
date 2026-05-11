@@ -1,4 +1,4 @@
-<!-- harbor-spec:managed version=1.3.0 kind=rule -->
+<!-- harbor-spec:managed version=1.4.x kind=rule -->
 
 # Harbor Contract Rules
 
@@ -276,6 +276,24 @@ Returns
 Raises
 Side effects (when relevant)
 ```
+
+Public / strict Python minimum fields:
+
+```text
+one-line summary
+Behavior
+Args
+Returns
+Raises
+Side Effects
+Idempotency
+Security, when relevant
+@harbor.scope
+@harbor.l3_strictness
+@harbor.idempotency
+```
+
+If the target defines public CLI behavior, JSON output, file write behavior, parser behavior, or another external-visible result, include the contract fields needed to describe that surface in the same change.
 
 ---
 
@@ -921,6 +939,179 @@ def strict_func(arg1: str, retry: bool = False) -> dict:
       ValueError: If input is invalid.
       TimeoutError: If external dependency times out.
     """
+```
+
+### 15.1 Python Public / Strict Minimum Fields
+
+For public or strict Python targets, the docstring should usually include at least:
+
+```text
+one-line summary
+Behavior
+Args
+Returns
+Raises
+Side Effects
+Idempotency
+Security, when relevant
+@harbor.scope
+@harbor.l3_strictness
+@harbor.idempotency
+```
+
+Add more sections when the target governs:
+
+```text
+CLI behavior
+JSON output
+file write behavior
+exit behavior
+schema shape
+non-interactive safety boundaries
+```
+
+### 15.2 CLI / JSON / File-Write Mini-Template
+
+Use this mini-template when the contract target governs a CLI surface, machine-readable output, or write path behavior:
+
+```python
+def write_report(output_path: str, *, overwrite: bool = False) -> str:
+    """Write the generated report to an allowlisted path.
+
+    Behavior:
+      - Validates the requested output target before writing.
+      - Preserves stable output semantics for callers and automation.
+
+    CLI Args / Flags:
+      - output_path: Repo-relative output path.
+      - overwrite: Allows replacing an existing report when true.
+
+    Exit Behavior:
+      - Returns the written repo-relative path on success.
+      - Raises before writing when validation fails.
+
+    Output Contract:
+      - Returns a stable path string.
+      - Does not expose secrets or machine-local absolute paths.
+
+    File Write Targets:
+      - Writes only to .harbor/reports/**.
+      - Never writes to .harbor/diary/**.
+
+    Rejected Paths / Safety Boundaries:
+      - Rejects diary, secret, env, and repo-external paths.
+
+    Non-interactive Behavior:
+      - Fails closed when required confirmation is missing.
+
+    Side Effects:
+      - Creates or overwrites one report file when validation succeeds.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: overwrite
+    """
+```
+
+For CLI / JSON / file-write behavior, prefer to cover:
+
+```text
+CLI Args / Flags
+Exit Behavior
+Output Contract
+File Write Targets
+Rejected Paths / Safety Boundaries
+Non-interactive Behavior
+Side Effects
+```
+
+### 15.3 TypeScript Contract Authoring Standard
+
+TypeScript v1.4.x uses nearby high-confidence `JSDoc / TSDoc` as the expected contract source for required exported targets.
+
+Use a nearby public-function template such as:
+
+```ts
+/**
+ * Execute the public operation and return a stable JSON-compatible result.
+ *
+ * Behavior:
+ * - Validates input before execution.
+ * - Preserves stable output field names.
+ * - Does not expose secrets or machine-local absolute paths.
+ *
+ * Side Effects:
+ * - Writes no files.
+ * - Performs no network calls unless explicitly stated.
+ *
+ * Idempotency:
+ * - Deterministic for the same input.
+ *
+ * @param input User-provided input.
+ * @returns Stable public result shape.
+ * @throws {Error} When input is invalid.
+ * @harbor.scope public
+ * @harbor.l3_strictness strict
+ * @harbor.idempotency deterministic
+ */
+export function runPublicOperation(input: Input): Output {
+  // implementation
+}
+```
+
+Use a nearby file-write / CLI template such as:
+
+```ts
+/**
+ * Write the generated report to an allowlisted path.
+ *
+ * Behavior:
+ * - Accepts only report output paths under the configured report directory.
+ * - Rejects diary, secret, env, and repository-external paths.
+ *
+ * File Write Targets:
+ * - Writes only to .harbor/reports/**.
+ * - Never writes to .harbor/diary/**.
+ *
+ * Failure Modes:
+ * - Throws when the output path is unsafe.
+ * - Does not partially write on validation failure.
+ *
+ * @param outputPath Repo-relative output path.
+ * @returns Written report path.
+ * @throws {Error} If outputPath is not allowlisted.
+ * @harbor.scope public
+ * @harbor.l3_strictness strict
+ * @harbor.idempotency overwrite
+ */
+export function writeReport(outputPath: string): string {
+  // implementation
+}
+```
+
+TypeScript authoring boundaries in v1.4.x:
+
+```text
+These templates help satisfy contract_presence / contract_required / checkpoint governance.
+They do not imply TypeScript semantic audit support.
+They do not imply TypeScript DDT support.
+Vitest / Jest comments alone are not Harbor DDT binding sources.
+```
+
+### 15.4 Contract Authoring Checklist
+
+Before checkpoint, verify:
+
+```text
+1. Is this target contract_required?
+2. What is the strictness: strict / standard / light?
+3. Did the same change update the contract source?
+4. If Python, is the Harbor Contract Docstring present and complete enough?
+5. If TypeScript, is nearby high-confidence JSDoc / TSDoc present?
+6. If the target affects CLI / JSON / file write behavior, does the contract describe that surface explicitly?
+7. Are tests / DDT updates needed?
+8. Is generated context refresh needed?
+9. Is a Diary Draft needed?
 ```
 
 ---

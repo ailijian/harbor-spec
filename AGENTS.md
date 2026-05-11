@@ -1,4 +1,4 @@
-<!-- harbor-spec:managed version=1.3.0 kind=agents-entrypoint -->
+<!-- harbor-spec:managed version=1.4.x kind=agents-entrypoint -->
 
 # AGENTS.md
 
@@ -13,27 +13,25 @@ Default shell: Windows 11 PowerShell
 
 You are an AI coding assistant working under the Harbor-spec context governance workflow.
 
-Harbor-spec is the context governance layer for this repository.
+Harbor-spec is the repo-local context governance layer for AI coding / vibe coding / agentic coding.
 
-It helps keep the following aligned:
+It keeps these layers aligned:
 
 ```text
 implementation
 contracts
 schemas
-tests
-DDT targets
+tests / DDT
 generated context views
-decision history
-runtime safety rules
+decision memory
+runtime safety
 AI tool instructions
 ```
 
 Harbor-spec is not an AI IDE.
-
 Harbor-spec is not a code generator.
 
-From v1.4+, Harbor evolves from Python FunctionContract/docstring-centric governance to language-neutral ContractSubject governance.
+From v1.4+, Harbor evolves from Python FunctionContract / docstring-centric governance to language-neutral ContractSubject governance.
 
 Core principle:
 
@@ -41,7 +39,7 @@ Core principle:
 让 AI 写代码可以快，但契约、测试、上下文、决策记忆和安全边界不能漂移。
 ```
 
-When working in this repository, do not optimize only for “code changed successfully”.
+Do not optimize only for “code changed successfully”.
 
 Optimize for:
 
@@ -53,7 +51,7 @@ code + contract + tests + generated context + diary + safety consistency
 
 ## 2. What This File Is
 
-`AGENTS.md` is the shared lightweight entrypoint for AI coding tools such as:
+`AGENTS.md` is the always-loaded lightweight entrypoint for AI coding tools such as:
 
 ```text
 Codex
@@ -64,12 +62,12 @@ GitHub Copilot
 other agentic coding tools
 ```
 
-This file should stay short enough to be always loaded.
+Keep this file short.
 
-It should contain only:
+This file should contain only:
 
 ```text
-role definition
+role
 instruction priority
 workspace boundaries
 context loading order
@@ -77,72 +75,52 @@ core workflow
 task routing
 must-not-do rules
 completion expectations
+compact contract templates
 ```
 
-Detailed Harbor rules live under:
+Detailed rules live here:
 
 ```text
-.harbor/rules/
+.harbor/rules/agent-policy.md
+.harbor/rules/contract-rules.md
+.harbor/rules/ddt-rules.md
+.harbor/rules/runtime-safety.md
+.harbor/rules/diary-rules.md
+.harbor/rules/project-rules.md
+.harbor/rules/project-rules-guide.md
 ```
 
-Generated Harbor context lives under:
+Generated context lives here:
 
 ```text
-.harbor/views/
+.harbor/views/**
 ```
 
-Decision memory lives under:
+Decision memory lives here:
 
 ```text
-.harbor/diary/
+.harbor/diary/YYYY-MM.jsonl
 ```
 
-Machine-readable policy lives in:
+Machine policy lives here:
 
 ```text
 .harbor/policy.yaml
 .harbor/safety.yaml
 ```
 
-Skills live under:
+Skills live here:
 
 ```text
-.agents/skills/
+.agents/skills/**
 ```
 
-If deeper policy is needed, read:
-
-```text
-.harbor/rules/agent-policy.md
-```
-
-If contract details are needed, read:
-
-```text
-.harbor/rules/contract-rules.md
-```
-
-If DDT details are needed, read:
-
-```text
-.harbor/rules/ddt-rules.md
-```
-
-If runtime safety details are needed, read:
-
-```text
-.harbor/rules/runtime-safety.md
-```
-
-If diary details are needed, read:
-
-```text
-.harbor/rules/diary-rules.md
-```
+Skills are workflow entrypoints.
+Skills are not source of truth.
 
 ---
 
-## 3. Instruction Hierarchy and Priority
+## 3. Priority Rules
 
 Harbor separates safety priority from task priority.
 
@@ -187,15 +165,11 @@ state the conflict clearly
 do not silently ignore the conflict
 ```
 
-### 3.3 Instruction Hierarchy
-
-Instruction Hierarchy resolves rule and instruction conflicts.
-
 ---
 
 ## 4. Workspace Boundaries
 
-Harbor uses `.harbor/` as canonical workspace.
+Harbor uses `.harbor/` as the canonical workspace.
 
 ```text
 .harbor/
@@ -234,22 +208,22 @@ Boundary rules:
 ```text
 .harbor/rules/**   = static rule docs
 .harbor/views/**   = generated context views
-.harbor/diary/**   = decision memory
-.harbor/reports/** = diagnostics and evidence
+.harbor/diary/**   = source-of-truth decision memory
+.harbor/reports/** = diagnostics / evidence / saved draft reports
 .harbor/cache/**   = runtime cache, not source of truth
 .harbor/state/**   = runtime state, not source of truth
 .agents/skills/**  = workflow entrypoints, not source of truth
 ```
 
-Do not manually edit generated context under `.harbor/views/**` as project truth.
+Do not manually edit `.harbor/views/**` as project truth.
 
 Refresh generated context through Harbor commands.
 
 ---
 
-## 5. Source of Truth Priority (highest to lowest)
+## 5. Source of Truth Priority
 
-Use this compact source-of-truth order when resolving factual conflicts:
+When resolving factual conflicts, use this order:
 
 ```text
 1. Runtime safety / machine policy
@@ -258,12 +232,11 @@ Use this compact source-of-truth order when resolving factual conflicts:
    - .harbor/policy.yaml
 
 2. Explicit contracts / schemas / public behavior
-   - docstring contract
+   - Python docstring contract
    - JSDoc / TSDoc contract
-   - type hints
-   - TypeScript signature
+   - type hints / TypeScript signatures
    - schemas
-   - CLI args/output contract
+   - CLI args / output contract
    - JSON output contract
    - file write contract
    - documented side effects / raises / exit behavior
@@ -296,21 +269,11 @@ Use this compact source-of-truth order when resolving factual conflicts:
    - temp files
 ```
 
-Generated context helps orientation.
+Generated views help orientation but do not override code, contracts, schemas, tests, policy, or diary.
 
-Generated context does not override code, contracts, schemas, tests, policy, or diary.
+If generated context conflicts with source code, tests, schemas, policy, or diary, treat generated context as stale.
 
-Skills guide task execution.
-
-Skills are not source of truth.
-
-Conflict reminders:
-
-```text
 Do not auto-trust either implementation or contract when they conflict.
-Generated views and skills are advisory; they do not override code, contracts, tests, policy, or diary.
-Prefer canonical .harbor/** artifacts over legacy/export copies.
-```
 
 ---
 
@@ -333,11 +296,9 @@ For non-trivial coding, debugging, review, refactor, testing, or documentation t
 
 Do not read the whole repository unless the above context is insufficient.
 
-If generated context conflicts with source code, tests, schemas, policy, or diary, treat generated context as stale.
-
 ---
 
-## 7. Core Workflow
+## 7. Core Harbor Workflow
 
 Default local workflow:
 
@@ -365,14 +326,6 @@ stale --ci      = generated context freshness gate
 doctor --ci     = aggregated workspace health gate
 ```
 
-Repair guidance controls:
-
-```text
-checkpoint/stale/doctor support --advice off|basic
-guidance in CI JSON is optional additive data and can be disabled with --advice off
-harbor next --from <report.json> is read-only and does not execute repair commands
-```
-
 Workspace diagnostics:
 
 ```powershell
@@ -386,64 +339,28 @@ harbor workspace migrate --dry-run --format json
 
 Do not assume `workspace migrate --write` exists.
 
-Repair guidance:
+Repair guidance rules:
 
 ```text
+checkpoint / stale / doctor may support --advice off|basic.
 advice=basic is deterministic and does not require LLM.
-guidance is optional additive metadata; disable it with --advice off.
+guidance is optional additive metadata.
 guidance does not change CI pass/fail semantics.
-harbor next is read-only and never repairs, writes files, or accepts baselines.
+harbor next --from <report.json> is read-only.
+harbor next never repairs, writes files, accepts baselines, or writes diary.
 ```
 
 Decision-memory workflow:
 
-```powershell
-harbor checkpoint
-harbor finish
-harbor accept
-harbor log draft
-harbor log draft --format json
-harbor log draft --since-last-accept
-harbor log draft --since-last-log
-harbor log draft --from-report <path>
-harbor log draft --save
-harbor log draft --output .harbor/reports/<name>.md
-harbor log write
-harbor log write --yes
-harbor log write --from-latest-draft
-harbor log write --from-draft .harbor/reports/<name>.md
-```
-
-Rules:
-
 ```text
-checkpoint / finish / accept write change-window snapshots under .harbor/state/change-windows/**.
-change-window snapshots are runtime evidence, not source-of-truth memory.
-harbor log draft generates a reviewable Diary Draft only.
-harbor log draft does not write .harbor/diary/**.
-harbor log draft prints the draft to stdout.
-harbor log draft writes latest draft cache to .harbor/state/log/latest-draft.md and .harbor/state/log/latest-draft.json.
-harbor log draft --save writes a reviewable report copy to .harbor/reports/log-draft-YYYYMMDD-HHMMSS.md or .json.
-harbor log draft may write reviewable output to .harbor/reports/** through --output.
-explicit --output wins over --save; do not silently create a second saved copy.
-harbor log draft --output targeting .harbor/diary/** must be rejected.
-harbor log write reads latest draft by default.
-harbor log write without --yes requires interactive confirmation before writing.
-harbor log write without --yes must be rejected in non-interactive environments.
-harbor log write --yes is explicit authorization to write source-of-truth decision memory.
-harbor log write --from-latest-draft explicitly reads the latest draft cache.
-harbor log write --from-draft only allows .harbor/reports/** or latest draft cache paths as draft sources.
-harbor log write must reject .harbor/diary/**, .env, .env.*, secrets/**, repo-external paths, and other unallowlisted draft sources.
-successful harbor log write appends to .harbor/diary/YYYY-MM.jsonl and updates .harbor/state/log/last_log_marker.json.
-harbor log draft does not call LLM in v1.4.1.
-LLM-assisted draft is future work only.
-Any future LLM-assisted draft must be explicit opt-in.
-Any future LLM-assisted draft must not send secrets, credentials, private data, .env contents, file bodies, or diff bodies to an LLM.
-harbor log draft / harbor log write do not read or output file body or diff body.
-harbor log draft may summarize evidence from change-window snapshots, reports, and git status.
-Diary Draft is not source-of-truth memory.
-Written Diary Entry is source-of-truth memory only after actual write to .harbor/diary/**.
-CLI user-facing messages follow Harbor i18n / language settings; JSON schema keys remain stable English identifiers.
+checkpoint / finish / accept may produce change-window evidence under .harbor/state/**.
+change-window evidence is runtime evidence, not source-of-truth memory.
+harbor log draft is a safe draft command.
+harbor log draft previews a reviewable draft and updates .harbor/state/log/latest-draft.md/json.
+harbor log draft --save or --output may write reviewable draft reports under .harbor/reports/**.
+harbor log draft must not write .harbor/diary/**.
+harbor log write and harbor log write --yes are source-of-truth Diary writes.
+Written Diary Entry becomes source-of-truth memory only after actual write to .harbor/diary/**.
 ```
 
 ---
@@ -457,6 +374,7 @@ harbor accept
 harbor lock
 harbor log
 harbor log write
+harbor log write --yes
 harbor module promote-skill <module>
 git push
 git tag
@@ -483,7 +401,7 @@ Never claim a Diary entry was written unless it was actually written.
 
 If a decision should be recorded but the user did not request writing, output a Diary Draft instead.
 
-`harbor log` / `harbor log write` still require explicit user authorization for Diary writes.
+All harbor log write variants, including --from-draft and --from-latest-draft, are Diary write paths and require explicit user authorization.
 
 ---
 
@@ -513,7 +431,7 @@ Workspace diagnostics or migration dry-run:
 
 If a skill is missing, follow this file and the relevant `.harbor/rules/*.md`.
 
-Skills are workflow entrypoints.
+Skills guide task execution.
 
 Skills are not source of truth.
 
@@ -532,6 +450,33 @@ target_id = primary cross-language identity
 func_id   = legacy compatibility identity
 ```
 
+A change has Contract Impact when it affects:
+
+```text
+behavior
+args
+returns
+raises
+schema
+side effects
+state changes
+idempotency
+security
+permission
+persistence
+event shape
+database shape
+export format
+CLI args / output
+JSON output
+file write target
+exit behavior
+configuration behavior
+migration behavior
+user-visible result
+external-visible result
+```
+
 When modifying behavior, public API, schema, CLI, JSON output, file write behavior, generated view format, or tests, check:
 
 ```text
@@ -544,7 +489,7 @@ Generated context update needed: yes / no
 Diary Draft needed: yes / no
 ```
 
-Important rules:
+Important labels:
 
 ```text
 Missing contract is not semantic drift.
@@ -552,6 +497,7 @@ Semantic drift requires a comparable contract.
 CONTRACT_GAP means a required contract source is missing.
 SKIPPED_NO_CONTRACT means no contract is required and semantic audit is skipped.
 CONTRACT_PARSE_ERROR means a contract source exists but cannot be reliably parsed.
+unsupported_syntax_advisory means TypeScript syntax is unsupported in v1.4.x and should not be treated as contract_parse_error.
 ```
 
 If `CONTRACT_GAP` appears:
@@ -568,14 +514,152 @@ If semantic drift appears:
 do not auto-trust either implementation or contract
 inspect tests / DDT / source behavior
 update the stale side intentionally
-rerun the relevant checks
+rerun relevant checks
 ```
 
-### 10.1 TypeScript v1.4.x Governance Boundaries
+---
 
-TypeScript is first-class in v1.4.0 as a contract governance MVP.
+## 11. Contract Authoring Triggers
 
-MVP support:
+When adding or changing any required contract target, update its contract source in the same change.
+
+Required contract targets include:
+
+```text
+public API
+public CLI behavior
+JSON output
+file write behavior
+schema / parser / formatter
+report_to_dict / to_dict
+user-visible behavior
+external-visible behavior
+strict targets
+```
+
+For Python:
+
+```text
+Use Harbor Contract Docstring for public / strict Python targets,
+unless an equivalent contract source exists.
+```
+
+For TypeScript:
+
+```text
+Use nearby high-confidence JSDoc / TSDoc for required exported TypeScript targets.
+```
+
+Update contracts before `harbor checkpoint`.
+
+Then update tests / DDT / generated context when needed.
+
+For full templates, read:
+
+```text
+.harbor/rules/contract-rules.md
+```
+
+---
+
+## 12. Compact Python Contract Docstring Template
+
+Use this compact template for public / strict Python targets.
+
+```python
+def public_operation(arg: str) -> dict:
+    """Execute the public operation and return a stable result.
+
+    Behavior:
+      - Validates input before execution.
+      - Preserves stable output field names.
+      - Does not expose secrets or machine-local absolute paths.
+
+    Args:
+      arg (str): User-provided input.
+
+    Returns:
+      dict: Stable JSON-compatible result.
+
+    Raises:
+      ValueError: If input is invalid.
+
+    Side Effects:
+      - Writes no files unless explicitly stated.
+      - Performs no network calls unless explicitly stated.
+
+    Idempotency:
+      - Deterministic for the same input.
+
+    Security:
+      - Must not expose secrets.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: deterministic
+    """
+```
+
+For CLI / JSON / file-write targets, also document:
+
+```text
+CLI Args / Flags
+Exit Behavior
+Output Contract
+File Write Targets
+Rejected Paths / Safety Boundaries
+Non-interactive Behavior
+Side Effects
+```
+
+---
+
+## 13. Compact TypeScript Contract Template
+
+TypeScript v1.4.x uses nearby high-confidence JSDoc / TSDoc as the expected contract source for required exported targets.
+TypeScript signature alone does not satisfy strict semantic contract requirements.
+
+```ts
+/**
+ * Execute the public operation and return a stable result.
+ *
+ * Behavior:
+ * - Validates input before execution.
+ * - Preserves stable output field names.
+ * - Does not expose secrets or machine-local absolute paths.
+ *
+ * Side Effects:
+ * - Writes no files unless explicitly stated.
+ * - Performs no network calls unless explicitly stated.
+ *
+ * Idempotency:
+ * - Deterministic for the same input.
+ *
+ * @param input User-provided input.
+ * @returns Stable public result shape.
+ * @throws {Error} When input is invalid.
+ * @harbor.scope public
+ * @harbor.l3_strictness strict
+ * @harbor.idempotency deterministic
+ */
+export function publicOperation(input: Input): Output {
+  // implementation
+}
+```
+
+For CLI / JSON / file-write targets, also document:
+
+```text
+CLI Args / Flags
+Exit Behavior
+Output Contract
+File Write Targets
+Rejected Paths / Safety Boundaries
+Non-interactive Behavior
+Side Effects
+```
+
+TypeScript v1.4.x support:
 
 ```text
 opt-in enablement
@@ -591,7 +675,7 @@ unsupported_syntax_advisory
 harbor next deterministic guidance
 ```
 
-Not supported in v1.4.x:
+Not supported in TypeScript v1.4.x:
 
 ```text
 JavaScript first-class governance
@@ -603,9 +687,11 @@ framework presets
 interface/type blocking gate
 ```
 
+Do not claim TypeScript DDT or TypeScript semantic audit coverage in v1.4.x.
+
 ---
 
-## 11. DDT Rules
+## 14. DDT Rules
 
 DDT means Docstring/Contract-Driven Testing.
 
@@ -638,9 +724,16 @@ If contract changes but tests do not:
 inspect whether tests still verify the intended contract
 ```
 
+v1.4.x boundary:
+
+```text
+DDT remains Python-first.
+TypeScript DDT is not supported.
+```
+
 ---
 
-## 12. Runtime Safety
+## 15. Runtime Safety
 
 Do not silently perform high-risk operations.
 
@@ -693,9 +786,11 @@ For detailed safety policy, read:
 .harbor/rules/runtime-safety.md
 ```
 
+For user-facing CLI text, use Harbor's i18n mechanism when available; keep JSON schema keys stable English identifiers.
+
 ---
 
-## 13. Generated Context
+## 16. Generated Context
 
 Generated context includes:
 
@@ -746,7 +841,7 @@ Do not manually edit `.harbor/views/**` as project truth.
 
 ---
 
-## 14. Diary
+## 17. Diary
 
 Diary records why important changes happened.
 
@@ -783,36 +878,26 @@ Do not run:
 
 ```powershell
 harbor log
+harbor log write
+harbor log write --yes
 ```
 
-unless the user explicitly requests it.
+unless the user explicitly requests a Diary write.
 
 When in doubt, output a Diary Draft instead of writing.
 
-Diary Draft workflow for non-trivial tasks:
+For non-trivial tasks, report:
 
 ```text
-Agent must report Diary Need: yes / no / uncertain.
-Agent may generate a Diary Draft for review.
-Agent may run harbor log draft as a safe draft command.
-Agent may run harbor log draft --save or write draft reports under .harbor/reports/**.
-harbor log draft may use change-window snapshots / reports / git status as evidence input.
-harbor log draft must not write .harbor/diary/**.
-harbor log draft latest-draft cache under .harbor/state/** is runtime state, not source-of-truth memory.
-harbor log draft may write reviewable output to .harbor/reports/** through --output.
-harbor log draft --output targeting .harbor/diary/** must be rejected.
-harbor log draft must not call LLM in v1.4.1.
-LLM-assisted draft is future work only and must be explicit opt-in.
-Any future LLM-assisted draft must not send secrets, credentials, private data, .env contents, file bodies, or diff bodies to an LLM.
-harbor log draft must not read or output file content or diff body.
-Agent must not write .harbor/diary/** without explicit user authorization.
-Agent must not automatically run harbor log write or harbor log write --yes.
-Agent must not run harbor log write / harbor log when it writes Diary without explicit user request.
+Diary Need: yes / no / uncertain
+Diary Draft: generated / not needed / not written
+Log Draft Command: run / not run
+Diary Write: not performed unless explicitly requested
 ```
 
 ---
 
-## 15. Testing and Validation
+## 18. Testing and Validation
 
 Prefer targeted validation first, then broader checks.
 
@@ -840,28 +925,27 @@ If tests were not run, say so clearly.
 
 ---
 
-## 16. Completion Expectations
+## 19. Completion Expectations
 
 Before finishing a non-trivial task, report:
 
 ```text
-what changed
-which files changed
+What changed
+Files changed
 Contract Impact: yes / no / uncertain
 Contract Presence / Contract Gap status when relevant
 Strictness: strict / standard / light when relevant
 Tests / DDT status
 Generated context status
-Diary status
-Diary Draft: generated / not needed / not written
 Diary Need: yes / no / uncertain
+Diary Draft: generated / not needed / not written
 Log Draft Command: run / not run
 Diary Write: not performed unless explicitly requested
 Runtime safety status
-remaining risks or follow-ups
+Remaining risks or follow-ups
 ```
 
-If commands were run, report exact commands and outcomes.
+If commands were run, report exact commands and observed outcomes.
 
 If commands were not run, say which were not run.
 
@@ -883,7 +967,7 @@ Do not claim a baseline was accepted unless `harbor accept` was actually execute
 
 ---
 
-## 17. Tool Honesty
+## 20. Tool Honesty
 
 Never fabricate:
 
@@ -903,7 +987,7 @@ If unable to complete a step, say what was completed and what remains.
 
 ---
 
-## 18. One-Line Rule
+## 21. One-Line Rule
 
 For every meaningful change, ask:
 
