@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.2"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-11T06:50:23Z"
+generated_at: "2026-05-11T07:32:14Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 30
@@ -39,7 +39,7 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:e255045d7df7039c3e3f0851eb8deeac863afa9b03f58386882a8559b973b462"
+source_fingerprint: "sha256:3c1c94068e3462fc9927b5dc2fad43df4a88c610747165baf07e9a29f193bca2"
 contract_fingerprint: "sha256:e83ae40bb2df80e718301ac30c438cd89df5483dbd7face7376ef49494e050b0"
 generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae883d5e242207648"
 ---
@@ -50,10 +50,10 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
 | harbor.core.drafting.DiaryDrafter.__init__ | AI 辅助生成 Diary 草稿。 | strict | ❌ Missing |
-| harbor.core.index.IndexBuilder._iter_py_files | 生成待扫描的 Python 文件列表（支持 Git 感知剪枝）。 | strict | ❌ Missing |
+| harbor.core.index.IndexBuilder._iter_py_files | — | strict | ❌ Missing |
 | harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
-| harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
-| harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
+| harbor.core.index.IndexBuilder.build | — | strict | ❌ Missing |
+| harbor.core.sync.SyncEngine.check_status | — | strict | ✅ Valid |
 | harbor.core.ci.checkpoint_ci_result_to_dict | — | strict | ❌ Missing |
 | harbor.core.ci.ci_result_to_dict | — | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
@@ -62,7 +62,7 @@ generator_fingerprint: "sha256:0a89de3cfaac6b60e9fe56f4ee14a0793fff230a812288dae
 | harbor.core.storage.HarborDB.get_all_files | 列出所有已索引文件及其 mtime。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_file | 查询单文件记录。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_file_entries | 查询指定文件的所有条目。 | strict | ❌ Missing |
-| harbor.core.index.IndexBuilder.iter_build | 以生成器方式构建索引，逐文件产出进度事件。 | strict | ❌ Missing |
+| harbor.core.index.IndexBuilder.iter_build | — | strict | ❌ Missing |
 | harbor.core.utils.iter_project_files | 生成待扫描的 Python 文件列表（统一剪枝逻辑）。 | strict | ❌ Missing |
 | harbor.core.diary.DiaryManager.log | 写入一条 DiaryEntry 到当月 JSONL。 | strict | ❌ Missing |
 | harbor.core.git_utils.GitIgnoreMatcher.match_dir | 判断相对路径目录是否被忽略（用于剪枝）。 | strict | ❌ Missing |

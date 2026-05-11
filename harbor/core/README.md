@@ -4,10 +4,10 @@
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
 | harbor.core.drafting.DiaryDrafter.__init__ | AI 辅助生成 Diary 草稿。 | strict | ❌ Missing |
-| harbor.core.index.IndexBuilder._iter_py_files | 生成待扫描的 Python 文件列表（支持 Git 感知剪枝）。 | strict | ❌ Missing |
+| harbor.core.index.IndexBuilder._iter_py_files | — | strict | ❌ Missing |
 | harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
-| harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
-| harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
+| harbor.core.index.IndexBuilder.build | — | strict | ❌ Missing |
+| harbor.core.sync.SyncEngine.check_status | — | strict | ✅ Valid |
 | harbor.core.ci.checkpoint_ci_result_to_dict | — | strict | ❌ Missing |
 | harbor.core.ci.ci_result_to_dict | — | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
@@ -16,7 +16,7 @@
 | harbor.core.storage.HarborDB.get_all_files | 列出所有已索引文件及其 mtime。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_file | 查询单文件记录。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_file_entries | 查询指定文件的所有条目。 | strict | ❌ Missing |
-| harbor.core.index.IndexBuilder.iter_build | 以生成器方式构建索引，逐文件产出进度事件。 | strict | ❌ Missing |
+| harbor.core.index.IndexBuilder.iter_build | — | strict | ❌ Missing |
 | harbor.core.utils.iter_project_files | 生成待扫描的 Python 文件列表（统一剪枝逻辑）。 | strict | ❌ Missing |
 | harbor.core.diary.DiaryManager.log | 写入一条 DiaryEntry 到当月 JSONL。 | strict | ❌ Missing |
 | harbor.core.git_utils.GitIgnoreMatcher.match_dir | 判断相对路径目录是否被忽略（用于剪枝）。 | strict | ❌ Missing |

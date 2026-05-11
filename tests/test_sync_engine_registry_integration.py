@@ -26,6 +26,8 @@ def test_sync_engine_default_registry_python_only(tmp_path: Path, monkeypatch):
 
     assert eng.registry.is_enabled("python") is True
     assert eng.registry.is_enabled("typescript") is False
+    assert "adapter" not in eng.__dict__
+    assert eng.adapter is eng.registry.get_adapter("python")
     assert eng._iter_files_by_enabled_adapters() == eng._iter_py_files()
 
 

@@ -126,7 +126,6 @@ class IndexBuilder:
         self.registry = AdapterRegistry.from_config(cfg)
         self.cache_dir = cache_dir
         self.cache_file = self.cache_dir / "l3_index.json"
-        self.adapter = PythonAdapter()
         self.exclude_paths = cfg.get("exclude_paths", [])
         self.gitignore = GitIgnoreMatcher.from_root(cfg_excludes=self.exclude_paths)
         # Keep SQLite storage colocated with the selected cache directory so
@@ -137,6 +136,14 @@ class IndexBuilder:
             self.db.migrate_from_json(self.cache_file)
         except Exception:
             pass
+
+    @property
+    def adapter(self) -> PythonAdapter:
+        """Backward-compatible adapter accessor without instance hardcoding."""
+        adapter = self.registry.get_adapter("python")
+        if adapter is None:
+            raise RuntimeError("Python adapter is disabled in registry config")
+        return adapter
 
     def build(self, incremental: bool = True) -> IndexReport:
         """构建或增量更新 L3 索引到缓存。

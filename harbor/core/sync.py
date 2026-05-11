@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
-from harbor.adapters.python.parser import PythonAdapter, FunctionContract
+from harbor.adapters.python.parser import PythonAdapter
 from harbor.adapters.registry import AdapterRegistry
 from harbor.core.contract_presence import evaluate_contract_presence
 from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
@@ -56,7 +56,6 @@ class SyncEngine:
         self.config_path = config_path or resolve_workspace_config_path(Path.cwd())
         self.config = self._load_config(self.config_path)
         self.registry = AdapterRegistry.from_config(self.config)
-        self.adapter = PythonAdapter()
         self.code_roots = self.config.get("code_roots", ["harbor/**"])
         self.exclude_paths = self.config.get("exclude_paths", [])
         self.db = HarborDB(project_root=Path.cwd())
@@ -65,6 +64,13 @@ class SyncEngine:
             self.db.migrate_from_json(Path(".harbor") / "cache" / "l3_index.json")
         except Exception:
             pass
+
+    @property
+    def adapter(self) -> PythonAdapter:
+        adapter = self.registry.get_adapter("python")
+        if adapter is None:
+            raise RuntimeError("Python adapter is disabled in registry config")
+        return adapter
 
     def check_status(self) -> StatusReport:
         """对比缓存索引与当前代码，输出 Harbor 上下文状态。

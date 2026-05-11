@@ -32,6 +32,8 @@ def test_index_builder_default_registry_python_only(tmp_path: Path):
     assert builder.registry.is_enabled("python") is True
     assert builder.registry.is_enabled("typescript") is False
     assert builder.registry.get_enabled_languages() == ["python"]
+    assert "adapter" not in builder.__dict__
+    assert builder.adapter is builder.registry.get_adapter("python")
     assert builder._iter_files_by_enabled_adapters() == builder._iter_py_files()
 
 
