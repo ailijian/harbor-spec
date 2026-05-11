@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime, timezone
 import re
 import sys
 from pathlib import Path
@@ -71,6 +72,7 @@ from harbor.core.contract_impact import (
     build_contract_impact_report,
     format_contract_impact_report,
 )
+from harbor.core.change_window import write_change_window_snapshot
 from harbor.core.diary import DiaryManager
 from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
@@ -87,6 +89,18 @@ def main():
 
     Behavior:
       - `checkpoint` / `stale` / `doctor` support `--advice off|basic`.
+      - Successful `checkpoint` / `accept` / `finish` dispatch paths also attempt
+        to write lightweight change-window runtime snapshots under
+        `.harbor/state/change-windows/`.
+      - Change-window snapshots are runtime state only, not source of truth, and
+        provide evidence for future `harbor log draft` workflows.
+      - Snapshot write failure must not change the original command `exit_code`
+        or gate result.
+      - Snapshot write failure may append runtime-only diagnostics under
+        `.harbor/state/change-window-diagnostics.jsonl` without changing
+        normal CLI output.
+      - Change-window snapshots do not write Diary entries and do not
+        automatically execute `harbor log`.
       - `init` supports `--advice off|basic` and writes advice defaults into
         `.harbor/config/harbor.yaml` through initializer logic.
       - `checkpoint --ci` may emit TypeScript MVP advisory category
@@ -98,6 +112,8 @@ def main():
         LLM/provider calls.
       - Guidance is optional additive data and does not change
         `exit_code` / `ci_failures` / advisory gate semantics.
+      - Change-window snapshot support does not change `checkpoint` / `finish` /
+        `accept` gate semantics.
       - `harbor next` is read-only: does not write files, does not execute fix
         commands, does not call LLM, and does not accept baseline.
       - `--format json` outputs for CI/next commands remain a single JSON object
@@ -108,6 +124,19 @@ def main():
     Side Effects:
       - Depends on subcommand. Gate commands are read-only by contract; write
         commands such as `lock` / `log` / `docs --write` may write files.
+      - `checkpoint` / `accept` / `finish` may additionally write change-window
+        runtime state under `.harbor/state/change-windows/`.
+
+    Returns:
+      None: Dispatches the selected CLI command. Change-window snapshot writes
+      are additive runtime state only and do not change the original command
+      exit semantics. Snapshot write failures may append runtime-only
+      diagnostics under `.harbor/state/change-window-diagnostics.jsonl`.
+
+    Raises:
+      SystemExit: Propagates CLI parse failures and CI/gate exit codes from the
+      primary command flow. Snapshot write failures must not raise a different
+      exit outcome and must not surface as normal CLI output.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
@@ -639,6 +668,16 @@ def main():
                     print(t("cli.lock.register_adopted_hint"))
         except Exception:
             pass
+        return {
+            "scanned": scanned,
+            "updated": updated,
+            "skipped": skipped,
+            "items": items_total,
+            "code_roots": list(code_roots or []),
+            "cache_dir": str(cache_dir) if cache_dir is not None else None,
+            "no_incremental": bool(no_incremental),
+            "register_scan": bool(register_scan),
+        }
 
     def _run_status(*, verbose=False):
         console = Console()
@@ -713,6 +752,76 @@ def main():
         print("")
         print(format_contract_impact_report(report))
         print(t("cli.contract_impact.advisory_note"))
+
+    def _build_checkpoint_snapshot_summary(*, status_report, check_summary, ci_result=None):
+        counts = dict(getattr(status_report, "counts", {}) or {})
+        ddt_violations = int((check_summary or {}).get("ddt_violations", 0))
+        ci_failures = 0
+        if ci_result is not None:
+            status = str(getattr(ci_result, "status", "") or "pass").lower()
+            ci_failures = len(list(getattr(ci_result, "ci_failures", []) or []))
+        else:
+            blocking_count = (
+                int(counts.get("drift", 0))
+                + int(counts.get("modified", 0))
+                + int(counts.get("contract_changed", 0))
+                + int(counts.get("contract_gap", 0))
+                + int(counts.get("contract_parse_error", 0))
+                + int(counts.get("untracked", 0))
+                + int(counts.get("missing", 0))
+                + ddt_violations
+            )
+            status = "fail" if blocking_count > 0 else "pass"
+            ci_failures = blocking_count
+        summary = {
+            "status": status,
+            "pass_fail": status,
+            "counts": counts,
+            "ci_failures": ci_failures,
+            "ddt_violations": ddt_violations,
+        }
+        if check_summary:
+            summary["check"] = dict(check_summary)
+        return summary
+
+    def _write_change_window_snapshot_safe(event, *, summary=None, validation=None, notes=None):
+        try:
+            write_change_window_snapshot(
+                event,
+                summary=summary or {},
+                validation=validation or {},
+                notes=notes or [],
+                repo_root=Path.cwd(),
+            )
+        except Exception as exc:
+            try:
+                repo_root = Path.cwd()
+                try:
+                    workspace_paths = load_workspace_paths(repo_root, enforce_write_safety=True)
+                    state_root = workspace_paths.state_root
+                except Exception:
+                    state_root = repo_root / ".harbor" / "state"
+                diagnostics_path = state_root / "change-window-diagnostics.jsonl"
+                intended_state_dir = state_root / "change-windows"
+                diagnostics_path.parent.mkdir(parents=True, exist_ok=True)
+                command_context = None
+                if isinstance(validation, dict):
+                    command_context = str(validation.get("command") or "").strip() or None
+                if command_context is None:
+                    command_context = str(event or "").strip() or None
+                record = {
+                    "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "event": str(event or "").strip().lower(),
+                    "error_type": type(exc).__name__,
+                    "error_message": str(exc),
+                    "cwd": repo_root.as_posix(),
+                    "intended_state_dir": intended_state_dir.as_posix(),
+                    "command_context": command_context,
+                }
+                with diagnostics_path.open("a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
+            except Exception:
+                pass
 
     def _run_check(*, fast=False, module=None, func=None, diff_only=True, debug=False, output_format="jsonl", verbose=False):
         scanner = DDTScanner()
@@ -1270,7 +1379,7 @@ def main():
     if args.command in ("lock", "accept"):
         code_roots = args.code_root if args.command == "lock" else None
         cache_dir = Path(args.cache_dir) if args.command == "lock" and args.cache_dir else None
-        _run_lock(
+        lock_summary = _run_lock(
             code_roots=code_roots,
             cache_dir=cache_dir,
             no_incremental=getattr(args, "no_incremental", False),
@@ -1279,6 +1388,18 @@ def main():
         )
         if args.command == "accept":
             print(t("cli.accept.done"))
+            _write_change_window_snapshot_safe(
+                "accept",
+                summary={
+                    "accepted": True,
+                    "baseline_alias": "lock",
+                    "counts": lock_summary,
+                },
+                validation={
+                    "command": "accept",
+                    "success": True,
+                },
+            )
     elif args.command == "start":
         print(t("cli.start.title"))
         _, clean = _run_status(verbose=False)
@@ -1294,7 +1415,20 @@ def main():
             rep, clean = _run_status(verbose=False)
             if not clean:
                 _print_checkpoint_contract_impact(rep)
-            _run_check(fast=True, verbose=False)
+            check_summary = _run_check(fast=True, verbose=False)
+            _write_change_window_snapshot_safe(
+                "checkpoint",
+                summary=_build_checkpoint_snapshot_summary(
+                    status_report=rep,
+                    check_summary=check_summary,
+                ),
+                validation={
+                    "command": "checkpoint",
+                    "ci": False,
+                    "status_counts": dict(getattr(rep, "counts", {}) or {}),
+                    "check": dict(check_summary),
+                },
+            )
         else:
             advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
             check_errors = []
@@ -1326,6 +1460,27 @@ def main():
                 print(json.dumps(checkpoint_ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
             else:
                 print(format_checkpoint_ci_result(ci_result))
+            _write_change_window_snapshot_safe(
+                "checkpoint",
+                summary=_build_checkpoint_snapshot_summary(
+                    status_report=status_report,
+                    check_summary={
+                        "ddt_violations": len(list(getattr(ddt_report, "violations", []) or [])),
+                        "ddt_advisory": len(list(getattr(ddt_report, "advisory", []) or [])),
+                    },
+                    ci_result=ci_result,
+                ),
+                validation={
+                    "command": "checkpoint",
+                    "ci": True,
+                    "format": args.format,
+                    "exit_code": int(getattr(ci_result, "exit_code", 0)),
+                    "status": getattr(ci_result, "status", None),
+                    "check_errors": list(check_errors),
+                    "ci_failures": len(list(getattr(ci_result, "ci_failures", []) or [])),
+                    "advisory": len(list(getattr(ci_result, "advisory", []) or [])),
+                },
+            )
             if ci_result.exit_code != 0:
                 raise SystemExit(ci_result.exit_code)
     elif args.command == "next":
@@ -1428,6 +1583,21 @@ def main():
                 _run_module_stale_changed(modules=changed_modules)
             print("")
             print(t("cli.finish.sync_context.next_steps"))
+        _write_change_window_snapshot_safe(
+            "finish",
+            summary={
+                "sync_context": bool(getattr(args, "sync_context", False)),
+                "blocking": blocking_count > 0,
+                "blocking_count": blocking_count,
+                "check": dict(check_summary),
+            },
+            validation={
+                "command": "finish",
+                "sync_context": bool(getattr(args, "sync_context", False)),
+                "status_counts": dict(getattr(status_report, "counts", {}) or {}),
+                "check": dict(check_summary),
+            },
+        )
     elif args.command == "config" and args.cfg_cmd == "list":
         data = _load_cfg_data_safe()
         code_roots = data.get("code_roots", ["harbor/**"])

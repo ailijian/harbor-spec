@@ -1,0 +1,21 @@
+﻿{
+  "advisory": [],
+  "ci": true,
+  "ci_failures": [],
+  "command": "doctor",
+  "exit_code": 0,
+  "next_steps": [
+    "harbor stale",
+    "harbor doctor"
+  ],
+  "status": "pass",
+  "summary": {
+    "checks_total": 5,
+    "fail": 0,
+    "pass": 5,
+    "scope": "变更模块",
+    "skip": 0,
+    "warn": 0
+  },
+  "writes_files": false
+}

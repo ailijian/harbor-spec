@@ -23,6 +23,11 @@ def _force_en_locale(monkeypatch):
     monkeypatch.setenv("HARBOR_LANGUAGE", "en")
 
 
+@pytest.fixture(autouse=True)
+def _disable_change_window_writes(monkeypatch):
+    monkeypatch.setattr(cli_main, "write_change_window_snapshot", lambda *args, **kwargs: None)
+
+
 def run_cmd(argv):
     out = StringIO()
     err = StringIO()

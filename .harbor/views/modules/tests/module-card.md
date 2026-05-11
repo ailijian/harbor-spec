@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-11T07:32:15Z"
+generated_at: "2026-05-11T10:24:35Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 83
+source_path_count: 87
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -19,6 +19,7 @@ source_paths:
   - "tests/test_adopted_roots.py"
   - "tests/test_audit.py"
   - "tests/test_cache_isolation_hardening.py"
+  - "tests/test_change_window_snapshot.py"
   - "tests/test_checkpoint_ci.py"
   - "tests/test_checkpoint_ci_guidance.py"
   - "tests/test_checkpoint_json_additive_compat.py"
@@ -75,6 +76,8 @@ source_paths:
   - "tests/test_module_skill.py"
   - "tests/test_project_structure.py"
   - "tests/test_python_adapter_compat.py"
+  - "tests/test_python_audit_regression.py"
+  - "tests/test_python_ddt_regression.py"
   - "tests/test_release_packaging.py"
   - "tests/test_repair_guidance.py"
   - "tests/test_semantic_audit_contract_gap.py"
@@ -85,6 +88,7 @@ source_paths:
   - "tests/test_typescript_checkpoint_ci.py"
   - "tests/test_typescript_contract_presence.py"
   - "tests/test_typescript_next_guidance.py"
+  - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_workspace_gitignore_policy.py"
@@ -92,11 +96,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:3035e9682af11cf9c7b641ceb3adad73ba3bfdf88bb877069a5d512af1336307"
-contract_fingerprint: "sha256:8f352061c31ca83ddff8dc6a640e9c51083e77c6d480d259c54e8bb2858fb040"
+source_fingerprint: "sha256:26a2932ccb1f35054e92a9cc2ced592e04642ee9014b156414aecd7f4206bee9"
+contract_fingerprint: "sha256:ccd959339f435f76a89c3aac8b11e344ba68465726f5603c88f90ecdf7709ebd"
 generator_fingerprint: "sha256:6633775ec4612993005fe721f29ed17a159d913015ba7775ccd1a2b119fa0b85"
-view_fingerprint: "6ea13f3e7f9b53c186e40796f07fff901961c8e7e28d29e89e77bb4b817c74e0"
-fingerprint: "6ea13f3e7f9b53c186e40796f07fff901961c8e7e28d29e89e77bb4b817c74e0"
+view_fingerprint: "ad65bfe713c0d4a47abe28f6a0ca43d47ab56bce9804467d086dd206690d0e67"
+fingerprint: "ad65bfe713c0d4a47abe28f6a0ca43d47ab56bce9804467d086dd206690d0e67"
 ---
 
 # Module Card: tests
@@ -127,6 +131,7 @@ tests/test_adapter_registry.py
 tests/test_adopted_roots.py
 tests/test_audit.py
 tests/test_cache_isolation_hardening.py
+tests/test_change_window_snapshot.py
 tests/test_checkpoint_ci.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_checkpoint_json_additive_compat.py
@@ -183,6 +188,8 @@ tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
 tests/test_python_adapter_compat.py
+tests/test_python_audit_regression.py
+tests/test_python_ddt_regression.py
 tests/test_release_packaging.py
 tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
@@ -193,6 +200,7 @@ tests/test_typescript_adapter_mvp.py
 tests/test_typescript_checkpoint_ci.py
 tests/test_typescript_contract_presence.py
 tests/test_typescript_next_guidance.py
+tests/test_typescript_not_supported_boundaries.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_workspace_gitignore_policy.py
@@ -231,8 +239,24 @@ tests/test_workspace_paths.py
 | tests.test_cache_isolation_hardening.test_docs_all_external_only_index_is_isolated | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening.test_external_temp_paths_only_land_in_isolated_workspace_index | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening.test_index_builder_uses_isolated_cache_dir_without_touching_repo_cache | tests/test_cache_isolation_hardening.py | unknown | standard |
+| tests.test_change_window_snapshot._contract_report | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._ddt_report | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._init_git_repo | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._run_cli | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._run_git | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._status_entry | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._status_report | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_accept_and_finish_invoke_snapshot_events | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_bad_json_snapshot_is_skipped_with_warning | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_checkpoint_ci_snapshot_write_failure_does_not_change_exit_code | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_checkpoint_ci_writes_snapshot_without_changing_pass_semantics | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_list_change_windows_sorts_newest_first_and_get_latest_filters_event | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_retention_keeps_latest_fifty_snapshots | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_snapshot_does_not_store_file_content_or_diff_body | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot.test_write_snapshot_creates_json_with_required_schema | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_checkpoint_ci._contract_report | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci._ddt_report | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci._disable_change_window_writes | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci._force_en_locale | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci._patch_checkpoint_inputs | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci._status_entry | tests/test_checkpoint_ci.py | unknown | standard |
@@ -279,6 +303,7 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_json_additive_compat.test_python_checkpoint_pass_fail_semantics_unchanged | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
 | tests.test_checkpoint_json_additive_compat.test_python_method_symbol_kind_and_func_id_stay_compatible | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
 | tests.test_checkpoint_json_additive_compat.test_typescript_contract_subject_json_has_task6a_ready_fields | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_ci_mode._disable_change_window_writes | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode._force_en_locale | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode._stale_summary | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.run_cmd | tests/test_ci_mode.py | unknown | standard |
@@ -328,6 +353,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_doctor.test_doctor_module_mode_runs | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_text_output_includes_legacy_diary_advisory | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_text_output_uses_unknown_for_no_indexed_records | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_finish_sync_context._disable_change_window_writes | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_status_report | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_validation_report | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._force_en_locale | tests/test_cli_finish_sync_context.py | unknown | standard |
@@ -700,6 +726,11 @@ tests/test_workspace_paths.py
 | tests.test_python_adapter_compat.test_no_docstring_maps_to_empty_contract_sources | tests/test_python_adapter_compat.py | unknown | standard |
 | tests.test_python_adapter_compat.test_python_adapter_parse_file_behavior_unchanged | tests/test_python_adapter_compat.py | unknown | standard |
 | tests.test_python_adapter_compat.test_target_id_uses_python_file_symbol_qualified_name_rule | tests/test_python_adapter_compat.py | unknown | standard |
+| tests.test_python_audit_regression.test_python_semantic_audit_mismatch_mapping_unchanged | tests/test_python_audit_regression.py | unknown | standard |
+| tests.test_python_audit_regression.test_python_semantic_audit_still_calls_provider_and_returns_ok | tests/test_python_audit_regression.py | unknown | standard |
+| tests.test_python_ddt_regression._write | tests/test_python_ddt_regression.py | unknown | standard |
+| tests.test_python_ddt_regression.test_python_ddt_strict_forbids_latest_and_strict_version_stays_valid | tests/test_python_ddt_regression.py | unknown | standard |
+| tests.test_python_ddt_regression.test_typescript_binding_is_advisory_and_does_not_change_python_rules | tests/test_python_ddt_regression.py | unknown | standard |
 | tests.test_release_packaging._force_en_locale | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging._repo_root | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging._run_help | tests/test_release_packaging.py | unknown | standard |
@@ -753,6 +784,7 @@ tests/test_workspace_paths.py
 | tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_standard_build_directories | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_tsx_js_jsx_dts | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_discover_files_default_only_ts | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_malformed_parse_does_not_poison_followup_file_parse | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
@@ -792,6 +824,15 @@ tests/test_workspace_paths.py
 | tests.test_typescript_next_guidance.test_next_explains_typescript_contract_gap | tests/test_typescript_next_guidance.py | unknown | standard |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_skipped_no_contract | tests/test_typescript_next_guidance.py | unknown | standard |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_unsupported_syntax_advisory | tests/test_typescript_next_guidance.py | unknown | standard |
+| tests.test_typescript_not_supported_boundaries._empty_contract_report | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
+| tests.test_typescript_not_supported_boundaries._empty_ddt_report | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
+| tests.test_typescript_not_supported_boundaries.test_non_function_typescript_targets_do_not_enter_blocking_checkpoint | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
+| tests.test_typescript_not_supported_boundaries.test_python_audit_provider_behavior_unchanged | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
+| tests.test_typescript_not_supported_boundaries.test_python_ddt_strict_and_latest_rules_unchanged | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
+| tests.test_typescript_not_supported_boundaries.test_typescript_adapter_discover_only_ts_and_excludes_js_family | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
+| tests.test_typescript_not_supported_boundaries.test_typescript_ddt_binding_is_advisory_not_supported | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
+| tests.test_typescript_not_supported_boundaries.test_typescript_semantic_audit_is_skipped_without_contract_presence_or_ast | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
+| tests.test_typescript_not_supported_boundaries.test_typescript_unsupported_syntax_advisory_remains_non_blocking | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
 | tests.test_utils_format.test_format_size_bytes | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_kb | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_mb | tests/test_utils_format.py | unknown | standard |
@@ -851,6 +892,7 @@ tests/test_adapter_registry.py
 tests/test_adopted_roots.py
 tests/test_audit.py
 tests/test_cache_isolation_hardening.py
+tests/test_change_window_snapshot.py
 tests/test_checkpoint_ci.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_checkpoint_json_additive_compat.py
@@ -907,6 +949,8 @@ tests/test_module_capsule_stale.py
 tests/test_module_skill.py
 tests/test_project_structure.py
 tests/test_python_adapter_compat.py
+tests/test_python_audit_regression.py
+tests/test_python_ddt_regression.py
 tests/test_release_packaging.py
 tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
@@ -917,6 +961,7 @@ tests/test_typescript_adapter_mvp.py
 tests/test_typescript_checkpoint_ci.py
 tests/test_typescript_contract_presence.py
 tests/test_typescript_next_guidance.py
+tests/test_typescript_not_supported_boundaries.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_workspace_gitignore_policy.py

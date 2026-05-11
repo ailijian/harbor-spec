@@ -1,0 +1,88 @@
+﻿{
+  "advisory": [
+    {
+      "category": "ddt_version_baseline_missing",
+      "file_path": "tests/test_sync_engine.py",
+      "func_id": "harbor.core.sync.SyncEngine.check_status",
+      "guidance": {
+        "anti_action": "Do not blindly bump l3_version. Do not run harbor accept automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review baseline state before deciding whether l3_version should be changed.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-ddt-diary",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": true,
+        "what_happened": "Strict DDT binding is structurally valid, but no L3 contract version baseline was found."
+      },
+      "reason": "严格 DDT 绑定格式有效，但未找到 L3 契约版本基线，无法判断 l3_version 是否需要升级。请在人工复核后建立或接受基线。",
+      "suggested_action": "请先初始化并复核基线后运行 harbor checkpoint，再确认是否需要升级 l3_version，最后再考虑 harbor accept。"
+    },
+    {
+      "category": "ddt_version_baseline_missing",
+      "file_path": "tests/test_utils_format.py",
+      "func_id": "harbor.utils.formatting.format_size",
+      "guidance": {
+        "anti_action": "Do not blindly bump l3_version. Do not run harbor accept automatically.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Review baseline state before deciding whether l3_version should be changed.",
+        "risk_level": "medium",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-ddt-diary",
+        "suggested_validation": [
+          "harbor check --format jsonl",
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": true,
+        "what_happened": "Strict DDT binding is structurally valid, but no L3 contract version baseline was found."
+      },
+      "reason": "严格 DDT 绑定格式有效，但未找到 L3 契约版本基线，无法判断 l3_version 是否需要升级。请在人工复核后建立或接受基线。",
+      "suggested_action": "请先初始化并复核基线后运行 harbor checkpoint，再确认是否需要升级 l3_version，最后再考虑 harbor accept。"
+    }
+  ],
+  "ci": true,
+  "ci_failures": [],
+  "command": "checkpoint",
+  "contract_impact": {
+    "advisory": true,
+    "categories": [],
+    "deterministic": true,
+    "findings": [],
+    "level": "no_contract_impact",
+    "notable_findings": [],
+    "summary_counts": {
+      "confirmed_contract_impact": 0,
+      "no_contract_impact": 0,
+      "possible_contract_impact": 0,
+      "unknown": 0
+    }
+  },
+  "exit_code": 0,
+  "next_steps": [
+    "Checkpoint CI 门禁已通过。",
+    "请重新运行 harbor checkpoint --ci。"
+  ],
+  "status": "pass",
+  "summary": {
+    "confirmed_contract_impact": 0,
+    "contract_changed": 0,
+    "contract_gap": 0,
+    "contract_parse_error": 0,
+    "ddt_advisory": 5,
+    "ddt_failures": 0,
+    "drift": 0,
+    "missing": 0,
+    "modified": 0,
+    "possible_contract_impact": 0,
+    "skipped_no_contract": 0,
+    "untracked": 0
+  },
+  "writes_files": false
+}

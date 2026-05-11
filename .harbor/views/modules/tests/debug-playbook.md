@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.3.2"
 view_type: "debug_playbook"
 module: "tests"
-generated_at: "2026-05-11T07:32:15Z"
+generated_at: "2026-05-11T10:24:35Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 83
+source_path_count: 87
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -19,6 +19,7 @@ source_paths:
   - "tests/test_adopted_roots.py"
   - "tests/test_audit.py"
   - "tests/test_cache_isolation_hardening.py"
+  - "tests/test_change_window_snapshot.py"
   - "tests/test_checkpoint_ci.py"
   - "tests/test_checkpoint_ci_guidance.py"
   - "tests/test_checkpoint_json_additive_compat.py"
@@ -75,6 +76,8 @@ source_paths:
   - "tests/test_module_skill.py"
   - "tests/test_project_structure.py"
   - "tests/test_python_adapter_compat.py"
+  - "tests/test_python_audit_regression.py"
+  - "tests/test_python_ddt_regression.py"
   - "tests/test_release_packaging.py"
   - "tests/test_repair_guidance.py"
   - "tests/test_semantic_audit_contract_gap.py"
@@ -85,6 +88,7 @@ source_paths:
   - "tests/test_typescript_checkpoint_ci.py"
   - "tests/test_typescript_contract_presence.py"
   - "tests/test_typescript_next_guidance.py"
+  - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_workspace_gitignore_policy.py"
@@ -92,8 +96,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:3035e9682af11cf9c7b641ceb3adad73ba3bfdf88bb877069a5d512af1336307"
-contract_fingerprint: "sha256:8f352061c31ca83ddff8dc6a640e9c51083e77c6d480d259c54e8bb2858fb040"
+source_fingerprint: "sha256:26a2932ccb1f35054e92a9cc2ced592e04642ee9014b156414aecd7f4206bee9"
+contract_fingerprint: "sha256:ccd959339f435f76a89c3aac8b11e344ba68465726f5603c88f90ecdf7709ebd"
 generator_fingerprint: "sha256:a2c1380dafac0b0368e15e107b95d1b11a2059054d9af3003939122f8e5815a1"
 ---
 
