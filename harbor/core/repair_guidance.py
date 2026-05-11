@@ -79,9 +79,28 @@ def generic_conservative_guidance(*, what_happened: str = "This item requires co
     )
 
 
-def guidance_for_checkpoint_category(category: str) -> RepairGuidance:
+def guidance_for_checkpoint_category(category: str, *, language: Optional[str] = None) -> RepairGuidance:
     cat = str(category or "").strip()
+    lang = str(language or "").strip().lower()
     if cat == "contract_gap":
+        if lang == "typescript":
+            return RepairGuidance(
+                what_happened="This TypeScript target requires a contract source, but no contract-like JSDoc/TSDoc was found.",
+                recommended_action=(
+                    "Add an adjacent JSDoc/TSDoc contract source for the target, or reclassify the target as "
+                    "internal/light if strict contract is not required."
+                ),
+                anti_action="TypeScript signature alone does not satisfy strict semantic contract requirements.",
+                suggested_skill="harbor-contract-change",
+                suggested_validation=[
+                    "harbor checkpoint --ci --format json",
+                ],
+                decision_required=False,
+                safe_to_auto_fix=False,
+                automation_policy="plan_only",
+                user_feedback_required=False,
+                risk_level="medium",
+            )
         return RepairGuidance(
             what_happened="This target requires a contract, but no valid contract source was found.",
             recommended_action="Inspect the target and add/update a Harbor contract docstring or equivalent contract source.",
@@ -216,6 +235,18 @@ def guidance_for_checkpoint_category(category: str) -> RepairGuidance:
             risk_level="medium",
         )
     if cat == "skipped_no_contract":
+        if lang == "typescript":
+            return RepairGuidance(
+                what_happened="This TypeScript target is currently classified as contract-not-required.",
+                recommended_action="No action is required unless contract_required classification is incorrect.",
+                suggested_skill=None,
+                suggested_validation=["harbor checkpoint --ci --format json"],
+                decision_required=False,
+                safe_to_auto_fix=False,
+                automation_policy="plan_only",
+                user_feedback_required=False,
+                risk_level="low",
+            )
         return RepairGuidance(
             what_happened="This target does not require a contract, so semantic audit was skipped.",
             recommended_action=(
@@ -223,6 +254,22 @@ def guidance_for_checkpoint_category(category: str) -> RepairGuidance:
                 "classification looks wrong."
             ),
             suggested_skill=None,
+            suggested_validation=["harbor checkpoint --ci --format json"],
+            decision_required=False,
+            safe_to_auto_fix=False,
+            automation_policy="plan_only",
+            user_feedback_required=False,
+            risk_level="low",
+        )
+    if cat == "unsupported_syntax_advisory":
+        return RepairGuidance(
+            what_happened="TypeScript lightweight parser could not safely classify this target.",
+            recommended_action=(
+                "Simplify the export form to the supported MVP patterns, or keep this as advisory and "
+                "wait for a future AST backend/framework preset."
+            ),
+            anti_action="Do not force this into contract_parse_error or blocking gate in v1.4.0 MVP.",
+            suggested_skill="harbor-contract-change",
             suggested_validation=["harbor checkpoint --ci --format json"],
             decision_required=False,
             safe_to_auto_fix=False,

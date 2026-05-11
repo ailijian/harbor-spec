@@ -89,7 +89,11 @@ def main():
       - `checkpoint` / `stale` / `doctor` support `--advice off|basic`.
       - `init` supports `--advice off|basic` and writes advice defaults into
         `.harbor/config/harbor.yaml` through initializer logic.
+      - `checkpoint --ci` may emit TypeScript MVP advisory category
+        `unsupported_syntax_advisory` as non-blocking output.
       - `next --from <report.json>` supports `--format text|json`.
+      - `next` guidance generation for checkpoint items is language-aware
+        (for example, TypeScript categories use deterministic TS-specific advice).
       - Guidance for `--advice basic` is deterministic metadata and does not use
         LLM/provider calls.
       - Guidance is optional additive data and does not change
@@ -108,6 +112,9 @@ def main():
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: once
+    @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance
+      (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without
+      auto-fix and without changing CI gate semantics.
     """
     try:
         from dotenv import load_dotenv
@@ -668,6 +675,14 @@ def main():
             print("\nContract Parse Error")
             for e in rep.contract_parse_error:
                 print(f"  E {e.id} ({e.details})")
+        if getattr(rep, "unsupported_syntax_advisory", []):
+            count = len(list(getattr(rep, "unsupported_syntax_advisory", []) or []))
+            print(f"\nUnsupported Syntax Advisory: {count}")
+            if verbose:
+                for e in rep.unsupported_syntax_advisory:
+                    print(f"  U {e.id} ({e.details})")
+            else:
+                print(f"  {t('cli.common.use_verbose_details')}")
         if rep.modified:
             print(f"\n{t('cli.status.modified')}")
             for e in rep.modified:
@@ -871,6 +886,7 @@ def main():
                 "contract_gap": [],
                 "skipped_no_contract": [],
                 "contract_parse_error": [],
+                "unsupported_syntax_advisory": [],
                 "untracked": [],
                 "missing": [],
                 "counts": {
@@ -880,6 +896,7 @@ def main():
                     "contract_gap": 0,
                     "skipped_no_contract": 0,
                     "contract_parse_error": 0,
+                    "unsupported_syntax_advisory": 0,
                     "untracked": 0,
                     "missing": 0,
                 },
@@ -901,6 +918,7 @@ def main():
         records.extend(getattr(rep, "contract_gap", []))
         records.extend(getattr(rep, "skipped_no_contract", []))
         records.extend(getattr(rep, "contract_parse_error", []))
+        records.extend(getattr(rep, "unsupported_syntax_advisory", []))
         records.extend(getattr(rep, "untracked", []))
         records.extend(getattr(rep, "missing", []))
         return records
@@ -913,6 +931,7 @@ def main():
         changed_paths.extend([e.file_path for e in getattr(rep, "contract_gap", [])])
         changed_paths.extend([e.file_path for e in getattr(rep, "skipped_no_contract", [])])
         changed_paths.extend([e.file_path for e in getattr(rep, "contract_parse_error", [])])
+        changed_paths.extend([e.file_path for e in getattr(rep, "unsupported_syntax_advisory", [])])
         changed_paths.extend([e.file_path for e in rep.untracked])
         changed_paths.extend([e.file_path for e in rep.missing])
         return changed_paths
@@ -1183,7 +1202,10 @@ def main():
             if isinstance(existing, dict):
                 guidance_payload = existing
             elif source_command == "checkpoint":
-                guidance_payload = guidance_for_checkpoint_category(str(item.get("category") or "unknown")).to_dict()
+                guidance_payload = guidance_for_checkpoint_category(
+                    str(item.get("category") or "unknown"),
+                    language=str(item.get("language") or ""),
+                ).to_dict()
             elif source_command == "stale":
                 generated = guidance_for_stale_item(
                     kind=item.get("kind"),

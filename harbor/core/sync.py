@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -22,6 +22,10 @@ class StatusEntry:
     file_path: str
     change_type: str
     details: str
+    target_id: Optional[str] = None
+    language: Optional[str] = None
+    symbol_kind: Optional[str] = None
+    adapter: Optional[str] = None
 
 
 @dataclass
@@ -30,7 +34,8 @@ class StatusReport:
 
     字段说明:
       - drift/modified/contract_changed: 契约与实现差异主分类。
-      - contract_gap/skipped_no_contract/contract_parse_error: 契约可用性分类。
+      - contract_gap/skipped_no_contract/unsupported_syntax_advisory/contract_parse_error:
+        契约可用性分类。
       - untracked/missing: 索引与当前代码集合差异。
       - counts: 各分类计数字典，键与上述字段同名。
     """
@@ -43,6 +48,7 @@ class StatusReport:
     untracked: List[StatusEntry]
     missing: List[StatusEntry]
     counts: Dict[str, int]
+    unsupported_syntax_advisory: List[StatusEntry] = field(default_factory=list)
 
 
 class SyncEngine:
@@ -90,7 +96,7 @@ class SyncEngine:
         Returns:
           StatusReport: 包含各类状态分组与计数；文件集合经 AdapterRegistry 门控后仍按 Python-only
             语义生成 drift/modified/contract_changed/contract_gap/skipped_no_contract/
-            contract_parse_error/untracked/missing 分类。
+            unsupported_syntax_advisory/contract_parse_error/untracked/missing 分类。
 
         Raises:
           Exception: 可能透传文件系统读取、源码解析或存储层异常；该方法不会统一包装异常类型。
@@ -100,6 +106,7 @@ class SyncEngine:
         contract_changed: List[StatusEntry] = []
         contract_gap: List[StatusEntry] = []
         skipped_no_contract: List[StatusEntry] = []
+        unsupported_syntax_advisory: List[StatusEntry] = []
         contract_parse_error: List[StatusEntry] = []
         untracked: List[StatusEntry] = []
         missing: List[StatusEntry] = []
@@ -108,6 +115,55 @@ class SyncEngine:
         files = self._iter_files_by_enabled_adapters()
         for p in files:
             fp = str(p.as_posix())
+            if self._is_typescript_path(fp):
+                ts_adapter = self.registry.get_adapter("typescript")
+                if ts_adapter is None:
+                    continue
+                try:
+                    subjects = list(ts_adapter.parse_file(fp))
+                except Exception:
+                    continue
+                for subject in subjects:
+                    entry_id = str(subject.legacy_func_id or subject.target_id or "").strip()
+                    entry_name = str(subject.qualified_name or "").strip()
+                    common_kwargs = {
+                        "id": entry_id,
+                        "name": entry_name,
+                        "file_path": fp,
+                        "target_id": str(subject.target_id or "").strip() or None,
+                        "language": str(subject.language or "typescript").strip().lower(),
+                        "symbol_kind": str(subject.symbol_kind or "").strip().lower() or None,
+                        "adapter": "typescript",
+                    }
+                    presence = str(subject.contract_presence or "missing")
+                    if presence == "unsupported_syntax":
+                        unsupported_syntax_advisory.append(
+                            StatusEntry(
+                                change_type="Unsupported Syntax Advisory",
+                                details="TypeScript MVP parser could not safely classify this target.",
+                                **common_kwargs,
+                            )
+                        )
+                        continue
+                    if presence in {"missing", "non_contract_doc"}:
+                        required = bool(subject.contract_required)
+                        if required:
+                            contract_gap.append(
+                                StatusEntry(
+                                    change_type="Contract Gap",
+                                    details="Required TypeScript contract source is missing or not contract-like.",
+                                    **common_kwargs,
+                                )
+                            )
+                        else:
+                            skipped_no_contract.append(
+                                StatusEntry(
+                                    change_type="Skipped No Contract",
+                                    details="No contract required for this TypeScript target; semantic comparison skipped.",
+                                    **common_kwargs,
+                                )
+                            )
+                continue
             current_paths.append(fp)
             disk_mtime = p.stat().st_mtime
             db_meta = self.db.get_file(fp)
@@ -209,6 +265,8 @@ class SyncEngine:
         db_files = [path for path, _ in self.db.get_all_files()]
         rel_current_set = set(self.db._posix_rel(fp) for fp in current_paths)
         for db_fp in db_files:
+            if not str(db_fp).endswith(".py"):
+                continue
             if db_fp not in rel_current_set:
                 for it in self.db.get_file_entries(db_fp):
                     missing.append(StatusEntry(id=it.get("id", ""), name=it.get("meta", {}).get("name", ""), file_path=db_fp, change_type="Missing", details="File removed"))
@@ -219,6 +277,7 @@ class SyncEngine:
             "contract_changed": len(contract_changed),
             "contract_gap": len(contract_gap),
             "skipped_no_contract": len(skipped_no_contract),
+            "unsupported_syntax_advisory": len(unsupported_syntax_advisory),
             "contract_parse_error": len(contract_parse_error),
             "untracked": len(untracked),
             "missing": len(missing),
@@ -229,6 +288,7 @@ class SyncEngine:
             contract_changed=contract_changed,
             contract_gap=contract_gap,
             skipped_no_contract=skipped_no_contract,
+            unsupported_syntax_advisory=unsupported_syntax_advisory,
             contract_parse_error=contract_parse_error,
             untracked=untracked,
             missing=missing,
@@ -247,7 +307,40 @@ class SyncEngine:
         return iter_project_files(self.code_roots, self.exclude_paths)
 
     def _iter_files_by_enabled_adapters(self) -> List[Path]:
-        # Task 2C keeps Python-only behavior while routing discovery through registry.
-        if not self.registry.is_enabled("python"):
-            return []
-        return self._iter_py_files()
+        files: List[Path] = []
+        if self.registry.is_enabled("python"):
+            files.extend(self._iter_py_files())
+        if self.registry.is_enabled("typescript"):
+            adapter = self.registry.get_adapter("typescript")
+            if adapter is not None:
+                try:
+                    files.extend(adapter.discover_files(self._iter_code_roots()))
+                except Exception:
+                    pass
+
+        dedup: Dict[str, Path] = {}
+        for path in files:
+            dedup[path.resolve().as_posix()] = path.resolve()
+        return [dedup[key] for key in sorted(dedup.keys())]
+
+    def _iter_code_roots(self) -> List[Path]:
+        roots: Dict[str, Path] = {}
+        cwd = Path.cwd()
+        for raw in self.code_roots:
+            token = str(raw or "").strip()
+            if not token:
+                continue
+            if any(ch in token for ch in ("*", "?", "[")):
+                for matched in cwd.glob(token):
+                    roots[matched.resolve().as_posix()] = matched.resolve()
+                continue
+            path = Path(token)
+            if not path.is_absolute():
+                path = (cwd / path)
+            roots[path.resolve().as_posix()] = path.resolve()
+        return [roots[key] for key in sorted(roots.keys())]
+
+    @staticmethod
+    def _is_typescript_path(path_text: str) -> bool:
+        normalized = str(path_text or "").strip().lower()
+        return normalized.endswith(".ts") and not normalized.endswith(".d.ts")

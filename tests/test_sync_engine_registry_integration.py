@@ -52,8 +52,8 @@ def test_sync_engine_file_discovery_matches_python_only_when_ts_enabled(tmp_path
 
     assert eng.registry.is_enabled("python") is True
     assert eng.registry.is_enabled("typescript") is True
-    assert len(files) == 1
-    assert files[0].suffix == ".py"
+    assert len(files) == 2
+    assert {item.suffix for item in files} == {".py", ".ts"}
 
 
 def test_typescript_enabled_unavailable_does_not_affect_python_status(tmp_path: Path, monkeypatch):
@@ -80,7 +80,17 @@ def test_typescript_enabled_unavailable_does_not_affect_python_status(tmp_path: 
             """
         ).strip(),
     )
-    _write(code_root / "ignored.ts", "export const ignored = true;\n")
+    _write(
+        code_root / "ignored.ts",
+        textwrap.dedent(
+            """
+            /**
+             * @returns {boolean}
+             */
+            export const ignored = () => true;
+            """
+        ).strip(),
+    )
 
     builder = IndexBuilder(code_roots=[str(code_root)], cache_dir=tmp_path / ".harbor" / "cache")
     builder.build(incremental=True)

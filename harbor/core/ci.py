@@ -319,9 +319,47 @@ def build_checkpoint_ci_result(
                 language=identity["language"],
                 symbol_kind=identity["symbol_kind"],
                 adapter=identity["adapter"],
-                reason=t("cli.ci.checkpoint.failure.skipped_no_contract"),
+                reason=_checkpoint_reason_for_entry(
+                    category="skipped_no_contract",
+                    default_reason=t("cli.ci.checkpoint.failure.skipped_no_contract"),
+                    entry=entry,
+                ),
                 suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
-                guidance=guidance_for_checkpoint_category("skipped_no_contract") if settings.enabled else None,
+                guidance=(
+                    guidance_for_checkpoint_category("skipped_no_contract", language=identity["language"])
+                    if settings.enabled
+                    else None
+                ),
+            )
+        )
+    for entry in list(getattr(status_report, "unsupported_syntax_advisory", []) or []):
+        identity = _derive_checkpoint_identity(
+            func_id=str(getattr(entry, "id", "") or ""),
+            file_path=str(getattr(entry, "file_path", "") or ""),
+            source=entry,
+            default_language="python",
+            default_adapter="python",
+        )
+        advisory.append(
+            CheckpointCIItem(
+                category="unsupported_syntax_advisory",
+                func_id=str(getattr(entry, "id", "") or ""),
+                file_path=str(getattr(entry, "file_path", "") or ""),
+                target_id=identity["target_id"],
+                language=identity["language"],
+                symbol_kind=identity["symbol_kind"],
+                adapter=identity["adapter"],
+                reason=_checkpoint_reason_for_entry(
+                    category="unsupported_syntax_advisory",
+                    default_reason="TypeScript MVP parser could not safely classify this target.",
+                    entry=entry,
+                ),
+                suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
+                guidance=(
+                    guidance_for_checkpoint_category("unsupported_syntax_advisory", language=identity["language"])
+                    if settings.enabled
+                    else None
+                ),
             )
         )
 
@@ -398,6 +436,7 @@ def build_checkpoint_ci_result(
         "contract_changed": len(list(getattr(status_report, "contract_changed", []) or [])),
         "contract_gap": len(list(getattr(status_report, "contract_gap", []) or [])),
         "skipped_no_contract": len(list(getattr(status_report, "skipped_no_contract", []) or [])),
+        "unsupported_syntax_advisory": len(list(getattr(status_report, "unsupported_syntax_advisory", []) or [])),
         "contract_parse_error": len(list(getattr(status_report, "contract_parse_error", []) or [])),
         "untracked": len(list(getattr(status_report, "untracked", []) or [])),
         "missing": len(list(getattr(status_report, "missing", []) or [])),
@@ -828,11 +867,28 @@ def _push_status_failures(
                 language=identity["language"],
                 symbol_kind=identity["symbol_kind"],
                 adapter=identity["adapter"],
-                reason=reason,
+                reason=_checkpoint_reason_for_entry(category=category, default_reason=reason, entry=entry),
                 suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
-                guidance=guidance_for_checkpoint_category(category) if include_guidance else None,
+                guidance=(
+                    guidance_for_checkpoint_category(category, language=identity["language"])
+                    if include_guidance
+                    else None
+                ),
             )
         )
+
+
+def _checkpoint_reason_for_entry(*, category: str, default_reason: str, entry: object) -> str:
+    language = str(getattr(entry, "language", "") or "").strip().lower()
+    if language != "typescript":
+        return default_reason
+    if category == "contract_gap":
+        return "Required TypeScript contract source is missing or not contract-like."
+    if category == "skipped_no_contract":
+        return "No contract required for this TypeScript target; semantic comparison skipped."
+    if category == "unsupported_syntax_advisory":
+        return "TypeScript MVP parser could not safely classify this target."
+    return default_reason
 
 
 def _dedupe_checkpoint_items(items: Sequence[CheckpointCIItem]) -> List[CheckpointCIItem]:
@@ -850,8 +906,9 @@ def _dedupe_checkpoint_items(items: Sequence[CheckpointCIItem]) -> List[Checkpoi
         "possible_contract_impact": 10,
         "unknown_contract_impact": 11,
         "skipped_no_contract": 12,
-        "ddt_version_baseline_missing": 13,
-        "ddt_binding_advisory": 14,
+        "unsupported_syntax_advisory": 13,
+        "ddt_version_baseline_missing": 14,
+        "ddt_binding_advisory": 15,
     }
     selected: Dict[Tuple[str, str], CheckpointCIItem] = {}
     out: List[CheckpointCIItem] = []
