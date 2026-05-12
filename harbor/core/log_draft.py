@@ -80,9 +80,31 @@ def build_diary_draft(
       - Read-only filesystem access for snapshots, reports, and optional log marker.
       - Read-only git commands through `collect_git_workspace_state`.
 
+    Returns:
+      Dict[str, Any]: Stable JSON-friendly diary draft payload with additive
+      `draft_status`, boundary metadata, validation summary, affected areas,
+      summary-level evidence, and `suggested_diary_entry`.
+      - `draft_status="ready"` means the current evidence is sufficient for a
+        writable Diary Draft under the default gate or explicit `--from-report`.
+      - `draft_status="insufficient_evidence"` means default-mode evidence was
+        reports-only or diary-only without post-boundary snapshots; the payload
+        remains reviewable but returns an empty `suggested_diary_entry` and does
+        not itself advance latest-draft cache or `last_log_marker`.
+
+    Raises:
+      LogDraftError: If conflicting boundary modes are requested together or an
+      explicit `--from-report` path cannot be loaded as supported report
+      evidence.
+
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: read-only
+    @harbor.behavior: default mode applies a deterministic draft-worthiness gate;
+      reports-only evidence and diary-only changed files produce
+      `draft_status=insufficient_evidence` rather than a writable Diary Draft;
+      explicit `--from-report` may still produce `draft_status=ready`; this
+      builder never writes latest draft cache and never updates
+      `last_log_marker`
     """
     root = Path(repo_root or Path.cwd()).resolve()
     workspace_paths = load_workspace_paths(root, enforce_write_safety=True)
@@ -212,13 +234,27 @@ def render_diary_draft_markdown(payload: Dict[str, Any]) -> str:
     Side Effects:
       - Pure rendering only; does not write files and does not mutate the payload.
 
+    Returns:
+      str: Stable markdown rendering of the supplied diary draft payload.
+      - Ready payloads render the normal review sections, including
+        `Suggested Diary Entry`.
+      - `draft_status="insufficient_evidence"` renders a compact no-op markdown
+        result with boundary/evidence bullets, without `Suggested Diary Entry`,
+        and without `harbor log write` next-action text.
+
+    Raises:
+      None: Rendering is pure and degrades to stable fallback text for missing
+      optional payload fields instead of failing for no-op drafts.
+
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: pure
     @harbor.behavior: renders stable markdown sections for summary-level diary
       draft review, including a dedicated `diary` affected-area line when
-      `.harbor/diary/**` evidence is present; never reclassifies diary paths as
-      production code
+      `.harbor/diary/**` evidence is present; ready payloads render the normal
+      writable-draft sections, while `draft_status=insufficient_evidence`
+      renders a no-op message without `Suggested Diary Entry` or write-hint
+      content; never reclassifies diary paths as production code
     """
     evidence = dict(payload.get("evidence") or {})
     snapshots = list(evidence.get("snapshots") or [])
@@ -399,7 +435,10 @@ def write_latest_diary_draft_cache(
     """Best-effort write of latest diary draft runtime cache under `.harbor/state/log/`.
 
     Behavior:
-      - Always attempts to write both `latest-draft.md` and `latest-draft.json`.
+      - Writes `latest-draft.md` and `latest-draft.json` only when the supplied
+        draft payload is writable (`draft_status="ready"`).
+      - `draft_status="insufficient_evidence"` is treated as a no-op cache path:
+        no cache artifacts are written and the result reports a skipped reason.
       - JSON cache uses a stable wrapper schema that embeds the raw draft payload.
       - Markdown cache always stores the rendered markdown preview even if the
         caller requested JSON stdout elsewhere.
@@ -407,15 +446,18 @@ def write_latest_diary_draft_cache(
         `schema_version`, `kind`, `created_at`, `source`, `draft`,
         `markdown_path`.
       - Cache writes target runtime state only and may overwrite previous
-        latest-draft cache files.
+        latest-draft cache files when the draft is ready.
       - Cache write failures are downgraded to warnings and never raise.
       - Cache writes do not write `.harbor/reports/**`, do not write
-        `.harbor/diary/**`, do not update `last_log_marker`, and do not change
-        the primary draft stdout / exit semantics.
+        `.harbor/diary/**`, do not update `last_log_marker`, do not advance any
+        Diary/log node state, and do not change the primary draft stdout / exit
+        semantics.
 
     Side Effects:
-      - May create `.harbor/state/log/` and write up to two runtime cache files.
-      - May overwrite existing latest-draft runtime cache files.
+      - Ready drafts may create `.harbor/state/log/` and write up to two runtime
+        cache files.
+      - Ready drafts may overwrite existing latest-draft runtime cache files.
+      - No-op drafts write no cache artifacts.
 
     Returns:
       Dict[str, Any]: Best-effort cache result with:
@@ -426,17 +468,24 @@ def write_latest_diary_draft_cache(
       - `markdown_path_display`: repo-relative display path for CLI messages
       - `json_path_display`: repo-relative display path for CLI messages
       - `warnings`: list of non-fatal cache write diagnostics
+      - `skipped_reason`: additive no-op indicator set to
+        `insufficient_evidence` when the draft payload is not writable and cache
+        writes are intentionally skipped
 
     Raises:
-      None: Cache failures are converted to warnings so callers can preserve
-      successful draft generation output.
+      None: Non-writable no-op drafts and cache write failures are reported
+      through the return payload so callers preserve successful draft generation
+      output and unchanged exit semantics.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: overwrite-runtime-state
     @harbor.behavior: writes latest draft runtime cache only; safe additive
-      helper for `harbor log draft`; does not write reports/diary and does not
-      change caller exit semantics on cache failure
+      helper for `harbor log draft`; only ready drafts refresh
+      `.harbor/state/log/latest-draft.md` and `.harbor/state/log/latest-draft.json`;
+      insufficient-evidence drafts are a no-op cache path; does not write
+      reports/diary, does not update `last_log_marker`, does not advance log
+      state, and does not change caller exit semantics on cache failure
     """
     root = Path(repo_root or Path.cwd()).resolve()
     workspace_paths = load_workspace_paths(root, enforce_write_safety=True)

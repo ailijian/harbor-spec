@@ -222,11 +222,13 @@ def main():
       and may include additive boundary metadata fields `boundary_source`,
       `boundary_timestamp`, `boundary_note`, and `draft_status`. Successful
       non-JSON `harbor log draft` stdout appends localized next-action hints
-      only for writable drafts. Draft `--output` / `--save` write targets remain
-      non-diary reports only and do not change source-of-truth Diary semantics.
-      `.harbor/diary/**` is the canonical Diary area rather than production
-      code classification. `harbor log write` may append one structured JSON
-      line to `.harbor/diary/YYYY-MM.jsonl` and may update
+      only for writable drafts. `draft_status="insufficient_evidence"` is a
+      no-op draft result: stdout remains reviewable, latest draft cache is not
+      refreshed, and no `harbor log write` hint is appended. Draft `--output` /
+      `--save` write targets remain non-diary reports only and do not change
+      source-of-truth Diary semantics. `.harbor/diary/**` is the canonical
+      Diary area rather than production code classification. `harbor log write`
+      may append one structured JSON line to `.harbor/diary/YYYY-MM.jsonl` and may update
       `.harbor/state/log/last_log_marker.json` after successful write;
       successful default stdout is a concise localized summary rather than the
       full written JSON entry payload, while written JSONL entry content
@@ -254,10 +256,13 @@ def main():
     @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance
       (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without
       auto-fix and without changing CI gate semantics; successful non-JSON
-      `harbor log draft` appends localized next-action hints only for writable
-      Diary Drafts, while `--format json` keeps stdout as one JSON object with
-      no extra human text; successful `harbor log write` prints a concise
-      localized success summary instead of the full written JSON entry payload.
+      `harbor log draft` distinguishes writable `draft_status=ready` from
+      no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft
+      cache refresh and suppress localized `harbor log write` hints, while
+      `--format json` keeps stdout as one JSON object with no extra human text;
+      existing `harbor log write` authorization and marker-update boundaries
+      remain unchanged; successful `harbor log write` prints a concise localized
+      success summary instead of the full written JSON entry payload.
     """
     try:
         from dotenv import load_dotenv
