@@ -3,15 +3,16 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "debug_playbook"
 module: "harbor/core"
-generated_at: "2026-05-12T12:53:44Z"
+generated_at: "2026-05-12T15:00:15Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 32
+source_path_count: 33
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
   - "harbor/core/advice_config.py"
   - "harbor/core/audit.py"
+  - "harbor/core/baseline_artifact.py"
   - "harbor/core/change_window.py"
   - "harbor/core/ci.py"
   - "harbor/core/context_integrity.py"
@@ -41,8 +42,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:4154292ffad479441649cf628d63b3bf9bd31a74938afd834fb850073e0b4e0b"
-contract_fingerprint: "sha256:becc56daf516faa32ca8faa8eacb5153146fba4ea7b47f50b404da0b58e6bd8b"
+source_fingerprint: "sha256:46aae526ddb25abf566e871b288eb7a62708aad13924fb1fbb3bd752d09ca6e2"
+contract_fingerprint: "sha256:6b023aca02fe817270008f917fc5b62a90b67e591412f6aa0562e743ca7d0e22"
 generator_fingerprint: "sha256:4eab62b1668ade257dde3264126e7f18232aeb65536d76629fe89ba24b23ad99"
 ---
 

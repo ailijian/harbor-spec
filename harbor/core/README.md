@@ -52,7 +52,7 @@
 | harbor.core.log_draft.write_latest_diary_draft_cache | Best-effort write of latest diary draft runtime cache und... | strict | ❌ Missing |
 | harbor.core.module_capsule.write_module_capsule | Write the canonical Module Capsule views for one module. | strict | ❌ Missing |
 | harbor.core.project_structure.write_project_structure | Write the canonical project-structure view and optional e... | strict | ❌ Missing |
-| harbor.core.workspace.write_workspace_config | — | strict | ❌ Missing |
+| harbor.core.workspace.write_workspace_config | Write the canonical Harbor workspace config file. | strict | ❌ Missing |
 
 ## Internal Details (optional)
 <details>
@@ -112,6 +112,9 @@
 | harbor.core.workspace_migrate._collect_module_readme_exports | — | standard | ⚪ Missing |
 | harbor.core.doctor._collect_next_steps | — | standard | ⚪ Missing |
 | harbor.core.ci._collect_next_steps | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._collect_python_snapshot_items | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._collect_typescript_snapshot_items | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._compare_snapshots | — | standard | ⚪ Missing |
 | harbor.core.log_draft._compose_written_details | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._confidence_for_level | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._current_file_path | — | standard | ⚪ Missing |
@@ -218,6 +221,7 @@
 | harbor.core.l2.L2Generator._load_index | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTValidator._load_map | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._load_meta | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._load_previous_snapshot_from_artifact | — | standard | ⚪ Missing |
 | harbor.core.log_draft._load_report_summary | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._load_template_text | — | standard | ⚪ Missing |
 | harbor.core.contract_presence._looks_like_contract_doc | — | standard | ⚪ Missing |
@@ -239,8 +243,11 @@
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_cli_input_path | Normalize repo-relative CLI paths so Windows separators s... | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact._normalize_contract_presence | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact._normalize_hash | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact._normalize_items | — | standard | ⚪ Missing |
 | harbor.core.stale._normalize_l2_body_for_export_compare | — | standard | ⚪ Missing |
 | harbor.core.stale._normalize_l2_markdown_for_stale | — | standard | ⚪ Missing |
 | harbor.core.advice_config._normalize_mode | — | standard | ⚪ Missing |
@@ -250,6 +257,7 @@
 | harbor.core.project_structure._normalize_rel_path | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._normalize_rel_path | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._normalize_rel_path | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._normalize_repo_file_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_report_status | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol_for_classification | — | standard | ⚪ Missing |
@@ -277,7 +285,10 @@
 | harbor.core.init_prompt._render_inline_options | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._render_scalar | — | standard | ⚪ Missing |
 | harbor.core.l2._repo_relative_index_path | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact._require_bool | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact._require_text | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_allowed_from_draft_path | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact._resolve_artifact_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_author | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_cli_input_path | — | standard | ⚪ Missing |
@@ -325,6 +336,7 @@
 | harbor.core.contract_impact._sorted_findings | — | standard | ⚪ Missing |
 | harbor.core.log_draft._split_list_values | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._stable_contract_rows | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine._status_entry_from_snapshot_item | — | standard | ⚪ Missing |
 | harbor.core.doctor._status_text | — | standard | ⚪ Missing |
 | harbor.core.doctor._status_to_json | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._strictness_rank | — | standard | ⚪ Missing |
@@ -346,6 +358,7 @@
 | harbor.core.doctor._unique | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._update_managed_block | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._utc_now_iso | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact._validate_artifact | — | standard | ⚪ Missing |
 | harbor.core.workspace._validate_within_repo | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._write_file_with_policy | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._yaml_quote | — | standard | ⚪ Missing |
@@ -354,6 +367,7 @@
 | harbor.core.sync.SyncEngine.adapter | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine.apply | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.audit | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact.build_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
 | harbor.core.ci.build_checkpoint_ci_result | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.build_context_integrity_metadata | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.build_contract_impact_report | — | standard | ⚪ Missing |
@@ -380,6 +394,7 @@
 | harbor.core.project_structure.classify_project_area | — | standard | ⚪ Missing |
 | harbor.core.l2.collect_all_indexed_modules | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | — | standard | ⚪ Missing |
+| harbor.core.sync.SyncEngine.collect_current_snapshot | Collect the current comparable checkpoint snapshot from s... | standard | ⚪ Missing |
 | harbor.core.change_window.collect_git_workspace_state | Collect lightweight git metadata for change-window snapsh... | standard | ⚪ Missing |
 | harbor.core.module_capsule.collect_module_context | — | standard | ⚪ Missing |
 | harbor.core.l2.collect_modules_from_paths | — | standard | ⚪ Missing |
@@ -425,10 +440,12 @@
 | harbor.core.contract_presence.is_contract_required | — | standard | ⚪ Missing |
 | harbor.core.change_window.list_change_windows | List readable change-window snapshots from newest to oldest. | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager.load_active | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact.load_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_config | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_paths | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.merge_generated_at | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.module_capsule_dir | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact.normalize_baseline_item_path | Normalize one baseline item path into repo-relative POSIX... | standard | ⚪ Missing |
 | harbor.core.l2.normalize_indexed_module_candidate | 将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。 | standard | ⚪ Missing |
 | harbor.core.module_capsule.normalize_module_path | — | standard | ⚪ Missing |
 | harbor.core.module_skill.normalize_skill_slug | — | standard | ⚪ Missing |
@@ -469,6 +486,7 @@
 | harbor.core.workspace_inspect.workspace_inspect_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.workspace_migrate_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.write | — | standard | ⚪ Missing |
+| harbor.core.baseline_artifact.write_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
 | harbor.core.module_skill.write_module_skill | — | standard | ⚪ Missing |
 
 </details>

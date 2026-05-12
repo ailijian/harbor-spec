@@ -50,14 +50,15 @@ def normalize_baseline_item_path(file_path: str, *, project_root: Optional[Path]
         raise AcceptedBaselineInvalidError("baseline item file_path must not be empty")
 
     normalized = raw.replace("\\", "/")
-    if normalized.startswith("/"):
-        raise AcceptedBaselineInvalidError("baseline item file_path must be repo-relative")
-    if re.match(r"^[a-zA-Z]:/", normalized):
+    root = (project_root or Path.cwd()).resolve()
+    if normalized.startswith("/") or re.match(r"^[a-zA-Z]:/", normalized):
         root = (project_root or Path.cwd()).resolve()
         candidate = Path(normalized)
         try:
             normalized = candidate.resolve().relative_to(root).as_posix()
         except Exception as exc:
+            if normalized.startswith("/"):
+                raise AcceptedBaselineInvalidError("baseline item file_path must be repo-relative") from exc
             raise AcceptedBaselineInvalidError("baseline item file_path must stay within repo root") from exc
     if normalized.startswith("../") or "/../" in normalized or normalized == "..":
         raise AcceptedBaselineInvalidError("baseline item file_path must stay within repo root")

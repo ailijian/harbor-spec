@@ -3,15 +3,16 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-12T12:53:44Z"
+generated_at: "2026-05-12T15:00:15Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 32
+source_path_count: 33
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
   - "harbor/core/advice_config.py"
   - "harbor/core/audit.py"
+  - "harbor/core/baseline_artifact.py"
   - "harbor/core/change_window.py"
   - "harbor/core/ci.py"
   - "harbor/core/context_integrity.py"
@@ -41,11 +42,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:4154292ffad479441649cf628d63b3bf9bd31a74938afd834fb850073e0b4e0b"
-contract_fingerprint: "sha256:becc56daf516faa32ca8faa8eacb5153146fba4ea7b47f50b404da0b58e6bd8b"
+source_fingerprint: "sha256:46aae526ddb25abf566e871b288eb7a62708aad13924fb1fbb3bd752d09ca6e2"
+contract_fingerprint: "sha256:6b023aca02fe817270008f917fc5b62a90b67e591412f6aa0562e743ca7d0e22"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "2edf770f100238557994dc3680d42b03c9523c78b474e97d30817f8e231fb44e"
-fingerprint: "2edf770f100238557994dc3680d42b03c9523c78b474e97d30817f8e231fb44e"
+view_fingerprint: "937e93975f6154763810e5f26bc99c0eebed678178959e6ab917c20483d8ad72"
+fingerprint: "937e93975f6154763810e5f26bc99c0eebed678178959e6ab917c20483d8ad72"
 ---
 
 # Module Card: harbor/core
@@ -69,6 +70,7 @@ If this summary is too generic, update the underlying contracts or module docume
 harbor/core/__init__.py
 harbor/core/advice_config.py
 harbor/core/audit.py
+harbor/core/baseline_artifact.py
 harbor/core/change_window.py
 harbor/core/ci.py
 harbor/core/context_integrity.py
@@ -119,6 +121,17 @@ harbor/core/workspace_migrate.py
 | harbor.core.audit._infer_file_path_from_contract | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit._is_typescript_target | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.resolve_provider | harbor/core/audit.py | unknown | standard |
+| harbor.core.baseline_artifact._normalize_contract_presence | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact._normalize_hash | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact._normalize_items | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact._require_bool | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact._require_text | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact._resolve_artifact_path | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact._validate_artifact | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact.build_checkpoint_baseline_artifact | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact.load_checkpoint_baseline_artifact | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact.normalize_baseline_item_path | harbor/core/baseline_artifact.py | unknown | standard |
+| harbor.core.baseline_artifact.write_checkpoint_baseline_artifact | harbor/core/baseline_artifact.py | unknown | standard |
 | harbor.core.change_window.ChangeWindowSnapshot.to_dict | harbor/core/change_window.py | public | strict |
 | harbor.core.change_window._coerce_changed_files | harbor/core/change_window.py | unknown | standard |
 | harbor.core.change_window._coerce_mapping | harbor/core/change_window.py | unknown | standard |
@@ -520,13 +533,20 @@ harbor/core/workspace_migrate.py
 | harbor.core.storage.HarborDB.upsert_entry | harbor/core/storage.py | public | strict |
 | harbor.core.storage.HarborDB.upsert_file | harbor/core/storage.py | public | strict |
 | harbor.core.sync.SyncEngine.__init__ | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine._collect_python_snapshot_items | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine._collect_typescript_snapshot_items | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine._compare_snapshots | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine._is_typescript_path | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine._iter_code_roots | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine._iter_files_by_enabled_adapters | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine._iter_py_files | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine._load_config | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine._load_previous_snapshot_from_artifact | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine._normalize_repo_file_path | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync.SyncEngine._status_entry_from_snapshot_item | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine.adapter | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine.check_status | harbor/core/sync.py | public | strict |
+| harbor.core.sync.SyncEngine.collect_current_snapshot | harbor/core/sync.py | unknown | standard |
 | harbor.core.utils.compute_body_hash | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.derive_adopted_roots | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.find_function_node | harbor/core/utils.py | unknown | standard |
@@ -571,8 +591,10 @@ harbor/core/workspace_migrate.py
 tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 tests/test_audit.py
+tests/test_baseline_artifact.py
 tests/test_change_window_snapshot.py
 tests/test_checkpoint_ci.py
+tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_ci_mode.py
 tests/test_cli_doctor.py
