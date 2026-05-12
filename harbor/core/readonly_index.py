@@ -21,10 +21,15 @@ def load_readonly_index(index_path: Path | None = None, *, repo_root: Path | Non
             return json.loads(target.read_text(encoding="utf-8"))
         except Exception:
             pass
+    # Prefer a fresh source scan over runtime DB state so CI/view checks do not
+    # depend on test-populated caches that are not source of truth.
+    transient_payload = _build_transient_index(root)
+    if transient_payload.get("files"):
+        return transient_payload
     db_payload = _load_existing_db_index(repo_root=root)
     if db_payload is not None:
         return db_payload
-    return _build_transient_index(root)
+    return transient_payload
 
 
 def _resolve_index_path(index_path: Path | None, *, repo_root: Path) -> Path:
