@@ -133,9 +133,14 @@ harbor log draft --output .harbor/reports/log-draft.md
 Rules:
 
 * `harbor log draft` prints a reviewable draft to stdout by default
-* `harbor log draft` also writes:
+* by default, it generates a writable Diary Draft only when meaningful new evidence exists
+* in default mode, auto-discovered reports are supplementary evidence only and do not trigger a writable draft by themselves
+* if the only post-boundary change is under `.harbor/diary/**`, that alone does not trigger a new writable draft
+* only explicit `--from-report <path>` allows a report to act as primary evidence
+* when a writable draft is generated, `harbor log draft` also writes:
   * `.harbor/state/log/latest-draft.md`
   * `.harbor/state/log/latest-draft.json`
+* when evidence is insufficient, Harbor returns a no-op result and does not refresh latest draft cache
 * the default `harbor log draft` boundary strategy is marker-first -> accept-fallback -> recent-fallback
 * `harbor log draft --since-last-log` forces `last_log_marker`
 * `harbor log draft --since-last-accept` forces the latest accept boundary

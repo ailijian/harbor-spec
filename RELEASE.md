@@ -26,6 +26,11 @@
 - Rules now allow AI agents to generate drafts and prepare report copies, but not write Diary entries automatically.
 - Log workflow is documented as `Evidence -> Draft Cache / Save -> Controlled Write`.
 - `harbor log draft` boundary is clarified as marker-first -> accept-fallback -> recent-fallback.
+- `harbor log draft` now applies a draft-worthiness gate in default mode.
+- reports alone are supplementary evidence in default mode and no longer trigger a writable draft by themselves.
+- diary-only changes under `.harbor/diary/**` no longer trigger a writable draft by themselves.
+- insufficient-evidence draft runs now return a no-op result, omit write hints, and do not refresh latest draft cache.
+- explicit `harbor log draft --from-report <path>` still allows report-led draft generation.
 - `harbor log draft` no longer advances `last_log_marker`; only successful `harbor log write` may update it after a Written Diary Entry lands in `.harbor/diary/YYYY-MM.jsonl`.
 - `--since-last-log` now consumes the actual `last_log_marker` write schema (`last_log_at` first, with legacy aliases still accepted).
 - CLI user-facing log prompts/errors follow Harbor i18n; JSON schema keys remain stable English identifiers.

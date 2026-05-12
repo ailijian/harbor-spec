@@ -8,6 +8,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from harbor.core.change_window import ChangeWindowSnapshot, collect_git_workspace_state, list_change_windows
 from harbor.core.workspace import load_workspace_paths
+from harbor.utils.i18n import t
 
 
 DIARY_DRAFT_SCHEMA_VERSION = "1.0"
@@ -34,6 +35,8 @@ LOG_MARKER_SNAPSHOT_KEYS = (
     "snapshot_timestamp",
 )
 CHANGED_FILE_STATUS_RANK = {"??": 0, "D": 1, "A": 2, "M": 3, "MM": 4}
+DRAFT_STATUS_READY = "ready"
+DRAFT_STATUS_INSUFFICIENT_EVIDENCE = "insufficient_evidence"
 
 
 class LogDraftError(RuntimeError):
@@ -55,6 +58,15 @@ def build_diary_draft(
         and current git status metadata.
       - Default evidence boundary is marker-first:
         `last_log_marker` -> latest accept fallback -> recent snapshots fallback.
+      - Applies a deterministic draft-worthiness gate in default mode:
+        writable drafts require at least one non-diary changed file or at least
+        one post-boundary snapshot; auto-discovered reports remain
+        supplementary-only unless `--from-report` is explicit.
+      - Diary-only changes under `.harbor/diary/**` may appear in evidence but do
+        not independently justify a new writable draft.
+      - When evidence is insufficient, returns a stable no-op payload with
+        `draft_status="insufficient_evidence"`, empty
+        `suggested_diary_entry`, and no marker/cache side effects.
       - `--since-last-log` keeps an explicit fallback / uncertainty note when the
         marker is unavailable or invalid instead of pretending a precise window.
       - Does not read source file contents, does not read diffs, and does not call
@@ -107,24 +119,33 @@ def build_diary_draft(
     affected_areas = _classify_affected_areas(changed_files)
     validation = _derive_validation_statuses(selected_snapshots, reports)
     contract_impact = _infer_contract_impact(changed_files, reports, selected_snapshots)
-    meaningful = bool(selected_snapshots or reports or changed_files)
+    draft_status = _determine_draft_status(
+        changed_files=changed_files,
+        snapshots=selected_snapshots,
+        explicit_report=from_report is not None,
+    )
+    meaningful = draft_status == DRAFT_STATUS_READY
 
     summary = _build_summary(
-        meaningful=meaningful,
+        draft_status=draft_status,
         changed_files=changed_files,
         affected_areas=affected_areas,
         boundary_source=str(boundary["source"] or ""),
         from_report=reports[0]["command"] if from_report is not None and reports else None,
+        reports=reports,
+        snapshots=selected_snapshots,
     )
     why = _build_why(
-        meaningful=meaningful,
+        draft_status=draft_status,
         contract_impact=contract_impact,
         notes=notes,
         changed_files=changed_files,
         reports=reports,
+        boundary_source=str(boundary["source"] or ""),
+        snapshots=selected_snapshots,
     )
     risks = _build_risks(
-        meaningful=meaningful,
+        draft_status=draft_status,
         notes=notes,
         validation=validation,
         latest_accept=latest_accept,
@@ -136,7 +157,7 @@ def build_diary_draft(
         affected_areas=affected_areas,
         contract_impact=contract_impact,
         validation=validation,
-        meaningful=meaningful,
+        draft_status=draft_status,
     )
 
     evidence_snapshots = [_snapshot_summary(snapshot) for snapshot in selected_snapshots]
@@ -153,6 +174,7 @@ def build_diary_draft(
     return {
         "schema_version": DIARY_DRAFT_SCHEMA_VERSION,
         "kind": DIARY_DRAFT_KIND,
+        "draft_status": draft_status,
         "summary": summary,
         "why": why,
         "boundary_source": boundary["source"],
@@ -178,6 +200,9 @@ def render_diary_draft_markdown(payload: Dict[str, Any]) -> str:
       - Produces a deterministic markdown draft with the fixed MVP sections:
         Summary, Why, Affected Areas, Contract Impact, Validation,
         Change Window Evidence, Risks / Notes, and Suggested Diary Entry.
+      - When `draft_status="insufficient_evidence"`, renders a compact no-op
+        draft: no `Suggested Diary Entry` section, no write hint content, and an
+        explicit "No writable Diary Draft was generated." conclusion.
       - Includes an explicit evidence-boundary note in Change Window Evidence so
         marker-first / accept-fallback / recent-fallback decisions remain visible
         in reviewable markdown output.
@@ -202,6 +227,7 @@ def render_diary_draft_markdown(payload: Dict[str, Any]) -> str:
     affected = dict(payload.get("affected_areas") or {})
     validation = dict(payload.get("validation") or {})
     risks = [str(item) for item in list(payload.get("risks") or [])]
+    draft_status = str(payload.get("draft_status") or DRAFT_STATUS_READY)
 
     latest_accept = next(
         (item for item in snapshots if item.get("event") == "accept" or item.get("role") == "latest_accept_boundary"),
@@ -209,6 +235,21 @@ def render_diary_draft_markdown(payload: Dict[str, Any]) -> str:
     )
     checkpoint_snapshots = [item for item in snapshots if item.get("event") == "checkpoint"]
     finish_snapshots = [item for item in snapshots if item.get("event") == "finish"]
+
+    if draft_status == DRAFT_STATUS_INSUFFICIENT_EVIDENCE:
+        lines = [
+            "# Diary Draft",
+            "",
+            str(payload.get("summary") or t("cli.log.draft.no_meaningful_evidence")),
+            "",
+            f"- boundary: {str(payload.get('boundary_note') or 'Evidence boundary: using recent change-window snapshots.')}",
+            f"- changed files: {_format_noop_changed_files(changed_files)}",
+            f"- snapshots: {_format_noop_snapshots(checkpoint_snapshots=checkpoint_snapshots, finish_snapshots=finish_snapshots)}",
+            f"- reports: {_format_noop_reports(reports)}",
+            "",
+            t("cli.log.draft.no_writable_draft"),
+        ]
+        return "\n".join(lines).strip() + "\n"
 
     lines = [
         "# Diary Draft",
@@ -413,6 +454,9 @@ def write_latest_diary_draft_cache(
         "json_path_display": json_display,
         "warnings": [],
     }
+    if str(payload.get("draft_status") or DRAFT_STATUS_READY) != DRAFT_STATUS_READY:
+        result["skipped_reason"] = DRAFT_STATUS_INSUFFICIENT_EVIDENCE
+        return result
 
     try:
         log_root.mkdir(parents=True, exist_ok=True)
@@ -1111,6 +1155,29 @@ def _bucket_for_path(path: str) -> str:
     return "production_code"
 
 
+def _is_diary_changed_file(item: Dict[str, str]) -> bool:
+    return str(item.get("path") or "").replace("\\", "/").strip().lower().startswith(".harbor/diary/")
+
+
+def _non_diary_changed_files(changed_files: Sequence[Dict[str, str]]) -> List[Dict[str, str]]:
+    return [dict(item) for item in list(changed_files or []) if not _is_diary_changed_file(dict(item))]
+
+
+def _determine_draft_status(
+    *,
+    changed_files: Sequence[Dict[str, str]],
+    snapshots: Sequence[ChangeWindowSnapshot],
+    explicit_report: bool,
+) -> str:
+    if explicit_report:
+        return DRAFT_STATUS_READY
+    if _non_diary_changed_files(changed_files):
+        return DRAFT_STATUS_READY
+    if snapshots:
+        return DRAFT_STATUS_READY
+    return DRAFT_STATUS_INSUFFICIENT_EVIDENCE
+
+
 def _derive_validation_statuses(
     snapshots: Sequence[ChangeWindowSnapshot],
     reports: Sequence[Dict[str, Any]],
@@ -1189,14 +1256,20 @@ def _infer_contract_impact(
 
 def _build_summary(
     *,
-    meaningful: bool,
+    draft_status: str,
     changed_files: Sequence[Dict[str, str]],
     affected_areas: Dict[str, List[str]],
     boundary_source: str,
     from_report: Optional[str],
+    reports: Sequence[Dict[str, Any]],
+    snapshots: Sequence[ChangeWindowSnapshot],
 ) -> str:
-    if not meaningful:
-        return "No meaningful change window found for diary drafting."
+    if draft_status != DRAFT_STATUS_READY:
+        if changed_files and not _non_diary_changed_files(changed_files):
+            return t("cli.log.draft.no_meaningful_evidence") + " only diary file updates were detected."
+        if reports and not snapshots:
+            return t("cli.log.draft.no_meaningful_evidence") + " auto-discovered reports remain supplementary only."
+        return t("cli.log.draft.no_meaningful_evidence")
 
     labels = [
         label
@@ -1224,14 +1297,25 @@ def _build_summary(
 
 def _build_why(
     *,
-    meaningful: bool,
+    draft_status: str,
     contract_impact: str,
     notes: Sequence[str],
     changed_files: Sequence[Dict[str, str]],
     reports: Sequence[Dict[str, Any]],
+    boundary_source: str,
+    snapshots: Sequence[ChangeWindowSnapshot],
 ) -> str:
-    if not meaningful:
-        return "Evidence insufficient: no snapshots, relevant reports, or changed files were found."
+    if draft_status != DRAFT_STATUS_READY:
+        fragments: List[str] = []
+        if changed_files and not _non_diary_changed_files(changed_files):
+            fragments.append("Only diary file updates were detected, which are visible as evidence but do not independently justify a new writable Diary Draft.")
+        elif reports and not snapshots:
+            fragments.append("Only auto-discovered report evidence was found; reports remain supplementary evidence in default draft mode.")
+        else:
+            fragments.append("No changed files, new snapshots, or explicit report evidence justified a writable Diary Draft.")
+        if notes:
+            fragments.append(" ".join(str(item) for item in notes))
+        return " ".join(fragments).strip()
 
     fragments: List[str] = []
     if changed_files:
@@ -1253,15 +1337,15 @@ def _build_why(
 
 def _build_risks(
     *,
-    meaningful: bool,
+    draft_status: str,
     notes: Sequence[str],
     validation: Dict[str, str],
     latest_accept: Optional[ChangeWindowSnapshot],
     from_report: Optional[Path],
 ) -> List[str]:
     risks: List[str] = []
-    if not meaningful:
-        risks.append("no meaningful change window found")
+    if draft_status != DRAFT_STATUS_READY:
+        risks.append("no meaningful new change evidence for a writable draft")
     for note in notes:
         risks.append(str(note))
     if latest_accept is None:
@@ -1281,20 +1365,10 @@ def _build_suggested_diary_entry(
     affected_areas: Dict[str, List[str]],
     contract_impact: str,
     validation: Dict[str, str],
-    meaningful: bool,
+    draft_status: str,
 ) -> str:
-    if not meaningful:
-        return (
-            "[Diary Draft]\n"
-            "- Type: decision\n"
-            "- Importance: normal\n"
-            "- Visibility: repo\n"
-            "- Module: workspace\n"
-            "- Contract Impact: uncertain\n"
-            "- Breaking Change: uncertain\n"
-            "- Summary: No meaningful change window found.\n"
-            "- Reason: Evidence insufficient for a stronger Diary recommendation.\n"
-        )
+    if draft_status != DRAFT_STATUS_READY:
+        return ""
 
     area_labels = [
         label
@@ -1330,6 +1404,27 @@ def _build_suggested_diary_entry(
         "- Risks:\n"
         "  - Evidence is summary-level only and excludes file bodies/diffs.\n"
     )
+
+
+def _format_noop_changed_files(rows: Sequence[Dict[str, str]]) -> str:
+    items = list(rows or [])
+    if not items:
+        return "none"
+    if items and not _non_diary_changed_files(items):
+        return "only diary file updates were detected"
+    return _format_changed_files(items)
+
+
+def _format_noop_snapshots(*, checkpoint_snapshots: Sequence[Dict[str, Any]], finish_snapshots: Sequence[Dict[str, Any]]) -> str:
+    if checkpoint_snapshots or finish_snapshots:
+        return "present"
+    return "none"
+
+
+def _format_noop_reports(rows: Sequence[Dict[str, Any]]) -> str:
+    if not list(rows or []):
+        return "none"
+    return "supplemental only"
 
 
 def _resolve_output_path(path: Path, *, repo_root: Path) -> Path:

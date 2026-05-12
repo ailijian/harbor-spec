@@ -134,9 +134,14 @@ harbor log draft --output .harbor/reports/log-draft.md
 规则：
 
 * `harbor log draft` 默认在 stdout 展示 reviewable draft
-* `harbor log draft` 默认写：
+* 默认只有在存在 meaningful new evidence 时，才会生成可写入 Diary 的 draft
+* 默认模式下 auto-discovered reports 只是 supplementary evidence，单独存在时不会触发新的可写 draft
+* 如果 boundary 之后只有 `.harbor/diary/**` 变化，也不会单独触发新的可写 draft
+* 只有显式 `--from-report <path>` 时，report 才可作为主 evidence 生成 draft
+* 生成可写 draft 时，`harbor log draft` 才会写：
   * `.harbor/state/log/latest-draft.md`
   * `.harbor/state/log/latest-draft.json`
+* 如果 evidence 不足，则输出 no-op 结果，且不会刷新 latest draft cache
 * `harbor log draft` 默认边界策略是：marker-first -> accept-fallback -> recent-fallback
 * `harbor log draft --since-last-log` 强制使用 `last_log_marker`
 * `harbor log draft --since-last-accept` 强制使用 latest accept
@@ -474,6 +479,11 @@ harbor log draft --output .harbor/reports/log-draft.md
 * `harbor log draft --since-last-log` 强制使用 `last_log_marker`
 * `harbor log draft --since-last-accept` 强制使用 latest accept
 * `harbor log draft` 不推进 `last_log_marker`
+* 默认模式下只有存在 meaningful new evidence 时，才会生成可写入的 Diary Draft
+* auto-discovered reports 在默认模式下仅为 supplementary evidence，单独存在时不会触发新的可写 draft
+* 仅 `.harbor/diary/**` 变化不会单独触发新的可写 draft
+* evidence 不足时，不显示 `Suggested Diary Entry`，不提示 `harbor log write`，也不刷新 latest draft cache
+* `harbor log draft --from-report <path>` 仍可显式使用 report 生成 draft
 * `harbor log draft` 的 `--output` 可写 `.harbor/reports/**`
 * `harbor log draft` 的 `--output` 指向 `.harbor/diary/**` 必须拒绝
 * `harbor log draft` 在 v1.4.1 不调用 LLM
@@ -1212,6 +1222,9 @@ harbor log draft 的 --output 指向 .harbor/diary/** 必须拒绝
 harbor log draft 在 v1.4.1 不调用 LLM
 LLM-assisted draft 属于 future work，不是 v1.4.1 当前能力
 harbor log draft 不输出文件正文或 diff 正文
+默认模式下只有存在 meaningful new evidence 时才会生成可写 draft
+reports alone 在默认模式下只是 supplementary evidence
+仅 .harbor/diary/** 变化不会单独触发新的可写 draft
 ```
 
 如果需要真正写入 Diary，仍然要由人类明确授权执行 `harbor log`。

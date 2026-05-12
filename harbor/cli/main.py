@@ -137,15 +137,19 @@ def main():
         `--format markdown|json`, `--output <path>`, and `--save`.
       - Draft JSON output keeps stdout as one pure JSON object and includes
         additive boundary metadata fields:
-        `boundary_source`, `boundary_timestamp`, `boundary_note`.
+        `boundary_source`, `boundary_timestamp`, `boundary_note`, and
+        `draft_status`; successful JSON mode does not append human hints on
+        stderr.
       - `harbor log draft --output` may write one non-diary file such as
         `.harbor/reports/*.md` or `.harbor/reports/*.json`.
-      - Successful non-JSON `harbor log draft` output also prints localized next
-        actions for formal Diary write, report copy save, and explicit
-        non-interactive write authorization.
-      - `harbor log draft` also attempts to refresh latest draft runtime cache
-        under `.harbor/state/log/latest-draft.md` and
-        `.harbor/state/log/latest-draft.json`.
+      - Successful non-JSON `harbor log draft` output prints localized next
+        actions for formal Diary write/save flows only when the current evidence
+        is sufficient to generate a writable Diary Draft.
+      - `harbor log draft` refreshes latest draft runtime cache under
+        `.harbor/state/log/latest-draft.md` and
+        `.harbor/state/log/latest-draft.json` only when it produced a writable
+        Diary Draft; insufficient-evidence no-op drafts do not refresh latest
+        draft cache.
       - Latest draft cache writes are runtime state only, may overwrite prior
         cache files, and must not change stdout draft content or exit semantics
         if cache write fails.
@@ -209,20 +213,17 @@ def main():
       exit semantics. Snapshot write failures may append runtime-only
       diagnostics under `.harbor/state/change-window-diagnostics.jsonl`.
       `harbor log draft` emits a reviewable markdown/json draft only, may write
-      latest draft runtime cache under `.harbor/state/log/latest-draft.*`, may
-      write one non-diary output file such as `.harbor/reports/*.md` or
-      `.harbor/reports/*.json` via `--output` or `--save`, does not write
-      `.harbor/diary/**`, does not update log markers, does not read or print
-      file bodies / diff bodies, and does not call LLM. Draft JSON output keeps
-      stdout as one pure JSON object and may include additive boundary metadata
-      fields `boundary_source`, `boundary_timestamp`, and `boundary_note`.
-      Successful non-JSON
-      `harbor log draft` stdout also appends localized next-action hints for
-      `harbor log write`, `harbor log draft --save`, and
-      `harbor log write --yes`, while `harbor log draft --format json` keeps
-      stdout as one pure JSON object and routes human hints outside the JSON
-      stream. Draft `--output` / `--save` write targets remain non-diary
-      reports only and do not change source-of-truth Diary semantics.
+      latest draft runtime cache under `.harbor/state/log/latest-draft.*` only
+      when evidence is sufficient for a writable draft, may write one non-diary
+      output file such as `.harbor/reports/*.md` or `.harbor/reports/*.json`
+      via `--output` or `--save`, does not write `.harbor/diary/**`, does not
+      update log markers, does not read or print file bodies / diff bodies, and
+      does not call LLM. Draft JSON output keeps stdout as one pure JSON object
+      and may include additive boundary metadata fields `boundary_source`,
+      `boundary_timestamp`, `boundary_note`, and `draft_status`. Successful
+      non-JSON `harbor log draft` stdout appends localized next-action hints
+      only for writable drafts. Draft `--output` / `--save` write targets remain
+      non-diary reports only and do not change source-of-truth Diary semantics.
       `.harbor/diary/**` is the canonical Diary area rather than production
       code classification. `harbor log write` may append one structured JSON
       line to `.harbor/diary/YYYY-MM.jsonl` and may update
@@ -253,10 +254,10 @@ def main():
     @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance
       (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without
       auto-fix and without changing CI gate semantics; successful non-JSON
-      `harbor log draft` appends localized next-action hints for formal Diary
-      write/save flows, while `--format json` keeps stdout as one JSON object;
-      successful `harbor log write` prints a concise localized success summary
-      instead of the full written JSON entry payload.
+      `harbor log draft` appends localized next-action hints only for writable
+      Diary Drafts, while `--format json` keeps stdout as one JSON object with
+      no extra human text; successful `harbor log write` prints a concise
+      localized success summary instead of the full written JSON entry payload.
     """
     try:
         from dotenv import load_dotenv
@@ -2280,7 +2281,18 @@ def main():
                 since_last_log=bool(getattr(args, "since_last_log", False)),
                 from_report=Path(args.from_report) if getattr(args, "from_report", None) else None,
             )
-            cache_result = write_latest_diary_draft_cache(payload, repo_root=Path.cwd())
+            draft_ready = str(payload.get("draft_status") or "") == "ready"
+            cache_result = (
+                write_latest_diary_draft_cache(payload, repo_root=Path.cwd())
+                if draft_ready
+                else {
+                    "markdown_path": None,
+                    "json_path": None,
+                    "markdown_path_display": ".harbor/state/log/latest-draft.md",
+                    "json_path_display": ".harbor/state/log/latest-draft.json",
+                    "warnings": [],
+                }
+            )
             rendered = serialize_diary_draft(payload, args.format)
             output_target = None
             explicit_output = bool(getattr(args, "output", None))
@@ -2300,12 +2312,9 @@ def main():
                     repo_root=Path.cwd(),
                 )
             print(rendered, end="")
-            next_actions_text = _build_log_draft_next_actions_text()
-            if args.format == "json":
-                print(next_actions_text, file=sys.stderr)
-            else:
-                print(next_actions_text)
-            if cache_result.get("markdown_path_display"):
+            if draft_ready and args.format != "json":
+                print(_build_log_draft_next_actions_text())
+            if draft_ready and cache_result.get("markdown_path") and args.format != "json":
                 print(
                     t(
                         "cli.log.draft.cached",
@@ -2314,9 +2323,10 @@ def main():
                     ),
                     file=sys.stderr,
                 )
-            for warning in list(cache_result.get("warnings") or []):
-                print(t("cli.log.draft.cache_warning", message=str(warning)), file=sys.stderr)
-            if explicit_output and save_requested:
+            if args.format != "json":
+                for warning in list(cache_result.get("warnings") or []):
+                    print(t("cli.log.draft.cache_warning", message=str(warning)), file=sys.stderr)
+            if explicit_output and save_requested and args.format != "json":
                 print(
                     t(
                         "cli.log.draft.output_preferred",
@@ -2324,7 +2334,7 @@ def main():
                     ),
                     file=sys.stderr,
                 )
-            elif output_target is not None:
+            elif output_target is not None and args.format != "json":
                 print(
                     t("cli.log.draft.saved", path=_to_repo_relative_display(output_target)),
                     file=sys.stderr,

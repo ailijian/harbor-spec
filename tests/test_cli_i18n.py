@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from io import StringIO
@@ -198,6 +199,41 @@ def test_log_draft_next_actions_use_zh_i18n(monkeypatch, tmp_path: Path):
         assert "写入正式 Diary（需要确认）：harbor log write" in out
         assert "非交互显式写入：harbor log write --yes" in out
         assert "已更新 latest draft cache" in err
+    finally:
+        if old_env is None:
+            os.environ.pop("HARBOR_LANGUAGE", None)
+        else:
+            os.environ["HARBOR_LANGUAGE"] = old_env
+        os.chdir(old)
+
+
+def test_log_draft_insufficient_evidence_uses_zh_i18n_without_next_actions(monkeypatch, tmp_path: Path):
+    old = Path.cwd()
+    old_env = os.environ.get("HARBOR_LANGUAGE")
+    try:
+        os.environ["HARBOR_LANGUAGE"] = "zh"
+        os.chdir(tmp_path)
+        marker = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text('{"last_log_at":"2026-05-11T12:20:00Z"}\n', encoding="utf-8")
+        (tmp_path / ".harbor" / "reports").mkdir(parents=True, exist_ok=True)
+        (tmp_path / ".harbor" / "reports" / "checkpoint-only.json").write_text(
+            json.dumps({"command": "checkpoint", "status": "pass"}, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(
+            log_draft,
+            "collect_git_workspace_state",
+            lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+        )
+
+        code, out, err = run_cmd_with_err(["log", "draft"])
+
+        assert code == 0
+        assert "未发现值得起草的新变更证据。" in out
+        assert "未生成可写入的 Diary Draft。" in out
+        assert "下一步：" not in out
+        assert "已更新 latest draft cache" not in err
     finally:
         if old_env is None:
             os.environ.pop("HARBOR_LANGUAGE", None)

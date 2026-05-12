@@ -18,6 +18,11 @@ from harbor.core.log_draft import (
 )
 
 
+@pytest.fixture(autouse=True)
+def _force_en_locale(monkeypatch):
+    monkeypatch.setenv("HARBOR_LANGUAGE", "en")
+
+
 def _write_report(repo_root: Path, relative_path: str, payload: dict) -> Path:
     target = repo_root / relative_path
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -503,7 +508,8 @@ def test_bad_snapshot_json_is_skipped_without_crashing(monkeypatch, tmp_path: Pa
     with pytest.warns(RuntimeWarning, match="Skipping invalid change window snapshot"):
         payload = build_diary_draft(repo_root=tmp_path)
 
-    assert payload["summary"] == "No meaningful change window found for diary drafting."
+    assert payload["draft_status"] == "insufficient_evidence"
+    assert payload["summary"] == "No meaningful new change evidence was found since the last log marker."
     assert payload["contract_impact"] == "uncertain"
 
 
@@ -647,6 +653,111 @@ def test_write_latest_diary_draft_cache_failure_is_warning_only(monkeypatch, tmp
     assert len(result["warnings"]) == 2
     assert any("latest draft markdown cache" in warning for warning in result["warnings"])
     assert any("latest draft JSON cache" in warning for warning in result["warnings"])
+
+
+def test_reports_only_evidence_is_insufficient_and_does_not_build_writable_draft(monkeypatch, tmp_path: Path):
+    marker_path = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker_path.parent.mkdir(parents=True, exist_ok=True)
+    marker_path.write_text(json.dumps({"last_log_at": "2026-05-11T12:00:00Z"}, ensure_ascii=False) + "\n", encoding="utf-8")
+    _write_report(
+        tmp_path,
+        ".harbor/reports/checkpoint-only.json",
+        {"command": "checkpoint", "status": "pass", "writes_files": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path)
+    rendered_markdown = serialize_diary_draft(payload, "markdown")
+    cache_result = write_latest_diary_draft_cache(payload, repo_root=tmp_path)
+
+    assert payload["draft_status"] == "insufficient_evidence"
+    assert "No meaningful new change evidence was found since the last log marker." in payload["summary"]
+    assert "auto-discovered reports remain supplementary only." in payload["summary"]
+    assert payload["suggested_diary_entry"] == ""
+    assert payload["boundary_source"] == "last_log_marker"
+    assert payload["evidence"]["reports"] == [
+        {"command": "checkpoint", "path": ".harbor/reports/checkpoint-only.json", "status": "pass"}
+    ]
+    assert "## Suggested Diary Entry" not in rendered_markdown
+    assert "No writable Diary Draft was generated." in rendered_markdown
+    assert "- reports: supplemental only" in rendered_markdown
+    assert cache_result["markdown_path"] is None
+    assert cache_result["json_path"] is None
+    assert cache_result["skipped_reason"] == "insufficient_evidence"
+    assert not (tmp_path / ".harbor" / "state" / "log" / "latest-draft.md").exists()
+    assert not (tmp_path / ".harbor" / "state" / "log" / "latest-draft.json").exists()
+
+
+def test_diary_only_changed_files_are_insufficient_for_writable_draft(monkeypatch, tmp_path: Path):
+    marker_path = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker_path.parent.mkdir(parents=True, exist_ok=True)
+    marker_path.write_text(json.dumps({"last_log_at": "2026-05-11T12:00:00Z"}, ensure_ascii=False) + "\n", encoding="utf-8")
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {
+            "git_head": "head123",
+            "workspace_dirty": True,
+            "changed_files": [{"path": ".harbor/diary/2026-05.jsonl", "status": "M"}],
+        },
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path)
+    rendered_markdown = serialize_diary_draft(payload, "markdown")
+
+    assert payload["draft_status"] == "insufficient_evidence"
+    assert "No meaningful new change evidence was found since the last log marker." in payload["summary"]
+    assert "only diary file updates were detected." in payload["summary"]
+    assert payload["suggested_diary_entry"] == ""
+    assert payload["affected_areas"]["diary"] == [".harbor/diary/2026-05.jsonl"]
+    assert "Only diary file updates were detected" in payload["why"]
+    assert "## Suggested Diary Entry" not in rendered_markdown
+    assert "- changed files: only diary file updates were detected" in rendered_markdown
+
+
+def test_snapshot_only_evidence_still_builds_writable_draft(monkeypatch, tmp_path: Path):
+    _write_snapshot(
+        tmp_path,
+        "checkpoint",
+        datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc),
+        changed_files=[],
+        summary={"status": "pass"},
+        validation={"checkpoint": "pass"},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path)
+
+    assert payload["draft_status"] == "ready"
+    assert payload["suggested_diary_entry"].startswith("[Diary Draft]")
+    assert any(item["event"] == "checkpoint" for item in payload["evidence"]["snapshots"])
+
+
+def test_explicit_from_report_still_builds_writable_draft_without_changed_files_or_snapshots(monkeypatch, tmp_path: Path):
+    report_path = _write_report(
+        tmp_path,
+        ".harbor/reports/checkpoint-explicit.json",
+        {"command": "checkpoint", "status": "pass", "writes_files": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path, from_report=report_path)
+
+    assert payload["draft_status"] == "ready"
+    assert payload["summary"].startswith("Drafted from the explicit checkpoint report")
+    assert payload["suggested_diary_entry"].startswith("[Diary Draft]")
 
 
 def test_build_saved_diary_draft_output_path_uses_reports_root_and_format(tmp_path: Path):

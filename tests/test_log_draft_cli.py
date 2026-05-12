@@ -128,8 +128,7 @@ def test_log_draft_json_output_is_stable(monkeypatch, tmp_path: Path):
     payload = json.loads(out)
 
     assert code == 0
-    assert "Latest draft cache updated:" in err
-    assert "Next steps:" in err
+    assert err == ""
     assert payload["schema_version"] == "1.0"
     assert payload["kind"] == "diary_draft"
     assert set(payload.keys()) == {
@@ -138,6 +137,7 @@ def test_log_draft_json_output_is_stable(monkeypatch, tmp_path: Path):
         "boundary_source",
         "boundary_timestamp",
         "contract_impact",
+        "draft_status",
         "evidence",
         "kind",
         "risks",
@@ -213,7 +213,7 @@ def test_log_draft_save_json_writes_timestamped_json_copy_without_polluting_stdo
 
     assert code == 0
     assert payload["kind"] == "diary_draft"
-    assert "Draft saved to: .harbor/reports/log-draft-20260511-123456.json" in err
+    assert err == ""
     assert (tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.json").exists()
 
 
@@ -282,7 +282,7 @@ def test_log_draft_since_last_accept_filters_to_post_accept_evidence(monkeypatch
     changed_paths = {item["path"] for item in payload["evidence"]["changed_files"]}
 
     assert code == 0
-    assert "Latest draft cache updated:" in err
+    assert err == ""
     assert "harbor/core/new.py" in changed_paths
     assert "harbor/core/old.py" not in changed_paths
 
@@ -317,7 +317,7 @@ def test_log_draft_default_json_prefers_last_log_marker_boundary(monkeypatch, tm
     changed_paths = {item["path"] for item in payload["evidence"]["changed_files"]}
 
     assert code == 0
-    assert "Latest draft cache updated:" in err
+    assert err == ""
     assert payload["boundary_source"] == "last_log_marker"
     assert payload["boundary_timestamp"] == "2026-05-11T12:20:00Z"
     assert "using last log marker" in payload["boundary_note"]
@@ -352,7 +352,7 @@ def test_log_draft_json_reports_invalid_marker_fallback_without_polluting_json(m
     assert "has only snapshot metadata and no parseable log timestamp" in payload["boundary_note"]
     assert "falling back to latest accept" in payload["boundary_note"]
     assert out.strip().startswith("{")
-    assert "Next steps:" in err
+    assert err == ""
 
 
 def test_log_draft_save_does_not_modify_existing_marker(monkeypatch, tmp_path: Path):
@@ -421,3 +421,123 @@ def test_log_draft_cache_warning_does_not_fail_command(monkeypatch, tmp_path: Pa
     assert code == 0
     assert "# Diary Draft" in out
     assert "Latest draft cache warning: disk full" in err
+
+
+def test_log_draft_reports_only_outputs_insufficient_evidence_without_write_hints(monkeypatch, tmp_path: Path):
+    marker = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text('{"last_log_at":"2026-05-11T12:20:00Z"}\n', encoding="utf-8")
+    _write_report(
+        tmp_path,
+        ".harbor/reports/checkpoint-only.json",
+        {"command": "checkpoint", "status": "pass", "writes_files": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    code, out, err = run_cmd(["log", "draft"])
+
+    assert code == 0
+    assert "No meaningful new change evidence was found" in out
+    assert "No writable Diary Draft was generated." in out
+    assert "Suggested Diary Entry" not in out
+    assert "harbor log write" not in out
+    assert "Latest draft cache updated:" not in err
+    assert not (tmp_path / ".harbor" / "state" / "log" / "latest-draft.md").exists()
+    assert not (tmp_path / ".harbor" / "state" / "log" / "latest-draft.json").exists()
+
+
+def test_log_draft_diary_only_outputs_insufficient_evidence_without_write_hints(monkeypatch, tmp_path: Path):
+    marker = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text('{"last_log_at":"2026-05-11T12:20:00Z"}\n', encoding="utf-8")
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {
+            "git_head": "head123",
+            "workspace_dirty": True,
+            "changed_files": [{"path": ".harbor/diary/2026-05.jsonl", "status": "M"}],
+        },
+    )
+
+    code, out, err = run_cmd(["log", "draft"])
+
+    assert code == 0
+    assert "only diary file updates were detected" in out
+    assert "No writable Diary Draft was generated." in out
+    assert "Suggested Diary Entry" not in out
+    assert "harbor log write" not in out
+    assert err == ""
+
+
+def test_log_draft_reports_only_json_is_pure_and_marks_insufficient_evidence(monkeypatch, tmp_path: Path):
+    marker = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text('{"last_log_at":"2026-05-11T12:20:00Z"}\n', encoding="utf-8")
+    _write_report(
+        tmp_path,
+        ".harbor/reports/checkpoint-only.json",
+        {"command": "checkpoint", "status": "pass", "writes_files": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    code, out, err = run_cmd(["log", "draft", "--format", "json"])
+    payload = json.loads(out)
+
+    assert code == 0
+    assert err == ""
+    assert payload["draft_status"] == "insufficient_evidence"
+    assert payload["suggested_diary_entry"] == ""
+    assert "No meaningful new change evidence was found since the last log marker." in payload["summary"]
+    assert "auto-discovered reports remain supplementary only." in payload["summary"]
+
+
+def test_log_draft_snapshot_only_still_outputs_writable_draft(monkeypatch, tmp_path: Path):
+    _write_snapshot(
+        tmp_path,
+        "checkpoint",
+        datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc),
+        changed_files=[],
+        summary={"status": "pass"},
+        validation={"checkpoint": "pass"},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    code, out, err = run_cmd(["log", "draft"])
+
+    assert code == 0
+    assert "## Suggested Diary Entry" in out
+    assert "harbor log write" in out
+    assert "Latest draft cache updated:" in err
+
+
+def test_log_draft_from_report_still_generates_writable_draft(monkeypatch, tmp_path: Path):
+    report = _write_report(
+        tmp_path,
+        ".harbor/reports/checkpoint-explicit.json",
+        {"command": "checkpoint", "status": "pass", "writes_files": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    code, out, err = run_cmd(["log", "draft", "--from-report", str(report)])
+
+    assert code == 0
+    assert "## Suggested Diary Entry" in out
+    assert "harbor log write" in out
+    assert "Latest draft cache updated:" in err
