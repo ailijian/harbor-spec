@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-11T18:42:54Z"
+generated_at: "2026-05-12T07:50:35Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 32
@@ -41,11 +41,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:967cb3d0f0f7aa25ed6381a628310912238f36cd0378b11e597589659f9bea50"
-contract_fingerprint: "sha256:2627d665f434a9e425466f3284ee950092e251b65db4745f17b89aa979fe8356"
+source_fingerprint: "sha256:d2fe370eb8ac35453a9042dd2faade176838c4bcc73a22ff18a28dbf59888ce2"
+contract_fingerprint: "sha256:93739ca946fdfce326e202a2b6f6a0c296e6d885b266232f8cc9eee8ba42dbe1"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "604817be94fde28b49be8ed2a41e87097063e335bf59b4394b9a1469fda10d05"
-fingerprint: "604817be94fde28b49be8ed2a41e87097063e335bf59b4394b9a1469fda10d05"
+view_fingerprint: "37ce053d529d99cfe5d96673311a59d77b8a68bed69c69eb2b53739ece3a608e"
+fingerprint: "37ce053d529d99cfe5d96673311a59d77b8a68bed69c69eb2b53739ece3a608e"
 ---
 
 # Module Card: harbor/core
@@ -352,6 +352,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.l2.collect_modules_from_paths | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.infer_module_from_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.normalize_indexed_module_candidate | harbor/core/l2.py | unknown | standard |
+| harbor.core.log_draft._append_text_value | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._bucket_for_path | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._build_risks | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._build_suggested_diary_entry | harbor/core/log_draft.py | unknown | standard |
@@ -359,34 +360,54 @@ harbor/core/workspace_migrate.py
 | harbor.core.log_draft._build_why | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._classify_affected_areas | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._coerce_validation_status | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._compose_written_details | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._dedupe_changed_files | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._derive_validation_statuses | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._determine_draft_status | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._discover_report_summaries | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._extract_bullet_items | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._extract_first_safe_text_block | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._extract_latest_git_head | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._extract_latest_snapshot_timestamp | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._extract_markdown_section | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._extract_markdown_summary_sections | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._extract_structured_fields_from_json_draft | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._format_area_list | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._format_changed_files | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._format_noop_changed_files | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._format_noop_reports | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._format_noop_snapshots | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._format_reports | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._format_snapshot_group | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._format_snapshot_line | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._infer_contract_impact | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._is_diary_changed_file | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._is_env_or_secrets_path | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._is_within | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._latest_accept_snapshot | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._load_report_summary | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._merge_affected_area_mappings | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._merge_changed_files | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._non_diary_changed_files | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._normalize_changed_file | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._normalize_contract_impact | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._normalize_report_status | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._parse_affected_areas_section | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._parse_diary_draft_lines | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._parse_markdown_draft_fields | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._parse_validation_lines | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._pick_first_nonempty | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._read_draft_source_file | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._read_last_log_marker | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._read_last_log_marker_timestamp | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._read_marker_value | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._reject_diary_output_path | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._resolve_allowed_from_draft_path | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._resolve_diary_draft_boundary | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._resolve_latest_draft_source | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._resolve_output_path | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._safe_excerpt | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._safe_multiline_excerpt | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._sanitize_affected_areas | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._sanitize_evidence | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._sanitize_markdown_text | harbor/core/log_draft.py | unknown | standard |
@@ -394,6 +415,9 @@ harbor/core/workspace_migrate.py
 | harbor.core.log_draft._sanitize_validation | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._select_snapshots | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._snapshot_summary | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._split_list_values | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._summarize_affected_areas_for_details | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._summarize_validation_for_details | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._to_repo_relative_display | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft.build_diary_draft | harbor/core/log_draft.py | public | strict |
 | harbor.core.log_draft.build_log_write_preview | harbor/core/log_draft.py | public | strict |

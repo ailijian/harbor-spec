@@ -65,6 +65,7 @@
 | tests.test_cli_workspace_inspect._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_ci_mode._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._force_en_locale | — | standard | ⚪ Missing |
+| tests.test_log_draft._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy._gitignore_entries | — | standard | ⚪ Missing |
@@ -89,6 +90,7 @@
 | tests.test_workspace_gitignore_policy._repo_root | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._run_cli | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening._run_cmd | — | standard | ⚪ Missing |
+| tests.test_diary_workspace_paths._run_cmd | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._run_git | — | standard | ⚪ Missing |
 | tests.test_release_packaging._run_help | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat._sample_contract | — | standard | ⚪ Missing |
@@ -133,6 +135,7 @@
 | tests.test_stale._write_index | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._write_json_draft | — | standard | ⚪ Missing |
 | tests.test_stale._write_l2_export_config | — | standard | ⚪ Missing |
+| tests.test_log_draft._write_latest_json_draft | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._write_markdown_draft | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance._write_report | — | standard | ⚪ Missing |
 | tests.test_log_draft._write_report | — | standard | ⚪ Missing |
@@ -199,7 +202,9 @@
 | tests.test_log_draft.test_auto_discovery_skips_non_utf8_reports | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_bad_json_snapshot_is_skipped_with_warning | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_bad_snapshot_json_is_skipped_without_crashing | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_build_diary_draft_classifies_diary_paths_separately | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_build_diary_draft_collects_required_fields_and_evidence | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_build_diary_draft_does_not_modify_existing_last_log_marker | — | standard | ⚪ Missing |
 | tests.test_doctor.test_build_doctor_report_is_read_only | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_build_saved_diary_draft_output_path_uses_reports_root_and_format | — | standard | ⚪ Missing |
@@ -253,6 +258,7 @@
 | tests.test_ci_mode.test_ci_next_steps_excludes_accept_log_lock | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_classify_project_area_is_stable | — | standard | ⚪ Missing |
 | tests.test_cli_decorate.test_cli_dry_run_preview_counts | — | standard | ⚪ Missing |
+| tests.test_diary_workspace_paths.test_cli_log_message_accepts_supported_legacy_types_in_isolated_workspace | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_cli_main_change_is_possible_with_cli_categories | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening.test_cli_status_writes_cache_in_tmp_workspace_only | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_inspect.test_cli_workspace_inspect_invalid_format_returns_argparse_error | — | standard | ⚪ Missing |
@@ -292,6 +298,9 @@
 | tests.test_ddt_validate.test_ddt_validate_matrix | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_ddt_version_baseline_missing_guidance_is_manual | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_decorate_maps_to_adopt_dry_run | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_default_log_draft_falls_back_to_latest_accept_when_marker_missing | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_default_log_draft_falls_back_to_recent_when_marker_and_accept_are_missing | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_default_log_draft_prefers_last_log_marker_boundary | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_default_paths | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_default_registry_disables_typescript | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_default_registry_enables_python | — | standard | ⚪ Missing |
@@ -310,6 +319,7 @@
 | tests.test_initializer.test_detect_script_layout | — | standard | ⚪ Missing |
 | tests.test_initializer.test_detect_src_layout | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_diary_export_maps_to_log_export | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_diary_only_changed_files_are_insufficient_for_writable_draft | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_standard_build_directories | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_tsx_js_jsx_dts | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_discover_files_default_only_ts | — | standard | ⚪ Missing |
@@ -357,6 +367,7 @@
 | tests.test_cli_i18n_env.test_env_language_overrides_config | — | standard | ⚪ Missing |
 | tests.test_init_detector.test_excludes_do_not_override_code_roots | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_explicit_from_report_still_builds_writable_draft_without_changed_files_or_snapshots | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_export_options_parsing | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence.test_exported_class_public_method_with_tsdoc_is_present_and_required | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence.test_exported_function_without_tsdoc_is_missing_and_required | — | standard | ⚪ Missing |
@@ -422,6 +433,7 @@
 | tests.test_init_llm_env.test_init_wizard_source_removes_legacy_yes_no_brackets | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence.test_internal_helper_is_not_required | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_invalid_marker_falls_back_to_accept_with_explicit_note | — | standard | ⚪ Missing |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_json_output_does_not_include_absolute_paths | — | standard | ⚪ Missing |
 | tests.test_drafting_json_parse.test_kv_fallback_lines_parse | — | standard | ⚪ Missing |
@@ -444,6 +456,8 @@
 | tests.test_stale.test_l2_readme_up_to_date_when_content_matches_except_timestamp | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_repeat_write_keeps_canonical_content_when_body_unchanged | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_last_log_marker_round_trip_prefers_last_log_at_and_keeps_legacy_aliases | — | standard | ⚪ Missing |
+| tests.test_diary_workspace_paths.test_legacy_chore_type_remains_supported | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_legacy_config_read | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_legacy_exists_but_canonical_missing_is_stale | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat.test_legacy_func_id_keeps_original_function_contract_id | — | standard | ⚪ Missing |
@@ -459,21 +473,35 @@
 | tests.test_lock_register_adopted.test_lock_register_adopted | — | standard | ⚪ Missing |
 | tests.test_lock_flags.test_lock_register_scan | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_cache_warning_does_not_fail_command | — | standard | ⚪ Missing |
+| tests.test_log_draft_cli.test_log_draft_default_json_prefers_last_log_marker_boundary | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_default_outputs_markdown_and_does_not_call_log_write | — | standard | ⚪ Missing |
+| tests.test_log_draft_cli.test_log_draft_diary_only_outputs_insufficient_evidence_without_write_hints | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_from_report_bad_json_returns_clear_error | — | standard | ⚪ Missing |
+| tests.test_log_draft_cli.test_log_draft_from_report_still_generates_writable_draft | — | standard | ⚪ Missing |
+| tests.test_cli_i18n.test_log_draft_insufficient_evidence_uses_zh_i18n_without_next_actions | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_json_output_is_stable | — | standard | ⚪ Missing |
+| tests.test_log_draft_cli.test_log_draft_json_reports_invalid_marker_fallback_without_polluting_json | — | standard | ⚪ Missing |
+| tests.test_cli_i18n.test_log_draft_next_actions_use_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_output_path_takes_precedence_over_save | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_output_rejects_diary_path | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_output_writes_reports_file_and_keeps_stdout | — | standard | ⚪ Missing |
+| tests.test_log_draft_cli.test_log_draft_reports_only_json_is_pure_and_marks_insufficient_evidence | — | standard | ⚪ Missing |
+| tests.test_log_draft_cli.test_log_draft_reports_only_outputs_insufficient_evidence_without_write_hints | — | standard | ⚪ Missing |
+| tests.test_log_draft_cli.test_log_draft_save_does_not_modify_existing_marker | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_save_json_writes_timestamped_json_copy_without_polluting_stdout | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_save_writes_timestamped_markdown_copy | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.test_log_draft_since_last_accept_filters_to_post_accept_evidence | — | standard | ⚪ Missing |
+| tests.test_log_draft_cli.test_log_draft_snapshot_only_still_outputs_writable_draft | — | standard | ⚪ Missing |
+| tests.test_cli_i18n.test_log_message_invalid_type_uses_friendly_zh_error_without_traceback | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_log_message_keeps_json_first_line_and_prints_canonical_target | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_from_draft_path_policy | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_from_latest_draft_flag_writes_successfully | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_interactive_no_cancels_without_writing | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_interactive_yes_writes_diary | — | standard | ⚪ Missing |
+| tests.test_log_write_from_draft.test_log_write_markdown_draft_maps_structured_quality_fields | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_markdown_fallback_uses_safe_excerpt_only | — | standard | ⚪ Missing |
+| tests.test_log_write_from_draft.test_log_write_marker_failure_warns_without_rolling_back_diary | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_log_write_marker_round_trip_closes_since_last_log_boundary | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_non_interactive_without_yes_is_rejected | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path | — | standard | ⚪ Missing |
@@ -599,6 +627,7 @@
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_repair_guidance_has_no_llm_integration_symbols | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_report_to_dict_is_deterministic_and_sanitized | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_reports_only_evidence_is_insufficient_and_does_not_build_writable_draft | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_retention_keeps_latest_fifty_snapshots | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_does_not_duplicate_tag | — | standard | ⚪ Missing |
@@ -615,6 +644,7 @@
 | tests.test_typescript_contract_presence.test_signature_only_public_function_remains_missing_required | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_since_last_accept_falls_back_when_accept_snapshot_is_missing | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_since_last_accept_filters_older_snapshots | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_since_last_log_invalid_marker_uses_explicit_uncertain_fallback_note | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_since_last_log_without_marker_falls_back_to_recent_snapshots | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_single_write_new_config_target | — | standard | ⚪ Missing |
 | tests.test_doctor.test_skill_reference_check_legacy_existing_passes_when_export_enabled | — | standard | ⚪ Missing |
@@ -623,6 +653,7 @@
 | tests.test_doctor.test_skill_reference_check_skips_when_agents_skills_missing | — | standard | ⚪ Missing |
 | tests.test_doctor.test_skill_reference_check_warns_when_capsule_missing | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_snapshot_does_not_store_file_content_or_diff_body | — | standard | ⚪ Missing |
+| tests.test_log_draft.test_snapshot_only_evidence_still_builds_writable_draft | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_source_fingerprint_is_deterministic | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_source_of_truth_priority_and_conflict_docs_are_present | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_advisory_does_not_trigger_write_or_workflow_side_effects | — | standard | ⚪ Missing |

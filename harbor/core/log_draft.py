@@ -582,6 +582,7 @@ def resolve_draft_source(
       - `source_kind`: `json` or `markdown`
       - `draft_payload`: parsed draft object when available, else `None`
       - `markdown_text`: markdown text when source is markdown, else `None`
+
     """
     root = Path(repo_root or Path.cwd()).resolve()
     workspace_paths = load_workspace_paths(root, enforce_write_safety=True)
@@ -1053,6 +1054,7 @@ def _snapshot_summary(snapshot: ChangeWindowSnapshot, *, role: Optional[str] = N
 
 
 def _load_report_summary(path: Path, *, repo_root: Path) -> Dict[str, Any]:
+    path = _normalize_cli_input_path(path)
     candidate = path if path.is_absolute() else (repo_root / path)
     resolved = candidate.resolve()
     try:
@@ -1477,6 +1479,7 @@ def _format_noop_reports(rows: Sequence[Dict[str, Any]]) -> str:
 
 
 def _resolve_output_path(path: Path, *, repo_root: Path) -> Path:
+    path = _normalize_cli_input_path(path)
     candidate = path if path.is_absolute() else (repo_root / path)
     resolved = candidate.resolve()
     try:
@@ -1486,6 +1489,21 @@ def _resolve_output_path(path: Path, *, repo_root: Path) -> Path:
             f"Draft output path must stay within the repository: '{resolved.as_posix()}'."
         ) from exc
     return resolved
+
+
+def _normalize_cli_input_path(path: Path) -> Path:
+    """Normalize repo-relative CLI paths so Windows separators stay portable.
+
+    CLI users may pass repo-relative paths like `.harbor\\reports\\draft.json`
+    from Windows shells. On POSIX runners, backslashes are ordinary filename
+    characters, so normalize only non-absolute inputs before allowlist checks.
+    """
+    raw = str(path or "").strip()
+    if not raw:
+        return path
+    if path.is_absolute() or re.match(r"^[A-Za-z]:[\\/]", raw) or raw.startswith("\\\\"):
+        return Path(raw)
+    return Path(raw.replace("\\", "/"))
 
 
 def _reject_diary_output_path(path: Path, *, diary_root: Path) -> None:
@@ -1517,6 +1535,7 @@ def _resolve_allowed_from_draft_path(
     latest_json: Path,
     diary_root: Path,
 ) -> Path:
+    path = _normalize_cli_input_path(path)
     candidate = path if path.is_absolute() else (repo_root / path)
     resolved = candidate.resolve()
     try:

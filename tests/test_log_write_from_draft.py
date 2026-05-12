@@ -10,6 +10,7 @@ from rich.prompt import Prompt
 import harbor.cli.main as cli_main
 from harbor.cli.main import main
 from harbor.core.diary import DiaryManager
+from harbor.core.log_draft import _normalize_cli_input_path
 
 
 @pytest.fixture(autouse=True)
@@ -297,6 +298,13 @@ def test_log_write_rejects_repo_external_absolute_path(tmp_path: Path):
     assert code == 1
     assert out == ""
     assert "Rejected unsafe `--from-draft` path" in err
+
+
+def test_normalize_cli_input_path_converts_repo_relative_windows_separators():
+    assert _normalize_cli_input_path(Path(r".harbor\reports\from-report.json")) == Path(".harbor/reports/from-report.json")
+    assert _normalize_cli_input_path(Path(r".harbor\diary\blocked.md")) == Path(".harbor/diary/blocked.md")
+    absolute = Path(r"C:\temp\draft.json")
+    assert _normalize_cli_input_path(absolute) == absolute
 
 
 def test_log_write_markdown_fallback_uses_safe_excerpt_only(tmp_path: Path):

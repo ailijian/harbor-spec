@@ -33,23 +33,23 @@ jobs:
         env:
           HARBOR_LANGUAGE: zh
           HARBOR_LANG: zh
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
         run: pytest
 
-      - name: Harbor build-index
-        run: harbor build-index
+      - name: Harbor checkpoint (CI gate)
+        env:
+          HARBOR_LANGUAGE: zh
+          HARBOR_LANG: zh
+        run: harbor checkpoint --ci --format json
 
-      - name: Harbor status should be clean
-        run: |
-          out="$(harbor status)"
-          echo "$out"
-          if [ "$out" != "No changes detected." ]; then
-            echo "Harbor status not clean"
-            exit 1
-          fi
+      - name: Harbor stale (CI gate)
+        env:
+          HARBOR_LANGUAGE: zh
+          HARBOR_LANG: zh
+        run: harbor stale --ci --format json
 
-      - name: Harbor DDT validate
-        run: harbor ddt validate
-
-      - name: Harbor semantic audit (non-blocking)
-        run: harbor audit --semantic
-        continue-on-error: true
+      - name: Harbor doctor (CI gate)
+        env:
+          HARBOR_LANGUAGE: zh
+          HARBOR_LANG: zh
+        run: harbor doctor --ci --format json
