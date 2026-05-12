@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from harbor.core.index import process_file_worker
+from harbor.core.storage import HarborDB
 from harbor.core.utils import iter_project_files
 from harbor.core.workspace import load_workspace_config
 
@@ -20,6 +21,9 @@ def load_readonly_index(index_path: Path | None = None, *, repo_root: Path | Non
             return json.loads(target.read_text(encoding="utf-8"))
         except Exception:
             pass
+    db_payload = _load_existing_db_index(repo_root=root)
+    if db_payload is not None:
+        return db_payload
     return _build_transient_index(root)
 
 
@@ -56,3 +60,35 @@ def _build_transient_index(repo_root: Path) -> Dict[str, Any]:
     }
     _TRANSIENT_INDEX_CACHE[cache_key] = copy.deepcopy(payload)
     return payload
+
+
+def _load_existing_db_index(*, repo_root: Path) -> Dict[str, Any] | None:
+    db_path = (repo_root / ".harbor" / "cache" / "harbor.db").resolve()
+    if not db_path.exists():
+        return None
+
+    db = HarborDB(db_path=db_path, project_root=repo_root)
+    try:
+        files: Dict[str, Any] = {}
+        for fp, mtime in db.get_all_files():
+            items = []
+            for it in db.get_file_entries(fp):
+                meta = it.get("meta", {}) or {}
+                items.append(
+                    {
+                        "id": it.get("id"),
+                        "qualified_name": meta.get("qualified_name"),
+                        "name": meta.get("name"),
+                        "signature_hash": it.get("signature_hash"),
+                        "body_hash": it.get("body_hash"),
+                        "contract_hash": it.get("contract_hash"),
+                        "docstring_raw_hash": meta.get("docstring_raw_hash"),
+                        "scope": meta.get("scope"),
+                        "strictness": meta.get("strictness"),
+                        "lineno": meta.get("lineno"),
+                    }
+                )
+            files[fp] = {"mtime": mtime, "file_hash": "", "items": items}
+        return {"meta": {"schema_version": "1.0.2", "source": "existing_harbor_db"}, "files": files}
+    finally:
+        db.conn.close()

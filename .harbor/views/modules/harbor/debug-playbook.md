@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "debug_playbook"
 module: "harbor"
-generated_at: "2026-05-12T15:21:22Z"
+generated_at: "2026-05-12T15:46:55Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 55
@@ -64,8 +64,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:22052aaa64d08a38aa46e374035f5a14f3bd447d32953a755ae32b723f668810"
-contract_fingerprint: "sha256:86dabbdc16da8638b4d0c3f65d5fa91449a1c34efdff799350ca10f563f7e70b"
+source_fingerprint: "sha256:8b1fd0691c42dd1470176d27c696cf81da5669593e94ad246d5c278ff9c54268"
+contract_fingerprint: "sha256:d7eb1b3a68957c059d54cad85ca4938a7e03d59a606c51e31d687b105262a070"
 generator_fingerprint: "sha256:4eab62b1668ade257dde3264126e7f18232aeb65536d76629fe89ba24b23ad99"
 ---
 
