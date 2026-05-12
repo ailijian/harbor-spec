@@ -394,6 +394,10 @@ class L2Generator:
         normalized = str(module_path or "").strip().replace("\\", "/")
         while "//" in normalized:
             normalized = normalized.replace("//", "/")
+        if normalized.startswith("/") or _looks_like_windows_absolute_path(normalized):
+            raise ValueError(
+                f"Invalid module path: '{module_path}'. Resolved path '{normalized}' escapes repo root '{self.repo_root.as_posix()}'."
+            )
         normalized = normalized.strip("/")
         if not normalized:
             return ""
@@ -416,6 +420,13 @@ def _to_repo_relative(path_text: str, repo_root: Path) -> str:
     raw = str(path_text or "").strip().replace("\\", "/")
     if not raw:
         return ""
+    if _looks_like_windows_absolute_path(raw):
+        marker = f"/{repo_root.name.lower()}/"
+        lower = raw.lower()
+        idx = lower.find(marker)
+        if idx == -1:
+            return ""
+        return raw[idx + len(marker) :].strip("/")
     path_obj = Path(raw)
     if path_obj.is_absolute():
         try:

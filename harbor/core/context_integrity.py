@@ -43,17 +43,30 @@ def _normalize_rel_path(value: str) -> str:
     return str(value or "").replace("\\", "/").strip("/")
 
 
+def _looks_like_windows_absolute_path(path_text: str) -> bool:
+    normalized = str(path_text or "").strip().replace("\\", "/")
+    return bool(normalized) and (bool(normalized[:2].endswith(":")) and normalized[2:3] == "/" or normalized.startswith("//"))
+
+
 def _as_repo_relative(path_text: str, repo_root: Path) -> str:
-    norm = _normalize_rel_path(path_text)
-    if not norm:
+    raw = str(path_text or "").strip()
+    if not raw:
         return ""
-    path_obj = Path(norm)
+    normalized = raw.replace("\\", "/")
+    if _looks_like_windows_absolute_path(normalized):
+        marker = f"/{repo_root.name.lower()}/"
+        lower = normalized.lower()
+        idx = lower.find(marker)
+        if idx == -1:
+            return ""
+        return _normalize_rel_path(normalized[idx + len(marker) :])
+    path_obj = Path(normalized)
     if path_obj.is_absolute():
         try:
             return path_obj.resolve().relative_to(repo_root.resolve()).as_posix()
         except Exception:
             return ""
-    return norm
+    return _normalize_rel_path(normalized)
 
 
 def _now_iso() -> str:

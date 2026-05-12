@@ -27,6 +27,30 @@ class DoctorCheckResult:
     suggestions: List[str]
 
     def to_dict(self) -> dict:
+        """Serialize one doctor check result into stable JSON output.
+
+        Behavior:
+          - Converts internal status labels to stable lowercase JSON values.
+          - Sanitizes detail and suggestion strings to avoid leaking
+            machine-local absolute paths.
+          - Preserves a fixed key set for CLI JSON consumers.
+
+        Returns:
+          dict: Stable JSON-compatible doctor check payload.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same check state.
+
+        Security:
+          - Must not expose machine-local absolute paths in JSON fields.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         return {
             "name": self.name,
             "status": _status_to_json(self.status),
@@ -41,6 +65,32 @@ class DoctorReport:
     checks: List[DoctorCheckResult]
 
     def to_dict(self, *, command: str = "doctor") -> dict:
+        """Serialize the aggregated doctor report into stable JSON output.
+
+        Behavior:
+          - Preserves stable top-level keys for CLI/CI JSON consumers.
+          - Aggregates pass/warn/fail/skip counts from contained checks.
+          - Marks output as advisory and read-only metadata.
+
+        Args:
+          command (str): Command name to expose in the JSON payload.
+
+        Returns:
+          dict: Stable JSON-compatible doctor report payload.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same report state.
+
+        Security:
+          - Must not expose machine-local absolute paths through nested checks.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         summary = {
             "pass": sum(1 for c in self.checks if c.status == PASS),
             "warn": sum(1 for c in self.checks if c.status == WARN),
@@ -483,13 +533,28 @@ def _sanitize_json_text(value: str) -> str:
 
 
 def _sanitize_single_path(path_text: str) -> str:
-    candidate = Path(path_text)
+    raw = str(path_text or "").strip()
+    if not raw:
+        return ""
+    normalized = raw.replace("\\", "/")
+    repo_root = Path.cwd().resolve()
+    if re.match(r"(?i)^[a-z]:/", normalized) or normalized.startswith("//"):
+        marker = f"/{repo_root.name.lower()}/"
+        lower = normalized.lower()
+        idx = lower.find(marker)
+        if idx != -1:
+            rel = normalized[idx + len(marker) :].strip("/")
+            if rel:
+                return rel
+        base = Path(normalized.rstrip("/")).name or Path(normalized).name
+        return base or normalized
+    candidate = Path(normalized)
     if candidate.is_absolute():
         try:
-            return candidate.resolve().relative_to(Path.cwd().resolve()).as_posix()
+            return candidate.resolve().relative_to(repo_root).as_posix()
         except Exception:
-            return candidate.name or path_text.replace("\\", "/")
-    return path_text.replace("\\", "/")
+            return candidate.name or normalized
+    return normalized
 
 
 def _unique(values: List[str]) -> List[str]:

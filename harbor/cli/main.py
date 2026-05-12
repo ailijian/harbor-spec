@@ -1221,7 +1221,19 @@ def main():
         cwd = Path.cwd().resolve()
         workspace_paths = []
         for raw_path in changed_paths:
-            p = Path(str(raw_path))
+            raw = str(raw_path or "").strip()
+            if not raw:
+                continue
+            normalized = raw.replace("\\", "/")
+            if re.match(r"(?i)^[a-z]:/", normalized) or normalized.startswith("//"):
+                marker = f"/{cwd.name.lower()}/"
+                lower = normalized.lower()
+                idx = lower.find(marker)
+                if idx == -1:
+                    continue
+                workspace_paths.append(normalized[idx + len(marker) :].strip("/"))
+                continue
+            p = Path(normalized)
             abs_path = p if p.is_absolute() else (cwd / p)
             try:
                 rel = abs_path.resolve().relative_to(cwd).as_posix()

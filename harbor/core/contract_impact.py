@@ -257,6 +257,33 @@ def build_contract_impact_report(records: Sequence[Any]) -> ContractImpactReport
 
 
 def contract_impact_report_to_dict(report: ContractImpactReport) -> dict:
+    """Serialize contract-impact analysis into stable JSON output.
+
+    Behavior:
+      - Preserves stable top-level keys for CLI/CI JSON consumers.
+      - Sorts findings deterministically before serialization.
+      - Sanitizes string fields so JSON output does not leak machine-local
+        absolute paths.
+
+    Args:
+      report (ContractImpactReport): Contract-impact analysis result.
+
+    Returns:
+      dict: Stable JSON-compatible contract-impact payload.
+
+    Side Effects:
+      - Writes no files.
+
+    Idempotency:
+      - Deterministic for the same report state.
+
+    Security:
+      - Must not expose machine-local absolute paths in serialized findings.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: deterministic
+    """
     normalized_findings = _sorted_findings(report.findings)
     normalized_notable = _sorted_findings(report.notable_findings)
     return {
@@ -488,10 +515,25 @@ def _sanitize_json_text(value: Optional[str]) -> str:
 
 
 def _sanitize_single_path(path_text: str) -> str:
-    candidate = Path(path_text)
+    raw = str(path_text or "").strip()
+    if not raw:
+        return ""
+    normalized = raw.replace("\\", "/")
+    repo_root = Path.cwd().resolve()
+    if re.match(r"(?i)^[a-z]:/", normalized) or normalized.startswith("//"):
+        marker = f"/{repo_root.name.lower()}/"
+        lower = normalized.lower()
+        idx = lower.find(marker)
+        if idx != -1:
+            rel = normalized[idx + len(marker) :].strip("/")
+            if rel:
+                return rel
+        base = Path(normalized.rstrip("/")).name or Path(normalized).name
+        return base or normalized
+    candidate = Path(normalized)
     if candidate.is_absolute():
         try:
-            return candidate.resolve().relative_to(Path.cwd().resolve()).as_posix()
+            return candidate.resolve().relative_to(repo_root).as_posix()
         except Exception:
-            return candidate.name or path_text.replace("\\", "/")
-    return path_text.replace("\\", "/")
+            return candidate.name or normalized
+    return normalized

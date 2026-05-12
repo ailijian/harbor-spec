@@ -24,6 +24,33 @@ class ViewStaleResult:
     suggested_command: Optional[str] = None
 
     def to_dict(self, *, view_name: Optional[str] = None) -> dict:
+        """Serialize one stale-view result into a stable JSON-safe shape.
+
+        Behavior:
+          - Normalizes the view key for machine-readable output.
+          - Sanitizes reason and suggested command strings to avoid leaking
+            machine-local absolute paths.
+          - Omits `reason` and `suggested_command` when the view is up to date.
+
+        Args:
+          view_name (Optional[str]): Explicit JSON view key override.
+
+        Returns:
+          dict: Stable JSON-compatible stale view payload.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same dataclass state.
+
+        Security:
+          - Must not expose machine-local absolute paths in JSON fields.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         is_up_to_date = self.status == "up_to_date"
         return {
             "view": view_name or self.view.lower().replace(" ", "_"),
@@ -41,7 +68,29 @@ class ModuleStaleSummary:
     module_capsule: ViewStaleResult
 
     def to_dict(self) -> dict:
-        """将模块视图状态摘要序列化为稳定 JSON 结构。"""
+        """Serialize one module stale summary into stable JSON output.
+
+        Behavior:
+          - Preserves stable top-level keys `module` and `views`.
+          - Sanitizes module display paths for JSON consumers.
+          - Emits view entries in fixed order: canonical L2, export L2, capsule.
+
+        Returns:
+          dict: Stable JSON-compatible module stale summary.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same summary state.
+
+        Security:
+          - Must not expose machine-local absolute paths in module identifiers.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         return {
             "module": _sanitize_module_for_json(self.module),
             "views": [
@@ -344,10 +393,25 @@ def _sanitize_json_text(value: Optional[str]) -> Optional[str]:
 
 
 def _sanitize_single_path(path_text: str) -> str:
-    candidate = Path(path_text)
+    raw = str(path_text or "").strip()
+    if not raw:
+        return ""
+    normalized = raw.replace("\\", "/")
+    repo_root = Path.cwd().resolve()
+    if re.match(r"(?i)^[a-z]:/", normalized) or normalized.startswith("//"):
+        marker = f"/{repo_root.name.lower()}/"
+        lower = normalized.lower()
+        idx = lower.find(marker)
+        if idx != -1:
+            rel = normalized[idx + len(marker) :].strip("/")
+            if rel:
+                return rel
+        base = Path(normalized.rstrip("/")).name or Path(normalized).name
+        return base or normalized
+    candidate = Path(normalized)
     if candidate.is_absolute():
         try:
-            return candidate.resolve().relative_to(Path.cwd().resolve()).as_posix()
+            return candidate.resolve().relative_to(repo_root).as_posix()
         except Exception:
-            return candidate.name or path_text.replace("\\", "/")
-    return path_text.replace("\\", "/")
+            return candidate.name or normalized
+    return normalized

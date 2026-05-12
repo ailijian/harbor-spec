@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-12T10:14:28Z"
+generated_at: "2026-05-12T11:23:23Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 32
@@ -41,11 +41,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:9cf72662002eee858487581bc0da7848065c933fbd08cb444cab8495fe218e53"
-contract_fingerprint: "sha256:c4cde02d3c6aa7cdfc174a4dd7ed032db9ab09034d0f136f5fa5f3338087de4d"
+source_fingerprint: "sha256:aec6fbd8108de54ca022eb90d75141b59af5e6903ce990e7b7ccaf246186e8ac"
+contract_fingerprint: "sha256:99527f378420241767304719fd6fdbb0f991c807d7d4e16a483d8dc7d7b9de15"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "9e236179fe9fd988a80b4cf9db1b6cb34a6b26fc763e853a178b4271833bc23f"
-fingerprint: "9e236179fe9fd988a80b4cf9db1b6cb34a6b26fc763e853a178b4271833bc23f"
+view_fingerprint: "34df9a2e2b2d2d3dc03cc62921acb1c84ff8b5e8db33a14f2d040fef4ff6a3bc"
+fingerprint: "34df9a2e2b2d2d3dc03cc62921acb1c84ff8b5e8db33a14f2d040fef4ff6a3bc"
 ---
 
 # Module Card: harbor/core
@@ -472,6 +472,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.project_structure._infer_area | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._key_files_display | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._load_index | harbor/core/project_structure.py | unknown | standard |
+| harbor.core.project_structure._looks_like_windows_absolute_path | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._normalize_rel_path | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._read_project_metadata | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | harbor/core/project_structure.py | unknown | standard |
@@ -482,10 +483,10 @@ harbor/core/workspace_migrate.py
 | harbor.core.project_structure._to_project_relative_path | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._yes_no | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure.classify_project_area | harbor/core/project_structure.py | unknown | standard |
-| harbor.core.project_structure.collect_project_structure_context | harbor/core/project_structure.py | unknown | standard |
-| harbor.core.project_structure.generate_project_structure_markdown | harbor/core/project_structure.py | unknown | standard |
+| harbor.core.project_structure.collect_project_structure_context | harbor/core/project_structure.py | public | strict |
+| harbor.core.project_structure.generate_project_structure_markdown | harbor/core/project_structure.py | public | strict |
 | harbor.core.project_structure.rank_key_file | harbor/core/project_structure.py | unknown | standard |
-| harbor.core.project_structure.write_project_structure | harbor/core/project_structure.py | unknown | standard |
+| harbor.core.project_structure.write_project_structure | harbor/core/project_structure.py | public | strict |
 | harbor.core.repair_guidance.RepairGuidance.to_dict | harbor/core/repair_guidance.py | public | strict |
 | harbor.core.repair_guidance.generic_conservative_guidance | harbor/core/repair_guidance.py | unknown | standard |
 | harbor.core.repair_guidance.guidance_for_checkpoint_category | harbor/core/repair_guidance.py | unknown | standard |
