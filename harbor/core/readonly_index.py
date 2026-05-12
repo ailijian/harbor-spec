@@ -89,6 +89,8 @@ def _load_existing_db_index(*, repo_root: Path) -> Dict[str, Any] | None:
                     }
                 )
             files[fp] = {"mtime": mtime, "file_hash": "", "items": items}
+        if not files:
+            return None
         return {"meta": {"schema_version": "1.0.2", "source": "existing_harbor_db"}, "files": files}
     finally:
         db.conn.close()
