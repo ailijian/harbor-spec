@@ -705,7 +705,13 @@ def _resolve_docs_export_project_structure_path(root: Path, config: Optional[Dic
         return None
 
     raw_root = str(docs_options.get("root") or "docs/harbor").strip()
-    export_root = Path(raw_root)
+    normalized_root = raw_root.replace("\\", "/")
+    export_root = Path(normalized_root)
+    if _looks_like_windows_absolute_path(raw_root) and not export_root.is_absolute():
+        raise ValueError(
+            f"Invalid workspace path for 'views.export.docs.root': '{raw_root}'. "
+            f"Resolved path '{normalized_root}' escapes repo root '{root.resolve().as_posix()}'."
+        )
     if not export_root.is_absolute():
         export_root = root / export_root
     export_root = export_root.resolve()

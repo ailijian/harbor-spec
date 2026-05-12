@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from harbor.core.change_window import ChangeWindowSnapshot, collect_git_workspace_state, list_change_windows
-from harbor.core.workspace import load_workspace_paths
+from harbor.core.workspace import _looks_like_windows_absolute_path, load_workspace_paths
 from harbor.utils.i18n import t
 
 
@@ -1054,19 +1054,17 @@ def _snapshot_summary(snapshot: ChangeWindowSnapshot, *, role: Optional[str] = N
 
 
 def _load_report_summary(path: Path, *, repo_root: Path) -> Dict[str, Any]:
-    path = _normalize_cli_input_path(path)
-    candidate = path if path.is_absolute() else (repo_root / path)
-    resolved = candidate.resolve()
+    resolved, display_path = _resolve_cli_input_path(path, repo_root=repo_root)
     try:
         payload = json.loads(resolved.read_text(encoding="utf-8"))
     except UnicodeDecodeError as exc:
-        raise LogDraftError(f"Failed to decode report '{resolved.as_posix()}' as UTF-8 JSON: {exc}") from exc
+        raise LogDraftError(f"Failed to decode report '{display_path}' as UTF-8 JSON: {exc}") from exc
     except json.JSONDecodeError as exc:
-        raise LogDraftError(f"Failed to parse JSON report '{resolved.as_posix()}': {exc}") from exc
+        raise LogDraftError(f"Failed to parse JSON report '{display_path}': {exc}") from exc
     except OSError as exc:
-        raise LogDraftError(f"Unable to read report '{resolved.as_posix()}': {exc}") from exc
+        raise LogDraftError(f"Unable to read report '{display_path}': {exc}") from exc
     if not isinstance(payload, dict):
-        raise LogDraftError(f"Report '{resolved.as_posix()}' must contain a JSON object.")
+        raise LogDraftError(f"Report '{display_path}' must contain a JSON object.")
 
     command = str(payload.get("command") or "").strip().lower()
     if command not in KNOWN_REPORT_COMMANDS:
@@ -1479,14 +1477,12 @@ def _format_noop_reports(rows: Sequence[Dict[str, Any]]) -> str:
 
 
 def _resolve_output_path(path: Path, *, repo_root: Path) -> Path:
-    path = _normalize_cli_input_path(path)
-    candidate = path if path.is_absolute() else (repo_root / path)
-    resolved = candidate.resolve()
+    resolved, display_path = _resolve_cli_input_path(path, repo_root=repo_root)
     try:
         resolved.relative_to(repo_root)
     except ValueError as exc:
         raise LogDraftError(
-            f"Draft output path must stay within the repository: '{resolved.as_posix()}'."
+            f"Draft output path must stay within the repository: '{display_path}'."
         ) from exc
     return resolved
 
@@ -1504,6 +1500,18 @@ def _normalize_cli_input_path(path: Path) -> Path:
     if path.is_absolute() or re.match(r"^[A-Za-z]:[\\/]", raw) or raw.startswith("\\\\"):
         return Path(raw)
     return Path(raw.replace("\\", "/"))
+
+
+def _resolve_cli_input_path(path: Path, *, repo_root: Path) -> Tuple[Path, str]:
+    normalized_path = _normalize_cli_input_path(path)
+    display_path = str(normalized_path or "").strip().replace("\\", "/")
+    if _looks_like_windows_absolute_path(display_path):
+        candidate = Path(display_path)
+        if not candidate.is_absolute():
+            raise LogDraftError(f"Path is outside the current repository: '{display_path}'.")
+        return candidate.resolve(), display_path
+    candidate = normalized_path if normalized_path.is_absolute() else (repo_root / normalized_path)
+    return candidate.resolve(), display_path or candidate.resolve().as_posix()
 
 
 def _reject_diary_output_path(path: Path, *, diary_root: Path) -> None:
@@ -1535,13 +1543,11 @@ def _resolve_allowed_from_draft_path(
     latest_json: Path,
     diary_root: Path,
 ) -> Path:
-    path = _normalize_cli_input_path(path)
-    candidate = path if path.is_absolute() else (repo_root / path)
-    resolved = candidate.resolve()
+    resolved, display_path = _resolve_cli_input_path(path, repo_root=repo_root)
     try:
         rel = resolved.relative_to(repo_root.resolve())
     except ValueError as exc:
-        raise LogDraftError(f"Unsafe --from-draft path (outside repo): '{resolved.as_posix()}'.") from exc
+        raise LogDraftError(f"Unsafe --from-draft path (outside repo): '{display_path}'.") from exc
     rel_posix = rel.as_posix()
     rel_lower = rel_posix.lower()
 

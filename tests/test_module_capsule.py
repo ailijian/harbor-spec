@@ -176,6 +176,21 @@ def test_write_module_capsule_rejects_nested_parent_traversal_module_path(tmp_pa
         assert "Invalid module path" in str(ex)
 
 
+def test_write_module_capsule_rejects_windows_absolute_module_path(tmp_path: Path):
+    ctx = {
+        "module": "C:/outside/project/module",
+        "key_files": ["harbor/core/sync.py"],
+        "contracts": [],
+        "tests": [],
+        "strictness": "standard",
+    }
+    try:
+        write_module_capsule(ctx, output_root=tmp_path / ".harbor" / "views" / "modules")
+        assert False, "expected Windows absolute module path validation to fail"
+    except ValueError as ex:
+        assert "Absolute paths are not allowed" in str(ex)
+
+
 def test_write_module_capsule_rejects_export_root_outside_repo(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
@@ -191,5 +206,24 @@ def test_write_module_capsule_rejects_export_root_outside_repo(tmp_path: Path, m
     try:
         write_module_capsule(ctx, root=tmp_path)
         assert False, "expected export root validation to fail"
+    except ValueError as ex:
+        assert "views.export.docs.root" in str(ex)
+
+
+def test_write_module_capsule_rejects_windows_absolute_export_root(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text("views:\n  export:\n    docs:\n      enabled: true\n      root: C:/outside\n", encoding="utf-8")
+    ctx = {
+        "module": "harbor/core",
+        "key_files": ["harbor/core/sync.py"],
+        "contracts": [],
+        "tests": [],
+        "strictness": "standard",
+    }
+    try:
+        write_module_capsule(ctx, root=tmp_path)
+        assert False, "expected Windows absolute export root validation to fail"
     except ValueError as ex:
         assert "views.export.docs.root" in str(ex)

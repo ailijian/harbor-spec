@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-12T11:23:23Z"
+generated_at: "2026-05-12T11:48:59Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 32
@@ -41,11 +41,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:aec6fbd8108de54ca022eb90d75141b59af5e6903ce990e7b7ccaf246186e8ac"
-contract_fingerprint: "sha256:99527f378420241767304719fd6fdbb0f991c807d7d4e16a483d8dc7d7b9de15"
+source_fingerprint: "sha256:307a0d123aa09e56b7ac00e9f4026277f37f4314c7969770090aefb2c8751632"
+contract_fingerprint: "sha256:5ab6bcd3ba52be4e5ad266c2c034a77dd4aa3ee2e3a4612e97090747371213c8"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "34df9a2e2b2d2d3dc03cc62921acb1c84ff8b5e8db33a14f2d040fef4ff6a3bc"
-fingerprint: "34df9a2e2b2d2d3dc03cc62921acb1c84ff8b5e8db33a14f2d040fef4ff6a3bc"
+view_fingerprint: "bf378547917b84528cdf8fa8bd0765fb39cfb7b90e51a3b5048c46b6d4785cae"
+fingerprint: "bf378547917b84528cdf8fa8bd0765fb39cfb7b90e51a3b5048c46b6d4785cae"
 ---
 
 # Module Card: harbor/core
@@ -164,6 +164,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.context_integrity._as_repo_relative | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._decode_scalar | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._json_stable_hash | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._looks_like_windows_absolute_path | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._normalize_body_for_compare | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._normalize_rel_path | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._now_iso | harbor/core/context_integrity.py | unknown | standard |
@@ -203,7 +204,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.contract_impact.classify_contract_impact_for_file_path | harbor/core/contract_impact.py | unknown | standard |
 | harbor.core.contract_impact.classify_contract_impact_for_function_change | harbor/core/contract_impact.py | unknown | standard |
 | harbor.core.contract_impact.classify_contract_impact_from_status_record | harbor/core/contract_impact.py | unknown | standard |
-| harbor.core.contract_impact.contract_impact_report_to_dict | harbor/core/contract_impact.py | unknown | standard |
+| harbor.core.contract_impact.contract_impact_report_to_dict | harbor/core/contract_impact.py | public | strict |
 | harbor.core.contract_impact.format_contract_impact_report | harbor/core/contract_impact.py | unknown | standard |
 | harbor.core.contract_presence._looks_like_contract_doc | harbor/core/contract_presence.py | unknown | standard |
 | harbor.core.contract_presence.evaluate_contract_presence | harbor/core/contract_presence.py | unknown | standard |
@@ -244,8 +245,8 @@ harbor/core/workspace_migrate.py
 | harbor.core.diary.DiaryManager.export_markdown | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager.load_active | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager.log | harbor/core/diary.py | public | strict |
-| harbor.core.doctor.DoctorCheckResult.to_dict | harbor/core/doctor.py | unknown | standard |
-| harbor.core.doctor.DoctorReport.to_dict | harbor/core/doctor.py | unknown | standard |
+| harbor.core.doctor.DoctorCheckResult.to_dict | harbor/core/doctor.py | public | strict |
+| harbor.core.doctor.DoctorReport.to_dict | harbor/core/doctor.py | public | strict |
 | harbor.core.doctor._collect_next_steps | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._derived_view_detail_status | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._filter_safe_next_steps | harbor/core/doctor.py | unknown | standard |
@@ -492,8 +493,8 @@ harbor/core/workspace_migrate.py
 | harbor.core.repair_guidance.guidance_for_checkpoint_category | harbor/core/repair_guidance.py | unknown | standard |
 | harbor.core.repair_guidance.guidance_for_doctor_item | harbor/core/repair_guidance.py | unknown | standard |
 | harbor.core.repair_guidance.guidance_for_stale_item | harbor/core/repair_guidance.py | unknown | standard |
-| harbor.core.stale.ModuleStaleSummary.to_dict | harbor/core/stale.py | unknown | standard |
-| harbor.core.stale.ViewStaleResult.to_dict | harbor/core/stale.py | unknown | standard |
+| harbor.core.stale.ModuleStaleSummary.to_dict | harbor/core/stale.py | public | strict |
+| harbor.core.stale.ViewStaleResult.to_dict | harbor/core/stale.py | public | strict |
 | harbor.core.stale._format_view_lines | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale._normalize_l2_body_for_export_compare | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale._normalize_l2_markdown_for_stale | harbor/core/stale.py | unknown | standard |

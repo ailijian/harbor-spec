@@ -12,7 +12,12 @@ from harbor.core.context_integrity import (
     extract_integrity_fingerprints,
 )
 from harbor.core.storage import HarborDB
-from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
+from harbor.core.workspace import (
+    _looks_like_windows_absolute_path,
+    load_workspace_config,
+    load_workspace_paths,
+    parse_workspace_export_options,
+)
 
 
 @dataclass
@@ -48,6 +53,8 @@ def _safe_module_subpath(module: str) -> str:
     normalized = normalize_module_path(module)
     if not normalized:
         return normalized
+    if normalized.startswith("/") or _looks_like_windows_absolute_path(normalized):
+        raise ValueError(f"Invalid module path: '{module}'. Absolute paths are not allowed.")
     parts = [part for part in normalized.split("/") if part not in ("", ".")]
     if any(part == ".." for part in parts):
         raise ValueError(f"Invalid module path: '{module}'. Relative parent segments are not allowed.")
@@ -68,7 +75,13 @@ def _resolve_docs_export_modules_root(root: Path, config: Optional[Dict[str, Any
         return None
 
     raw_root = str(docs_options.get("root") or "docs/harbor").strip()
-    export_root = Path(raw_root)
+    normalized_root = raw_root.replace("\\", "/")
+    export_root = Path(normalized_root)
+    if _looks_like_windows_absolute_path(raw_root) and not export_root.is_absolute():
+        raise ValueError(
+            f"Invalid workspace path for 'views.export.docs.root': '{raw_root}'. "
+            f"Resolved path '{normalized_root}' escapes repo root '{root.resolve().as_posix()}'."
+        )
     if not export_root.is_absolute():
         export_root = root / export_root
     export_root = export_root.resolve()
@@ -591,11 +604,73 @@ def preview_module_capsule(context: Dict[str, Any]) -> Dict[str, str]:
     }
 
 
+def build_module_card_frontmatter(
+    module: str,
+    *,
+    source_paths: List[str],
+    contract_records: List[Dict[str, Any]],
+    repo_root: Path,
+    generation_command: str,
+    fingerprint: str,
+) -> Dict[str, Any]:
+    metadata = build_context_integrity_metadata(
+        view_type="module_card",
+        module=module,
+        generation_command=generation_command,
+        source_paths=source_paths,
+        contract_records=contract_records,
+        repo_root=repo_root,
+    )
+    metadata["view_fingerprint"] = fingerprint
+    metadata["fingerprint"] = fingerprint
+    return metadata
+
+
 def write_module_capsule(
     context: Dict[str, Any],
     output_root: Optional[Path] = None,
     root: Optional[Path] = None,
 ) -> ModuleCapsuleWriteResult:
+    """Write the canonical Module Capsule views for one module.
+
+    Behavior:
+      - Resolves canonical capsule paths under `.harbor/views/modules/**`.
+      - Renders `module-card.md`, `review-checklist.md`, and `debug-playbook.md`.
+      - Writes optional docs export copies only when the configured export root
+        stays inside the repository.
+      - Rejects parent traversal and cross-platform absolute module paths.
+
+    Args:
+      context (Dict[str, Any]): Module context used to render capsule views.
+      output_root (Optional[Path]): Override for canonical output root in tests
+        or targeted writes.
+      root (Optional[Path]): Repository root used for path validation and
+        integrity metadata generation.
+
+    Returns:
+      ModuleCapsuleWriteResult: Canonical and optional exported file paths that
+      were written for this module.
+
+    File Write Targets:
+      - `.harbor/views/modules/<module>/module-card.md`
+      - `.harbor/views/modules/<module>/review-checklist.md`
+      - `.harbor/views/modules/<module>/debug-playbook.md`
+      - Optional docs export copies under the configured docs root
+
+    Side Effects:
+      - Creates parent directories for generated module capsule files.
+      - Overwrites generated capsule files with refreshed rendered content.
+
+    Idempotency:
+      - Deterministic for the same `context`, output roots, and repository state.
+
+    Security:
+      - Must not write outside the repository root or configured safe output roots.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: deterministic
+    """
     module_name = str(context.get("module", "") or "")
     paths = resolve_module_capsule_paths(module_name, root=root, output_root=output_root)
     canonical_dir = paths["canonical_dir"]
@@ -613,22 +688,29 @@ def write_module_capsule(
 
     for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
         path = canonical_dir / name
-        view_type = {
-            "module-card.md": "module_card",
-            "review-checklist.md": "review_checklist",
-            "debug-playbook.md": "debug_playbook",
-        }[name]
-        metadata = build_context_integrity_metadata(
-            view_type=view_type,
-            module=module_norm,
-            generation_command=generation_command,
-            source_paths=source_paths,
-            contract_records=contract_records,
-            repo_root=(root or Path.cwd()).resolve(),
-        )
+        repo_root = (root or Path.cwd()).resolve()
         if name == "module-card.md":
-            metadata["view_fingerprint"] = module_fp
-            metadata["fingerprint"] = module_fp
+            metadata = build_module_card_frontmatter(
+                module_norm,
+                source_paths=source_paths,
+                contract_records=contract_records,
+                repo_root=repo_root,
+                generation_command=generation_command,
+                fingerprint=module_fp,
+            )
+        else:
+            view_type = {
+                "review-checklist.md": "review_checklist",
+                "debug-playbook.md": "debug_playbook",
+            }[name]
+            metadata = build_context_integrity_metadata(
+                view_type=view_type,
+                module=module_norm,
+                generation_command=generation_command,
+                source_paths=source_paths,
+                contract_records=contract_records,
+                repo_root=repo_root,
+            )
         previous = ""
         if path.exists():
             try:
@@ -644,22 +726,29 @@ def write_module_capsule(
         export_dir.mkdir(parents=True, exist_ok=True)
         for name in ["module-card.md", "review-checklist.md", "debug-playbook.md"]:
             export_path = export_dir / name
-            view_type = {
-                "module-card.md": "module_card",
-                "review-checklist.md": "review_checklist",
-                "debug-playbook.md": "debug_playbook",
-            }[name]
-            metadata = build_context_integrity_metadata(
-                view_type=view_type,
-                module=module_norm,
-                generation_command=generation_command,
-                source_paths=source_paths,
-                contract_records=contract_records,
-                repo_root=(root or Path.cwd()).resolve(),
-            )
+            repo_root = (root or Path.cwd()).resolve()
             if name == "module-card.md":
-                metadata["view_fingerprint"] = module_fp
-                metadata["fingerprint"] = module_fp
+                metadata = build_module_card_frontmatter(
+                    module_norm,
+                    source_paths=source_paths,
+                    contract_records=contract_records,
+                    repo_root=repo_root,
+                    generation_command=generation_command,
+                    fingerprint=module_fp,
+                )
+            else:
+                view_type = {
+                    "review-checklist.md": "review_checklist",
+                    "debug-playbook.md": "debug_playbook",
+                }[name]
+                metadata = build_context_integrity_metadata(
+                    view_type=view_type,
+                    module=module_norm,
+                    generation_command=generation_command,
+                    source_paths=source_paths,
+                    contract_records=contract_records,
+                    repo_root=repo_root,
+                )
             previous = ""
             if export_path.exists():
                 try:

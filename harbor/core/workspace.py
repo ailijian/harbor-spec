@@ -41,6 +41,14 @@ def _to_bool(value: Any, default: bool = False) -> bool:
     return default
 
 
+def _looks_like_windows_absolute_path(value: Any) -> bool:
+    raw = str(value or "").strip()
+    if not raw:
+        return False
+    normalized = raw.replace("\\", "/")
+    return bool(_WINDOWS_ABS_RE.match(raw)) or bool(_WINDOWS_UNC_RE.match(raw)) or normalized.startswith("//")
+
+
 def _normalize_path_like(value: Any, *, repo_root: Path) -> Path:
     if isinstance(value, Path):
         raw = value.as_posix()
@@ -51,8 +59,12 @@ def _normalize_path_like(value: Any, *, repo_root: Path) -> Path:
         return repo_root
 
     candidate: Path
-    if _WINDOWS_ABS_RE.match(raw) or _WINDOWS_UNC_RE.match(raw):
-        candidate = Path(PureWindowsPath(raw))
+    if _looks_like_windows_absolute_path(raw):
+        # Preserve Windows-style absolute inputs as absolute-like values on POSIX
+        # instead of incorrectly rebasing them into the current repository.
+        candidate = Path(PureWindowsPath(raw).as_posix())
+        if candidate.is_absolute():
+            return candidate.resolve()
     else:
         # Normalize slashes so Windows/POSIX style relative paths behave consistently.
         normalized = raw.replace("\\", "/")
@@ -120,6 +132,37 @@ def resolve_workspace_config_path(repo_root: Path) -> Path:
 
 
 def write_workspace_config(repo_root: Path, data: Dict[str, Any]) -> Path:
+    """Write the canonical Harbor workspace config file.
+
+    Behavior:
+      - Writes the canonical workspace config to `.harbor/config/harbor.yaml`.
+      - Creates parent directories when they do not already exist.
+      - Replaces the full file content with the provided YAML mapping.
+
+    Args:
+      repo_root (Path): Repository root used to resolve the canonical config path.
+      data (Dict[str, Any]): YAML-serializable workspace config payload.
+
+    Returns:
+      Path: Absolute path to the written canonical config file.
+
+    File Write Targets:
+      - `.harbor/config/harbor.yaml`
+
+    Side Effects:
+      - Creates `.harbor/config/` when missing.
+      - Overwrites the canonical config file content.
+
+    Idempotency:
+      - Deterministic for the same `repo_root` and `data`.
+
+    Security:
+      - Must not write outside the repository root.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: deterministic
+    """
     root = Path(repo_root).resolve()
     target = root / ".harbor" / "config" / "harbor.yaml"
     target.parent.mkdir(parents=True, exist_ok=True)

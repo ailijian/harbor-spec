@@ -275,6 +275,7 @@
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | — | standard | ⚪ Missing |
 | tests.test_doctor.test_collect_next_steps_filters_high_impact_commands | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_builds_expected_flags_and_counts | — | standard | ⚪ Missing |
+| tests.test_project_structure.test_collect_project_structure_context_filters_windows_absolute_paths_on_posix | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_reads_metadata_from_pyproject | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_commit_alias_unchanged_maps_to_lock | — | standard | ⚪ Missing |

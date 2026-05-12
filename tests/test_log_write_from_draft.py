@@ -300,6 +300,14 @@ def test_log_write_rejects_repo_external_absolute_path(tmp_path: Path):
     assert "Rejected unsafe `--from-draft` path" in err
 
 
+def test_log_write_rejects_windows_absolute_from_draft_path(tmp_path: Path):
+    code, out, err = run_cmd(["log", "write", "--from-draft", "C:/outside-draft.md", "--yes"])
+
+    assert code == 1
+    assert out == ""
+    assert "Rejected unsafe `--from-draft` path" in err
+
+
 def test_normalize_cli_input_path_converts_repo_relative_windows_separators():
     assert _normalize_cli_input_path(Path(r".harbor\reports\from-report.json")) == Path(".harbor/reports/from-report.json")
     assert _normalize_cli_input_path(Path(r".harbor\diary\blocked.md")) == Path(".harbor/diary/blocked.md")

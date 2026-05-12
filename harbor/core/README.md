@@ -15,6 +15,7 @@
 | harbor.core.ci.checkpoint_ci_result_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci` 公开 CI JSON pa... | strict | ❌ Missing |
 | harbor.core.ci.ci_result_to_dict | 将通用 CIResult 序列化为 checkpoint 之外的公开 CI JSON payload。 | strict | ❌ Missing |
 | harbor.core.project_structure.collect_project_structure_context | Collect the canonical project-structure context from inde... | strict | ❌ Missing |
+| harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
 | harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
@@ -32,6 +33,10 @@
 | harbor.core.storage.HarborDB.purge_missing | 删除 DB 中存在但磁盘已缺失的文件记录。 | strict | ❌ Missing |
 | harbor.core.log_draft.render_diary_draft_markdown | Render a stable markdown diary draft from the JSON payload. | strict | ❌ Missing |
 | harbor.core.log_draft.serialize_diary_draft | Serialize a diary draft payload as markdown or stable JSON. | strict | ❌ Missing |
+| harbor.core.doctor.DoctorCheckResult.to_dict | Serialize one doctor check result into stable JSON output. | strict | ❌ Missing |
+| harbor.core.doctor.DoctorReport.to_dict | Serialize the aggregated doctor report into stable JSON o... | strict | ❌ Missing |
+| harbor.core.stale.ViewStaleResult.to_dict | Serialize one stale-view result into a stable JSON-safe s... | strict | ❌ Missing |
+| harbor.core.stale.ModuleStaleSummary.to_dict | Serialize one module stale summary into stable JSON output. | strict | ❌ Missing |
 | harbor.core.ci.CIFailure.to_dict | 将通用 CI failure/advisory 项序列化为 machine-readable JSON-compa... | strict | ❌ Missing |
 | harbor.core.ci.CheckpointCIItem.to_dict | 将 checkpoint CI failure/advisory 项序列化为 machine-readable J... | strict | ❌ Missing |
 | harbor.core.repair_guidance.RepairGuidance.to_dict | Serialize deterministic repair guidance into a JSON-compa... | strict | ❌ Missing |
@@ -45,7 +50,7 @@
 | harbor.core.log_draft.write_diary_entry_from_draft | Write one structured diary entry from an approved draft s... | strict | ❌ Missing |
 | harbor.core.log_draft.write_last_log_marker | Best-effort update of `.harbor/state/log/last_log_marker.... | strict | ❌ Missing |
 | harbor.core.log_draft.write_latest_diary_draft_cache | Best-effort write of latest diary draft runtime cache und... | strict | ❌ Missing |
-| harbor.core.project_structure.write_project_structure | Write the canonical project-structure view and optional e... | strict | ❌ Missing |
+| harbor.core.project_structure.write_project_structure | — | strict | ❌ Missing |
 
 ## Internal Details (optional)
 <details>
@@ -118,7 +123,7 @@
 | harbor.core.ci._derive_checkpoint_identity | — | standard | ⚪ Missing |
 | harbor.core.ci._derive_qualified_name_and_symbol_kind | — | standard | ⚪ Missing |
 | harbor.core.log_draft._derive_validation_statuses | — | standard | ⚪ Missing |
-| harbor.core.doctor._derived_view_detail_status | — | standard | ⚪ Missing |
+| harbor.core.doctor._derived_view_detail_status | 将内部 view status 归一化为可展示文本。 | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_django | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_go | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_java | — | standard | ⚪ Missing |
@@ -161,7 +166,7 @@
 | harbor.core.log_draft._format_snapshot_group | — | standard | ⚪ Missing |
 | harbor.core.log_draft._format_snapshot_line | — | standard | ⚪ Missing |
 | harbor.core.change_window._format_snapshot_stamp | — | standard | ⚪ Missing |
-| harbor.core.stale._format_view_lines | — | standard | ⚪ Missing |
+| harbor.core.stale._format_view_lines | 格式化单个视图状态的文本行。 | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._from_dict | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._get_default_excludes | — | standard | ⚪ Missing |
 | harbor.core.change_window._git_status_lines | — | standard | ⚪ Missing |
@@ -216,6 +221,7 @@
 | harbor.core.contract_presence._looks_like_contract_doc | — | standard | ⚪ Missing |
 | harbor.core.project_structure._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.l2._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._mask_key | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._max_level | — | standard | ⚪ Missing |
 | harbor.core.log_draft._merge_affected_area_mappings | — | standard | ⚪ Missing |
@@ -228,7 +234,7 @@
 | harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_changed_file | — | standard | ⚪ Missing |
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
-| harbor.core.log_draft._normalize_cli_input_path | Normalize repo-relative CLI paths so Windows separators s... | standard | ⚪ Missing |
+| harbor.core.log_draft._normalize_cli_input_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
@@ -362,7 +368,7 @@
 | harbor.core.stale.check_l2_readme_export_stale | — | standard | ⚪ Missing |
 | harbor.core.stale.check_l2_readme_stale | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.check_module_capsule_stale | — | standard | ⚪ Missing |
-| harbor.core.stale.check_module_derived_views_stale | — | standard | ⚪ Missing |
+| harbor.core.stale.check_module_derived_views_stale | 检查单模块的 L2 / L2 export / Capsule 三类视图状态。 | standard | ⚪ Missing |
 | harbor.core.contract_impact.classify_contract_impact_for_docstring_diff | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.classify_contract_impact_for_file_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.classify_contract_impact_for_function_change | — | standard | ⚪ Missing |
@@ -382,7 +388,6 @@
 | harbor.core.context_integrity.compute_source_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.init_prompt.confirm | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.content_without_generated_at_for_compare | — | standard | ⚪ Missing |
-| harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | standard | ⚪ Missing |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
 | harbor.core.utils.derive_adopted_roots | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
@@ -395,7 +400,7 @@
 | harbor.core.ci.format_ci_result | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.format_contract_impact_report | — | standard | ⚪ Missing |
 | harbor.core.doctor.format_doctor_report | — | standard | ⚪ Missing |
-| harbor.core.stale.format_stale_summary | — | standard | ⚪ Missing |
+| harbor.core.stale.format_stale_summary | 将 stale 检查结果渲染为 CLI 文本摘要。 | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.format_workspace_inspect_report | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.format_workspace_migrate_report | — | standard | ⚪ Missing |
 | harbor.core.git_utils.GitIgnoreMatcher.from_root | — | standard | ⚪ Missing |
@@ -439,7 +444,7 @@
 | harbor.core.init_wizard.InitWizard.run | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_config_index_check | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_ddt_fast_check | — | standard | ⚪ Missing |
-| harbor.core.doctor.run_derived_views_check | — | standard | ⚪ Missing |
+| harbor.core.doctor.run_derived_views_check | 检查模块派生视图状态并汇总为 Doctor 结果。 | standard | ⚪ Missing |
 | harbor.core.doctor.run_skill_reference_check | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_workspace_status_check | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.sanitize_text | — | standard | ⚪ Missing |
@@ -449,12 +454,8 @@
 | harbor.core.init_prompt.select_one | — | standard | ⚪ Missing |
 | harbor.core.module_skill.skill_dir_for_module | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.split_frontmatter | — | standard | ⚪ Missing |
-| harbor.core.stale.stale_report_to_dict | — | standard | ⚪ Missing |
+| harbor.core.stale.stale_report_to_dict | 将 stale 检查结果序列化为 machine-readable JSON 对象。 | standard | ⚪ Missing |
 | harbor.core.context_integrity.strip_frontmatter | — | standard | ⚪ Missing |
-| harbor.core.doctor.DoctorCheckResult.to_dict | Serialize one doctor check result into stable JSON output. | standard | ⚪ Missing |
-| harbor.core.doctor.DoctorReport.to_dict | — | standard | ⚪ Missing |
-| harbor.core.stale.ViewStaleResult.to_dict | Serialize one stale-view result into a stable JSON-safe s... | standard | ⚪ Missing |
-| harbor.core.stale.ModuleStaleSummary.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.WorkspaceMigrationPlanItem.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceLegacyPathStatus.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceGitTrackingStatus.to_dict | — | standard | ⚪ Missing |

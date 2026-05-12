@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-12T10:14:24Z"
+generated_at: "2026-05-12T11:48:59Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 90
@@ -99,8 +99,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:23f119e590a07c877265d1001da50ea308251e1bba64d6d8c0c100135fdda134"
-contract_fingerprint: "sha256:f23d84276a598f88971335d83627e97882b58cd8b338af28c675b4c792b62025"
+source_fingerprint: "sha256:a64164e2e3128d057348c5ba4014bc04eb5564e4ab3a70172c1b41548809563c"
+contract_fingerprint: "sha256:2db1525ce451a31cff08c3376c6d3bf24e4096dc166ae722ad75b357ca09edd2"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -381,6 +381,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | — | standard | ⚪ Missing |
 | tests.test_doctor.test_collect_next_steps_filters_high_impact_commands | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_builds_expected_flags_and_counts | — | standard | ⚪ Missing |
+| tests.test_project_structure.test_collect_project_structure_context_filters_windows_absolute_paths_on_posix | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_reads_metadata_from_pyproject | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_commit_alias_unchanged_maps_to_lock | — | standard | ⚪ Missing |
