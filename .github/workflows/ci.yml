@@ -29,6 +29,13 @@ jobs:
         run: |
           python -m pip install -e ".[dev]"
 
+      - name: Seed Harbor baseline cache
+        env:
+          HARBOR_LANGUAGE: zh
+          HARBOR_LANG: zh
+        run: |
+          harbor lock --no-register-adopted --no-incremental
+
       - name: Run unit tests
         env:
           HARBOR_LANGUAGE: zh

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-12T11:48:59Z"
+generated_at: "2026-05-12T12:51:42Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 90
@@ -99,8 +99,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:a64164e2e3128d057348c5ba4014bc04eb5564e4ab3a70172c1b41548809563c"
-contract_fingerprint: "sha256:2db1525ce451a31cff08c3376c6d3bf24e4096dc166ae722ad75b357ca09edd2"
+source_fingerprint: "sha256:63bbb8ed433d63daf4a0c6e1c8aa5d9bdaad0d99aab8a14a97e986f0142e951c"
+contract_fingerprint: "sha256:910eac76879f74f9e44ca046dc11be1d40eac3da3b5297edc1878008ba9aa04d"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -612,6 +612,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_non_interactive_without_yes_is_rejected | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path | — | standard | ⚪ Missing |
+| tests.test_log_write_from_draft.test_log_write_rejects_windows_absolute_from_draft_path | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_requires_latest_draft_by_default | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_yes_writes_from_latest_json_and_updates_marker | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_log_writes_only_canonical_path | — | standard | ⚪ Missing |
@@ -697,6 +698,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_help_and_ux.test_project_help_lists_structure_and_structure_help_lists_write | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_project_structure_docs_export_root_cannot_escape_repo_root | — | standard | ⚪ Missing |
+| tests.test_workspace_paths.test_project_structure_docs_export_root_rejects_windows_absolute_path | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_does_not_trigger_other_side_effect_paths | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_filesystem_fallback_generates_non_empty_key_areas_and_modules | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_no_index_is_friendly_and_not_crash_when_no_filesystem_fallback | — | standard | ⚪ Missing |
@@ -837,6 +839,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_up_to_date_when_fingerprint_matches | — | standard | ⚪ Missing |
 | tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix | — | standard | ⚪ Missing |
+| tests.test_workspace_paths.test_windows_absolute_write_path_cannot_escape_repo_root | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_windows_posix_path_normalization | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_wizard_language_prompt_comes_first | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_workflow_help_exposes_start_checkpoint_finish_accept | — | standard | ⚪ Missing |
@@ -865,6 +868,8 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_module_capsule.test_write_module_capsule_rejects_export_root_outside_repo | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_write_module_capsule_rejects_nested_parent_traversal_module_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_write_module_capsule_rejects_parent_traversal_module_path | — | standard | ⚪ Missing |
+| tests.test_module_capsule.test_write_module_capsule_rejects_windows_absolute_export_root | — | standard | ⚪ Missing |
+| tests.test_module_capsule.test_write_module_capsule_rejects_windows_absolute_module_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_write_module_capsule_writes_three_files | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_write_module_card_contains_frontmatter_fingerprint | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_write_module_skill_only_writes_skill_file | — | standard | ⚪ Missing |

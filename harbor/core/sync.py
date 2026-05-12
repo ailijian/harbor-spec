@@ -79,6 +79,9 @@ class SyncEngine:
           - 基于 HarborDB 快照进行比对（初始化阶段会尝试从 `.harbor/cache/l3_index.json` 迁移旧索引）。
           - 通过 AdapterRegistry 的启用语言门控获取待扫描文件；v1.4.0 默认仅启用 Python。
           - 实时解析 `code_roots` 下的 Python 文件，计算 `body_hash` 与 `contract_hash`。
+          - 当旧快照与当前文件的 `body_hash/contract_hash` 完全一致时，即使文件 mtime
+            因 fresh clone / worktree 变化而不同，也保留 accepted baseline 语义，不重复报告
+            历史 `contract_gap` / `skipped_no_contract` / `contract_parse_error`。
           - 按照状态矩阵分类差异:
             - Drift/Modified/Contract Changed
             - Contract Gap/Skipped No Contract/Contract Parse Error
@@ -196,6 +199,13 @@ class SyncEngine:
                 c = old_items.get(id_)
                 n = new_items.get(id_)
                 if c and n:
+                    body_changed = (c.get("body_hash") != n.get("body_hash"))
+                    contract_changed_flag = (c.get("contract_hash") != n.get("contract_hash"))
+                    # Preserve accepted baseline semantics across fresh clones/worktrees:
+                    # if implementation and contract hashes are unchanged, do not
+                    # re-surface historical contract gaps purely because mtime changed.
+                    if (not body_changed) and (not contract_changed_flag):
+                        continue
                     presence = str(n.get("contract_presence") or "present")
                     if presence == "malformed":
                         contract_parse_error.append(
@@ -231,8 +241,6 @@ class SyncEngine:
                                 )
                             )
                         continue
-                    body_changed = (c.get("body_hash") != n.get("body_hash"))
-                    contract_changed_flag = (c.get("contract_hash") != n.get("contract_hash"))
                     if body_changed and not contract_changed_flag:
                         drift.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=fp, change_type="Drift", details="Body changed, Contract static"))
                     elif body_changed and contract_changed_flag:

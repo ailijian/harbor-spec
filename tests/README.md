@@ -506,6 +506,7 @@
 | tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_non_interactive_without_yes_is_rejected | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path | — | standard | ⚪ Missing |
+| tests.test_log_write_from_draft.test_log_write_rejects_windows_absolute_from_draft_path | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_requires_latest_draft_by_default | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.test_log_write_yes_writes_from_latest_json_and_updates_marker | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_log_writes_only_canonical_path | — | standard | ⚪ Missing |
@@ -591,6 +592,7 @@
 | tests.test_cli_help_and_ux.test_project_help_lists_structure_and_structure_help_lists_write | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_project_structure_docs_export_root_cannot_escape_repo_root | — | standard | ⚪ Missing |
+| tests.test_workspace_paths.test_project_structure_docs_export_root_rejects_windows_absolute_path | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_does_not_trigger_other_side_effect_paths | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_filesystem_fallback_generates_non_empty_key_areas_and_modules | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure.test_project_structure_no_index_is_friendly_and_not_crash_when_no_filesystem_fallback | — | standard | ⚪ Missing |
@@ -731,6 +733,7 @@
 | tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_up_to_date_when_fingerprint_matches | — | standard | ⚪ Missing |
 | tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix | — | standard | ⚪ Missing |
+| tests.test_workspace_paths.test_windows_absolute_write_path_cannot_escape_repo_root | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_windows_posix_path_normalization | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_wizard_language_prompt_comes_first | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_workflow_help_exposes_start_checkpoint_finish_accept | — | standard | ⚪ Missing |
@@ -759,6 +762,8 @@
 | tests.test_module_capsule.test_write_module_capsule_rejects_export_root_outside_repo | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_write_module_capsule_rejects_nested_parent_traversal_module_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_write_module_capsule_rejects_parent_traversal_module_path | — | standard | ⚪ Missing |
+| tests.test_module_capsule.test_write_module_capsule_rejects_windows_absolute_export_root | — | standard | ⚪ Missing |
+| tests.test_module_capsule.test_write_module_capsule_rejects_windows_absolute_module_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_write_module_capsule_writes_three_files | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_write_module_card_contains_frontmatter_fingerprint | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_write_module_skill_only_writes_skill_file | — | standard | ⚪ Missing |

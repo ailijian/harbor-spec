@@ -1,6 +1,7 @@
 from pathlib import Path
 import textwrap
 import json
+import os
 from types import SimpleNamespace
 
 from harbor.core.index import IndexBuilder
@@ -101,6 +102,37 @@ def test_sync_engine_contract_gap_for_required_target_without_docstring(tmp_path
     rep = eng.check_status()
     assert rep.counts["contract_gap"] >= 1
     assert rep.counts["drift"] == 0
+
+
+def test_sync_engine_preserves_accepted_required_contract_gap_when_only_mtime_changes(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    cache_dir = tmp_path / ".harbor" / "cache"
+    code_root = tmp_path / "harbor" / "core"
+    code_root.mkdir(parents=True, exist_ok=True)
+
+    src = textwrap.dedent(
+        """
+        def write_report(x):
+            return x
+        """
+    ).strip()
+    target = write_module(code_root, src, name="accepted_gap.py")
+
+    builder = IndexBuilder(code_roots=[str(tmp_path / "harbor")], cache_dir=cache_dir)
+    builder.build(incremental=True)
+
+    original_mtime = target.stat().st_mtime
+    target.touch()
+    if target.stat().st_mtime == original_mtime:
+        os.utime(target, (original_mtime + 5, original_mtime + 5))
+
+    eng = SyncEngine()
+    eng.code_roots = [str(tmp_path / "harbor")]
+    rep = eng.check_status()
+
+    assert rep.counts["contract_gap"] == 0
+    assert rep.counts["untracked"] == 0
+    assert rep.counts["missing"] == 0
 
 
 def test_sync_engine_skipped_no_contract_for_internal_helper_without_docstring(tmp_path: Path, monkeypatch):

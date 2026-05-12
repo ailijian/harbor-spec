@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-12T11:48:59Z"
+generated_at: "2026-05-12T12:51:42Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 90
@@ -99,11 +99,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:a64164e2e3128d057348c5ba4014bc04eb5564e4ab3a70172c1b41548809563c"
-contract_fingerprint: "sha256:80116c47b1f82c693df7429d1d6371ed29302d82cd730864aecc33d0872aba04"
+source_fingerprint: "sha256:63bbb8ed433d63daf4a0c6e1c8aa5d9bdaad0d99aab8a14a97e986f0142e951c"
+contract_fingerprint: "sha256:aa42688c678b94d55c4106d96875aa8c375eab7d0b89a2455adb650c6f6d7e59"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "1b20ba7eea230be7962f5fdf66ef803d12daa05dcd9a77f4ac47ce81b1d9f004"
-fingerprint: "1b20ba7eea230be7962f5fdf66ef803d12daa05dcd9a77f4ac47ce81b1d9f004"
+view_fingerprint: "b675643516feb2db188394aac2e6986f8409d048d771e8c1559362453f17dbf2"
+fingerprint: "b675643516feb2db188394aac2e6986f8409d048d771e8c1559362453f17dbf2"
 ---
 
 # Module Card: tests
@@ -776,6 +776,7 @@ tests/test_workspace_paths.py
 | tests.test_log_write_from_draft.test_log_write_marker_failure_warns_without_rolling_back_diary | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_log_write_from_draft.test_log_write_non_interactive_without_yes_is_rejected | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_log_write_rejects_windows_absolute_from_draft_path | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_log_write_from_draft.test_log_write_requires_latest_draft_by_default | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_log_write_from_draft.test_log_write_yes_writes_from_latest_json_and_updates_marker | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_log_write_from_draft.test_normalize_cli_input_path_converts_repo_relative_windows_separators | tests/test_log_write_from_draft.py | unknown | standard |
@@ -789,6 +790,8 @@ tests/test_workspace_paths.py
 | tests.test_module_capsule.test_write_module_capsule_rejects_export_root_outside_repo | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_write_module_capsule_rejects_nested_parent_traversal_module_path | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_write_module_capsule_rejects_parent_traversal_module_path | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_write_module_capsule_rejects_windows_absolute_export_root | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_write_module_capsule_rejects_windows_absolute_module_path | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_write_module_capsule_writes_three_files | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule_stale._write_index | tests/test_module_capsule_stale.py | unknown | standard |
 | tests.test_module_capsule_stale.test_capsule_stale_uses_view_fingerprint_not_source_fingerprint | tests/test_module_capsule_stale.py | unknown | standard |
@@ -976,7 +979,9 @@ tests/test_workspace_paths.py
 | tests.test_workspace_paths.test_legacy_config_read | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_new_config_read | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_project_structure_docs_export_root_cannot_escape_repo_root | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_project_structure_docs_export_root_rejects_windows_absolute_path | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_single_write_new_config_target | tests/test_workspace_paths.py | unknown | standard |
+| tests.test_workspace_paths.test_windows_absolute_write_path_cannot_escape_repo_root | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_windows_posix_path_normalization | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_write_path_cannot_escape_repo_root | tests/test_workspace_paths.py | unknown | standard |
 
