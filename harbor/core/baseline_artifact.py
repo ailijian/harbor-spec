@@ -6,7 +6,23 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
-from harbor import __version__ as HARBOR_VERSION
+try:
+    from harbor import __version__ as HARBOR_VERSION
+except Exception:
+    try:
+        from importlib.metadata import version
+
+        HARBOR_VERSION = version("harbor-spec")
+    except Exception:
+        try:
+            init_py = Path(__file__).resolve().parents[1] / "__init__.py"
+            match = re.search(
+                r'__version__\s*=\s*["\']([^"\']+)["\']',
+                init_py.read_text(encoding="utf-8"),
+            )
+            HARBOR_VERSION = match.group(1) if match else "unknown"
+        except Exception:
+            HARBOR_VERSION = "unknown"
 
 ACCEPTED_CHECKPOINT_BASELINE_PATH = Path(".harbor") / "baseline" / "accepted-checkpoint.json"
 CHECKPOINT_BASELINE_SCHEMA_VERSION = "1.0"

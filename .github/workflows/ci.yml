@@ -36,12 +36,6 @@ jobs:
           PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
         run: pytest
 
-      - name: Verify accepted baseline artifact exists
-        env:
-          HARBOR_LANGUAGE: zh
-          HARBOR_LANG: zh
-        run: test -f .harbor/baseline/accepted-checkpoint.json
-
       - name: Harbor checkpoint (CI gate)
         env:
           HARBOR_LANGUAGE: zh

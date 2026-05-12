@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-12T12:51:42Z"
+generated_at: "2026-05-12T14:32:48Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 90
+source_path_count: 93
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -14,13 +14,16 @@ source_paths:
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"
   - "tests/fixtures_sqlite/sample.py"
+  - "tests/test_accept_cli.py"
   - "tests/test_adapter_basic.py"
   - "tests/test_adapter_registry.py"
   - "tests/test_adopted_roots.py"
   - "tests/test_audit.py"
+  - "tests/test_baseline_artifact.py"
   - "tests/test_cache_isolation_hardening.py"
   - "tests/test_change_window_snapshot.py"
   - "tests/test_checkpoint_ci.py"
+  - "tests/test_checkpoint_ci_baseline_artifact.py"
   - "tests/test_checkpoint_ci_guidance.py"
   - "tests/test_checkpoint_json_additive_compat.py"
   - "tests/test_ci_mode.py"
@@ -99,11 +102,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:63bbb8ed433d63daf4a0c6e1c8aa5d9bdaad0d99aab8a14a97e986f0142e951c"
-contract_fingerprint: "sha256:aa42688c678b94d55c4106d96875aa8c375eab7d0b89a2455adb650c6f6d7e59"
+source_fingerprint: "sha256:086fbb7a8af0821c84de73c96ae11e817b8028b5683f2e450d84c1a401eec031"
+contract_fingerprint: "sha256:3253848d777960b5988aefe41242273c7d7dfb8299e7ef87d254a8ca3b10c4dc"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "b675643516feb2db188394aac2e6986f8409d048d771e8c1559362453f17dbf2"
-fingerprint: "b675643516feb2db188394aac2e6986f8409d048d771e8c1559362453f17dbf2"
+view_fingerprint: "d4fcca09949e592acdd330f88608db168f1071850db5916ed0450fd091c4906b"
+fingerprint: "d4fcca09949e592acdd330f88608db168f1071850db5916ed0450fd091c4906b"
 ---
 
 # Module Card: tests
@@ -129,13 +132,16 @@ tests/conftest.py
 tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 tests/fixtures_sqlite/sample.py
+tests/test_accept_cli.py
 tests/test_adapter_basic.py
 tests/test_adapter_registry.py
 tests/test_adopted_roots.py
 tests/test_audit.py
+tests/test_baseline_artifact.py
 tests/test_cache_isolation_hardening.py
 tests/test_change_window_snapshot.py
 tests/test_checkpoint_ci.py
+tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_checkpoint_json_additive_compat.py
 tests/test_ci_mode.py
@@ -224,6 +230,12 @@ tests/test_workspace_paths.py
 | tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | standard |
 | tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | standard |
 | tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict |
+| tests.test_accept_cli._disable_change_window_writes | tests/test_accept_cli.py | unknown | standard |
+| tests.test_accept_cli._force_en_locale | tests/test_accept_cli.py | unknown | standard |
+| tests.test_accept_cli._write_sample_repo | tests/test_accept_cli.py | unknown | standard |
+| tests.test_accept_cli.run_cmd | tests/test_accept_cli.py | unknown | standard |
+| tests.test_accept_cli.test_accept_supports_custom_output_and_default_cache_refresh | tests/test_accept_cli.py | unknown | standard |
+| tests.test_accept_cli.test_accept_writes_canonical_baseline_artifact_json | tests/test_accept_cli.py | unknown | standard |
 | tests.test_adapter_basic.test_adapter_parses_itself | tests/test_adapter_basic.py | unknown | standard |
 | tests.test_adapter_basic.test_signature_hash_changes | tests/test_adapter_basic.py | unknown | standard |
 | tests.test_adapter_registry.test_config_can_disable_python | tests/test_adapter_registry.py | unknown | standard |
@@ -238,6 +250,11 @@ tests/test_workspace_paths.py
 | tests.test_audit.test_semantic_guard_mismatch_parsing | tests/test_audit.py | unknown | standard |
 | tests.test_audit.test_semantic_guard_ok | tests/test_audit.py | unknown | standard |
 | tests.test_audit.test_semantic_guard_skipped_no_contract_for_internal_helper | tests/test_audit.py | unknown | standard |
+| tests.test_baseline_artifact._baseline_item | tests/test_baseline_artifact.py | unknown | standard |
+| tests.test_baseline_artifact.test_build_checkpoint_baseline_artifact_rejects_duplicate_target_ids | tests/test_baseline_artifact.py | unknown | standard |
+| tests.test_baseline_artifact.test_load_checkpoint_baseline_artifact_rejects_missing_required_field | tests/test_baseline_artifact.py | unknown | standard |
+| tests.test_baseline_artifact.test_normalize_baseline_item_path_converts_windows_style_input | tests/test_baseline_artifact.py | unknown | standard |
+| tests.test_baseline_artifact.test_write_and_load_checkpoint_baseline_artifact | tests/test_baseline_artifact.py | unknown | standard |
 | tests.test_cache_isolation_hardening._fingerprint | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening._run_cmd | tests/test_cache_isolation_hardening.py | unknown | standard |
 | tests.test_cache_isolation_hardening._snapshot_repo_cache | tests/test_cache_isolation_hardening.py | unknown | standard |
@@ -279,6 +296,7 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci._patch_checkpoint_inputs | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci._status_entry | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci._status_report | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci._stub_checkpoint_baseline_artifact | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.run_cmd | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_contract_parse_error_blocks | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_ddt_baseline_missing_stays_advisory_not_failure | tests/test_checkpoint_ci.py | unknown | standard |
@@ -301,6 +319,16 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci.test_checkpoint_ci_zh_text_labels | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact._disable_change_window_writes | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact._disable_ddt | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact._force_en_locale | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact._write_artifact_from_current_snapshot | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact._write_sample_repo | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact.run_cmd | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_on_body_change_against_artifact | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_when_accepted_baseline_artifact_invalid | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_when_accepted_baseline_artifact_missing | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_passes_with_accepted_baseline_artifact | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance._ddt_report | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance._patch_inputs | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance._status_entry | tests/test_checkpoint_ci_guidance.py | unknown | standard |
@@ -324,6 +352,7 @@ tests/test_workspace_paths.py
 | tests.test_ci_mode._disable_change_window_writes | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode._force_en_locale | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode._stale_summary | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_mode._stub_checkpoint_baseline_artifact | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.run_cmd | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.test_ci_mode_i18n_labels_follow_language | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.test_ci_mode_no_write_regression | tests/test_ci_mode.py | unknown | standard |
@@ -873,6 +902,7 @@ tests/test_workspace_paths.py
 | tests.test_sync_engine.test_sync_engine_contract_gap_for_required_target_without_docstring | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_contract_parse_error_when_contract_presence_is_malformed | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_drift_detection | tests/test_sync_engine.py | unknown | standard |
+| tests.test_sync_engine.test_sync_engine_preserves_accepted_required_contract_gap_when_only_mtime_changes | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_skipped_no_contract_for_internal_helper_without_docstring | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.write_module | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine_registry_integration._write | tests/test_sync_engine_registry_integration.py | unknown | standard |
@@ -990,13 +1020,16 @@ tests/test_workspace_paths.py
 ```text
 tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
+tests/test_accept_cli.py
 tests/test_adapter_basic.py
 tests/test_adapter_registry.py
 tests/test_adopted_roots.py
 tests/test_audit.py
+tests/test_baseline_artifact.py
 tests/test_cache_isolation_hardening.py
 tests/test_change_window_snapshot.py
 tests/test_checkpoint_ci.py
+tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_checkpoint_json_additive_compat.py
 tests/test_ci_mode.py

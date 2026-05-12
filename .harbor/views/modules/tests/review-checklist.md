@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "review_checklist"
 module: "tests"
-generated_at: "2026-05-12T12:51:42Z"
+generated_at: "2026-05-12T14:32:48Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 90
+source_path_count: 93
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -14,13 +14,16 @@ source_paths:
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"
   - "tests/fixtures_sqlite/sample.py"
+  - "tests/test_accept_cli.py"
   - "tests/test_adapter_basic.py"
   - "tests/test_adapter_registry.py"
   - "tests/test_adopted_roots.py"
   - "tests/test_audit.py"
+  - "tests/test_baseline_artifact.py"
   - "tests/test_cache_isolation_hardening.py"
   - "tests/test_change_window_snapshot.py"
   - "tests/test_checkpoint_ci.py"
+  - "tests/test_checkpoint_ci_baseline_artifact.py"
   - "tests/test_checkpoint_ci_guidance.py"
   - "tests/test_checkpoint_json_additive_compat.py"
   - "tests/test_ci_mode.py"
@@ -99,8 +102,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:63bbb8ed433d63daf4a0c6e1c8aa5d9bdaad0d99aab8a14a97e986f0142e951c"
-contract_fingerprint: "sha256:aa42688c678b94d55c4106d96875aa8c375eab7d0b89a2455adb650c6f6d7e59"
+source_fingerprint: "sha256:086fbb7a8af0821c84de73c96ae11e817b8028b5683f2e450d84c1a401eec031"
+contract_fingerprint: "sha256:3253848d777960b5988aefe41242273c7d7dfb8299e7ef87d254a8ca3b10c4dc"
 generator_fingerprint: "sha256:045bb540a24521f96101c225aaa2874da1e7d4c5bdc7e724231e449cada8461a"
 ---
 

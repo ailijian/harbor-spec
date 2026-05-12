@@ -21,6 +21,22 @@ def _isolate_workspace(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
 
 
+@pytest.fixture(autouse=True)
+def _stub_checkpoint_baseline_artifact(monkeypatch):
+    monkeypatch.setattr(
+        cli_main,
+        "load_checkpoint_baseline_artifact",
+        lambda *args, **kwargs: {
+            "schema_version": "1.0",
+            "kind": "accepted_checkpoint_baseline",
+            "accepted_at": "2026-05-12T00:00:00Z",
+            "accepted_by": "harbor accept",
+            "harbor_version": "1.4.1",
+            "baseline": {"items": []},
+        },
+    )
+
+
 def run_cmd(argv):
     buf = StringIO()
     with redirect_stdout(buf):
@@ -125,14 +141,14 @@ def test_gen_l2_maps_to_docs():
 
 
 def test_start_command_recognized(monkeypatch):
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: _clean_status_report())
     out = run_cmd(["start"])
     assert "Harbor Start:" in out
     assert "No Harbor changes detected. You can start AI coding." in out
 
 
 def test_checkpoint_command_recognized(monkeypatch):
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: _clean_status_report())
     monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
     monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
     out = run_cmd(["checkpoint"])
@@ -142,7 +158,7 @@ def test_checkpoint_command_recognized(monkeypatch):
 
 
 def test_checkpoint_ci_json_recognized(monkeypatch):
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: _clean_status_report())
     monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
     monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
     out = run_cmd(["checkpoint", "--ci", "--format", "json"])
@@ -154,7 +170,7 @@ def test_checkpoint_ci_json_recognized(monkeypatch):
 
 
 def test_finish_command_recognized(monkeypatch):
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: _clean_status_report())
     monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
     monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
     monkeypatch.setattr(
@@ -189,7 +205,7 @@ def test_accept_maps_to_lock_logic(monkeypatch):
     monkeypatch.setattr(cli_main, "IndexBuilder", FakeBuilder)
     out = run_cmd(["accept"])
     assert "scanned=0 updated=0 skipped=0 items=0" in out
-    assert "Accepted current Harbor baseline." in out
+    assert "Accepted current Harbor checkpoint baseline artifact." in out
 
 
 def test_commit_alias_unchanged_maps_to_lock(monkeypatch):
@@ -217,7 +233,7 @@ def test_commit_alias_unchanged_maps_to_lock(monkeypatch):
 
 
 def test_checkpoint_does_not_trigger_semantic_audit(monkeypatch):
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: _clean_status_report())
     monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
     monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
 
@@ -260,7 +276,7 @@ def test_checkpoint_prints_contract_impact_summary_when_dirty(monkeypatch):
         untracked=[],
         missing=[],
     )
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: dirty)
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: dirty)
     monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
     monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
     out = run_cmd(["checkpoint"])
@@ -269,7 +285,7 @@ def test_checkpoint_prints_contract_impact_summary_when_dirty(monkeypatch):
 
 
 def test_finish_does_not_auto_run_docs_log_lock(monkeypatch):
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: _clean_status_report())
     monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
     monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
     monkeypatch.setattr(
@@ -308,7 +324,7 @@ def test_status_skipped_no_contract_default_summary(monkeypatch):
         SimpleNamespace(id="harbor.core.a._helper", details="No contract required", file_path="harbor/core/a.py"),
         SimpleNamespace(id="harbor.core.b._helper", details="No contract required", file_path="harbor/core/b.py"),
     ]
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: rep)
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: rep)
 
     out = run_cmd(["status"])
     assert "Skipped No Contract: 2 targets skipped (non-blocking)" in out
@@ -325,7 +341,7 @@ def test_status_skipped_no_contract_verbose_lists_targets(monkeypatch):
         SimpleNamespace(id="harbor.core.a._helper", details="No contract required", file_path="harbor/core/a.py"),
         SimpleNamespace(id="harbor.core.b._helper", details="No contract required", file_path="harbor/core/b.py"),
     ]
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: rep)
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: rep)
 
     out = run_cmd(["status", "--verbose"])
     assert "harbor.core.a._helper" in out
@@ -415,7 +431,7 @@ def test_checkpoint_ci_json_advisory_unchanged_with_advice_modes(monkeypatch):
         SimpleNamespace(category="ddt_version_baseline_missing", binding=binding, message="m1", suggested_action="s1"),
         SimpleNamespace(category="ddt_version_baseline_missing", binding=binding2, message="m2", suggested_action="s2"),
     ]
-    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _clean_status_report())
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self, *args, **kwargs: _clean_status_report())
     monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
     monkeypatch.setattr(
         cli_main.DDTValidator,

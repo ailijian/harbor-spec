@@ -9,6 +9,17 @@ from harbor.cli.main import main
 from harbor.core.contract_impact import ContractImpactLevel, ContractImpactReport
 
 
+def _accepted_checkpoint_baseline():
+    return {
+        "schema_version": "1.0",
+        "kind": "accepted_checkpoint_baseline",
+        "accepted_at": "2026-05-12T00:00:00Z",
+        "accepted_by": "harbor accept",
+        "harbor_version": "1.4.1",
+        "baseline": {"items": []},
+    }
+
+
 def run_cmd(argv):
     out = StringIO()
     err = StringIO()
@@ -49,8 +60,10 @@ def _ddt_report(*, advisory=None):
 
 
 def _patch_inputs(monkeypatch, *, status=None, ddt=None):
+    monkeypatch.setattr(cli_main, "load_checkpoint_baseline_artifact", lambda *args, **kwargs: _accepted_checkpoint_baseline())
+
     class _FakeSyncEngine:
-        def check_status(self):
+        def check_status(self, baseline_snapshot=None, baseline_source="runtime_cache"):
             return status or _status_report()
 
     class _FakeDDTScanner:

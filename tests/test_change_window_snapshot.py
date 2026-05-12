@@ -20,6 +20,22 @@ from harbor.core.change_window import (
 from harbor.core.contract_impact import ContractImpactLevel, ContractImpactReport
 
 
+@pytest.fixture(autouse=True)
+def _stub_checkpoint_baseline_artifact(monkeypatch):
+    monkeypatch.setattr(
+        cli_main,
+        "load_checkpoint_baseline_artifact",
+        lambda *args, **kwargs: {
+            "schema_version": "1.0",
+            "kind": "accepted_checkpoint_baseline",
+            "accepted_at": "2026-05-12T00:00:00Z",
+            "accepted_by": "harbor accept",
+            "harbor_version": "1.4.1",
+            "baseline": {"items": []},
+        },
+    )
+
+
 def _run_git(repo_root: Path, *args: str) -> str:
     completed = subprocess.run(
         ["git", *args],
@@ -154,7 +170,7 @@ class _FakeSyncEngine:
     def __init__(self, report):
         self._report = report
 
-    def check_status(self):
+    def check_status(self, baseline_snapshot=None, baseline_source="runtime_cache"):
         return self._report
 
 
@@ -327,7 +343,7 @@ def test_checkpoint_ci_snapshot_write_failure_does_not_change_exit_code(monkeypa
     status = _status_report(missing=[_status_entry("harbor.core.foo.gone", "harbor/core/foo.py", "removed")])
 
     class _FakeSyncEngine:
-        def check_status(self):
+        def check_status(self, baseline_snapshot=None, baseline_source="runtime_cache"):
             return status
 
     class _FakeDDTScanner:
@@ -424,7 +440,7 @@ def test_accept_writes_accept_snapshot_and_can_be_read(monkeypatch, tmp_path: Pa
     assert latest.summary["accepted"] is True
     assert latest.validation["command"] == "accept"
     assert "accepted" in json.dumps(latest.summary, ensure_ascii=False)
-    assert "Accepted current Harbor baseline." in out
+    assert "Accepted current Harbor checkpoint baseline artifact." in out
 
 
 def test_finish_snapshot_write_failure_does_not_change_exit_code(monkeypatch, tmp_path: Path):
@@ -458,7 +474,7 @@ def test_accept_snapshot_write_failure_does_not_change_exit_code(monkeypatch, tm
     diagnostics = _read_runtime_diagnostics(tmp_path)
 
     assert code == 0
-    assert "Accepted current Harbor baseline." in out
+    assert "Accepted current Harbor checkpoint baseline artifact." in out
     assert get_latest_change_window("accept", repo_root=tmp_path) is None
     assert diagnostics
     assert diagnostics[-1]["event"] == "accept"
