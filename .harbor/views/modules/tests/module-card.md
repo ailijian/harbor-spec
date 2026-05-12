@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-12T07:50:47Z"
+generated_at: "2026-05-12T10:14:28Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 90
@@ -99,11 +99,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:51eca5775da9fdb40d31a77d63eee121309a9c959c1937402c0e8817d1ce38d7"
-contract_fingerprint: "sha256:370e630e37ed26cdce692f50710bae0fc28484a4dce942b58816ab9a8dec89ed"
+source_fingerprint: "sha256:23f119e590a07c877265d1001da50ea308251e1bba64d6d8c0c100135fdda134"
+contract_fingerprint: "sha256:b3a9bd2d06fc7ccc9f9cb3e3d4337e7eb1ca0d100d971e7ed736906b59114502"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "2f485df00af982d96fdc3b8bf3ead1f2a4f629b22a139981e2a758370bbac888"
-fingerprint: "2f485df00af982d96fdc3b8bf3ead1f2a4f629b22a139981e2a758370bbac888"
+view_fingerprint: "31a0e674ab15bd04c9dcff8d2aed37cc6deb82ee490c7f8f70af7218317ed1c7"
+fingerprint: "31a0e674ab15bd04c9dcff8d2aed37cc6deb82ee490c7f8f70af7218317ed1c7"
 ---
 
 # Module Card: tests
@@ -778,6 +778,7 @@ tests/test_workspace_paths.py
 | tests.test_log_write_from_draft.test_log_write_rejects_repo_external_absolute_path | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_log_write_from_draft.test_log_write_requires_latest_draft_by_default | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_log_write_from_draft.test_log_write_yes_writes_from_latest_json_and_updates_marker | tests/test_log_write_from_draft.py | unknown | standard |
+| tests.test_log_write_from_draft.test_normalize_cli_input_path_converts_repo_relative_windows_separators | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_min_count_one.test_min_count_one_includes_single_file_dir | tests/test_min_count_one.py | unknown | standard |
 | tests.test_module_capsule._write_index | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | tests/test_module_capsule.py | unknown | standard |

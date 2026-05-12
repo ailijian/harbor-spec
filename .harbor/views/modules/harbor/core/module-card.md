@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-12T07:50:35Z"
+generated_at: "2026-05-12T10:14:28Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 32
@@ -41,11 +41,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:d2fe370eb8ac35453a9042dd2faade176838c4bcc73a22ff18a28dbf59888ce2"
-contract_fingerprint: "sha256:93739ca946fdfce326e202a2b6f6a0c296e6d885b266232f8cc9eee8ba42dbe1"
+source_fingerprint: "sha256:9cf72662002eee858487581bc0da7848065c933fbd08cb444cab8495fe218e53"
+contract_fingerprint: "sha256:c4cde02d3c6aa7cdfc174a4dd7ed032db9ab09034d0f136f5fa5f3338087de4d"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "37ce053d529d99cfe5d96673311a59d77b8a68bed69c69eb2b53739ece3a608e"
-fingerprint: "37ce053d529d99cfe5d96673311a59d77b8a68bed69c69eb2b53739ece3a608e"
+view_fingerprint: "9e236179fe9fd988a80b4cf9db1b6cb34a6b26fc763e853a178b4271833bc23f"
+fingerprint: "9e236179fe9fd988a80b4cf9db1b6cb34a6b26fc763e853a178b4271833bc23f"
 ---
 
 # Module Card: harbor/core
@@ -347,6 +347,8 @@ harbor/core/workspace_migrate.py
 | harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.write | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._looks_like_windows_absolute_path | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._repo_relative_index_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._to_repo_relative | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.collect_all_indexed_modules | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.collect_modules_from_paths | harbor/core/l2.py | unknown | standard |
@@ -390,6 +392,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.log_draft._merge_changed_files | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._non_diary_changed_files | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._normalize_changed_file | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._normalize_cli_input_path | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._normalize_contract_impact | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._normalize_report_status | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._parse_affected_areas_section | harbor/core/log_draft.py | unknown | standard |

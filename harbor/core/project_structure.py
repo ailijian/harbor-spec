@@ -70,11 +70,23 @@ def _normalize_rel_path(value: str) -> str:
     return (value or "").replace("\\", "/").strip("/")
 
 
+def _looks_like_windows_absolute_path(path_text: str) -> bool:
+    normalized = str(path_text or "").strip().replace("\\", "/")
+    return bool(re.match(r"(?i)^[a-z]:/", normalized)) or normalized.startswith("//")
+
+
 def _to_project_relative_path(file_path: str, root: Path) -> str:
     raw = str(file_path or "").strip()
     if not raw:
         return ""
     norm = raw.replace("\\", "/")
+    if _looks_like_windows_absolute_path(norm):
+        marker = f"/{root.name.lower()}/"
+        lower = norm.lower()
+        idx = lower.find(marker)
+        if idx == -1:
+            return ""
+        return _normalize_rel_path(norm[idx + len(marker) :])
     try:
         path_obj = Path(norm)
     except Exception:
@@ -342,6 +354,31 @@ def _yes_no(value: bool) -> str:
 
 
 def collect_project_structure_context(root: Path, index_path: Optional[Path] = None) -> ProjectStructureContext:
+    """Collect the canonical project-structure context from index or filesystem.
+
+    Behavior:
+      - Loads Harbor index records when available, otherwise falls back to
+        filesystem discovery within `root`.
+      - Normalizes path separators to POSIX-style display paths.
+      - Includes only repo-relative files and modules; absolute paths outside
+        `root`, including Windows-style absolute paths on POSIX runners, are
+        ignored instead of being surfaced as project modules.
+
+    Args:
+      root (Path): Repository root used for repo-relative filtering.
+      index_path (Optional[Path]): Optional Harbor index path override.
+
+    Returns:
+      ProjectStructureContext: Deterministic project structure summary.
+
+    Side Effects:
+      - Reads index / workspace files only.
+      - Writes no files.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+    """
     root = root.resolve()
     idx_path = index_path or (root / ".harbor" / "cache" / "l3_index.json")
     index_data = _load_index(idx_path)
@@ -460,6 +497,28 @@ def collect_project_structure_context(root: Path, index_path: Optional[Path] = N
 
 
 def generate_project_structure_markdown(context: ProjectStructureContext) -> str:
+    """Render a deterministic Markdown view from project-structure context.
+
+    Behavior:
+      - Produces the canonical project-structure Markdown body.
+      - Preserves stable section ordering for metadata, discovery mode,
+        modules, supporting areas, and regeneration guidance.
+      - Must not expose filtered outside-repo absolute paths when the input
+        context was built from repo-scoped project files.
+
+    Args:
+      context (ProjectStructureContext): Prepared project structure context.
+
+    Returns:
+      str: Markdown body without frontmatter.
+
+    Side Effects:
+      - Pure formatter; writes no files.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: deterministic
+    """
     metadata = context.metadata
     discovery_notes = {
         "filesystem fallback": "No Harbor index records were found, so this view was generated from filesystem discovery.",
@@ -661,6 +720,31 @@ def _resolve_docs_export_project_structure_path(root: Path, config: Optional[Dic
 
 
 def write_project_structure(context: ProjectStructureContext, root: Path) -> ProjectStructureWriteResult:
+    """Write the canonical project-structure view and optional export copy.
+
+    Behavior:
+      - Renders the project-structure Markdown for `context`.
+      - Writes the canonical generated view under `.harbor/views/**`.
+      - Optionally writes a configured export copy when the export target stays
+        inside `root`.
+      - Builds source-path integrity metadata from repo-relative files only;
+        absolute paths outside `root`, including Windows-style absolute paths on
+        POSIX runners, are excluded from generated metadata and output.
+
+    Args:
+      context (ProjectStructureContext): Prepared project structure context.
+      root (Path): Repository root used for generated write safety.
+
+    Returns:
+      ProjectStructureWriteResult: Canonical path plus any export paths written.
+
+    Side Effects:
+      - Writes generated Markdown files under approved workspace/export paths.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: deterministic
+    """
     root = Path(root).resolve()
     body = generate_project_structure_markdown(context)
 

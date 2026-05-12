@@ -93,6 +93,17 @@ def test_collect_project_structure_context_builds_expected_flags_and_counts(tmp_
     assert cli.key_files[0] == "harbor/cli/main.py"
 
 
+def test_collect_project_structure_context_filters_windows_absolute_paths_on_posix(tmp_path: Path):
+    idx = _write_index(tmp_path)
+    context = collect_project_structure_context(tmp_path, index_path=idx)
+
+    module_names = [m.module for m in context.modules]
+    supporting_names = [a.area for a in context.supporting_areas]
+
+    assert "C:/external/other-project" not in module_names
+    assert "C:/external/other-project" not in supporting_names
+
+
 def test_collect_project_structure_reads_metadata_from_pyproject(tmp_path: Path):
     idx = _write_index(tmp_path)
     (tmp_path / "pyproject.toml").write_text(

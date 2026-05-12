@@ -569,6 +569,7 @@
 | tests.test_checkpoint_json_additive_compat.test_non_function_symbol_kind_does_not_enter_blocking_checkpoint_failures | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_non_function_typescript_targets_do_not_enter_blocking_checkpoint | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_non_tty_does_not_try_arrow_selector | — | standard | ⚪ Missing |
+| tests.test_log_write_from_draft.test_normalize_cli_input_path_converts_repo_relative_windows_separators | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_normalize_skill_slug_rules_are_stable | — | standard | ⚪ Missing |
