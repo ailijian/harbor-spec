@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-12T16:04:01Z"
+generated_at: "2026-05-12T16:14:00Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 34
@@ -43,11 +43,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:871ad65bef0d719618288a4bd3fa8ba3369ae8e193f2f5e4277f6b8848700724"
-contract_fingerprint: "sha256:82c650ef23184205583bf87397f54070a954e09c41e094ca4d159e15155db5d3"
+source_fingerprint: "sha256:b1daa619a4ee100d34515dda1a81a6463924368d83454474422bc0ebe54e705a"
+contract_fingerprint: "sha256:cf83f9d7f1b8e622a55a7fbae54587f94aed52b3ccb52d356ac2493a9352a50f"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "7468bd774751fc1681acfc64ebd7d0d429dfb35c01ea2f0c5cb7f1996ca43b12"
-fingerprint: "7468bd774751fc1681acfc64ebd7d0d429dfb35c01ea2f0c5cb7f1996ca43b12"
+view_fingerprint: "0c944a32ce384ed0bd10e2370600699e42f2ec13acab8969c36885007c1addb2"
+fingerprint: "0c944a32ce384ed0bd10e2370600699e42f2ec13acab8969c36885007c1addb2"
 ---
 
 # Module Card: harbor/core
@@ -252,7 +252,6 @@ harbor/core/workspace_migrate.py
 | harbor.core.diary.DiaryManager._normalize_for_hash | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._parse_ts | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_author | harbor/core/diary.py | unknown | standard |
-| harbor.core.diary.DiaryManager._resolve_diary_dir | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_legacy_diary_dirs | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_repo_root | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._utc_now_iso | harbor/core/diary.py | unknown | standard |
@@ -505,6 +504,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.project_structure.rank_key_file | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure.write_project_structure | harbor/core/project_structure.py | public | strict |
 | harbor.core.readonly_index._build_transient_index | harbor/core/readonly_index.py | unknown | standard |
+| harbor.core.readonly_index._load_existing_db_index | harbor/core/readonly_index.py | unknown | standard |
 | harbor.core.readonly_index._resolve_index_path | harbor/core/readonly_index.py | unknown | standard |
 | harbor.core.readonly_index.load_readonly_index | harbor/core/readonly_index.py | unknown | standard |
 | harbor.core.repair_guidance.RepairGuidance.to_dict | harbor/core/repair_guidance.py | public | strict |
