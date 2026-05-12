@@ -1,4 +1,5 @@
 import sys
+import json
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
@@ -8,6 +9,8 @@ import pytest
 
 import harbor.cli.main as cli_main
 from harbor.cli.main import main
+from harbor.core.l2 import L2Generator
+from harbor.core.module_capsule import collect_module_context, write_module_capsule
 from harbor.core.stale import ModuleStaleSummary, ViewStaleResult
 
 
@@ -22,6 +25,18 @@ def run_cmd(argv):
         sys.argv = ["harbor"] + argv
         main()
     return buf.getvalue()
+
+
+def _run_cmd_with_exit_code(argv):
+    buf = StringIO()
+    code = 0
+    with redirect_stdout(buf):
+        sys.argv = ["harbor"] + argv
+        try:
+            main()
+        except SystemExit as ex:
+            code = ex.code if isinstance(ex.code, int) else 1
+    return code, buf.getvalue()
 
 
 def _empty_status_report():
@@ -50,6 +65,46 @@ def _sample_summary(module: str, *, stale: bool = False) -> ModuleStaleSummary:
         ),
         module_capsule=ViewStaleResult("Module Capsule", status, reason, suggest_capsule),
     )
+
+
+def _write_sample_repo(tmp_path: Path) -> None:
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text("code_roots:\n- harbor/**\n- tests/**\nexclude_paths: []\n", encoding="utf-8")
+
+    pkg = tmp_path / "harbor" / "core"
+    pkg.mkdir(parents=True, exist_ok=True)
+    (pkg / "__init__.py").write_text("", encoding="utf-8")
+    (pkg / "sample.py").write_text(
+        '''def run(value: int) -> int:
+    """Return the provided value.
+
+    Behavior:
+      - Returns the provided integer unchanged.
+
+    Args:
+      value (int): Input integer.
+
+    Returns:
+      int: Same integer value.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    """
+    return value
+''',
+        encoding="utf-8",
+    )
+
+    tests_dir = tmp_path / "tests"
+    tests_dir.mkdir(parents=True, exist_ok=True)
+    (tests_dir / "test_sample.py").write_text("def test_sample():\n    assert True\n", encoding="utf-8")
+
+
+def _generate_views_for_module(module: str) -> None:
+    gen = L2Generator()
+    gen.write(module, gen.generate(module), force=True)
+    write_module_capsule(collect_module_context(module))
 
 
 def test_stale_default_is_changed_scope(monkeypatch):
@@ -167,3 +222,21 @@ def test_stale_reports_all_up_to_date_message(monkeypatch):
     monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _sample_summary(module, stale=False))
     out = run_cmd(["stale", "--all"])
     assert "All derived context views are up to date." in out
+
+
+def test_stale_ci_all_passes_without_runtime_index_cache(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    _generate_views_for_module("harbor/core")
+    _generate_views_for_module("tests")
+
+    code, out = _run_cmd_with_exit_code(["stale", "--all", "--ci", "--format", "json"])
+    payload = json.loads(out)
+
+    assert code == 0
+    assert payload["status"] == "pass"
+    assert payload["summary"]["ci_failures"] == 0
+    assert payload["summary"]["advisory_items"] == 0
+    assert not (tmp_path / ".harbor" / "cache" / "l3_index.json").exists()
+    assert not (tmp_path / ".harbor" / "cache" / "harbor.db").exists()

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-12T14:32:48Z"
+generated_at: "2026-05-12T15:21:22Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 93
@@ -102,11 +102,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:086fbb7a8af0821c84de73c96ae11e817b8028b5683f2e450d84c1a401eec031"
-contract_fingerprint: "sha256:3253848d777960b5988aefe41242273c7d7dfb8299e7ef87d254a8ca3b10c4dc"
+source_fingerprint: "sha256:eca854466e4de20a894f9bf0ff90cd64419415cf266620963aadcc7a580243f4"
+contract_fingerprint: "sha256:6500e51d914c5f22ac3f127a0fcaa186bec0608655b4359d811d3ac00eab2501"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "d4fcca09949e592acdd330f88608db168f1071850db5916ed0450fd091c4906b"
-fingerprint: "d4fcca09949e592acdd330f88608db168f1071850db5916ed0450fd091c4906b"
+view_fingerprint: "338029867e0542828ceed91bd29b7f98b8ff87862e0ab494b99971bac36a36d6"
+fingerprint: "338029867e0542828ceed91bd29b7f98b8ff87862e0ab494b99971bac36a36d6"
 ---
 
 # Module Card: tests
@@ -276,6 +276,7 @@ tests/test_workspace_paths.py
 | tests.test_change_window_snapshot._run_git | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot._status_entry | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot._status_report | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_change_window_snapshot._stub_checkpoint_baseline_artifact | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_accept_and_finish_invoke_snapshot_events | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_accept_snapshot_write_failure_does_not_change_exit_code | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_accept_writes_accept_snapshot_and_can_be_read | tests/test_change_window_snapshot.py | unknown | standard |
@@ -329,6 +330,7 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_when_accepted_baseline_artifact_invalid | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_when_accepted_baseline_artifact_missing | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_passes_with_accepted_baseline_artifact | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance._ddt_report | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance._patch_inputs | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance._status_entry | tests/test_checkpoint_ci_guidance.py | unknown | standard |
@@ -522,13 +524,17 @@ tests/test_workspace_paths.py
 | tests.test_cli_project_structure.test_project_structure_write_updates_canonical_path_by_default | tests/test_cli_project_structure.py | unknown | standard |
 | tests.test_cli_stale._empty_status_report | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale._force_en_locale | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale._generate_views_for_module | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale._run_cmd_with_exit_code | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale._sample_summary | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale._write_sample_repo | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.run_cmd | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_advisory_does_not_trigger_write_or_workflow_side_effects | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_all_scope_runs | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_changed_and_all_args_are_recognized | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_changed_checks_both_views | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_changed_windows_path_and_stable_order | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_ci_all_passes_without_runtime_index_cache | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_ci_arg_is_recognized | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_default_is_changed_scope | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_modes_are_mutually_exclusive | tests/test_cli_stale.py | unknown | standard |
@@ -538,6 +544,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_v2._empty_validation_report | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2._force_en_locale | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2._isolate_workspace | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_v2._stub_checkpoint_baseline_artifact | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.run_cmd | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_accept_maps_to_lock_logic | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_check_ddt_baseline_missing_default_aggregated | tests/test_cli_v2.py | unknown | standard |
@@ -811,8 +818,11 @@ tests/test_workspace_paths.py
 | tests.test_log_write_from_draft.test_normalize_cli_input_path_converts_repo_relative_windows_separators | tests/test_log_write_from_draft.py | unknown | standard |
 | tests.test_min_count_one.test_min_count_one_includes_single_file_dir | tests/test_min_count_one.py | unknown | standard |
 | tests.test_module_capsule._write_index | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule._write_sample_repo | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_collect_module_context_falls_back_to_transient_source_scan_without_cache | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_generators_include_required_sections | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_l2_and_capsule_can_be_generated_without_runtime_index_cache | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_module_capsule_dir_keeps_nested_path | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_no_records_is_friendly | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix | tests/test_module_capsule.py | unknown | standard |
@@ -885,6 +895,8 @@ tests/test_workspace_paths.py
 | tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_required_contract_skips_llm | tests/test_semantic_audit_contract_gap.py | unknown | standard |
 | tests.test_stale._write_index | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_l2_export_config | tests/test_stale.py | unknown | standard |
+| tests.test_stale._write_sample_repo | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_check_module_derived_views_stale_is_up_to_date_without_runtime_index_cache | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_disabled_is_explicit_and_not_warn_counter | tests/test_stale.py | unknown | standard |

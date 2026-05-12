@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/utils"
-generated_at: "2026-05-09T14:42:42Z"
+generated_at: "2026-05-12T15:21:22Z"
 generation_command: "harbor module seal harbor/utils --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -12,11 +12,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:dc4e0f67590b11ce503090b466f7aa6d4383167ac90c8b8fbb6f2263a96714fb"
+source_fingerprint: "sha256:9928e5105f74dba56d9359798faa51b4b71df7300ca98ba105f1f6211609ce77"
 contract_fingerprint: "sha256:885d2ce9187f1f00625f908557d61bb1becce82dd1922e18e33a7a9b2420383c"
-generator_fingerprint: "sha256:f44e1f818b3a39b00015f9a4e08a728616ee3823083319b09fdc4ec491e9df1b"
-view_fingerprint: "f5838c973145af034edb2d28fd21fd88f62daa68be39c5d44491316c1877de87"
-fingerprint: "f5838c973145af034edb2d28fd21fd88f62daa68be39c5d44491316c1877de87"
+generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
+view_fingerprint: "beea82cf588f8dcca7e4713158e59a372fb8c445dd59ca84dbb16496d81e810e"
+fingerprint: "beea82cf588f8dcca7e4713158e59a372fb8c445dd59ca84dbb16496d81e810e"
 ---
 
 # Module Card: harbor/utils
@@ -56,6 +56,7 @@ harbor/utils/i18n.py
 tests/test_cli_i18n.py
 tests/test_cli_i18n_env.py
 tests/test_utils_format.py
+tests/test_workspace_i18n.py
 ```
 
 ## Review Focus

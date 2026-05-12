@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from harbor.core.context_integrity import build_context_integrity_metadata, compose_markdown_with_frontmatter
 from harbor.core.ddt import DDTScanner, DDTValidator
+from harbor.core.readonly_index import load_readonly_index
 from harbor.core.utils import find_function_node
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
 
@@ -278,30 +279,7 @@ class L2Generator:
         return sorted(set(modules))
 
     def _load_index(self, path: Path) -> Dict[str, Any]:
-        if path.exists():
-            return json.loads(path.read_text(encoding="utf-8"))
-        from harbor.core.storage import HarborDB
-        db = HarborDB()
-        files: Dict[str, Any] = {}
-        for fp, mtime in db.get_all_files():
-            items = []
-            for it in db.get_file_entries(fp):
-                items.append(
-                    {
-                        "id": it.get("id"),
-                        "qualified_name": it.get("meta", {}).get("qualified_name"),
-                        "name": it.get("meta", {}).get("name"),
-                        "signature_hash": it.get("signature_hash"),
-                        "body_hash": it.get("body_hash"),
-                        "contract_hash": it.get("contract_hash"),
-                        "docstring_raw_hash": it.get("meta", {}).get("docstring_raw_hash"),
-                        "scope": it.get("meta", {}).get("scope"),
-                        "strictness": it.get("meta", {}).get("strictness"),
-                        "lineno": it.get("meta", {}).get("lineno"),
-                    }
-                )
-            files[fp] = {"mtime": mtime, "file_hash": "", "items": items}
-        return {"meta": {"schema_version": "1.0.2"}, "files": files}
+        return load_readonly_index(index_path=path, repo_root=self.repo_root)
 
     def _load_meta(self, path: Optional[Path] = None) -> Dict[str, Any]:
         if path is not None:

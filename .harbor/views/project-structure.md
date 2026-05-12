@@ -1,21 +1,37 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.3.0"
+harbor_version: "1.4.1"
 view_type: "project_structure"
-generated_at: "2026-05-08T13:03:54Z"
+generated_at: "2026-05-12T15:21:42Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
-source_path_count: 90
-source_paths_truncated: false
+source_path_count: 147
+source_paths_truncated: true
 source_paths:
   - "harbor/__init__.py"
   - "harbor/adapters/__init__.py"
+  - "harbor/adapters/base.py"
   - "harbor/adapters/python/__init__.py"
+  - "harbor/adapters/python/compat.py"
   - "harbor/adapters/python/parser.py"
+  - "harbor/adapters/registry.py"
+  - "harbor/adapters/typescript/__init__.py"
+  - "harbor/adapters/typescript/adapter.py"
+  - "harbor/adapters/typescript/hashing.py"
+  - "harbor/adapters/typescript/jsdoc.py"
+  - "harbor/adapters/typescript/parser.py"
+  - "harbor/adapters/typescript/symbols.py"
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
   - "harbor/core/__init__.py"
+  - "harbor/core/advice_config.py"
   - "harbor/core/audit.py"
+  - "harbor/core/baseline_artifact.py"
+  - "harbor/core/change_window.py"
+  - "harbor/core/ci.py"
+  - "harbor/core/context_integrity.py"
+  - "harbor/core/contract_impact.py"
+  - "harbor/core/contract_presence.py"
   - "harbor/core/ddt.py"
   - "harbor/core/decorator.py"
   - "harbor/core/diary.py"
@@ -24,10 +40,14 @@ source_paths:
   - "harbor/core/git_utils.py"
   - "harbor/core/index.py"
   - "harbor/core/init.py"
+  - "harbor/core/init_prompt.py"
+  - "harbor/core/init_wizard.py"
   - "harbor/core/l2.py"
+  - "harbor/core/log_draft.py"
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
   - "harbor/core/project_structure.py"
+  - "harbor/core/repair_guidance.py"
   - "harbor/core/stale.py"
   - "harbor/core/storage.py"
   - "harbor/core/sync.py"
@@ -36,18 +56,30 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
+  - "harbor/templates/__init__.py"
+  - "harbor/templates/init/__init__.py"
   - "harbor/test_utils.py"
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
   - "tests/__init__.py"
+  - "tests/conftest.py"
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"
   - "tests/fixtures_sqlite/sample.py"
+  - "tests/test_accept_cli.py"
   - "tests/test_adapter_basic.py"
+  - "tests/test_adapter_registry.py"
   - "tests/test_adopted_roots.py"
   - "tests/test_audit.py"
+  - "tests/test_baseline_artifact.py"
   - "tests/test_cache_isolation_hardening.py"
+  - "tests/test_change_window_snapshot.py"
+  - "tests/test_checkpoint_ci.py"
+  - "tests/test_checkpoint_ci_baseline_artifact.py"
+  - "tests/test_checkpoint_ci_guidance.py"
+  - "tests/test_checkpoint_json_additive_compat.py"
+  - "tests/test_ci_mode.py"
   - "tests/test_cli_config.py"
   - "tests/test_cli_decorate.py"
   - "tests/test_cli_docs_modes.py"
@@ -68,7 +100,12 @@ source_paths:
   - "tests/test_cli_workspace_inspect.py"
   - "tests/test_cli_workspace_migrate.py"
   - "tests/test_config_update.py"
+  - "tests/test_context_integrity.py"
+  - "tests/test_contract_impact.py"
+  - "tests/test_contract_presence.py"
+  - "tests/test_contract_subject_model.py"
   - "tests/test_ddt_validate.py"
+  - "tests/test_ddt_version_baseline.py"
   - "tests/test_decorator_engine.py"
   - "tests/test_derive_adopted_roots.py"
   - "tests/test_diary_workspace_paths.py"
@@ -76,31 +113,24 @@ source_paths:
   - "tests/test_drafting.py"
   - "tests/test_drafting_json_parse.py"
   - "tests/test_gitignore_prune.py"
+  - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
   - "tests/test_index_builder_bad_syntax.py"
+  - "tests/test_index_builder_registry_integration.py"
   - "tests/test_index_progress.py"
   - "tests/test_init_detector.py"
+  - "tests/test_init_governance.py"
+  - "tests/test_init_llm_env.py"
+  - "tests/test_init_wizard.py"
   - "tests/test_initializer.py"
   - "tests/test_l2_paths.py"
   - "tests/test_lock_flags.py"
   - "tests/test_lock_register_adopted.py"
-  - "tests/test_min_count_one.py"
-  - "tests/test_module_capsule.py"
-  - "tests/test_module_capsule_stale.py"
-  - "tests/test_module_skill.py"
-  - "tests/test_project_structure.py"
-  - "tests/test_release_packaging.py"
-  - "tests/test_stale.py"
-  - "tests/test_sync_engine.py"
-  - "tests/test_utils_format.py"
-  - "tests/test_windows_abs_path_prefix.py"
-  - "tests/test_workspace_gitignore_policy.py"
-  - "tests/test_workspace_inspect.py"
-  - "tests/test_workspace_migrate.py"
-  - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:9554b789e2b3fe5dec1b0eb9c63afd48a37a5c4c550c095f855066e7a355c3e8"
-contract_fingerprint: "sha256:3205a6320d829c7101b1eaa3e02d82065debc72f9df5edfc2df00e188febdbf4"
-generator_fingerprint: "sha256:35f67097cd0d58e1f39df2e7bfb05b32ab7962b8e16639baa4027d8abe57079e"
+  - "tests/test_log_draft.py"
+  - "tests/test_log_draft_cli.py"
+source_fingerprint: "sha256:46d08c030416dab66cb9b10b793b0eecc4a15720c746020493494e3475db52a5"
+contract_fingerprint: "sha256:9078140c385b6094c1b5ac31a12574aed9a64958f6aca607515004315c2f2c9a"
+generator_fingerprint: "sha256:23ede01e946f15789329e98cc70551d240aa807690a0da420bddfae426745494"
 ---
 
 # Project Structure
@@ -113,7 +143,7 @@ generator_fingerprint: "sha256:35f67097cd0d58e1f39df2e7bfb05b32ab7962b8e16639baa
 | Field | Value |
 |---|---|
 | Name | harbor-spec |
-| Version | 1.3.0 |
+| Version | 1.4.1 |
 | Description | Harbor-spec: context governance engine for AI coding, with contract drift detection, DDT validation, workflow facades, L2 README generation, module capsules, and advisory health checks. |
 | CLI Entrypoint | harbor.cli.main:main |
 
@@ -140,27 +170,29 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 
 | Area | Purpose | Discovered Files | Indexed Contracts |
 |---|---|---:|---:|
-| harbor/cli | CLI command parsing and workflow facade | 2 | 1 |
-| harbor/core | Core Harbor logic | 22 | 230 |
+| harbor/cli | CLI command parsing and workflow facade | 2 | 2 |
+| harbor/core | Core Harbor logic | 33 | 478 |
 | harbor/utils | Shared utilities | 3 | 3 |
-| tests | Test suite | 58 | 378 |
-| harbor | Derived from indexed files under harbor. | 5 | 9 |
+| tests | Test suite | 93 | 791 |
+| harbor | Derived from indexed files under harbor. | 16 | 53 |
 
 ## Code Modules
 
 | Module | Key Files | L2 README | Module Capsule | Skill |
 |---|---|---|---|---|
-| harbor | harbor/cli/main.py, harbor/core/audit.py, harbor/core/ddt.py, ... (+29 more) | yes | no | no |
-| harbor/adapters/python | harbor/adapters/python/parser.py, harbor/adapters/python/__init__.py | yes | no | no |
+| harbor | harbor/cli/main.py, harbor/core/audit.py, harbor/core/ddt.py, ... (+51 more) | yes | no | no |
+| harbor/adapters | harbor/adapters/base.py, harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, ... (+9 more) | yes | no | no |
+| harbor/adapters/python | harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, harbor/adapters/python/__init__.py | yes | no | no |
+| harbor/adapters/typescript | harbor/adapters/typescript/adapter.py, harbor/adapters/typescript/hashing.py, harbor/adapters/typescript/jsdoc.py, ... (+3 more) | yes | no | no |
 | harbor/cli | harbor/cli/main.py, harbor/cli/__init__.py | yes | no | no |
-| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+19 more) | yes | no | yes |
+| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+30 more) | yes | no | yes |
 | harbor/utils | harbor/utils/formatting.py, harbor/utils/i18n.py, harbor/utils/__init__.py | yes | no | no |
 
 ## Supporting Areas
 
 | Area | Purpose | Key Files |
 |---|---|---|
-| tests | Test suite | tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, tests/core/test_storage_migration.py, ... (+55 more) |
+| tests | Test suite | tests/conftest.py, tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, ... (+90 more) |
 | tests/core | Core test suite | tests/core/test_index_sync_sqlite.py, tests/core/test_storage_migration.py |
 | tests/fixtures_sqlite | Test fixtures | tests/fixtures_sqlite/sample.py |
 

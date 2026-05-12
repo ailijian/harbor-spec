@@ -1,7 +1,9 @@
 import json
 from pathlib import Path
 
+from harbor.core.l2 import L2Generator
 from harbor.core.module_capsule import collect_module_context
+from harbor.core.module_capsule import write_module_capsule
 from harbor.core.stale import (
     check_l2_readme_stale,
     check_module_derived_views_stale,
@@ -36,6 +38,40 @@ def _write_l2_export_config(tmp_path: Path, enabled: bool) -> None:
         "l2:\n  export:\n    module_readme:\n      enabled: " + ("true" if enabled else "false") + "\n",
         encoding="utf-8",
     )
+
+
+def _write_sample_repo(tmp_path: Path) -> None:
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text("code_roots:\n- harbor/**\n- tests/**\nexclude_paths: []\n", encoding="utf-8")
+
+    pkg = tmp_path / "harbor" / "core"
+    pkg.mkdir(parents=True, exist_ok=True)
+    (pkg / "__init__.py").write_text("", encoding="utf-8")
+    (pkg / "sample.py").write_text(
+        '''def run(value: int) -> int:
+    """Return the provided value.
+
+    Behavior:
+      - Returns the provided integer unchanged.
+
+    Args:
+      value (int): Input integer.
+
+    Returns:
+      int: Same integer value.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    """
+    return value
+''',
+        encoding="utf-8",
+    )
+
+    tests_dir = tmp_path / "tests"
+    tests_dir.mkdir(parents=True, exist_ok=True)
+    (tests_dir / "test_sample.py").write_text("def test_sample():\n    assert True\n", encoding="utf-8")
 
 
 def test_l2_readme_stale_when_missing(tmp_path: Path, monkeypatch):
@@ -252,3 +288,20 @@ def test_stale_json_contains_l2_readme_export_view_name(tmp_path: Path, monkeypa
     assert "l2_readme_export" in view_names
     assert "specs/diary" not in dumped
     assert ".harbor/diary" not in dumped
+
+
+def test_check_module_derived_views_stale_is_up_to_date_without_runtime_index_cache(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    gen = L2Generator()
+    markdown = gen.generate("harbor/core")
+    gen.write("harbor/core", markdown, force=True)
+    write_module_capsule(collect_module_context("harbor/core"))
+
+    summary = check_module_derived_views_stale("harbor/core")
+
+    assert summary.l2_readme.status == "up_to_date"
+    assert summary.module_capsule.status == "up_to_date"
+    assert not (tmp_path / ".harbor" / "cache" / "l3_index.json").exists()
+    assert not (tmp_path / ".harbor" / "cache" / "harbor.db").exists()

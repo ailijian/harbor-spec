@@ -11,7 +11,7 @@ from harbor.core.context_integrity import (
     compose_markdown_with_frontmatter,
     extract_integrity_fingerprints,
 )
-from harbor.core.storage import HarborDB
+from harbor.core.readonly_index import load_readonly_index
 from harbor.core.workspace import (
     _looks_like_windows_absolute_path,
     load_workspace_config,
@@ -181,30 +181,7 @@ def _summarize_strictness(contracts: List[Dict[str, str]]) -> str:
 
 
 def _load_index(index_path: Optional[Path] = None) -> Dict[str, Any]:
-    idx_path = index_path or (Path(".harbor") / "cache" / "l3_index.json")
-    if idx_path.exists():
-        try:
-            return json.loads(idx_path.read_text(encoding="utf-8"))
-        except Exception:
-            return {"files": {}}
-
-    db = HarborDB()
-    files: Dict[str, Any] = {}
-    for fp, mtime in db.get_all_files():
-        items = []
-        for it in db.get_file_entries(fp):
-            meta = it.get("meta", {}) or {}
-            items.append(
-                {
-                    "id": it.get("id"),
-                    "qualified_name": meta.get("qualified_name"),
-                    "name": meta.get("name"),
-                    "scope": meta.get("scope"),
-                    "strictness": meta.get("strictness"),
-                }
-            )
-        files[fp] = {"mtime": mtime, "items": items}
-    return {"files": files}
+    return load_readonly_index(index_path=index_path, repo_root=Path.cwd())
 
 
 def _belongs_to_module(file_path: str, module: str) -> bool:

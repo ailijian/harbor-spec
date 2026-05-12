@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/cli"
-generated_at: "2026-05-12T11:20:59Z"
+generated_at: "2026-05-12T15:21:22Z"
 generation_command: "harbor module seal harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -11,11 +11,11 @@ source_paths_truncated: false
 source_paths:
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
-source_fingerprint: "sha256:44438dc624506b0cf74d17c1d2370aa0062f9ccf8f0cf5f368bfb3dbb5507a29"
+source_fingerprint: "sha256:4976e1fb070a85852f7b4b85faa87616a0bd53a4bf6f45d8546cd6895ecdbe15"
 contract_fingerprint: "sha256:e8d65a7eeccb7f432bb9d145005351c88fdfb552aaf0575e5b0e14c2b2c2a0d8"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "d9ed8a1f149d211619c3967e0875f90443b487968a8ef3f8e0a23e4d13a4cd46"
-fingerprint: "d9ed8a1f149d211619c3967e0875f90443b487968a8ef3f8e0a23e4d13a4cd46"
+view_fingerprint: "fe273b1fa96b4a3d796937b91f04019a586841481542878e6d05f7bdecadff6b"
+fingerprint: "fe273b1fa96b4a3d796937b91f04019a586841481542878e6d05f7bdecadff6b"
 ---
 
 # Module Card: harbor/cli
@@ -50,6 +50,7 @@ harbor/cli/main.py
 ## Tests
 
 ```text
+tests/test_accept_cli.py
 tests/test_cli_config.py
 tests/test_cli_decorate.py
 tests/test_cli_docs_modes.py

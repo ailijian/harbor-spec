@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from harbor.core.l2 import L2Generator
 from harbor.core.module_capsule import (
     compute_module_fingerprint,
     collect_module_context,
@@ -12,6 +13,40 @@ from harbor.core.module_capsule import (
     read_capsule_fingerprint,
     write_module_capsule,
 )
+
+
+def _write_sample_repo(tmp_path: Path) -> None:
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text("code_roots:\n- harbor/**\n- tests/**\nexclude_paths: []\n", encoding="utf-8")
+
+    pkg = tmp_path / "harbor" / "core"
+    pkg.mkdir(parents=True, exist_ok=True)
+    (pkg / "__init__.py").write_text("", encoding="utf-8")
+    (pkg / "sample.py").write_text(
+        '''def run(value: int) -> int:
+    """Return the provided value.
+
+    Behavior:
+      - Returns the provided integer unchanged.
+
+    Args:
+      value (int): Input integer.
+
+    Returns:
+      int: Same integer value.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    """
+    return value
+''',
+        encoding="utf-8",
+    )
+
+    tests_dir = tmp_path / "tests"
+    tests_dir.mkdir(parents=True, exist_ok=True)
+    (tests_dir / "test_sample.py").write_text("def test_sample():\n    assert True\n", encoding="utf-8")
 
 
 def _write_index(tmp_path: Path) -> Path:
@@ -227,3 +262,35 @@ def test_write_module_capsule_rejects_windows_absolute_export_root(tmp_path: Pat
         assert False, "expected Windows absolute export root validation to fail"
     except ValueError as ex:
         assert "views.export.docs.root" in str(ex)
+
+
+def test_collect_module_context_falls_back_to_transient_source_scan_without_cache(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    ctx = collect_module_context("harbor/core")
+
+    assert ctx["module"] == "harbor/core"
+    assert "harbor/core/__init__.py" in ctx["key_files"]
+    assert "harbor/core/sample.py" in ctx["key_files"]
+    assert any(contract["symbol"] == "harbor.core.sample.run" for contract in ctx["contracts"])
+    assert ctx["strictness"] == "strict"
+    assert not (tmp_path / ".harbor" / "cache" / "harbor.db").exists()
+
+
+def test_l2_and_capsule_can_be_generated_without_runtime_index_cache(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    gen = L2Generator()
+    markdown = gen.generate("harbor/core")
+    written = gen.write("harbor/core", markdown, force=True)
+    assert written is not None
+
+    ctx = collect_module_context("harbor/core")
+    result = write_module_capsule(ctx)
+
+    assert any(path.name == "README.md" for path in written)
+    assert any(path.name == "module-card.md" for path in result.canonical_paths)
+    assert not (tmp_path / ".harbor" / "cache" / "l3_index.json").exists()
+    assert not (tmp_path / ".harbor" / "cache" / "harbor.db").exists()
