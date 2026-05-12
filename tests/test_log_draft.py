@@ -196,6 +196,39 @@ def test_since_last_log_without_marker_falls_back_to_recent_snapshots(monkeypatc
     assert any(item["event"] == "finish" for item in payload["evidence"]["snapshots"])
 
 
+def test_build_diary_draft_classifies_diary_paths_separately(monkeypatch, tmp_path: Path):
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc),
+        changed_files=[
+            {"path": ".harbor/diary/2026-05.jsonl", "status": "M"},
+            {"path": ".harbor/state/log/latest-draft.json", "status": "M"},
+        ],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path)
+    rendered_markdown = serialize_diary_draft(payload, "markdown")
+
+    assert payload["affected_areas"]["diary"] == [".harbor/diary/2026-05.jsonl"]
+    assert payload["affected_areas"]["runtime_state"] == [".harbor/state/log/latest-draft.json"]
+    assert payload["affected_areas"]["production_code"] == []
+    assert any(
+        item["path"] == ".harbor/diary/2026-05.jsonl" and item["status"] == "M"
+        for item in payload["evidence"]["changed_files"]
+    )
+    assert "production code" not in payload["summary"]
+    assert "diary" in payload["summary"]
+    assert "- Module: diary, runtime state" in payload["suggested_diary_entry"]
+    assert "- diary: .harbor/diary/2026-05.jsonl" in rendered_markdown
+
+
 def test_bad_snapshot_json_is_skipped_without_crashing(monkeypatch, tmp_path: Path):
     target_dir = change_window_dir(tmp_path)
     target_dir.mkdir(parents=True, exist_ok=True)

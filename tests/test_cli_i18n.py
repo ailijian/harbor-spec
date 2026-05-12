@@ -3,11 +3,14 @@ from pathlib import Path
 from io import StringIO
 from contextlib import redirect_stderr, redirect_stdout
 import sys
+from datetime import datetime, timezone
 
+import harbor.core.log_draft as log_draft
 from rich.console import Console
 from rich.prompt import Prompt
 
 from harbor.cli.main import main
+from harbor.core.change_window import write_change_window_snapshot
 from harbor.core.init_wizard import InitWizard, InitWizardOptions
 
 
@@ -158,6 +161,43 @@ def test_log_write_non_interactive_requires_yes_uses_zh_i18n(tmp_path: Path):
         assert code == 1
         assert out == ""
         assert "非交互环境执行 `harbor log write` 必须显式传入 `--yes`。" in err
+    finally:
+        if old_env is None:
+            os.environ.pop("HARBOR_LANGUAGE", None)
+        else:
+            os.environ["HARBOR_LANGUAGE"] = old_env
+        os.chdir(old)
+
+
+def test_log_draft_next_actions_use_zh_i18n(monkeypatch, tmp_path: Path):
+    old = Path.cwd()
+    old_env = os.environ.get("HARBOR_LANGUAGE")
+    try:
+        os.environ["HARBOR_LANGUAGE"] = "zh"
+        os.chdir(tmp_path)
+        write_change_window_snapshot(
+            "checkpoint",
+            repo_root=tmp_path,
+            timestamp=datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc),
+            git_head="abc123",
+            workspace_dirty=True,
+            changed_files=[{"path": "harbor/core/log_draft.py", "status": "M"}],
+            summary={"status": "pass"},
+            validation={"command": "checkpoint"},
+        )
+        monkeypatch.setattr(
+            log_draft,
+            "collect_git_workspace_state",
+            lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+        )
+
+        code, out, err = run_cmd_with_err(["log", "draft"])
+
+        assert code == 0
+        assert "下一步：" in out
+        assert "写入正式 Diary（需要确认）：harbor log write" in out
+        assert "非交互显式写入：harbor log write --yes" in out
+        assert "已更新 latest draft cache" in err
     finally:
         if old_env is None:
             os.environ.pop("HARBOR_LANGUAGE", None)

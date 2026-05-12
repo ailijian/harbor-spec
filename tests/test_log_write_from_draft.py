@@ -168,8 +168,11 @@ def test_log_write_yes_writes_from_latest_json_and_updates_marker(tmp_path: Path
     assert marker["last_snapshot"] == "2026-05-11T12:00:00Z"
     assert marker["diary_path"] == f".harbor/diary/{diary_path.name}"
     assert any(row.summary == entry["summary"] for row in rows)
-    assert '"kind": "written_diary_entry"' in out.splitlines()[0]
-    assert "Diary entry written:" in out
+    assert out.startswith(f"Diary path: .harbor/diary/{diary_path.name}")
+    assert "Summary: Task E2 adds controlled written diary entry support." in out
+    assert "Source: .harbor/state/log/latest-draft.json" in out
+    assert "Marker: .harbor/state/log/last_log_marker.json" in out
+    assert '"kind": "written_diary_entry"' not in out
 
 
 def test_log_write_from_latest_draft_flag_writes_successfully(tmp_path: Path):
@@ -181,7 +184,7 @@ def test_log_write_from_latest_draft_flag_writes_successfully(tmp_path: Path):
     assert code == 0
     assert err == ""
     assert entry["source"] == "harbor log write --from-latest-draft"
-    assert ".harbor/state/log/latest-draft.json" in out
+    assert "Source: .harbor/state/log/latest-draft.json" in out
 
 
 def test_log_write_interactive_yes_writes_diary(monkeypatch, tmp_path: Path):
@@ -194,6 +197,7 @@ def test_log_write_interactive_yes_writes_diary(monkeypatch, tmp_path: Path):
     assert code == 0
     assert err == ""
     assert "Ready to write Diary entry" in out
+    assert "Summary: Task E2 adds controlled written diary entry support." in out
     assert (tmp_path / ".harbor" / "diary").exists()
 
 

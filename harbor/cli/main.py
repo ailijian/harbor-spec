@@ -135,6 +135,9 @@ def main():
         `--format markdown|json`, `--output <path>`, and `--save`.
       - `harbor log draft --output` may write one non-diary file such as
         `.harbor/reports/*.md` or `.harbor/reports/*.json`.
+      - Successful non-JSON `harbor log draft` output also prints localized next
+        actions for formal Diary write, report copy save, and explicit
+        non-interactive write authorization.
       - `harbor log draft` also attempts to refresh latest draft runtime cache
         under `.harbor/state/log/latest-draft.md` and
         `.harbor/state/log/latest-draft.json`.
@@ -160,6 +163,8 @@ def main():
       - Successful `harbor log write` appends one structured JSON line to
         `.harbor/diary/YYYY-MM.jsonl` and then attempts a best-effort
         `.harbor/state/log/last_log_marker.json` update.
+      - Default successful `harbor log write` stdout is a concise localized
+        summary, not the full written JSON entry payload.
       - Non-interactive `harbor log write` requires `--yes`; cancel/deny paths
         must not write `.harbor/diary/**`.
       - `init` supports `--advice off|basic` and writes advice defaults into
@@ -198,9 +203,20 @@ def main():
       write one non-diary output file such as `.harbor/reports/*.md` or
       `.harbor/reports/*.json` via `--output` or `--save`, does not write
       `.harbor/diary/**`, does not update log markers, does not read or print
-      file bodies / diff bodies, and does not call LLM. `harbor log write` may
-      append one structured JSON line to `.harbor/diary/YYYY-MM.jsonl` and may
-      update `.harbor/state/log/last_log_marker.json` after successful write.
+      file bodies / diff bodies, and does not call LLM. Successful non-JSON
+      `harbor log draft` stdout also appends localized next-action hints for
+      `harbor log write`, `harbor log draft --save`, and
+      `harbor log write --yes`, while `harbor log draft --format json` keeps
+      stdout as one pure JSON object and routes human hints outside the JSON
+      stream. Draft `--output` / `--save` write targets remain non-diary
+      reports only and do not change source-of-truth Diary semantics.
+      `.harbor/diary/**` is the canonical Diary area rather than production
+      code classification. `harbor log write` may append one structured JSON
+      line to `.harbor/diary/YYYY-MM.jsonl` and may update
+      `.harbor/state/log/last_log_marker.json` after successful write;
+      successful default stdout is a concise localized summary rather than the
+      full written JSON entry payload, while written JSONL entry content
+      remains unchanged.
 
     Raises:
       SystemExit: Propagates CLI parse failures and CI/gate exit codes from the
@@ -211,14 +227,23 @@ def main():
       log write` read/authorization/path errors fail clearly without writing
       Diary; direct legacy `harbor log -m/--message` validation failures also
       fail clearly without traceback-driven UX; marker update failures do not
-      roll back a completed Diary write.
+      roll back a completed Diary write. Non-interactive `harbor log write`
+      still requires explicit `--yes` authorization unless the user confirms in
+      an interactive session; cancel/deny paths must not write
+      `.harbor/diary/**`. These UX-polish paths do not call LLM, do not print
+      file bodies / diff bodies / secrets, and do not change checkpoint /
+      stale / doctor gate semantics or legacy `harbor log` behavior.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: once
     @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance
       (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without
-      auto-fix and without changing CI gate semantics.
+      auto-fix and without changing CI gate semantics; successful non-JSON
+      `harbor log draft` appends localized next-action hints for formal Diary
+      write/save flows, while `--format json` keeps stdout as one JSON object;
+      successful `harbor log write` prints a concise localized success summary
+      instead of the full written JSON entry payload.
     """
     try:
         from dotenv import load_dotenv
@@ -1259,17 +1284,21 @@ def main():
             return t("cli.log.message.invalid_visibility", value=str(getattr(args, "visibility", "") or ""))
         return message
 
-    def _print_log_write_from_draft_result(result: dict) -> None:
-        print(json.dumps(result["entry"], ensure_ascii=False, sort_keys=True))
-        print(
-            t(
-                "cli.log.write.success",
-                diary_path=result["diary_path_display"],
-                source_draft=result["source_draft_display"],
-                marker_path=result["marker_path_display"],
-            )
+    def _build_log_draft_next_actions_text() -> str:
+        return "\n".join(
+            [
+                t("cli.log.draft.next_actions.header"),
+                t("cli.log.draft.next_actions.write"),
+                t("cli.log.draft.next_actions.save"),
+                t("cli.log.draft.next_actions.write_yes"),
+            ]
         )
+
+    def _print_log_write_from_draft_result(result: dict) -> None:
         print(t("cli.log.write.diary_path", path=result["diary_path_display"]))
+        print(t("cli.log.write.summary_line", summary=str(result["entry"].get("summary") or "")))
+        print(t("cli.log.write.source_line", path=result["source_draft_display"]))
+        print(t("cli.log.write.marker_line", path=result["marker_path_display"]))
         for warning in list(result.get("warnings") or []):
             print(
                 t(
@@ -2258,6 +2287,11 @@ def main():
                     repo_root=Path.cwd(),
                 )
             print(rendered, end="")
+            next_actions_text = _build_log_draft_next_actions_text()
+            if args.format == "json":
+                print(next_actions_text, file=sys.stderr)
+            else:
+                print(next_actions_text)
             if cache_result.get("markdown_path_display"):
                 print(
                     t(

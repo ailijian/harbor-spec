@@ -106,6 +106,10 @@ def test_log_draft_default_outputs_markdown_and_does_not_call_log_write(monkeypa
     assert code == 0
     assert "# Diary Draft" in out
     assert "## Suggested Diary Entry" in out
+    assert "Next steps:" in out
+    assert "harbor log write" in out
+    assert "harbor log draft --save" in out
+    assert "harbor log write --yes" in out
     assert "Latest draft cache updated:" in err
     assert (tmp_path / ".harbor" / "state" / "log" / "latest-draft.md").exists()
     assert (tmp_path / ".harbor" / "state" / "log" / "latest-draft.json").exists()
@@ -125,6 +129,7 @@ def test_log_draft_json_output_is_stable(monkeypatch, tmp_path: Path):
 
     assert code == 0
     assert "Latest draft cache updated:" in err
+    assert "Next steps:" in err
     assert payload["schema_version"] == "1.0"
     assert payload["kind"] == "diary_draft"
     assert set(payload.keys()) == {
@@ -140,6 +145,8 @@ def test_log_draft_json_output_is_stable(monkeypatch, tmp_path: Path):
         "why",
     }
     assert out.strip() == json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
+    assert "harbor log write --yes" not in out
+    assert "harbor log draft --save" not in out
 
 
 def test_log_draft_output_writes_reports_file_and_keeps_stdout(monkeypatch, tmp_path: Path):

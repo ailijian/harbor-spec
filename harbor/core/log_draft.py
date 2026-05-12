@@ -182,6 +182,10 @@ def render_diary_draft_markdown(payload: Dict[str, Any]) -> str:
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: pure
+    @harbor.behavior: renders stable markdown sections for summary-level diary
+      draft review, including a dedicated `diary` affected-area line when
+      `.harbor/diary/**` evidence is present; never reclassifies diary paths as
+      production code
     """
     evidence = dict(payload.get("evidence") or {})
     snapshots = list(evidence.get("snapshots") or [])
@@ -213,6 +217,7 @@ def render_diary_draft_markdown(payload: Dict[str, Any]) -> str:
         "",
         f"- production code: {_format_area_list(affected.get('production_code') or [])}",
         f"- tests: {_format_area_list(affected.get('tests') or [])}",
+        f"- diary: {_format_area_list(affected.get('diary') or [])}",
         f"- generated context: {_format_area_list(affected.get('generated_context') or [])}",
         f"- reports: {_format_area_list(affected.get('reports') or [])}",
         f"- runtime state: {_format_area_list(affected.get('runtime_state') or [])}",
@@ -945,6 +950,7 @@ def _classify_affected_areas(changed_files: Sequence[Dict[str, str]]) -> Dict[st
     buckets: Dict[str, List[str]] = {
         "production_code": [],
         "tests": [],
+        "diary": [],
         "generated_context": [],
         "reports": [],
         "runtime_state": [],
@@ -964,6 +970,8 @@ def _bucket_for_path(path: str) -> str:
     lower = normalized.lower()
     if lower.startswith("tests/"):
         return "tests"
+    if lower.startswith(".harbor/diary/"):
+        return "diary"
     if lower.startswith(".harbor/views/"):
         return "generated_context"
     if lower.startswith(".harbor/reports/"):
@@ -1074,6 +1082,7 @@ def _build_summary(
         for label, paths in (
             ("production code", affected_areas.get("production_code") or []),
             ("tests", affected_areas.get("tests") or []),
+            ("diary", affected_areas.get("diary") or []),
             ("generated context", affected_areas.get("generated_context") or []),
             ("reports", affected_areas.get("reports") or []),
             ("runtime state", affected_areas.get("runtime_state") or []),
@@ -1171,6 +1180,7 @@ def _build_suggested_diary_entry(
         for label, paths in (
             ("production code", affected_areas.get("production_code") or []),
             ("tests", affected_areas.get("tests") or []),
+            ("diary", affected_areas.get("diary") or []),
             ("generated context", affected_areas.get("generated_context") or []),
             ("reports", affected_areas.get("reports") or []),
             ("runtime state", affected_areas.get("runtime_state") or []),
@@ -1698,6 +1708,7 @@ def _parse_affected_areas_section(section_text: str) -> Dict[str, Any]:
     key_map = {
         "production code": "production_code",
         "tests": "tests",
+        "diary": "diary",
         "generated context": "generated_context",
         "reports": "reports",
         "runtime state": "runtime_state",
@@ -1793,7 +1804,7 @@ def _summarize_validation_for_details(validation: Dict[str, str]) -> str:
 
 def _summarize_affected_areas_for_details(affected_areas: Dict[str, Any]) -> str:
     parts: List[str] = []
-    for key in ("production_code", "tests", "generated_context", "reports", "runtime_state", "docs", "areas"):
+    for key in ("production_code", "tests", "diary", "generated_context", "reports", "runtime_state", "docs", "areas"):
         value = affected_areas.get(key)
         if isinstance(value, list) and value:
             parts.append(f"{key}=" + ", ".join(str(item) for item in value[:4]))
