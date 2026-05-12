@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-12T14:25:36Z",
+  "accepted_at": "2026-05-12T14:51:45Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -6976,6 +6976,18 @@
         "target_id": "python:tests/test_change_window_snapshot.py:function:tests.test_change_window_snapshot._status_report"
       },
       {
+        "body_hash": "0363930dd56cffc37478852570b9e6aeaa17b79e107a072ae3a6b4ee5a9f6187",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_change_window_snapshot.py",
+        "func_id": "tests.test_change_window_snapshot._stub_checkpoint_baseline_artifact",
+        "id": "tests.test_change_window_snapshot._stub_checkpoint_baseline_artifact",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_change_window_snapshot.py:function:tests.test_change_window_snapshot._stub_checkpoint_baseline_artifact"
+      },
+      {
         "body_hash": "e0c3fecc3742ab58be4ac9cdf16c99a6b49becc8fc86a36bb6960c6e1713c3d8",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -6988,7 +7000,7 @@
         "target_id": "python:tests/test_change_window_snapshot.py:function:tests.test_change_window_snapshot.test_accept_and_finish_invoke_snapshot_events"
       },
       {
-        "body_hash": "c564d24c8f45be424dce21dbc6fa372c8289d922ae626664b782301e7ed4620f",
+        "body_hash": "fc600aae39c6c118efc221234b516f4b5fbd26bd5ff6c5934e18f41929ffaae0",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -7000,7 +7012,7 @@
         "target_id": "python:tests/test_change_window_snapshot.py:function:tests.test_change_window_snapshot.test_accept_snapshot_write_failure_does_not_change_exit_code"
       },
       {
-        "body_hash": "5d38d652825ff591ee78fef26eff1a8f0a8eb7b2cfb44f3a89c54957352ae51a",
+        "body_hash": "fe325139ee8e402abd5bb1e3add633f2db4e1e64df713bd3f5b09e8c916c5610",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -7024,7 +7036,7 @@
         "target_id": "python:tests/test_change_window_snapshot.py:function:tests.test_change_window_snapshot.test_bad_json_snapshot_is_skipped_with_warning"
       },
       {
-        "body_hash": "c6f3267b232200f8d547f72c93cca586919ecf81e30dfb7e4fdcd05c1512233a",
+        "body_hash": "5dd7a8237290c5f3779e513716634a781a5452a521e6734da4c319fa4caae351",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -7660,6 +7672,18 @@
         "target_id": "python:tests/test_checkpoint_ci_baseline_artifact.py:function:tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_passes_with_accepted_baseline_artifact"
       },
       {
+        "body_hash": "20c3b60578d89d0861069a5aa0a3cf7f5c0f23d4e66e5a03b0f6022a1b8802ac",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_checkpoint_ci_guidance.py",
+        "func_id": "tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline",
+        "id": "tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_checkpoint_ci_guidance.py:function:tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline"
+      },
+      {
         "body_hash": "1a997b26522f60744923552dd3cc702f291564c562fcecb354570662b105bed7",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -7672,7 +7696,7 @@
         "target_id": "python:tests/test_checkpoint_ci_guidance.py:function:tests.test_checkpoint_ci_guidance._ddt_report"
       },
       {
-        "body_hash": "205c3cb886b991e8e162d32cb79fd077121498ba81dd5c9dea7445519a85976b",
+        "body_hash": "38b55d15a98270b91c24bfebf7495960b46b0971672c3e11b2f4f0002110b0c3",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10168,6 +10192,18 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2._isolate_workspace"
       },
       {
+        "body_hash": "0363930dd56cffc37478852570b9e6aeaa17b79e107a072ae3a6b4ee5a9f6187",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_v2.py",
+        "func_id": "tests.test_cli_v2._stub_checkpoint_baseline_artifact",
+        "id": "tests.test_cli_v2._stub_checkpoint_baseline_artifact",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2._stub_checkpoint_baseline_artifact"
+      },
+      {
         "body_hash": "24740205eda1f09a9d63e08341b54991dce434e597d5f1a14a69a94464f1bae2",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -10180,7 +10216,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.run_cmd"
       },
       {
-        "body_hash": "60be5bb55d48f31153582b5e8944a26f1ae40f6f6590261cb5dd3127c682ed5a",
+        "body_hash": "ea7036c336659caf23cbb49b1349e8bbd589d54389eabf5c27291c762a38b67e",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10216,7 +10252,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_check_ddt_baseline_missing_verbose_lists_bindings"
       },
       {
-        "body_hash": "9b8db6080b9f5ccd3bd0c71e1e55a431c8ee0a19f9c446cc68b14a7c3a7998ac",
+        "body_hash": "18fdd242815618cf516d340d4b9505a813524b33276469c3076b725a72648ca8",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10228,7 +10264,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_checkpoint_ci_json_advisory_unchanged_with_advice_modes"
       },
       {
-        "body_hash": "197d131c1084a0a6dac31cf6f162c01f5abda1022b9e470b48394cd81e00661a",
+        "body_hash": "1d2cb32e887da330128626ebf2888239a693c415f0d34acd5e9371411a7ff2ca",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10240,7 +10276,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_checkpoint_ci_json_recognized"
       },
       {
-        "body_hash": "68579d11def452ea3858e037ef1875293a06c32974e02d38222e218ae9e37c87",
+        "body_hash": "2b1d5ca0c3f66d2440a9e5eb1cc1d8db86d91de492698e75d94e6edebe0d1044",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10252,7 +10288,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_checkpoint_command_recognized"
       },
       {
-        "body_hash": "c17126454f17ff2e481c8142471d6fc7edb74e2dad3d3725693ab260ba9331a6",
+        "body_hash": "964796abce0fcef140b939679c0407d165c85f20cae3e9e17f1217d45af99e02",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10264,7 +10300,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit"
       },
       {
-        "body_hash": "d661ea98f67fa03226991af260f3eec0f220b29e12c38bc6f60722f4a8e954aa",
+        "body_hash": "28cd5c01ef8bcd4489d9cfb1cd6acdfce8db7fd4baaa13a57369c95e54c9d6b2",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10324,7 +10360,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_diary_export_maps_to_log_export"
       },
       {
-        "body_hash": "dacf7da56d1a364912edeb81069081b84edd29963753544fe740284b47475eab",
+        "body_hash": "f33949c6c3fafd6fee44f22f93b3cb3a1f42f1cb01c7265864d8ca4d7f5c4e11",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10336,7 +10372,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_finish_command_recognized"
       },
       {
-        "body_hash": "5065d85ae7dce6898d46f9ccf6d9c131ab8c3943f6d27c39039e7dd7d1feffa7",
+        "body_hash": "f642669eefe6976c64a3ff3ac8f00f477e61358addea2bc739fa8991c725c256",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10372,7 +10408,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_log_message_keeps_json_first_line_and_prints_canonical_target"
       },
       {
-        "body_hash": "e050686ed64f26d17ca34b6b84d3ed8f13b5f24ec56c0987a5cb9afecd8bfc72",
+        "body_hash": "1253839f2f27d6498e90daab995f549f1c380ec8a0d59c2d37e6352c2329b2ae",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10396,7 +10432,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_status_alias_st"
       },
       {
-        "body_hash": "14110b65044219288dbc0ec00a3ec3147e1f66e9f068322d625b18a31ea1b6e7",
+        "body_hash": "6c9430e9cda5063f3f728296b59e7e1a8d43ee61fbfb2b3b094bda8fd1b0bc96",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10408,7 +10444,7 @@
         "target_id": "python:tests/test_cli_v2.py:function:tests.test_cli_v2.test_status_skipped_no_contract_default_summary"
       },
       {
-        "body_hash": "055609592a1ed991dbaa11246ca95c1ad8b91ef532fcfbc4ff3fcc4fe4bb1124",
+        "body_hash": "0498ffec2363d7c871652389836f5ade844a01bedc7fa33ba782154f1d7cba0f",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
