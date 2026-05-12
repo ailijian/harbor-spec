@@ -136,11 +136,15 @@ Rules:
 * `harbor log draft` also writes:
   * `.harbor/state/log/latest-draft.md`
   * `.harbor/state/log/latest-draft.json`
+* the default `harbor log draft` boundary strategy is marker-first -> accept-fallback -> recent-fallback
+* `harbor log draft --since-last-log` forces `last_log_marker`
+* `harbor log draft --since-last-accept` forces the latest accept boundary
 * `harbor log draft --save` creates:
   * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.md`
   * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.json`
 * `harbor log draft --output <path>` uses the explicit output path and takes priority over `--save`
 * `harbor log draft` does not write `.harbor/diary/**`
+* `harbor log draft` does not advance `last_log_marker`
 * `harbor log draft --output` targeting `.harbor/diary/**` must be rejected
 
 ### 3. Write
@@ -161,6 +165,7 @@ Rules:
 * `--from-draft` only allows controlled sources: `.harbor/reports/**` or the latest draft cache
 * `.harbor/diary/**`, `.env`, `.env.*`, `secrets/**`, and repo-external paths must be rejected as draft sources
 * after a successful write to `.harbor/diary/YYYY-MM.jsonl`, Harbor updates `.harbor/state/log/last_log_marker.json`
+* `last_log_marker` means “the last formally written Diary node” and remains runtime state rather than source-of-truth memory
 
 ### Safety Boundaries
 
@@ -464,6 +469,10 @@ Boundaries:
 
 * `harbor log draft` only generates a reviewable Diary Draft and does not write a Written Diary Entry
 * `harbor log draft` does not write `.harbor/diary/**`
+* the default `harbor log draft` boundary strategy is marker-first -> accept-fallback -> recent-fallback
+* `harbor log draft --since-last-log` forces `last_log_marker`
+* `harbor log draft --since-last-accept` forces the latest accept boundary
+* `harbor log draft` does not advance `last_log_marker`
 * `harbor log draft --output` may write to `.harbor/reports/**`
 * `harbor log draft --output` targeting `.harbor/diary/**` must be rejected
 * `harbor log draft` does not call LLM in v1.4.1

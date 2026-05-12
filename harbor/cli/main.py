@@ -130,9 +130,14 @@ def main():
       - `harbor log draft` is a safe read-only draft generator:
         it summarizes existing evidence to stdout / optional non-diary output
         paths and does not write `.harbor/diary/**`.
+      - Default `harbor log draft` evidence boundary is marker-first:
+        `last_log_marker` -> latest accept fallback -> recent snapshots fallback.
       - `harbor log draft` supports `--since-last-accept`,
         `--since-last-log`, `--from-report <path>`,
         `--format markdown|json`, `--output <path>`, and `--save`.
+      - Draft JSON output keeps stdout as one pure JSON object and includes
+        additive boundary metadata fields:
+        `boundary_source`, `boundary_timestamp`, `boundary_note`.
       - `harbor log draft --output` may write one non-diary file such as
         `.harbor/reports/*.md` or `.harbor/reports/*.json`.
       - Successful non-JSON `harbor log draft` output also prints localized next
@@ -149,6 +154,11 @@ def main():
         present, explicit `--output` takes precedence.
       - `harbor log draft` never executes `harbor log`, never writes
         `.harbor/diary/**`, never writes `last_log_marker`, and never calls LLM.
+      - `--since-last-log` forces the log-marker boundary path; if the marker is
+        unavailable or invalid, draft output keeps an explicit fallback /
+        uncertainty note instead of silently pretending a precise boundary.
+      - `--since-last-accept` forces the latest accept boundary and does not use
+        `last_log_marker` for that explicit mode.
       - `harbor log draft` / `harbor log write` expose only summary-level draft
         data and never print file bodies or diff bodies.
       - `harbor log write` writes source-of-truth Diary memory only after
@@ -203,7 +213,10 @@ def main():
       write one non-diary output file such as `.harbor/reports/*.md` or
       `.harbor/reports/*.json` via `--output` or `--save`, does not write
       `.harbor/diary/**`, does not update log markers, does not read or print
-      file bodies / diff bodies, and does not call LLM. Successful non-JSON
+      file bodies / diff bodies, and does not call LLM. Draft JSON output keeps
+      stdout as one pure JSON object and may include additive boundary metadata
+      fields `boundary_source`, `boundary_timestamp`, and `boundary_note`.
+      Successful non-JSON
       `harbor log draft` stdout also appends localized next-action hints for
       `harbor log write`, `harbor log draft --save`, and
       `harbor log write --yes`, while `harbor log draft --format json` keeps
@@ -675,12 +688,12 @@ def main():
     p_log_draft_boundary.add_argument(
         "--since-last-accept",
         action="store_true",
-        help="Use change-window evidence after the latest accept snapshot",
+        help="Force change-window evidence after the latest accept snapshot",
     )
     p_log_draft_boundary.add_argument(
         "--since-last-log",
         action="store_true",
-        help="Use change-window evidence after `.harbor/state/log/last_log_marker.json` when available",
+        help="Force `.harbor/state/log/last_log_marker.json` as the boundary; unavailable markers emit an explicit fallback note",
     )
     p_log_draft_boundary.add_argument(
         "--from-report",

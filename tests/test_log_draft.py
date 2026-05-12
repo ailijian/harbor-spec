@@ -11,7 +11,9 @@ from harbor.core.log_draft import (
     build_diary_draft,
     build_saved_diary_draft_output_path,
     serialize_diary_draft,
+    write_diary_entry_from_draft,
     write_diary_draft_output,
+    write_last_log_marker,
     write_latest_diary_draft_cache,
 )
 
@@ -42,6 +44,50 @@ def _write_snapshot(
         summary=summary or {},
         validation=validation or {},
     )
+
+
+def _write_latest_json_draft(
+    repo_root: Path,
+    *,
+    summary: str = "Controlled written diary entry.",
+    why: str = "Need a reviewable draft source for controlled log write testing.",
+    snapshot_timestamp: str = "2026-05-11T12:00:00Z",
+) -> Path:
+    payload = {
+        "schema_version": "1.0",
+        "kind": "diary_draft",
+        "summary": summary,
+        "why": why,
+        "affected_areas": {"production_code": ["harbor/core/log_draft.py"]},
+        "contract_impact": "yes",
+        "validation": {"pytest": "unknown", "checkpoint": "pass", "stale": "unknown", "doctor": "unknown"},
+        "evidence": {
+            "snapshots": [{"event": "checkpoint", "timestamp": snapshot_timestamp, "git_head": "abc123"}],
+            "reports": [],
+            "changed_files": [{"path": "harbor/core/log_draft.py", "status": "M"}],
+        },
+        "risks": ["Keep draft/report/runtime-state semantics aligned."],
+        "suggested_diary_entry": (
+            "[Diary Draft]\n"
+            "- Type: decision\n"
+            "- Importance: high\n"
+            "- Visibility: repo\n"
+            f"- Summary: {summary}\n"
+            f"- Reason: {why}\n"
+        ),
+    }
+    target = repo_root / ".harbor" / "state" / "log" / "latest-draft.json"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    wrapper = {
+        "schema_version": "1.0",
+        "kind": "diary_draft",
+        "created_at": "2026-05-11T12:10:00Z",
+        "source": "harbor log draft",
+        "draft": payload,
+        "markdown_path": ".harbor/state/log/latest-draft.md",
+    }
+    target.write_text(json.dumps(wrapper, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    return target
 
 
 def test_build_diary_draft_collects_required_fields_and_evidence(monkeypatch, tmp_path: Path):
@@ -192,8 +238,223 @@ def test_since_last_log_without_marker_falls_back_to_recent_snapshots(monkeypatc
 
     payload = build_diary_draft(repo_root=tmp_path, since_last_log=True)
 
-    assert any("No last log marker found" in item for item in payload["risks"])
+    assert payload["boundary_source"] == "recent_snapshots"
+    assert "no valid log marker found" in payload["boundary_note"]
+    assert "--since-last-log" in payload["boundary_note"]
     assert any(item["event"] == "finish" for item in payload["evidence"]["snapshots"])
+
+
+def test_last_log_marker_round_trip_prefers_last_log_at_and_keeps_legacy_aliases(tmp_path: Path):
+    diary_path = tmp_path / ".harbor" / "diary" / "2026-05.jsonl"
+    diary_path.parent.mkdir(parents=True, exist_ok=True)
+    diary_path.write_text("", encoding="utf-8")
+    draft_path = tmp_path / ".harbor" / "state" / "log" / "latest-draft.json"
+    draft_path.parent.mkdir(parents=True, exist_ok=True)
+    draft_path.write_text("{}", encoding="utf-8")
+
+    result = write_last_log_marker(
+        entry_payload={
+            "ts": "2026-05-11T12:30:00Z",
+            "evidence": {"snapshots": [{"timestamp": "2026-05-11T12:00:00Z", "git_head": "abc123"}]},
+        },
+        diary_path=diary_path,
+        draft_source_path=draft_path,
+        repo_root=tmp_path,
+    )
+    marker_path = result["marker_path"]
+    payload = json.loads(marker_path.read_text(encoding="utf-8"))
+
+    assert payload["last_log_at"] == "2026-05-11T12:30:00Z"
+    assert payload["last_snapshot"] == "2026-05-11T12:00:00Z"
+    assert log_draft._read_last_log_marker_timestamp(marker_path) == "2026-05-11T12:30:00Z"
+
+    payload.update({"last_log_at": "2026-05-11T12:45:00Z", "timestamp": "2026-05-11T12:15:00Z"})
+    marker_path.write_text(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    assert log_draft._read_last_log_marker_timestamp(marker_path) == "2026-05-11T12:45:00Z"
+
+    for key in ("timestamp", "ts", "last_log_timestamp", "last_log_ts"):
+        marker_path.write_text(json.dumps({key: "2026-05-11T12:50:00Z"}, ensure_ascii=False) + "\n", encoding="utf-8")
+        assert log_draft._read_last_log_marker_timestamp(marker_path) == "2026-05-11T12:50:00Z"
+
+
+def test_log_write_marker_round_trip_closes_since_last_log_boundary(monkeypatch, tmp_path: Path):
+    base = datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc)
+    _write_latest_json_draft(tmp_path, snapshot_timestamp="2026-05-11T12:00:00Z")
+    _write_snapshot(
+        tmp_path,
+        "checkpoint",
+        base + timedelta(minutes=20),
+        changed_files=[{"path": "harbor/core/before_marker.py", "status": "M"}],
+        summary={"status": "pass"},
+    )
+    write_diary_entry_from_draft(
+        repo_root=tmp_path,
+        from_latest_draft=True,
+        now=base + timedelta(minutes=30),
+    )
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        base + timedelta(minutes=40),
+        changed_files=[{"path": "harbor/core/after_marker.py", "status": "M"}],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path, since_last_log=True)
+    changed_paths = {item["path"] for item in payload["evidence"]["changed_files"]}
+
+    assert payload["boundary_source"] == "last_log_marker"
+    assert payload["boundary_timestamp"] == "2026-05-11T12:30:00Z"
+    assert "harbor/core/after_marker.py" in changed_paths
+    assert "harbor/core/before_marker.py" not in changed_paths
+
+
+def test_default_log_draft_prefers_last_log_marker_boundary(monkeypatch, tmp_path: Path):
+    base = datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc)
+    _write_snapshot(tmp_path, "accept", base, changed_files=[], summary={"accepted": True})
+    marker_path = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker_path.parent.mkdir(parents=True, exist_ok=True)
+    marker_path.write_text(json.dumps({"last_log_at": "2026-05-11T12:20:00Z"}, ensure_ascii=False) + "\n", encoding="utf-8")
+    _write_snapshot(
+        tmp_path,
+        "checkpoint",
+        base + timedelta(minutes=10),
+        changed_files=[{"path": "harbor/core/too-old.py", "status": "M"}],
+        summary={"status": "pass"},
+    )
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        base + timedelta(minutes=30),
+        changed_files=[{"path": "harbor/core/fresh.py", "status": "M"}],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path)
+    changed_paths = {item["path"] for item in payload["evidence"]["changed_files"]}
+
+    assert payload["boundary_source"] == "last_log_marker"
+    assert payload["boundary_timestamp"] == "2026-05-11T12:20:00Z"
+    assert "using last log marker" in payload["boundary_note"]
+    assert "harbor/core/fresh.py" in changed_paths
+    assert "harbor/core/too-old.py" not in changed_paths
+
+
+def test_default_log_draft_falls_back_to_latest_accept_when_marker_missing(monkeypatch, tmp_path: Path):
+    base = datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc)
+    _write_snapshot(
+        tmp_path,
+        "checkpoint",
+        base,
+        changed_files=[{"path": "harbor/core/pre_accept.py", "status": "M"}],
+        summary={"status": "pass"},
+    )
+    _write_snapshot(tmp_path, "accept", base + timedelta(minutes=5), changed_files=[], summary={"accepted": True})
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        base + timedelta(minutes=10),
+        changed_files=[{"path": "harbor/core/post_accept.py", "status": "M"}],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path)
+    changed_paths = {item["path"] for item in payload["evidence"]["changed_files"]}
+
+    assert payload["boundary_source"] == "latest_accept"
+    assert payload["boundary_timestamp"] == "2026-05-11T12:05:00Z"
+    assert "no last log marker found" in payload["boundary_note"]
+    assert "harbor/core/post_accept.py" in changed_paths
+    assert "harbor/core/pre_accept.py" not in changed_paths
+
+
+def test_default_log_draft_falls_back_to_recent_when_marker_and_accept_are_missing(monkeypatch, tmp_path: Path):
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc),
+        changed_files=[{"path": "harbor/core/recent_only.py", "status": "M"}],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": None, "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path)
+
+    assert payload["boundary_source"] == "recent_snapshots"
+    assert payload["boundary_timestamp"] is None
+    assert "using recent change-window snapshots" in payload["boundary_note"]
+    assert any(item["path"] == "harbor/core/recent_only.py" for item in payload["evidence"]["changed_files"])
+
+
+def test_invalid_marker_falls_back_to_accept_with_explicit_note(monkeypatch, tmp_path: Path):
+    base = datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc)
+    marker_path = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker_path.parent.mkdir(parents=True, exist_ok=True)
+    marker_path.write_text(json.dumps({"last_snapshot": "2026-05-11T12:00:00Z"}, ensure_ascii=False) + "\n", encoding="utf-8")
+    _write_snapshot(tmp_path, "accept", base + timedelta(minutes=5), changed_files=[], summary={"accepted": True})
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        base + timedelta(minutes=10),
+        changed_files=[{"path": "harbor/core/post_accept.py", "status": "M"}],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": None, "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path)
+
+    assert payload["boundary_source"] == "latest_accept"
+    assert "has only snapshot metadata and no parseable log timestamp" in payload["boundary_note"]
+    assert "falling back to latest accept" in payload["boundary_note"]
+
+
+def test_since_last_log_invalid_marker_uses_explicit_uncertain_fallback_note(monkeypatch, tmp_path: Path):
+    base = datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc)
+    marker_path = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker_path.parent.mkdir(parents=True, exist_ok=True)
+    marker_path.write_text(json.dumps({"last_snapshot": "2026-05-11T12:00:00Z"}, ensure_ascii=False) + "\n", encoding="utf-8")
+    _write_snapshot(tmp_path, "accept", base + timedelta(minutes=5), changed_files=[], summary={"accepted": True})
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        base + timedelta(minutes=10),
+        changed_files=[{"path": "harbor/core/post_accept.py", "status": "M"}],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": None, "workspace_dirty": False, "changed_files": []},
+    )
+
+    payload = build_diary_draft(repo_root=tmp_path, since_last_log=True)
+
+    assert payload["boundary_source"] == "latest_accept"
+    assert "--since-last-log" in payload["boundary_note"]
+    assert "could not resolve a marker timestamp" in payload["boundary_note"]
 
 
 def test_build_diary_draft_classifies_diary_paths_separately(monkeypatch, tmp_path: Path):
@@ -402,3 +663,28 @@ def test_build_saved_diary_draft_output_path_uses_reports_root_and_format(tmp_pa
 
     assert path_md == tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.md"
     assert path_json == tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.json"
+
+
+def test_build_diary_draft_does_not_modify_existing_last_log_marker(monkeypatch, tmp_path: Path):
+    marker_path = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker_path.parent.mkdir(parents=True, exist_ok=True)
+    original = {"last_log_at": "2026-05-11T12:00:00Z", "diary_path": ".harbor/diary/2026-05.jsonl"}
+    marker_path.write_text(json.dumps(original, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    before = marker_path.read_text(encoding="utf-8")
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        datetime(2026, 5, 11, 12, 10, tzinfo=timezone.utc),
+        changed_files=[{"path": "harbor/core/log_draft.py", "status": "M"}],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    build_diary_draft(repo_root=tmp_path)
+
+    after = marker_path.read_text(encoding="utf-8")
+    assert after == before

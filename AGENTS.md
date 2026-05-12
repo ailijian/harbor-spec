@@ -358,8 +358,12 @@ change-window evidence is runtime evidence, not source-of-truth memory.
 harbor log draft is a safe draft command.
 harbor log draft previews a reviewable draft and updates .harbor/state/log/latest-draft.md/json.
 harbor log draft --save or --output may write reviewable draft reports under .harbor/reports/**.
+default harbor log draft boundary is marker-first -> accept-fallback -> recent-fallback.
+harbor log draft must not update .harbor/state/log/last_log_marker.json.
 harbor log draft must not write .harbor/diary/**.
 harbor log write and harbor log write --yes are source-of-truth Diary writes.
+successful harbor log write updates .harbor/state/log/last_log_marker.json only after writing .harbor/diary/YYYY-MM.jsonl.
+last_log_marker represents the last formally written Diary node and is runtime state, not source-of-truth memory.
 Written Diary Entry becomes source-of-truth memory only after actual write to .harbor/diary/**.
 ```
 

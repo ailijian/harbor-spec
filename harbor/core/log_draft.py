@@ -23,10 +23,14 @@ SAFE_EXCERPT_MAX_LEN = 1000
 WRITTEN_DIARY_SUMMARY_MAX_LEN = 240
 WRITTEN_DIARY_DETAILS_MAX_LEN = 2000
 LOG_MARKER_TIMESTAMP_KEYS = (
+    "last_log_at",
     "timestamp",
     "ts",
     "last_log_timestamp",
     "last_log_ts",
+)
+LOG_MARKER_SNAPSHOT_KEYS = (
+    "last_snapshot",
     "snapshot_timestamp",
 )
 CHANGED_FILE_STATUS_RANK = {"??": 0, "D": 1, "A": 2, "M": 3, "MM": 4}
@@ -49,11 +53,16 @@ def build_diary_draft(
     Behavior:
       - Reads only existing evidence: change-window snapshots, optional report JSON,
         and current git status metadata.
+      - Default evidence boundary is marker-first:
+        `last_log_marker` -> latest accept fallback -> recent snapshots fallback.
+      - `--since-last-log` keeps an explicit fallback / uncertainty note when the
+        marker is unavailable or invalid instead of pretending a precise window.
       - Does not read source file contents, does not read diffs, and does not call
         LLM/network providers.
       - Never writes `.harbor/diary/**`; output file writes are handled separately.
       - Returns a stable JSON-friendly draft payload suitable for markdown or JSON
-        rendering.
+        rendering, including additive `boundary_source`, `boundary_timestamp`,
+        and `boundary_note` fields.
 
     Side Effects:
       - Read-only filesystem access for snapshots, reports, and optional log marker.
@@ -68,28 +77,22 @@ def build_diary_draft(
     notes: List[str] = []
 
     latest_accept = _latest_accept_snapshot(root)
-    marker_timestamp: Optional[str] = None
 
     if since_last_accept and since_last_log:
         raise LogDraftError("Choose only one boundary mode: --since-last-accept or --since-last-log.")
 
-    if since_last_accept:
-        if latest_accept is not None:
-            notes.append(f"Using change-window evidence after the latest accept snapshot at {latest_accept.timestamp}.")
-        else:
-            notes.append("Evidence boundary uncertain: no accept snapshot found; fell back to recent change-window snapshots.")
-    elif since_last_log:
-        marker_timestamp = _read_last_log_marker_timestamp(workspace_paths.state_root / "log" / "last_log_marker.json")
-        if marker_timestamp:
-            notes.append(f"Using change-window evidence after the last log marker at {marker_timestamp}.")
-        else:
-            notes.append("No last log marker found; fell back to recent change-window snapshots.")
-            notes.append("Evidence boundary uncertain because `--since-last-log` could not resolve a marker timestamp.")
+    boundary = _resolve_diary_draft_boundary(
+        state_root=workspace_paths.state_root,
+        latest_accept=latest_accept,
+        since_last_accept=since_last_accept,
+        since_last_log=since_last_log,
+    )
+    if boundary["note"]:
+        notes.append(str(boundary["note"]))
 
-    boundary_timestamp = latest_accept.timestamp if since_last_accept and latest_accept is not None else marker_timestamp
     selected_snapshots = _select_snapshots(
         list_change_windows(repo_root=root),
-        boundary_timestamp=boundary_timestamp,
+        boundary_timestamp=boundary["timestamp"],
         limit=snapshot_limit,
     )
 
@@ -110,8 +113,7 @@ def build_diary_draft(
         meaningful=meaningful,
         changed_files=changed_files,
         affected_areas=affected_areas,
-        since_last_accept=since_last_accept,
-        since_last_log=since_last_log,
+        boundary_source=str(boundary["source"] or ""),
         from_report=reports[0]["command"] if from_report is not None and reports else None,
     )
     why = _build_why(
@@ -153,6 +155,9 @@ def build_diary_draft(
         "kind": DIARY_DRAFT_KIND,
         "summary": summary,
         "why": why,
+        "boundary_source": boundary["source"],
+        "boundary_timestamp": boundary["timestamp"],
+        "boundary_note": boundary["note"],
         "affected_areas": affected_areas,
         "contract_impact": contract_impact,
         "validation": validation,
@@ -173,6 +178,9 @@ def render_diary_draft_markdown(payload: Dict[str, Any]) -> str:
       - Produces a deterministic markdown draft with the fixed MVP sections:
         Summary, Why, Affected Areas, Contract Impact, Validation,
         Change Window Evidence, Risks / Notes, and Suggested Diary Entry.
+      - Includes an explicit evidence-boundary note in Change Window Evidence so
+        marker-first / accept-fallback / recent-fallback decisions remain visible
+        in reviewable markdown output.
       - Renders only summary-level evidence already present in the payload.
       - Does not inject file contents, diff bodies, secrets, or environment values.
 
@@ -236,6 +244,7 @@ def render_diary_draft_markdown(payload: Dict[str, Any]) -> str:
         "",
         "## Change Window Evidence",
         "",
+        f"- {str(payload.get('boundary_note') or 'Evidence boundary: using recent change-window snapshots.')}",
         f"- latest accept snapshot: {_format_snapshot_line(latest_accept)}",
         f"- checkpoint snapshots: {_format_snapshot_group(checkpoint_snapshots)}",
         f"- finish snapshots: {_format_snapshot_group(finish_snapshots)}",
@@ -797,19 +806,132 @@ def _latest_accept_snapshot(repo_root: Path) -> Optional[ChangeWindowSnapshot]:
 
 
 def _read_last_log_marker_timestamp(marker_path: Path) -> Optional[str]:
+    return str(_read_last_log_marker(marker_path).get("timestamp") or "") or None
+
+
+def _read_last_log_marker(marker_path: Path) -> Dict[str, Any]:
+    result: Dict[str, Any] = {
+        "exists": False,
+        "timestamp": None,
+        "timestamp_key": None,
+        "snapshot_timestamp": None,
+        "snapshot_key": None,
+        "note": "",
+    }
     if not marker_path.exists():
-        return None
+        return result
+    result["exists"] = True
     try:
         payload = json.loads(marker_path.read_text(encoding="utf-8"))
     except Exception:
-        return None
+        result["note"] = "last log marker exists but could not be parsed as JSON"
+        return result
     if not isinstance(payload, dict):
-        return None
-    for key in LOG_MARKER_TIMESTAMP_KEYS:
+        result["note"] = "last log marker exists but is not a JSON object"
+        return result
+
+    timestamp, timestamp_key = _read_marker_value(payload, LOG_MARKER_TIMESTAMP_KEYS)
+    snapshot_timestamp, snapshot_key = _read_marker_value(payload, LOG_MARKER_SNAPSHOT_KEYS)
+    result["timestamp"] = timestamp
+    result["timestamp_key"] = timestamp_key
+    result["snapshot_timestamp"] = snapshot_timestamp
+    result["snapshot_key"] = snapshot_key
+    if timestamp:
+        return result
+    if snapshot_timestamp:
+        result["note"] = "last log marker exists but has only snapshot metadata and no parseable log timestamp"
+        return result
+    result["note"] = "last log marker exists but contains no parseable log timestamp"
+    return result
+
+
+def _read_marker_value(payload: Dict[str, Any], keys: Sequence[str]) -> Tuple[Optional[str], Optional[str]]:
+    for key in keys:
         value = str(payload.get(key) or "").strip()
         if value:
-            return value
-    return None
+            return value, key
+    return None, None
+
+
+def _resolve_diary_draft_boundary(
+    *,
+    state_root: Path,
+    latest_accept: Optional[ChangeWindowSnapshot],
+    since_last_accept: bool,
+    since_last_log: bool,
+) -> Dict[str, Optional[str]]:
+    marker_info = _read_last_log_marker(state_root / "log" / "last_log_marker.json")
+    marker_timestamp = str(marker_info.get("timestamp") or "").strip() or None
+    marker_note = str(marker_info.get("note") or "").strip()
+
+    if since_last_accept:
+        if latest_accept is not None:
+            return {
+                "source": "latest_accept",
+                "timestamp": latest_accept.timestamp,
+                "note": f"Evidence boundary: using latest accept at {latest_accept.timestamp}.",
+            }
+        return {
+            "source": "recent_snapshots",
+            "timestamp": None,
+            "note": (
+                "Evidence boundary uncertain: no accept snapshot found; using recent change-window snapshots "
+                "because `--since-last-accept` could not resolve a latest accept boundary."
+            ),
+        }
+
+    if since_last_log:
+        if marker_timestamp:
+            return {
+                "source": "last_log_marker",
+                "timestamp": marker_timestamp,
+                "note": f"Evidence boundary: using last log marker at {marker_timestamp}.",
+            }
+        if latest_accept is not None:
+            reason = marker_note or "no valid log marker found"
+            return {
+                "source": "latest_accept",
+                "timestamp": latest_accept.timestamp,
+                "note": (
+                    f"Evidence boundary: {reason}; falling back to latest accept at {latest_accept.timestamp} "
+                    "because `--since-last-log` could not resolve a marker timestamp."
+                ),
+            }
+        reason = marker_note or "no valid log marker found"
+        return {
+            "source": "recent_snapshots",
+            "timestamp": None,
+            "note": (
+                f"Evidence boundary uncertain: {reason}; using recent change-window snapshots because "
+                "`--since-last-log` could not resolve a marker timestamp."
+            ),
+        }
+
+    if marker_timestamp:
+        return {
+            "source": "last_log_marker",
+            "timestamp": marker_timestamp,
+            "note": f"Evidence boundary: using last log marker at {marker_timestamp}.",
+        }
+    if latest_accept is not None:
+        if marker_note:
+            note = f"Evidence boundary: {marker_note}; falling back to latest accept at {latest_accept.timestamp}."
+        else:
+            note = f"Evidence boundary: no last log marker found; falling back to latest accept at {latest_accept.timestamp}."
+        return {
+            "source": "latest_accept",
+            "timestamp": latest_accept.timestamp,
+            "note": note,
+        }
+    if marker_note:
+        note = f"Evidence boundary: {marker_note}; using recent change-window snapshots."
+    else:
+        note = "Evidence boundary: no last log marker or accept snapshot found; using recent change-window snapshots."
+    return {
+        "source": "recent_snapshots",
+        "timestamp": None,
+        "note": note,
+    }
 
 
 def _select_snapshots(
@@ -1070,8 +1192,7 @@ def _build_summary(
     meaningful: bool,
     changed_files: Sequence[Dict[str, str]],
     affected_areas: Dict[str, List[str]],
-    since_last_accept: bool,
-    since_last_log: bool,
+    boundary_source: str,
     from_report: Optional[str],
 ) -> str:
     if not meaningful:
@@ -1094,9 +1215,9 @@ def _build_summary(
     count = len(list(changed_files or []))
     if from_report:
         return f"Drafted from the explicit {from_report} report plus current change-window evidence across {area_text}."
-    if since_last_accept:
+    if boundary_source == "latest_accept":
         return f"Evidence since the latest accept snapshot suggests meaningful changes across {area_text} ({count} changed files observed)."
-    if since_last_log:
+    if boundary_source == "last_log_marker":
         return f"Evidence since the last log marker suggests meaningful changes across {area_text} ({count} changed files observed)."
     return f"Recent change-window evidence suggests meaningful changes across {area_text} ({count} changed files observed)."
 

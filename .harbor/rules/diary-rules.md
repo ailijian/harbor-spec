@@ -424,6 +424,9 @@ harbor log draft may be used after accept to draft a Diary from change-window ev
 harbor log draft must not write .harbor/diary/** by default.
 harbor log draft writes latest draft cache to .harbor/state/log/latest-draft.md and .harbor/state/log/latest-draft.json.
 harbor log draft --save writes a timestamped reviewable report copy under .harbor/reports/**.
+default harbor log draft boundary is marker-first -> accept-fallback -> recent-fallback.
+--since-last-log forces the last_log_marker boundary path; unavailable or invalid markers must leave an explicit fallback / uncertainty note instead of pretending a precise boundary.
+--since-last-accept forces the latest accept boundary and does not use last_log_marker for that explicit mode.
 explicit --output wins over --save; do not silently create a second saved copy.
 --output targeting .harbor/diary/** must be rejected.
 harbor log / harbor log write still require explicit human authorization.

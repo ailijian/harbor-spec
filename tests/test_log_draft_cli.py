@@ -134,6 +134,9 @@ def test_log_draft_json_output_is_stable(monkeypatch, tmp_path: Path):
     assert payload["kind"] == "diary_draft"
     assert set(payload.keys()) == {
         "affected_areas",
+        "boundary_note",
+        "boundary_source",
+        "boundary_timestamp",
         "contract_impact",
         "evidence",
         "kind",
@@ -282,6 +285,99 @@ def test_log_draft_since_last_accept_filters_to_post_accept_evidence(monkeypatch
     assert "Latest draft cache updated:" in err
     assert "harbor/core/new.py" in changed_paths
     assert "harbor/core/old.py" not in changed_paths
+
+
+def test_log_draft_default_json_prefers_last_log_marker_boundary(monkeypatch, tmp_path: Path):
+    base = datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc)
+    marker = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text('{"last_log_at":"2026-05-11T12:20:00Z"}\n', encoding="utf-8")
+    _write_snapshot(
+        tmp_path,
+        "checkpoint",
+        base.replace(minute=10),
+        changed_files=[{"path": "harbor/core/too-old.py", "status": "M"}],
+        summary={"status": "pass"},
+    )
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        base.replace(minute=30),
+        changed_files=[{"path": "harbor/core/fresh.py", "status": "M"}],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    code, out, err = run_cmd(["log", "draft", "--format", "json"])
+    payload = json.loads(out)
+    changed_paths = {item["path"] for item in payload["evidence"]["changed_files"]}
+
+    assert code == 0
+    assert "Latest draft cache updated:" in err
+    assert payload["boundary_source"] == "last_log_marker"
+    assert payload["boundary_timestamp"] == "2026-05-11T12:20:00Z"
+    assert "using last log marker" in payload["boundary_note"]
+    assert "harbor/core/fresh.py" in changed_paths
+    assert "harbor/core/too-old.py" not in changed_paths
+
+
+def test_log_draft_json_reports_invalid_marker_fallback_without_polluting_json(monkeypatch, tmp_path: Path):
+    base = datetime(2026, 5, 11, 12, 0, tzinfo=timezone.utc)
+    marker = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text('{"last_snapshot":"2026-05-11T12:00:00Z"}\n', encoding="utf-8")
+    _write_snapshot(tmp_path, "accept", base.replace(minute=5), changed_files=[], summary={"accepted": True})
+    _write_snapshot(
+        tmp_path,
+        "finish",
+        base.replace(minute=10),
+        changed_files=[{"path": "harbor/core/post_accept.py", "status": "M"}],
+        summary={"sync_context": False},
+    )
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+
+    code, out, err = run_cmd(["log", "draft", "--format", "json"])
+    payload = json.loads(out)
+
+    assert code == 0
+    assert payload["boundary_source"] == "latest_accept"
+    assert "has only snapshot metadata and no parseable log timestamp" in payload["boundary_note"]
+    assert "falling back to latest accept" in payload["boundary_note"]
+    assert out.strip().startswith("{")
+    assert "Next steps:" in err
+
+
+def test_log_draft_save_does_not_modify_existing_marker(monkeypatch, tmp_path: Path):
+    _seed_draft_evidence(tmp_path)
+    marker = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text('{"last_log_at":"2026-05-11T12:00:00Z","diary_path":".harbor/diary/2026-05.jsonl"}\n', encoding="utf-8")
+    before = marker.read_text(encoding="utf-8")
+    monkeypatch.setattr(
+        log_draft,
+        "collect_git_workspace_state",
+        lambda repo_root: {"git_head": "head123", "workspace_dirty": False, "changed_files": []},
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "build_saved_diary_draft_output_path",
+        lambda **kwargs: tmp_path / ".harbor" / "reports" / "log-draft-20260511-123456.md",
+    )
+
+    code, out, err = run_cmd(["log", "draft", "--save"])
+
+    assert code == 0
+    assert "# Diary Draft" in out
+    assert "Draft saved to: .harbor/reports/log-draft-20260511-123456.md" in err
+    assert marker.read_text(encoding="utf-8") == before
 
 
 def test_log_draft_from_report_bad_json_returns_clear_error(monkeypatch, tmp_path: Path):

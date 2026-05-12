@@ -25,6 +25,9 @@
 - Agent rules now distinguish Diary Draft from Written Diary Entry.
 - Rules now allow AI agents to generate drafts and prepare report copies, but not write Diary entries automatically.
 - Log workflow is documented as `Evidence -> Draft Cache / Save -> Controlled Write`.
+- `harbor log draft` boundary is clarified as marker-first -> accept-fallback -> recent-fallback.
+- `harbor log draft` no longer advances `last_log_marker`; only successful `harbor log write` may update it after a Written Diary Entry lands in `.harbor/diary/YYYY-MM.jsonl`.
+- `--since-last-log` now consumes the actual `last_log_marker` write schema (`last_log_at` first, with legacy aliases still accepted).
 - CLI user-facing log prompts/errors follow Harbor i18n; JSON schema keys remain stable English identifiers.
 - Log draft skips invalid / non-UTF-8 report evidence safely.
 - TypeScript boundaries remain unchanged from v1.4.0 in v1.4.1.
@@ -33,11 +36,13 @@
 
 - `harbor log draft` generates a reviewable draft only; it does not write a Written Diary Entry.
 - `harbor log draft` does not write `.harbor/diary/**`.
+- `harbor log draft` does not update `.harbor/state/log/last_log_marker.json`.
 - `harbor log write` writes Diary only through the explicit write path.
 - `harbor log write --yes` is explicit authorization.
 - non-interactive write without `--yes` is rejected.
 - draft sources are allowlisted.
 - `.harbor/diary/**`, `.env`, `.env.*`, `secrets/**`, and repo-external paths are rejected as draft sources.
+- `last_log_marker` is runtime state that points to the last formally written Diary node; it is not source-of-truth memory.
 - `harbor log draft --output` may write to `.harbor/reports/**`.
 - `harbor log draft --save` writes a reviewable report copy only.
 - `harbor log draft` does not output file content or diff body.

@@ -137,11 +137,15 @@ harbor log draft --output .harbor/reports/log-draft.md
 * `harbor log draft` 默认写：
   * `.harbor/state/log/latest-draft.md`
   * `.harbor/state/log/latest-draft.json`
+* `harbor log draft` 默认边界策略是：marker-first -> accept-fallback -> recent-fallback
+* `harbor log draft --since-last-log` 强制使用 `last_log_marker`
+* `harbor log draft --since-last-accept` 强制使用 latest accept
 * `harbor log draft --save` 会生成：
   * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.md`
   * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.json`
 * `harbor log draft --output <path>` 使用显式输出路径，且优先于 `--save`
 * `harbor log draft` 不写 `.harbor/diary/**`
+* `harbor log draft` 不推进 `last_log_marker`
 * `harbor log draft --output` 指向 `.harbor/diary/**` 必须拒绝
 
 ### 3. Write
@@ -162,6 +166,7 @@ harbor log write --from-draft .harbor/reports/log-draft.md
 * `--from-draft` 只允许受控来源：`.harbor/reports/**` 或 latest draft cache
 * `.harbor/diary/**`、`.env`、`.env.*`、`secrets/**`、repo 外路径必须拒绝为 draft source
 * 成功写入 `.harbor/diary/YYYY-MM.jsonl` 后，更新 `.harbor/state/log/last_log_marker.json`
+* `last_log_marker` 代表“上一次已经正式写入 Diary 的日志节点”，属于 runtime state，不是 source-of-truth memory
 
 ### 安全边界
 
@@ -465,6 +470,10 @@ harbor log draft --output .harbor/reports/log-draft.md
 
 * `harbor log draft` 只生成 reviewable Diary Draft，不写 Written Diary Entry
 * `harbor log draft` 不写 `.harbor/diary/**`
+* `harbor log draft` 默认边界策略是：marker-first -> accept-fallback -> recent-fallback
+* `harbor log draft --since-last-log` 强制使用 `last_log_marker`
+* `harbor log draft --since-last-accept` 强制使用 latest accept
+* `harbor log draft` 不推进 `last_log_marker`
 * `harbor log draft` 的 `--output` 可写 `.harbor/reports/**`
 * `harbor log draft` 的 `--output` 指向 `.harbor/diary/**` 必须拒绝
 * `harbor log draft` 在 v1.4.1 不调用 LLM

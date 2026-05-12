@@ -163,6 +163,7 @@ def test_log_write_yes_writes_from_latest_json_and_updates_marker(tmp_path: Path
     assert "diff --git" not in json.dumps(entry, ensure_ascii=False)
     assert "secret-value" not in json.dumps(entry, ensure_ascii=False)
     assert marker["schema_version"] == "1.0"
+    assert marker["last_log_at"] == entry["ts"]
     assert marker["last_draft_path"] == ".harbor/state/log/latest-draft.json"
     assert marker["last_git_head"] == "abc123"
     assert marker["last_snapshot"] == "2026-05-11T12:00:00Z"
@@ -203,6 +204,10 @@ def test_log_write_interactive_yes_writes_diary(monkeypatch, tmp_path: Path):
 
 def test_log_write_interactive_no_cancels_without_writing(monkeypatch, tmp_path: Path):
     _write_json_draft(tmp_path, ".harbor/state/log/latest-draft.json", wrap_latest=True)
+    marker_path = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker_path.parent.mkdir(parents=True, exist_ok=True)
+    marker_path.write_text('{"last_log_at":"2026-05-11T11:59:00Z"}\n', encoding="utf-8")
+    before = marker_path.read_text(encoding="utf-8")
     monkeypatch.setattr(cli_main, "_is_log_write_interactive", lambda: True)
     monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "n"))
 
@@ -212,10 +217,15 @@ def test_log_write_interactive_no_cancels_without_writing(monkeypatch, tmp_path:
     assert err == ""
     assert "Canceled. No diary written." in out
     assert not (tmp_path / ".harbor" / "diary").exists()
+    assert marker_path.read_text(encoding="utf-8") == before
 
 
 def test_log_write_non_interactive_without_yes_is_rejected(tmp_path: Path):
     _write_json_draft(tmp_path, ".harbor/state/log/latest-draft.json", wrap_latest=True)
+    marker_path = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker_path.parent.mkdir(parents=True, exist_ok=True)
+    marker_path.write_text('{"last_log_at":"2026-05-11T11:59:00Z"}\n', encoding="utf-8")
+    before = marker_path.read_text(encoding="utf-8")
 
     code, out, err = run_cmd(["log", "write"])
 
@@ -223,6 +233,7 @@ def test_log_write_non_interactive_without_yes_is_rejected(tmp_path: Path):
     assert out == ""
     assert "requires `--yes`" in err
     assert not (tmp_path / ".harbor" / "diary").exists()
+    assert marker_path.read_text(encoding="utf-8") == before
 
 
 @pytest.mark.parametrize(
@@ -240,6 +251,10 @@ def test_log_write_non_interactive_without_yes_is_rejected(tmp_path: Path):
     ],
 )
 def test_log_write_from_draft_path_policy(tmp_path: Path, draft_arg: str, expect_success: bool):
+    marker_path = tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json"
+    marker_path.parent.mkdir(parents=True, exist_ok=True)
+    marker_path.write_text('{"last_log_at":"2026-05-11T11:59:00Z"}\n', encoding="utf-8")
+    before = marker_path.read_text(encoding="utf-8")
     if "reports" in draft_arg.replace("\\", "/"):
         source = draft_arg.replace("\\", "/")
         if source.endswith(".json"):
@@ -270,6 +285,7 @@ def test_log_write_from_draft_path_policy(tmp_path: Path, draft_arg: str, expect
         assert "Rejected unsafe `--from-draft` path" in err or "Failed to read draft source" in err
         diary_jsonl = list((tmp_path / ".harbor" / "diary").glob("*.jsonl")) if (tmp_path / ".harbor" / "diary").exists() else []
         assert diary_jsonl == []
+        assert marker_path.read_text(encoding="utf-8") == before
 
 
 def test_log_write_rejects_repo_external_absolute_path(tmp_path: Path):
@@ -387,3 +403,24 @@ def test_log_write_markdown_draft_maps_structured_quality_fields(tmp_path: Path)
     assert "top-secret" not in entry_json
     assert len(entry["details"]) <= 2000
     assert ".harbor/reports/log-draft-quality.md" in out
+
+
+def test_log_write_marker_failure_warns_without_rolling_back_diary(monkeypatch, tmp_path: Path):
+    _write_json_draft(tmp_path, ".harbor/state/log/latest-draft.json", wrap_latest=True)
+    original_write_text = Path.write_text
+
+    def _failing_write_text(self, data, *args, **kwargs):
+        if self.name == "last_log_marker.json":
+            raise OSError("disk full")
+        return original_write_text(self, data, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", _failing_write_text)
+
+    code, out, err = run_cmd(["log", "write", "--yes"])
+    diary_path, entry = _read_single_diary_entry(tmp_path)
+
+    assert code == 0
+    assert f"Diary path: .harbor/diary/{diary_path.name}" in out
+    assert entry["kind"] == "written_diary_entry"
+    assert "Last log marker warning for .harbor/state/log/last_log_marker.json: Failed to write last log marker" in err
+    assert not (tmp_path / ".harbor" / "state" / "log" / "last_log_marker.json").exists()
