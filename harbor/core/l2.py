@@ -37,26 +37,42 @@ def collect_modules_from_paths(paths: List[str | Path]) -> List[str]:
     return sorted(modules)
 
 
+def _looks_like_windows_absolute_path(path_text: str) -> bool:
+    normalized = str(path_text or "").strip().replace("\\", "/")
+    return bool(re.match(r"(?i)^[a-z]:/", normalized)) or normalized.startswith("//")
+
+
+def _repo_relative_index_path(path: str | Path, *, repo_root: Path) -> Optional[str]:
+    raw = str(path or "").strip()
+    if not raw:
+        return None
+
+    normalized = raw.replace("\\", "/")
+    candidate = Path(normalized)
+    if candidate.is_absolute():
+        try:
+            return candidate.resolve().relative_to(repo_root.resolve()).as_posix()
+        except Exception:
+            return None
+
+    if _looks_like_windows_absolute_path(normalized):
+        marker = f"/{repo_root.name.lower()}/"
+        lower = normalized.lower()
+        idx = lower.find(marker)
+        if idx == -1:
+            return None
+        return normalized[idx + len(marker) :].strip("/")
+
+    return None
+
+
 def normalize_indexed_module_candidate(path: str | Path, *, repo_root: Optional[Path] = None) -> str:
     """将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。"""
-    module = infer_module_from_path(path)
-    if not module:
-        return ""
-
     root = (repo_root or Path.cwd()).resolve()
-    normalized = module.replace("\\", "/")
-    is_windows_abs = bool(re.match(r"(?i)^[a-z]:/", normalized))
-    candidate = Path(normalized)
-    is_absolute = candidate.is_absolute() or normalized.startswith("//") or is_windows_abs
-    if not is_absolute:
-        return normalized
-
-    try:
-        rel = candidate.resolve().relative_to(root).as_posix()
-    except Exception:
-        # Keep outside-repo absolute module so CLI can emit skip+warning.
-        return normalized
-    return infer_module_from_path(rel)
+    rel = _repo_relative_index_path(path, repo_root=root)
+    if rel is not None:
+        return infer_module_from_path(rel)
+    return infer_module_from_path(path)
 
 
 def collect_all_indexed_modules(index_path: Optional[Path] = None) -> List[str]:

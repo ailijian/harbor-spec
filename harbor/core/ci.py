@@ -710,13 +710,29 @@ def _sanitize_json_text(value: str) -> str:
 
 
 def _sanitize_single_path(path_text: str) -> str:
-    candidate = Path(path_text)
+    raw = str(path_text or "").strip()
+    if not raw:
+        return ""
+    normalized = raw.replace("\\", "/")
+    repo_root = Path.cwd().resolve()
+    if re.match(r"(?i)^[a-z]:/", normalized) or normalized.startswith("//"):
+        marker = f"/{repo_root.name.lower()}/"
+        lower = normalized.lower()
+        idx = lower.find(marker)
+        if idx != -1:
+            rel = normalized[idx + len(marker) :].strip("/")
+            if rel:
+                return rel
+        base = Path(normalized.rstrip("/")).name or Path(normalized).name
+        return base or normalized
+
+    candidate = Path(normalized)
     if candidate.is_absolute():
         try:
-            return candidate.resolve().relative_to(Path.cwd().resolve()).as_posix()
+            return candidate.resolve().relative_to(repo_root).as_posix()
         except Exception:
-            return candidate.name or path_text.replace("\\", "/")
-    return path_text.replace("\\", "/")
+            return candidate.name or normalized
+    return normalized
 
 
 def _sanitize_summary(summary: dict) -> dict:

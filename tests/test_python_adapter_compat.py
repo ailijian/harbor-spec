@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from harbor.adapters.python.compat import function_contract_to_subject

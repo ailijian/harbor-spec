@@ -253,16 +253,7 @@ def main():
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: once
-    @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance
-      (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without
-      auto-fix and without changing CI gate semantics; successful non-JSON
-      `harbor log draft` distinguishes writable `draft_status=ready` from
-      no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft
-      cache refresh and suppress localized `harbor log write` hints, while
-      `--format json` keeps stdout as one JSON object with no extra human text;
-      existing `harbor log write` authorization and marker-update boundaries
-      remain unchanged; successful `harbor log write` prints a concise localized
-      success summary instead of the full written JSON entry payload.
+    @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; docs/module batch flows normalize repo-absolute file candidates, reject outside-repo absolute module paths, and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
     """
     try:
         from dotenv import load_dotenv
@@ -1333,14 +1324,25 @@ def main():
         if not raw:
             return "<outside-repo>"
         normalized = raw.replace("\\", "/")
+        is_windows_abs = bool(re.match(r"(?i)^[a-z]:/", normalized)) or normalized.startswith("//")
         candidate = Path(normalized)
-        if candidate.is_absolute() or re.match(r"(?i)^[a-z]:/", normalized):
+        if candidate.is_absolute():
             try:
                 rel = candidate.resolve().relative_to(repo_root.resolve()).as_posix()
                 return rel
             except Exception:
                 base = candidate.name or Path(normalized.rstrip("/")).name
                 return f"<outside-repo>/{base}" if base else "<outside-repo>"
+        if is_windows_abs:
+            marker = f"/{repo_root.name.lower()}/"
+            lower = normalized.lower()
+            idx = lower.find(marker)
+            if idx != -1:
+                rel = normalized[idx + len(marker) :].strip("/")
+                if rel:
+                    return rel
+            base = Path(normalized.rstrip("/")).name or Path(normalized).name
+            return f"<outside-repo>/{base}" if base else "<outside-repo>"
         return normalized.strip("/") or "<outside-repo>"
 
     def _classify_module_safety(module: str, *, repo_root: Path) -> Tuple[bool, str, str]:
@@ -1358,11 +1360,20 @@ def main():
         is_windows_abs = bool(re.match(r"(?i)^[a-z]:$", head)) or bool(re.match(r"(?i)^[a-z]:/", normalized))
         is_absolute = normalized.startswith("/") or normalized.startswith("//") or is_windows_abs
         if is_absolute:
+            rel = ""
             candidate = Path(normalized)
-            try:
-                rel = candidate.resolve().relative_to(repo_root.resolve()).as_posix()
-            except Exception:
-                return False, t("cli.docs.unsafe_reason.outside_root"), ""
+            if candidate.is_absolute():
+                try:
+                    rel = candidate.resolve().relative_to(repo_root.resolve()).as_posix()
+                except Exception:
+                    return False, t("cli.docs.unsafe_reason.outside_root"), ""
+            else:
+                marker = f"/{repo_root.name.lower()}/"
+                lower = normalized.lower()
+                idx = lower.find(marker)
+                if idx == -1:
+                    return False, t("cli.docs.unsafe_reason.outside_root"), ""
+                rel = normalized[idx + len(marker) :].strip("/")
             rel_parts = [part for part in rel.split("/") if part not in ("", ".")]
             if not rel_parts or any(part == ".." for part in rel_parts):
                 return False, t("cli.docs.unsafe_reason.invalid"), ""
