@@ -422,11 +422,19 @@ Diary Draft is reviewable assistant output / report output, not written Diary.
 harbor log draft is safe with respect to source-of-truth memory.
 harbor log draft may be used after accept to draft a Diary from change-window evidence.
 harbor log draft must not write .harbor/diary/** by default.
-harbor log draft writes latest draft cache to .harbor/state/log/latest-draft.md and .harbor/state/log/latest-draft.json.
+harbor log draft writes latest draft cache to .harbor/state/log/latest-draft.md and .harbor/state/log/latest-draft.json only when it produced a writable Diary Draft.
 harbor log draft --save writes a timestamped reviewable report copy under .harbor/reports/**.
+default harbor log draft boundary is marker-first -> accept-fallback -> recent-fallback.
+--since-last-log forces the last_log_marker boundary path; unavailable or invalid markers must leave an explicit fallback / uncertainty note instead of pretending a precise boundary.
+--since-last-accept forces the latest accept boundary and does not use last_log_marker for that explicit mode.
 explicit --output wins over --save; do not silently create a second saved copy.
 --output targeting .harbor/diary/** must be rejected.
 harbor log / harbor log write still require explicit human authorization.
+default mode requires meaningful new evidence before Harbor generates a writable Diary Draft.
+default mode treats auto-discovered reports as supplementary evidence only; reports alone do not justify a new writable draft.
+diary-only changes under .harbor/diary/** may appear in evidence, but they do not independently justify a new writable draft.
+explicit --from-report <path> may still use a report as primary evidence.
+if evidence is insufficient, Harbor must emit a clear no-op / insufficient-evidence result, must not suggest harbor log write, and should not refresh latest draft cache.
 If evidence is insufficient, output evidence insufficient or no meaningful change window.
 Do not fabricate missing decisions, risks, tests, or reasons.
 non-UTF-8 reports and bad JSON reports must be skipped as unusable evidence or reported clearly.
