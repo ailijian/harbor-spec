@@ -5,9 +5,12 @@
 |---|---|---|---|
 | harbor.core.drafting.DiaryDrafter.__init__ | AI 辅助生成 Diary 草稿。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder._iter_py_files | 生成待扫描的 Python 文件列表（支持 Git 感知剪枝）。 | strict | ❌ Missing |
+| harbor.core.diary.DiaryManager.append_json_line | Append one structured JSON line to canonical diary storage. | strict | ❌ Missing |
 | harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
 | harbor.core.log_draft.build_diary_draft | Build a deterministic diary draft from existing change-wi... | strict | ❌ Missing |
+| harbor.core.log_draft.build_log_write_preview | Build summary-level preview data for interactive `harbor ... | strict | ❌ Missing |
+| harbor.core.log_draft.build_written_diary_entry | Build one structured written diary entry payload from an ... | strict | ❌ Missing |
 | harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
 | harbor.core.ci.checkpoint_ci_result_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci` 公开 CI JSON pa... | strict | ❌ Missing |
 | harbor.core.ci.ci_result_to_dict | 将通用 CIResult 序列化为 checkpoint 之外的公开 CI JSON payload。 | strict | ❌ Missing |
@@ -37,6 +40,9 @@
 | harbor.core.change_window.write_change_window_snapshot | Write one change-window snapshot under `.harbor/state/cha... | strict | ❌ Missing |
 | harbor.core.init.Initializer.write_config | 写入 `.harbor/config/harbor.yaml`。 | strict | ❌ Missing |
 | harbor.core.log_draft.write_diary_draft_output | Write a rendered diary draft to a safe non-diary path ins... | strict | ❌ Missing |
+| harbor.core.log_draft.write_diary_entry_from_draft | Write one structured diary entry from an approved draft s... | strict | ❌ Missing |
+| harbor.core.log_draft.write_last_log_marker | Best-effort update of `.harbor/state/log/last_log_marker.... | strict | ❌ Missing |
+| harbor.core.log_draft.write_latest_diary_draft_cache | Best-effort write of latest diary draft runtime cache und... | strict | ❌ Missing |
 
 ## Internal Details (optional)
 <details>
@@ -125,7 +131,12 @@
 | harbor.core.diary.DiaryManager._entry_dedupe_key | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._exclude_covers_root | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._extract_code_context | — | standard | ⚪ Missing |
+| harbor.core.log_draft._extract_first_safe_text_block | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._extract_functions | — | standard | ⚪ Missing |
+| harbor.core.log_draft._extract_latest_git_head | — | standard | ⚪ Missing |
+| harbor.core.log_draft._extract_latest_snapshot_timestamp | — | standard | ⚪ Missing |
+| harbor.core.log_draft._extract_markdown_section | — | standard | ⚪ Missing |
+| harbor.core.log_draft._extract_markdown_summary_sections | — | standard | ⚪ Missing |
 | harbor.core.project_structure._extract_toml_string_block | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._file_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._filter_excludes | — | standard | ⚪ Missing |
@@ -152,6 +163,7 @@
 | harbor.core.contract_impact._is_contract_asserting_test | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._is_dangerous_python_exclude | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_docs_or_rules_path | — | standard | ⚪ Missing |
+| harbor.core.log_draft._is_env_or_secrets_path | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._is_filtered_name | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_generated_view_module | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._is_interactive | — | standard | ⚪ Missing |
@@ -161,6 +173,7 @@
 | harbor.core.init_wizard._is_tty | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._is_typescript_path | — | standard | ⚪ Missing |
 | harbor.core.audit._is_typescript_target | — | standard | ⚪ Missing |
+| harbor.core.log_draft._is_within | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_write_like | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._iter_code_roots | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._iter_files_by_enabled_adapters | — | standard | ⚪ Missing |
@@ -198,6 +211,7 @@
 | harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_changed_file | — | standard | ⚪ Missing |
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
+| harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
 | harbor.core.stale._normalize_l2_body_for_export_compare | — | standard | ⚪ Missing |
@@ -220,6 +234,7 @@
 | harbor.core.diary.DiaryManager._parse_ts | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._posix_rel | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |
+| harbor.core.log_draft._read_draft_source_file | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._read_env_keys | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_last_log_marker_timestamp | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._read_meta_file | — | standard | ⚪ Missing |
@@ -227,33 +242,41 @@
 | harbor.core.log_draft._reject_diary_output_path | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._render_inline_options | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._render_scalar | — | standard | ⚪ Missing |
+| harbor.core.log_draft._resolve_allowed_from_draft_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_author | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_diary_dir | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | — | standard | ⚪ Missing |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_export_readme_path | — | standard | ⚪ Missing |
+| harbor.core.log_draft._resolve_latest_draft_source | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_legacy_diary_dirs | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_meta_path | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_module_target_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_output_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_repo_root | — | standard | ⚪ Missing |
 | harbor.core.change_window._run_git | — | standard | ⚪ Missing |
+| harbor.core.log_draft._safe_excerpt | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._safe_json_parse | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._safe_module_subpath | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._safe_module_subpath | — | standard | ⚪ Missing |
+| harbor.core.log_draft._sanitize_affected_areas | — | standard | ⚪ Missing |
 | harbor.core.ci._sanitize_checkpoint_contract_impact | — | standard | ⚪ Missing |
+| harbor.core.log_draft._sanitize_evidence | — | standard | ⚪ Missing |
 | harbor.core.doctor._sanitize_json_text | — | standard | ⚪ Missing |
 | harbor.core.stale._sanitize_json_text | — | standard | ⚪ Missing |
 | harbor.core.ci._sanitize_json_text | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._sanitize_json_text | — | standard | ⚪ Missing |
+| harbor.core.log_draft._sanitize_markdown_text | — | standard | ⚪ Missing |
 | harbor.core.project_structure._sanitize_module | — | standard | ⚪ Missing |
 | harbor.core.stale._sanitize_module_for_json | — | standard | ⚪ Missing |
+| harbor.core.log_draft._sanitize_risks | — | standard | ⚪ Missing |
 | harbor.core.doctor._sanitize_single_path | — | standard | ⚪ Missing |
 | harbor.core.stale._sanitize_single_path | — | standard | ⚪ Missing |
 | harbor.core.ci._sanitize_single_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._sanitize_single_path | — | standard | ⚪ Missing |
 | harbor.core.ci._sanitize_summary | — | standard | ⚪ Missing |
+| harbor.core.log_draft._sanitize_validation | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._save_cache | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._save_meta | — | standard | ⚪ Missing |
 | harbor.core.log_draft._select_snapshots | — | standard | ⚪ Missing |
@@ -297,6 +320,7 @@
 | harbor.core.doctor.build_doctor_report | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.build_module_card_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.build_prompt | — | standard | ⚪ Missing |
+| harbor.core.log_draft.build_saved_diary_draft_output_path | Build a timestamped safe reports path for `harbor log dra... | standard | ⚪ Missing |
 | harbor.core.ci.build_stale_ci_result | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.build_workspace_inspect_report | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.build_workspace_migrate_dry_run_report | — | standard | ⚪ Missing |
@@ -379,6 +403,7 @@
 | harbor.core.module_capsule.read_capsule_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.render_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.advice_config.resolve_advice_settings | — | standard | ⚪ Missing |
+| harbor.core.log_draft.resolve_draft_source | Resolve and parse one authorized draft source for `harbor... | standard | ⚪ Missing |
 | harbor.core.module_capsule.resolve_module_capsule_paths | — | standard | ⚪ Missing |
 | harbor.core.audit.resolve_provider | — | standard | ⚪ Missing |
 | harbor.core.workspace.resolve_workspace_config_path | — | standard | ⚪ Missing |

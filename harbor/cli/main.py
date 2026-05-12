@@ -102,6 +102,18 @@ def main():
     and write commands to subcommand handlers.
 
     Behavior:
+      - Legacy `harbor log -m/--message` and `harbor log --summary` remain
+        compatible summary-input aliases for direct Diary logging.
+      - Legacy `harbor log -m ... --type decision` is supported alongside the
+        previously accepted legacy `type=chore` path.
+      - Direct legacy `harbor log -m/--message` validation errors for invalid
+        `type` / `importance` / `visibility` or missing summary are rendered as
+        friendly CLI errors for caller-visible handling.
+      - Invalid legacy `harbor log` args exit with code 1 and must not print a
+        Python traceback in normal CLI output.
+      - `harbor log draft` / `harbor log write` dispatch order remains explicit:
+        draft/write subcommands are handled before legacy direct `harbor log`
+        message or LLM-assisted draft flows.
       - `checkpoint` / `stale` / `doctor` support `--advice off|basic`.
       - Successful `checkpoint` / `accept` / `finish` dispatch paths also attempt
         to write lightweight change-window runtime snapshots under
@@ -134,12 +146,17 @@ def main():
         present, explicit `--output` takes precedence.
       - `harbor log draft` never executes `harbor log`, never writes
         `.harbor/diary/**`, never writes `last_log_marker`, and never calls LLM.
+      - `harbor log draft` / `harbor log write` expose only summary-level draft
+        data and never print file bodies or diff bodies.
       - `harbor log write` writes source-of-truth Diary memory only after
         explicit authorization through `--yes` or interactive confirmation.
       - `harbor log write` reads the latest draft cache by default, supports
         `--from-latest-draft` and approved `--from-draft <path>` sources, and
         rejects `.harbor/diary/**`, `.env*`, `secrets/**`, outside-repo paths,
         and traversal attempts.
+      - No real Diary write occurs unless the user explicitly invokes a write
+        path (`harbor log -m/--message` or `harbor log write ...`) that reaches
+        canonical `.harbor/diary/**` append logic.
       - Successful `harbor log write` appends one structured JSON line to
         `.harbor/diary/YYYY-MM.jsonl` and then attempts a best-effort
         `.harbor/state/log/last_log_marker.json` update.
@@ -192,7 +209,9 @@ def main():
       argument / path / report-parse errors fail clearly without writing Diary;
       latest draft cache write failures remain non-fatal warnings only. `harbor
       log write` read/authorization/path errors fail clearly without writing
-      Diary; marker update failures do not roll back a completed Diary write.
+      Diary; direct legacy `harbor log -m/--message` validation failures also
+      fail clearly without traceback-driven UX; marker update failures do not
+      roll back a completed Diary write.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
@@ -1227,6 +1246,18 @@ def main():
         if "Unsafe --from-draft path" in message:
             return t("cli.log.write.unsafe_draft_path", message=message)
         return t("cli.log.write.from_draft_read_error", message=message)
+
+    def _render_log_message_error(exc: ValueError) -> str:
+        message = str(exc)
+        if message == "summary is required":
+            return t("cli.log.message.summary_required")
+        if message == "invalid type":
+            return t("cli.log.message.invalid_type", value=str(getattr(args, "type", "") or ""))
+        if message == "invalid importance":
+            return t("cli.log.message.invalid_importance", value=str(getattr(args, "importance", "") or ""))
+        if message == "invalid visibility":
+            return t("cli.log.message.invalid_visibility", value=str(getattr(args, "visibility", "") or ""))
+        return message
 
     def _print_log_write_from_draft_result(result: dict) -> None:
         print(json.dumps(result["entry"], ensure_ascii=False, sort_keys=True))
@@ -2296,16 +2327,20 @@ def main():
         print(md)
     elif args.command == "log" and args.message:
         mgr = DiaryManager()
-        entry = mgr.log(
-            summary=args.message,
-            type=args.type,
-            importance=args.importance,
-            visibility=args.visibility,
-            details=args.details,
-            ref_commit=args.ref_commit,
-            author=args.author,
-            ts=args.ts,
-        )
+        try:
+            entry = mgr.log(
+                summary=args.message,
+                type=args.type,
+                importance=args.importance,
+                visibility=args.visibility,
+                details=args.details,
+                ref_commit=args.ref_commit,
+                author=args.author,
+                ts=args.ts,
+            )
+        except ValueError as exc:
+            print(_render_log_message_error(exc), file=sys.stderr)
+            raise SystemExit(1)
         _print_log_write_result(entry, mgr)
     elif args.command == "log":
         console = Console()

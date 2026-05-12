@@ -164,3 +164,23 @@ def test_log_write_non_interactive_requires_yes_uses_zh_i18n(tmp_path: Path):
         else:
             os.environ["HARBOR_LANGUAGE"] = old_env
         os.chdir(old)
+
+
+def test_log_message_invalid_type_uses_friendly_zh_error_without_traceback(tmp_path: Path):
+    old = Path.cwd()
+    old_env = os.environ.get("HARBOR_LANGUAGE")
+    try:
+        os.environ["HARBOR_LANGUAGE"] = "zh"
+        os.chdir(tmp_path)
+        code, out, err = run_cmd_with_err(["log", "-m", "摘要", "--type", "invalid-kind"])
+        assert code == 1
+        assert out == ""
+        assert "非法 Diary type：invalid-kind。" in err
+        assert "Traceback" not in err
+        assert not (tmp_path / ".harbor" / "diary").exists()
+    finally:
+        if old_env is None:
+            os.environ.pop("HARBOR_LANGUAGE", None)
+        else:
+            os.environ["HARBOR_LANGUAGE"] = old_env
+        os.chdir(old)

@@ -20,6 +20,8 @@ DEFAULT_LOG_DRAFT_SAVE_PREFIX = "log-draft"
 KNOWN_REPORT_COMMANDS = {"checkpoint", "stale", "doctor"}
 VALIDATION_KEYS = ("pytest", "checkpoint", "stale", "doctor")
 SAFE_EXCERPT_MAX_LEN = 1000
+WRITTEN_DIARY_SUMMARY_MAX_LEN = 240
+WRITTEN_DIARY_DETAILS_MAX_LEN = 2000
 LOG_MARKER_TIMESTAMP_KEYS = (
     "timestamp",
     "ts",
@@ -27,6 +29,7 @@ LOG_MARKER_TIMESTAMP_KEYS = (
     "last_log_ts",
     "snapshot_timestamp",
 )
+CHANGED_FILE_STATUS_RANK = {"??": 0, "D": 1, "A": 2, "M": 3, "MM": 4}
 
 
 class LogDraftError(RuntimeError):
@@ -513,12 +516,45 @@ def build_written_diary_entry(
       - Builds one mixed-schema payload that keeps legacy reader fields
         (`ver/ts/author/type/importance/visibility/summary/details`) alongside
         new structured governance fields.
+      - JSON draft sources remain the primary structured input; when available,
+        top-level summary/why/affected_areas/contract_impact/validation/risk
+        fields are mapped first and may be enriched by parsing
+        `suggested_diary_entry`.
+      - Markdown draft sources deterministically extract summary-level fields
+        such as `Type`, `Importance`, `Visibility`, `Module`/affected areas,
+        `Contract Impact`, `Summary`, `Reason`, `Changes`, validation statuses,
+        and `Risks` from stable markdown headings and `[Diary Draft]` blocks.
+      - `details` is synthesized as a compact structured summary that prioritizes
+        summary/reason/changes/validation/risks and remains bounded in length;
+        markdown fallback excerpts stay bounded and sanitized.
+      - `evidence.changed_files` is normalized to unique `path`/`status`
+        summaries only; duplicate paths are deduped deterministically and no
+        file body / diff body fields are preserved.
       - Never embeds full markdown bodies, source file bodies, diff bodies, or
         secret-like env values in the returned entry payload.
       - Sanitizes `evidence.changed_files` down to path/status summaries.
 
     Side Effects:
       - Pure data assembly only; does not write diary files or markers.
+
+    Args:
+      repo_root: Repository root used for safe path resolution.
+      from_draft: Optional approved draft source under `.harbor/reports/**` or
+        latest-draft cache paths.
+      from_latest_draft: When true, force latest-draft cache resolution.
+      write_source: Stable CLI/source label recorded in the returned payload.
+      now: Optional timestamp override for deterministic tests.
+
+    Returns:
+      Dict[str, Any]: Mapping with `entry` and `source`, where `entry` keeps the
+      legacy reader fields plus structured governance fields, prefers JSON draft
+      structure when present, deterministically parses markdown draft fields
+      otherwise, synthesizes bounded `details`, and normalizes
+      `evidence.changed_files` to unique `path`/`status` rows only.
+
+    Raises:
+      LogDraftError: If the draft source cannot be resolved or parsed through
+        the approved allowlist.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
@@ -535,32 +571,53 @@ def build_written_diary_entry(
     markdown_text = str(resolved.get("markdown_text") or "")
 
     if draft_payload:
-        summary = _safe_excerpt(str(draft_payload.get("summary") or ""), max_len=300)
-        why = _safe_excerpt(str(draft_payload.get("why") or ""), max_len=SAFE_EXCERPT_MAX_LEN)
-        suggested = _safe_excerpt(str(draft_payload.get("suggested_diary_entry") or ""), max_len=SAFE_EXCERPT_MAX_LEN)
-        details = suggested or why or summary
-        if not summary:
-            summary = _safe_excerpt(details, max_len=240) or "Written diary entry from latest draft."
-        affected_areas = _sanitize_affected_areas(draft_payload.get("affected_areas"))
-        contract_impact = _normalize_contract_impact(draft_payload.get("contract_impact"))
-        validation = _sanitize_validation(draft_payload.get("validation"))
+        structured = _extract_structured_fields_from_json_draft(draft_payload)
+        summary = str(structured.get("summary") or "").strip()
+        reason = str(structured.get("reason") or "").strip()
+        changes = [str(item) for item in list(structured.get("changes") or [])]
+        affected_areas = _sanitize_affected_areas(structured.get("affected_areas"))
+        contract_impact = _normalize_contract_impact(structured.get("contract_impact"))
+        validation = _sanitize_validation(structured.get("validation"))
         evidence = _sanitize_evidence(draft_payload.get("evidence"))
-        risks = _sanitize_risks(draft_payload.get("risks"))
-    else:
-        sections = _extract_markdown_summary_sections(markdown_text)
-        summary = (
-            sections.get("suggested_diary_entry")
-            or sections.get("summary")
-            or sections.get("why")
-            or sections.get("fallback")
-            or "Written diary entry from markdown draft."
+        risks = _sanitize_risks(structured.get("risks"))
+        details = _compose_written_details(
+            summary=summary,
+            reason=reason,
+            changes=changes,
+            validation=validation,
+            risks=risks,
+            affected_areas=affected_areas,
+            breaking_change=str(structured.get("breaking_change") or ""),
         )
-        details = sections.get("suggested_diary_entry") or sections.get("summary") or sections.get("fallback") or summary
-        affected_areas = {}
-        contract_impact = "uncertain"
-        validation = {}
+        entry_type = str(structured.get("type") or "decision")
+        importance = str(structured.get("importance") or "medium")
+        visibility = str(structured.get("visibility") or "repo")
+        if not summary:
+            summary = _safe_excerpt(details, max_len=WRITTEN_DIARY_SUMMARY_MAX_LEN) or "Written diary entry from latest draft."
+    else:
+        structured = _parse_markdown_draft_fields(markdown_text)
+        summary = str(structured.get("summary") or "").strip()
+        reason = str(structured.get("reason") or "").strip()
+        changes = [str(item) for item in list(structured.get("changes") or [])]
+        affected_areas = _sanitize_affected_areas(structured.get("affected_areas"))
+        contract_impact = _normalize_contract_impact(structured.get("contract_impact"))
+        validation = _sanitize_validation(structured.get("validation"))
         evidence = {"changed_files": []}
-        risks = []
+        risks = _sanitize_risks(structured.get("risks"))
+        details = _compose_written_details(
+            summary=summary,
+            reason=reason,
+            changes=changes,
+            validation=validation,
+            risks=risks,
+            affected_areas=affected_areas,
+            breaking_change=str(structured.get("breaking_change") or ""),
+        )
+        entry_type = str(structured.get("type") or "decision")
+        importance = str(structured.get("importance") or "medium")
+        visibility = str(structured.get("visibility") or "repo")
+        if not summary:
+            summary = _safe_excerpt(details, max_len=WRITTEN_DIARY_SUMMARY_MAX_LEN) or "Written diary entry from markdown draft."
 
     entry: Dict[str, Any] = {
         "schema_version": WRITTEN_DIARY_ENTRY_SCHEMA_VERSION,
@@ -576,11 +633,11 @@ def build_written_diary_entry(
         "ver": 1,
         "ts": timestamp,
         "author": "harbor",
-        "type": "decision",
-        "importance": "medium",
-        "visibility": "repo",
-        "summary": _safe_excerpt(summary, max_len=240) or "Written diary entry from draft.",
-        "details": _safe_excerpt(details, max_len=SAFE_EXCERPT_MAX_LEN) or "No additional details.",
+        "type": entry_type,
+        "importance": importance,
+        "visibility": visibility,
+        "summary": _safe_excerpt(summary, max_len=WRITTEN_DIARY_SUMMARY_MAX_LEN) or "Written diary entry from draft.",
+        "details": _safe_multiline_excerpt(details, max_len=WRITTEN_DIARY_DETAILS_MAX_LEN) or "No additional details.",
     }
     return {"entry": entry, "source": resolved}
 
@@ -840,17 +897,17 @@ def _merge_changed_files(
     snapshots: Sequence[ChangeWindowSnapshot],
     current_changed_files: Sequence[Dict[str, str]],
 ) -> List[Dict[str, str]]:
-    merged: Dict[Tuple[str, str], Dict[str, str]] = {}
+    collected: List[Dict[str, str]] = []
     for snapshot in snapshots:
         for item in list(snapshot.changed_files or []):
             normalized = _normalize_changed_file(item)
             if normalized is not None:
-                merged[(normalized["path"], normalized["status"])] = normalized
+                collected.append(normalized)
     for item in current_changed_files:
         normalized = _normalize_changed_file(item)
         if normalized is not None:
-            merged[(normalized["path"], normalized["status"])] = normalized
-    return sorted(merged.values(), key=lambda item: (item["path"], item["status"]))
+            collected.append(normalized)
+    return _dedupe_changed_files(collected)
 
 
 def _normalize_changed_file(item: Any) -> Optional[Dict[str, str]]:
@@ -859,10 +916,29 @@ def _normalize_changed_file(item: Any) -> Optional[Dict[str, str]]:
     path = str(item.get("path") or "").replace("\\", "/").strip()
     if not path:
         return None
+    status = str(item.get("status") or "").strip().upper() or "M"
     return {
         "path": path,
-        "status": str(item.get("status") or "").strip(),
+        "status": status,
     }
+
+
+def _dedupe_changed_files(rows: Sequence[Dict[str, str]]) -> List[Dict[str, str]]:
+    best_by_path: Dict[str, Dict[str, str]] = {}
+    for item in list(rows or []):
+        normalized = _normalize_changed_file(item)
+        if normalized is None:
+            continue
+        path = normalized["path"]
+        current = best_by_path.get(path)
+        if current is None:
+            best_by_path[path] = normalized
+            continue
+        current_rank = CHANGED_FILE_STATUS_RANK.get(str(current.get("status") or "").upper(), -1)
+        new_rank = CHANGED_FILE_STATUS_RANK.get(str(normalized.get("status") or "").upper(), -1)
+        if new_rank > current_rank or (new_rank == current_rank and normalized["status"] >= current["status"]):
+            best_by_path[path] = normalized
+    return sorted(best_by_path.values(), key=lambda item: item["path"])
 
 
 def _classify_affected_areas(changed_files: Sequence[Dict[str, str]]) -> Dict[str, List[str]]:
@@ -1344,22 +1420,18 @@ def _sanitize_validation(value: Any) -> Dict[str, str]:
         return {}
     output: Dict[str, str] = {}
     for key, val in value.items():
-        output[str(key)] = str(val)
+        key_text = str(key)
+        if key_text in VALIDATION_KEYS:
+            output[key_text] = _coerce_validation_status(val)
+        else:
+            output[key_text] = str(val)
     return output
 
 
 def _sanitize_evidence(value: Any) -> Dict[str, Any]:
     if not isinstance(value, dict):
         return {"changed_files": []}
-    changed_files: List[Dict[str, str]] = []
-    for item in list(value.get("changed_files") or []):
-        if not isinstance(item, dict):
-            continue
-        path = str(item.get("path") or "").replace("\\", "/").strip()
-        if not path:
-            continue
-        changed_files.append({"path": path, "status": str(item.get("status") or "").strip()})
-    output: Dict[str, Any] = {"changed_files": changed_files}
+    output: Dict[str, Any] = {"changed_files": _dedupe_changed_files(list(value.get("changed_files") or []))}
     snapshots: List[Dict[str, Any]] = []
     for item in list(value.get("snapshots") or []):
         if not isinstance(item, dict):
@@ -1398,6 +1470,346 @@ def _sanitize_risks(value: Any) -> List[str]:
         if excerpt:
             risks.append(excerpt)
     return risks
+
+
+def _extract_structured_fields_from_json_draft(draft_payload: Dict[str, Any]) -> Dict[str, Any]:
+    suggested = str(draft_payload.get("suggested_diary_entry") or "")
+    parsed = _parse_markdown_draft_fields(suggested) if suggested else {}
+    affected_areas = _sanitize_affected_areas(draft_payload.get("affected_areas"))
+    parsed_affected = _sanitize_affected_areas(parsed.get("affected_areas"))
+    merged_affected = dict(affected_areas)
+    for key, value in parsed_affected.items():
+        if key not in merged_affected or not merged_affected.get(key):
+            merged_affected[key] = value
+
+    validation = _sanitize_validation(draft_payload.get("validation"))
+    for key, value in _sanitize_validation(parsed.get("validation")).items():
+        validation.setdefault(key, value)
+
+    risks = _sanitize_risks(draft_payload.get("risks"))
+    for risk in _sanitize_risks(parsed.get("risks")):
+        if risk not in risks:
+            risks.append(risk)
+
+    summary = _safe_excerpt(str(draft_payload.get("summary") or parsed.get("summary") or ""), max_len=WRITTEN_DIARY_SUMMARY_MAX_LEN)
+    reason = _safe_excerpt(str(draft_payload.get("why") or parsed.get("reason") or ""), max_len=SAFE_EXCERPT_MAX_LEN)
+    return {
+        "type": str(parsed.get("type") or "decision"),
+        "importance": str(parsed.get("importance") or "medium"),
+        "visibility": str(parsed.get("visibility") or "repo"),
+        "summary": summary,
+        "reason": reason,
+        "changes": list(parsed.get("changes") or []),
+        "affected_areas": merged_affected,
+        "contract_impact": draft_payload.get("contract_impact") or parsed.get("contract_impact") or "uncertain",
+        "validation": validation,
+        "risks": risks,
+        "breaking_change": parsed.get("breaking_change") or "",
+    }
+
+
+def _parse_markdown_draft_fields(markdown_text: str) -> Dict[str, Any]:
+    sanitized = _sanitize_markdown_text(markdown_text)
+    parsed_all = _parse_diary_draft_lines(sanitized.splitlines())
+    suggested_section = _extract_markdown_section(sanitized, "Suggested Diary Entry")
+    parsed_suggested = _parse_diary_draft_lines(suggested_section.splitlines()) if suggested_section else {}
+    summary_section = _safe_excerpt(_extract_markdown_section(sanitized, "Summary"), max_len=SAFE_EXCERPT_MAX_LEN)
+    reason_section = _safe_excerpt(
+        _extract_markdown_section(sanitized, "Reason") or _extract_markdown_section(sanitized, "Why"),
+        max_len=SAFE_EXCERPT_MAX_LEN,
+    )
+    validation_section = _parse_validation_lines(_extract_markdown_section(sanitized, "Validation").splitlines())
+    risks_section = _extract_bullet_items(_extract_markdown_section(sanitized, "Risks / Notes"))
+    changes_section = _extract_bullet_items(_extract_markdown_section(sanitized, "Changes"))
+    affected_section = _parse_affected_areas_section(_extract_markdown_section(sanitized, "Affected Areas"))
+
+    affected_areas = affected_section
+    for source in (parsed_all, parsed_suggested):
+        for key, value in _sanitize_affected_areas(source.get("affected_areas")).items():
+            if key not in affected_areas or not affected_areas.get(key):
+                affected_areas[key] = value
+
+    validation = dict(validation_section)
+    for source in (parsed_all, parsed_suggested):
+        for key, value in _sanitize_validation(source.get("validation")).items():
+            validation[key] = value
+
+    risks: List[str] = []
+    for item in list(parsed_all.get("risks") or []) + list(parsed_suggested.get("risks") or []) + risks_section:
+        excerpt = _safe_excerpt(str(item), max_len=200)
+        if excerpt and excerpt not in risks:
+            risks.append(excerpt)
+
+    changes: List[str] = []
+    for item in list(parsed_suggested.get("changes") or []) + list(parsed_all.get("changes") or []) + changes_section:
+        excerpt = _safe_excerpt(str(item), max_len=300)
+        if excerpt and excerpt not in changes:
+            changes.append(excerpt)
+
+    summary = _pick_first_nonempty(
+        parsed_suggested.get("summary"),
+        parsed_all.get("summary"),
+        summary_section,
+        reason_section,
+        _extract_first_safe_text_block(sanitized),
+    )
+    reason = _pick_first_nonempty(
+        parsed_suggested.get("reason"),
+        parsed_all.get("reason"),
+        reason_section,
+    )
+
+    return {
+        "type": _pick_first_nonempty(parsed_suggested.get("type"), parsed_all.get("type"), "decision"),
+        "importance": _pick_first_nonempty(parsed_suggested.get("importance"), parsed_all.get("importance"), "medium"),
+        "visibility": _pick_first_nonempty(parsed_suggested.get("visibility"), parsed_all.get("visibility"), "repo"),
+        "summary": _safe_excerpt(summary, max_len=WRITTEN_DIARY_SUMMARY_MAX_LEN),
+        "reason": _safe_excerpt(reason, max_len=SAFE_EXCERPT_MAX_LEN),
+        "changes": changes,
+        "affected_areas": affected_areas,
+        "contract_impact": _pick_first_nonempty(
+            parsed_suggested.get("contract_impact"),
+            parsed_all.get("contract_impact"),
+            _extract_markdown_section(sanitized, "Contract Impact"),
+            "uncertain",
+        ),
+        "validation": validation,
+        "risks": risks,
+        "breaking_change": _pick_first_nonempty(parsed_suggested.get("breaking_change"), parsed_all.get("breaking_change")),
+    }
+
+
+def _parse_diary_draft_lines(lines: Sequence[str]) -> Dict[str, Any]:
+    result: Dict[str, Any] = {
+        "type": "",
+        "importance": "",
+        "visibility": "",
+        "summary": "",
+        "reason": "",
+        "contract_impact": "",
+        "breaking_change": "",
+        "validation": {},
+        "changes": [],
+        "risks": [],
+        "affected_areas": {},
+    }
+    current_list: Optional[str] = None
+    current_scalar: Optional[str] = None
+
+    for raw_line in list(lines or []):
+        stripped = str(raw_line or "").strip()
+        if not stripped:
+            current_scalar = None
+            continue
+        if stripped == "[Diary Draft]":
+            continue
+        if stripped.startswith("#"):
+            current_list = None
+            current_scalar = None
+            continue
+
+        validation_match = re.match(r"^(?:[-*]\s*)?(pytest|checkpoint|stale|doctor)\s*:\s*(.+)$", stripped, re.IGNORECASE)
+        if validation_match:
+            result["validation"][validation_match.group(1).lower()] = _coerce_validation_status(validation_match.group(2))
+            continue
+
+        keyed_value_match = re.match(
+            r"^(?:[-*]\s*)?(Type|Importance|Visibility|Module|Affected Areas|Contract Impact|Breaking Change|Summary|Reason)\s*:\s*(.*)$",
+            stripped,
+            re.IGNORECASE,
+        )
+        if keyed_value_match:
+            current_list = None
+            key = keyed_value_match.group(1).strip().lower().replace(" ", "_")
+            value = keyed_value_match.group(2).strip()
+            if key == "type":
+                result["type"] = value.lower()
+            elif key == "importance":
+                result["importance"] = value.lower()
+            elif key == "visibility":
+                result["visibility"] = value.lower()
+            elif key == "contract_impact":
+                result["contract_impact"] = value.lower()
+            elif key == "breaking_change":
+                result["breaking_change"] = value.lower()
+            elif key == "summary":
+                result["summary"] = _append_text_value(str(result.get("summary") or ""), value)
+                current_scalar = "summary"
+            elif key == "reason":
+                result["reason"] = _append_text_value(str(result.get("reason") or ""), value)
+                current_scalar = "reason"
+            elif key in {"module", "affected_areas"} and value:
+                result["affected_areas"] = _merge_affected_area_mappings(
+                    result.get("affected_areas"),
+                    {"areas": _split_list_values(value)},
+                )
+                current_scalar = None
+            else:
+                current_scalar = None
+            continue
+
+        keyed_list_match = re.match(r"^(?:[-*]\s*)?(Changes|Tests|Validation|Risks)\s*:\s*$", stripped, re.IGNORECASE)
+        if keyed_list_match:
+            current_list = keyed_list_match.group(1).strip().lower()
+            current_scalar = None
+            continue
+
+        bullet_match = re.match(r"^(?:[-*]\s+|\d+\.\s+)(.+)$", stripped)
+        if bullet_match and current_list in {"changes", "risks"}:
+            result[current_list].append(bullet_match.group(1).strip())
+            continue
+
+        if current_scalar in {"summary", "reason"}:
+            result[current_scalar] = _append_text_value(str(result.get(current_scalar) or ""), stripped)
+            continue
+
+        if current_list == "changes":
+            result["changes"].append(stripped)
+        elif current_list == "risks":
+            result["risks"].append(stripped)
+
+    return result
+
+
+def _parse_validation_lines(lines: Sequence[str]) -> Dict[str, str]:
+    validation: Dict[str, str] = {}
+    for raw_line in list(lines or []):
+        stripped = str(raw_line or "").strip()
+        match = re.match(r"^(?:[-*]\s*)?(pytest|checkpoint|stale|doctor)\s*:\s*(.+)$", stripped, re.IGNORECASE)
+        if match:
+            validation[match.group(1).lower()] = _coerce_validation_status(match.group(2))
+    return validation
+
+
+def _extract_bullet_items(section_text: str) -> List[str]:
+    items: List[str] = []
+    for raw_line in str(section_text or "").splitlines():
+        match = re.match(r"^(?:[-*]\s+|\d+\.\s+)(.+)$", raw_line.strip())
+        if not match:
+            continue
+        value = _safe_excerpt(match.group(1).strip(), max_len=300)
+        if value and value not in items:
+            items.append(value)
+    return items
+
+
+def _parse_affected_areas_section(section_text: str) -> Dict[str, Any]:
+    affected: Dict[str, Any] = {}
+    key_map = {
+        "production code": "production_code",
+        "tests": "tests",
+        "generated context": "generated_context",
+        "reports": "reports",
+        "runtime state": "runtime_state",
+        "docs": "docs",
+    }
+    for raw_line in str(section_text or "").splitlines():
+        stripped = raw_line.strip()
+        match = re.match(r"^(?:[-*]\s*)?([A-Za-z /_-]+)\s*:\s*(.+)$", stripped)
+        if not match:
+            continue
+        key = key_map.get(match.group(1).strip().lower())
+        values = _split_list_values(match.group(2))
+        if not values:
+            continue
+        if key is None:
+            affected = _merge_affected_area_mappings(affected, {"areas": values})
+            continue
+        affected[key] = values
+    return affected
+
+
+def _merge_affected_area_mappings(base: Any, incoming: Dict[str, Any]) -> Dict[str, Any]:
+    merged = _sanitize_affected_areas(base)
+    for key, value in _sanitize_affected_areas(incoming).items():
+        existing = merged.get(key)
+        if isinstance(existing, list) and isinstance(value, list):
+            merged[key] = sorted(dict.fromkeys([str(item) for item in existing + value]))
+        elif not existing:
+            merged[key] = value
+    return merged
+
+
+def _split_list_values(value: str) -> List[str]:
+    parts = [part.strip() for part in str(value or "").split(",")]
+    return [part for part in parts if part]
+
+
+def _pick_first_nonempty(*values: Any) -> str:
+    for value in values:
+        text = str(value or "").strip()
+        if text:
+            return text
+    return ""
+
+
+def _append_text_value(existing: str, new_value: str) -> str:
+    if not existing:
+        return str(new_value or "").strip()
+    extra = str(new_value or "").strip()
+    if not extra:
+        return existing
+    return f"{existing} {extra}".strip()
+
+
+def _compose_written_details(
+    *,
+    summary: str,
+    reason: str,
+    changes: Sequence[str],
+    validation: Dict[str, str],
+    risks: Sequence[str],
+    affected_areas: Dict[str, Any],
+    breaking_change: str = "",
+) -> str:
+    lines = ["[Diary Draft]"]
+    if summary:
+        lines.append(f"Summary: {summary}")
+    if reason:
+        lines.append(f"Reason: {reason}")
+    affected_summary = _summarize_affected_areas_for_details(affected_areas)
+    if affected_summary:
+        lines.append(f"Affected Areas: {affected_summary}")
+    if changes:
+        lines.append("Changes: " + "; ".join(str(item) for item in list(changes)[:6]))
+    validation_summary = _summarize_validation_for_details(validation)
+    if validation_summary:
+        lines.append(f"Validation: {validation_summary}")
+    if risks:
+        lines.append("Risks: " + "; ".join(str(item) for item in list(risks)[:6]))
+    if breaking_change:
+        lines.append(f"Breaking Change: {breaking_change}")
+    return "\n".join(lines)
+
+
+def _summarize_validation_for_details(validation: Dict[str, str]) -> str:
+    parts = []
+    for key in VALIDATION_KEYS:
+        value = str(validation.get(key) or "").strip()
+        if value:
+            parts.append(f"{key}={value}")
+    return ", ".join(parts)
+
+
+def _summarize_affected_areas_for_details(affected_areas: Dict[str, Any]) -> str:
+    parts: List[str] = []
+    for key in ("production_code", "tests", "generated_context", "reports", "runtime_state", "docs", "areas"):
+        value = affected_areas.get(key)
+        if isinstance(value, list) and value:
+            parts.append(f"{key}=" + ", ".join(str(item) for item in value[:4]))
+    return "; ".join(parts)
+
+
+def _safe_multiline_excerpt(text: str, *, max_len: int) -> str:
+    sanitized = _sanitize_markdown_text(text)
+    lines = [line.strip() for line in sanitized.splitlines() if line.strip()]
+    if not lines:
+        return ""
+    joined = "\n".join(lines)
+    if len(joined) <= max_len:
+        return joined
+    clipped = joined[: max_len - 3].rstrip()
+    return clipped + "..."
 
 
 def _extract_latest_git_head(evidence: Dict[str, Any]) -> Optional[str]:

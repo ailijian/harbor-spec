@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.0"
+harbor_version: "1.4.1"
 view_type: "review_checklist"
 module: "harbor/core"
-generated_at: "2026-05-11T12:03:52Z"
+generated_at: "2026-05-11T18:42:54Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 32
@@ -41,9 +41,9 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:d275096035c582d1073ede2f28e53c7d732b50086fcac7b1817cbd83cda6f9d8"
-contract_fingerprint: "sha256:f31abef208a90857422aea7c0fa7dcd46b35275a39814070b1db2bd281b13069"
-generator_fingerprint: "sha256:652ae15c3e37dbcce056357a0c400963f6021d6a83d24c75aab0ff2881be1acc"
+source_fingerprint: "sha256:967cb3d0f0f7aa25ed6381a628310912238f36cd0378b11e597589659f9bea50"
+contract_fingerprint: "sha256:2627d665f434a9e425466f3284ee950092e251b65db4745f17b89aa979fe8356"
+generator_fingerprint: "sha256:045bb540a24521f96101c225aaa2874da1e7d4c5bdc7e724231e449cada8461a"
 ---
 
 # Review Checklist: harbor/core

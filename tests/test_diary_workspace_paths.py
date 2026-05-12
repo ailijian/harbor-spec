@@ -1,10 +1,15 @@
 import json
+import os
+import sys
 from datetime import datetime, timedelta
+from contextlib import redirect_stderr, redirect_stdout
+from io import StringIO
 from pathlib import Path
 
 import pytest
 import yaml
 
+from harbor.cli.main import main
 from harbor.core.diary import DiaryManager
 
 
@@ -20,6 +25,24 @@ def _month_pair() -> tuple[str, str]:
     return now.strftime("%Y-%m"), prev.strftime("%Y-%m")
 
 
+def _run_cmd(tmp_path: Path, argv: list[str]) -> tuple[int, str, str]:
+    out = StringIO()
+    err = StringIO()
+    old_cwd = Path.cwd()
+    code = 0
+    try:
+        with redirect_stdout(out), redirect_stderr(err):
+            os.chdir(tmp_path)
+            sys.argv = ["harbor"] + argv
+            try:
+                main()
+            except SystemExit as exc:
+                code = exc.code if isinstance(exc.code, int) else 1
+    finally:
+        os.chdir(old_cwd)
+    return code, out.getvalue(), err.getvalue()
+
+
 def test_log_writes_only_canonical_path(tmp_path: Path) -> None:
     mgr = DiaryManager(repo_root=tmp_path)
     current_month, _ = _month_pair()
@@ -31,6 +54,47 @@ def test_log_writes_only_canonical_path(tmp_path: Path) -> None:
     legacy = tmp_path / "specs" / "diary" / f"{current_month}.jsonl"
     assert canonical.exists()
     assert not legacy.exists()
+
+
+@pytest.mark.parametrize(
+    ("entry_type", "importance"),
+    [
+        ("decision", "high"),
+        ("chore", "normal"),
+    ],
+)
+def test_cli_log_message_accepts_supported_legacy_types_in_isolated_workspace(
+    tmp_path: Path,
+    entry_type: str,
+    importance: str,
+) -> None:
+    code, out, err = _run_cmd(
+        tmp_path,
+        [
+            "log",
+            "-m",
+            "Finalize v1.4.1 log workflow.",
+            "--type",
+            entry_type,
+            "--importance",
+            importance,
+            "--visibility",
+            "repo",
+        ],
+    )
+    diary_files = sorted((tmp_path / ".harbor" / "diary").glob("*.jsonl"))
+
+    assert code == 0
+    assert err == ""
+    assert len(diary_files) == 1
+    lines = diary_files[0].read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 1
+    entry = json.loads(lines[0])
+    assert entry["type"] == entry_type
+    assert entry["importance"] == importance
+    assert entry["visibility"] == "repo"
+    assert "Traceback" not in out
+    assert not (tmp_path / "specs" / "diary").exists()
 
 
 def test_load_active_reads_legacy_only_without_mutation(tmp_path: Path) -> None:
@@ -165,6 +229,15 @@ def test_monthly_rotation_writes_canonical_month_file(tmp_path: Path) -> None:
     assert (tmp_path / ".harbor" / "diary" / "2026-06.jsonl").exists()
     assert not (tmp_path / "specs" / "diary" / "2026-05.jsonl").exists()
     assert not (tmp_path / "specs" / "diary" / "2026-06.jsonl").exists()
+
+
+def test_legacy_chore_type_remains_supported(tmp_path: Path) -> None:
+    mgr = DiaryManager(repo_root=tmp_path)
+    entry = mgr.log(summary="legacy chore", type="chore", ts="2026-05-10T00:00:00Z", visibility="repo")
+
+    assert entry.type == "chore"
+    payload = json.loads((tmp_path / ".harbor" / "diary" / "2026-05.jsonl").read_text(encoding="utf-8").splitlines()[0])
+    assert payload["type"] == "chore"
 
 
 def test_configured_diary_root_within_repo_is_used(tmp_path: Path) -> None:

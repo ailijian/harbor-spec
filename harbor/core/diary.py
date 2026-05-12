@@ -13,7 +13,7 @@ from harbor.core.workspace import load_workspace_config, load_workspace_paths, r
 
 
 VISIBILITY_ORDER = {"internal": 0, "repo": 1, "public": 2}
-TYPE_SET = {"feature", "bugfix", "refactor", "chore", "incident"}
+TYPE_SET = {"feature", "bugfix", "refactor", "chore", "incident", "decision"}
 IMPORTANCE_SET = {"trivial", "normal", "high", "critical"}
 VISIBILITY_SET = set(VISIBILITY_ORDER.keys())
 
@@ -69,6 +69,9 @@ class DiaryManager:
           - 构造 DiaryEntry 并追加写入 canonical `.harbor/diary/{YYYY-MM}.jsonl`。
           - 自动处理月度轮转与文件创建。
           - 生成缺省元数据：`ts`（ISO8601 UTC）、`author`（读取 git user.name 或默认 "AI"）。
+          - 允许 `type=decision` 与 legacy `type=chore` 等受支持类型。
+          - 对非法 `type` / `importance` / `visibility` 保持 `ValueError`，供调用方（如 CLI）
+            做友好错误渲染而不是 traceback 直出。
 
         使用场景:
           - CLI `harbor log` 的核心实现。
@@ -85,7 +88,7 @@ class DiaryManager:
 
         Args:
           summary (str): 变更摘要。
-          type (str): `feature|bugfix|refactor|chore|incident`。
+          type (str): `feature|bugfix|refactor|chore|incident|decision`。
           importance (str): `trivial|normal|high|critical`。
           visibility (str): `internal|repo|public`。
           details (str | None): 详细描述，可选。
@@ -97,7 +100,8 @@ class DiaryManager:
           DiaryEntry: 已校验并写入的条目对象。
 
         Raises:
-          ValueError: 枚举值不合法或必填字段为空。
+          ValueError: 枚举值不合法或必填字段为空；其中非法 `type` 明确用于调用方级别的
+            友好错误处理。
           OSError: 目录/文件不可写或创建失败。
           ConfigError: 配置不可访问或路径越界。
         """
