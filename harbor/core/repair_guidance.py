@@ -200,6 +200,38 @@ def guidance_for_checkpoint_category(category: str, *, language: Optional[str] =
             user_feedback_required=True,
             risk_level="high",
         )
+    if cat == "accepted_baseline_missing":
+        return RepairGuidance(
+            what_happened="The accepted checkpoint baseline artifact is missing in CI mode.",
+            recommended_action=(
+                "Run harbor accept locally after review, then commit "
+                ".harbor/baseline/accepted-checkpoint.json."
+            ),
+            anti_action="Do not fall back to runtime cache in CI. Do not run harbor lock in CI as a workaround.",
+            suggested_skill="harbor-contract-change",
+            suggested_validation=["harbor checkpoint --ci --format json"],
+            decision_required=True,
+            safe_to_auto_fix=False,
+            automation_policy="manual_decision_required",
+            user_feedback_required=True,
+            risk_level="high",
+        )
+    if cat == "accepted_baseline_invalid":
+        return RepairGuidance(
+            what_happened="The accepted checkpoint baseline artifact exists, but its schema or content is invalid.",
+            recommended_action=(
+                "Fix the artifact locally so file paths are repo-relative POSIX paths and required fields are valid, "
+                "then commit the corrected artifact."
+            ),
+            anti_action="Do not ignore artifact schema errors. Do not fall back to runtime cache in CI.",
+            suggested_skill="harbor-contract-change",
+            suggested_validation=["harbor checkpoint --ci --format json"],
+            decision_required=True,
+            safe_to_auto_fix=False,
+            automation_policy="manual_decision_required",
+            user_feedback_required=True,
+            risk_level="high",
+        )
     if cat == "confirmed_contract_impact":
         return RepairGuidance(
             what_happened="A confirmed public contract impact was detected.",

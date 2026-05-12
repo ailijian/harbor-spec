@@ -495,7 +495,7 @@ harbor log draft --output .harbor/reports/log-draft.md
 
 ## ✅ CI 门禁
 
-HarborSpec v1.3.0 提供三个 CI gate：
+HarborSpec v1.4.x 提供三个 CI gate：
 
 ```powershell
 harbor checkpoint --ci
@@ -507,9 +507,17 @@ harbor doctor --ci
 
 严格 baseline gate。
 
+默认读取仓库内 accepted baseline artifact：
+
+```text
+.harbor/baseline/accepted-checkpoint.json
+```
+
 会阻断：
 
 * DDT failure
+* `accepted_baseline_missing`
+* `accepted_baseline_invalid`
 * missing / untracked function
 * implementation drift
 * contract_gap（`contract_required=true`）
@@ -528,6 +536,8 @@ harbor doctor --ci
 * `contract_and_body_changed`：契约与实现同时变化（基线未接受时阻断）。
 * `ddt_version_baseline_missing`：DDT 基线缺失 advisory / non-blocking。
 * `possible_contract_impact`：默认 advisory，除非被状态门禁升级。
+* `accepted_baseline_missing`：CI 中缺少 `.harbor/baseline/accepted-checkpoint.json`，不会回退到 runtime cache。
+* `accepted_baseline_invalid`：accepted baseline artifact schema 或内容非法，需在本地修复后提交。
 
 ---
 
@@ -577,6 +587,12 @@ DoctorCheckResult.status == FAIL
 * 不自动刷新
 * 不自动 `accept`
 * 不混入人类文本
+
+`checkpoint --ci --format json` 还会额外给出：
+
+* `baseline_source`
+* `baseline_path`
+* `baseline_found`
 
 示例：
 
@@ -781,10 +797,10 @@ harbor workspace migrate --write is not implemented in v1.3.0.
 | `harbor config list`             | 查看配置                 |
 | `harbor config add <pattern>`    | 添加扫描路径               |
 | `harbor config remove <pattern>` | 移除路径                 |
-| `harbor lock`                    | 底层基线/索引操作            |
-| `harbor accept`                  | 人类可读的接受新 baseline 动作 |
+| `harbor lock`                    | 底层 runtime cache / 索引重建操作 |
+| `harbor accept`                  | 写入 accepted baseline artifact，并可选刷新本地 cache |
 
-日常建议使用 `harbor accept`，而不是直接使用 `harbor lock`。
+日常建议使用 `harbor accept` 作为人工接受命令；CI 只运行 `checkpoint --ci`，不运行 `lock`。
 
 ---
 

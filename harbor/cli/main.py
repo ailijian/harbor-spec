@@ -51,6 +51,14 @@ from harbor.core.ci import (
     format_checkpoint_ci_result,
     format_ci_result,
 )
+from harbor.core.baseline_artifact import (
+    ACCEPTED_CHECKPOINT_BASELINE_PATH,
+    AcceptedBaselineInvalidError,
+    AcceptedBaselineMissingError,
+    build_checkpoint_baseline_artifact,
+    load_checkpoint_baseline_artifact,
+    write_checkpoint_baseline_artifact,
+)
 from harbor.core.advice_config import resolve_advice_settings
 from harbor.core.repair_guidance import (
     generic_conservative_guidance,
@@ -305,7 +313,7 @@ def main():
     parser = argparse.ArgumentParser(prog="harbor", description="Harbor-spec CLI")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_lock = sub.add_parser("lock", help="Lock current L3 contract snapshot into cache")
+    p_lock = sub.add_parser("lock", help="Low-level runtime cache/index rebuild command")
     p_lock.add_argument("--no-incremental", action="store_true")
     p_lock.add_argument("--code-root", action="append", default=None)
     p_lock.add_argument("--cache-dir", type=str, default=None)
@@ -375,8 +383,26 @@ def main():
     )
     p_accept = sub.add_parser(
         "accept",
-        help="Workflow facade alias for lock",
-        description="Workflow facade command: semantic alias of harbor lock.",
+        help="Accept current checkpoint baseline into repository baseline artifact",
+        description="Write the accepted checkpoint baseline artifact and optionally refresh runtime cache.",
+    )
+    p_accept.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help="Write accepted checkpoint baseline artifact to a custom path",
+    )
+    p_accept.add_argument(
+        "--format",
+        type=str,
+        choices=["text", "json"],
+        default="text",
+        help="Output format: text (default) or json",
+    )
+    p_accept.add_argument(
+        "--no-cache-refresh",
+        action="store_true",
+        help="Write the accepted baseline artifact without refreshing runtime cache",
     )
 
     p_adopt = sub.add_parser("adopt", help="Adopt legacy code into Harbor governance")
@@ -770,6 +796,12 @@ def main():
         except Exception:
             return {}
 
+    def _repo_display_path(path: Path) -> str:
+        try:
+            return path.resolve().relative_to(Path.cwd()).as_posix()
+        except Exception:
+            return path.resolve().as_posix()
+
     def _write_cfg_data(data):
         write_workspace_config(Path.cwd(), data)
 
@@ -848,6 +880,48 @@ def main():
             "cache_dir": str(cache_dir) if cache_dir is not None else None,
             "no_incremental": bool(no_incremental),
             "register_scan": bool(register_scan),
+        }
+
+    def _collect_checkpoint_baseline_items():
+        snapshot = SyncEngine().collect_current_snapshot()
+        items = []
+        for file_path in sorted(snapshot.keys()):
+            for item_id in sorted(snapshot[file_path].keys()):
+                item = dict(snapshot[file_path][item_id])
+                items.append(
+                    {
+                        "id": str(item.get("id") or item.get("func_id") or ""),
+                        "target_id": str(item.get("target_id") or ""),
+                        "func_id": str(item.get("func_id") or item.get("id") or ""),
+                        "language": str(item.get("language") or "python"),
+                        "symbol_kind": str(item.get("symbol_kind") or "function"),
+                        "file_path": str(item.get("file_path") or file_path),
+                        "body_hash": str(item.get("body_hash") or ""),
+                        "contract_hash": str(item.get("contract_hash") or ""),
+                        "contract_presence": str(item.get("contract_presence") or "present"),
+                        "contract_required": bool(item.get("contract_required")),
+                    }
+                )
+        return items
+
+    def _run_accept(*, output_path=None, no_cache_refresh=False):
+        baseline_items = _collect_checkpoint_baseline_items()
+        lock_summary = None
+        if not no_cache_refresh:
+            lock_summary = _run_lock()
+        artifact = build_checkpoint_baseline_artifact(items=baseline_items)
+        written_path = write_checkpoint_baseline_artifact(
+            artifact,
+            path=Path(output_path) if output_path else None,
+        )
+        return {
+            "accepted": True,
+            "artifact_written": True,
+            "artifact_path": _repo_display_path(written_path),
+            "artifact_items": len(artifact.get("baseline", {}).get("items", []) or []),
+            "cache_refreshed": not no_cache_refresh,
+            "cache_summary": lock_summary,
+            "writes_files": True,
         }
 
     def _run_status(*, verbose=False):
@@ -1624,9 +1698,9 @@ def main():
             lines.append(f"No actionable items from source command: {source_command}")
         return "\n".join(lines).rstrip()
 
-    if args.command in ("lock", "accept"):
-        code_roots = args.code_root if args.command == "lock" else None
-        cache_dir = Path(args.cache_dir) if args.command == "lock" and args.cache_dir else None
+    if args.command == "lock":
+        code_roots = args.code_root
+        cache_dir = Path(args.cache_dir) if args.cache_dir else None
         lock_summary = _run_lock(
             code_roots=code_roots,
             cache_dir=cache_dir,
@@ -1634,20 +1708,30 @@ def main():
             no_register_adopted=getattr(args, "no_register_adopted", False),
             register_scan=getattr(args, "register_scan", False),
         )
-        if args.command == "accept":
+    elif args.command == "accept":
+        accept_summary = _run_accept(
+            output_path=getattr(args, "output", None),
+            no_cache_refresh=bool(getattr(args, "no_cache_refresh", False)),
+        )
+        if getattr(args, "format", "text") == "json":
+            print(json.dumps(accept_summary, ensure_ascii=False, sort_keys=True, indent=2))
+        else:
             print(t("cli.accept.done"))
-            _write_change_window_snapshot_safe(
-                "accept",
-                summary={
-                    "accepted": True,
-                    "baseline_alias": "lock",
-                    "counts": lock_summary,
-                },
-                validation={
-                    "command": "accept",
-                    "success": True,
-                },
-            )
+            print(t("cli.accept.artifact_path", path=accept_summary["artifact_path"]))
+            print(t("cli.accept.artifact_items", count=accept_summary["artifact_items"]))
+            print(t("cli.accept.cache_refreshed", value=str(accept_summary["cache_refreshed"]).lower()))
+        _write_change_window_snapshot_safe(
+            "accept",
+            summary=accept_summary,
+            validation={
+                "command": "accept",
+                "success": True,
+                "artifact_written": True,
+                "artifact_path": accept_summary["artifact_path"],
+                "artifact_items": accept_summary["artifact_items"],
+                "cache_refreshed": accept_summary["cache_refreshed"],
+            },
+        )
     elif args.command == "start":
         print(t("cli.start.title"))
         _, clean = _run_status(verbose=False)
@@ -1683,9 +1767,25 @@ def main():
             status_report = _empty_status_report()
             ddt_report = _empty_ddt_report()
             records = []
+            baseline_source = "accepted_artifact"
+            baseline_path = _repo_display_path(Path.cwd() / ACCEPTED_CHECKPOINT_BASELINE_PATH)
+            baseline_found = False
+            baseline_error_category = None
+            baseline_error_reason = None
             try:
-                status_report = SyncEngine().check_status()
+                baseline_payload = load_checkpoint_baseline_artifact()
+                baseline_found = True
+                status_report = SyncEngine().check_status(
+                    baseline_snapshot=baseline_payload,
+                    baseline_source=baseline_source,
+                )
                 records = _collect_status_records_for_checkpoint_ci(status_report)
+            except AcceptedBaselineMissingError:
+                baseline_error_category = "accepted_baseline_missing"
+                baseline_error_reason = t("cli.ci.checkpoint.failure.accepted_baseline_missing")
+            except AcceptedBaselineInvalidError:
+                baseline_error_category = "accepted_baseline_invalid"
+                baseline_error_reason = t("cli.ci.checkpoint.failure.accepted_baseline_invalid")
             except Exception as ex:
                 check_errors.append(f"status_check_failed: {str(ex)}")
             try:
@@ -1703,6 +1803,11 @@ def main():
                 contract_impact_report=contract_impact_report,
                 check_errors=check_errors,
                 advice_settings=advice_settings,
+                baseline_source=baseline_source,
+                baseline_path=baseline_path,
+                baseline_found=baseline_found,
+                baseline_error_category=baseline_error_category,
+                baseline_error_reason=baseline_error_reason,
             )
             if args.format == "json":
                 print(json.dumps(checkpoint_ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))

@@ -489,7 +489,7 @@ Boundaries:
 
 ## ✅ CI Gates
 
-HarborSpec v1.3.0 provides three CI gates:
+HarborSpec v1.4.x provides three CI gates:
 
 ```powershell
 harbor checkpoint --ci
@@ -501,9 +501,17 @@ harbor doctor --ci
 
 Strict baseline gate.
 
+By default it reads the repo-owned accepted baseline artifact:
+
+```text
+.harbor/baseline/accepted-checkpoint.json
+```
+
 It blocks on:
 
 * DDT failure
+* `accepted_baseline_missing`
+* `accepted_baseline_invalid`
 * missing / untracked function
 * implementation drift
 * contract_gap (`contract_required=true`)
@@ -522,6 +530,8 @@ Current category behavior:
 * `contract_and_body_changed`: both contract and body changed (blocks before baseline acceptance).
 * `ddt_version_baseline_missing`: advisory / non-blocking.
 * `possible_contract_impact`: remains advisory unless promoted by status gate.
+* `accepted_baseline_missing`: `.harbor/baseline/accepted-checkpoint.json` is missing in CI; no runtime-cache fallback is used.
+* `accepted_baseline_invalid`: the accepted baseline artifact schema/content is invalid and must be fixed locally, then committed.
 
 ---
 
@@ -571,6 +581,12 @@ All CI JSON commands guarantee:
 * no auto-refresh
 * no automatic `accept`
 * no human text mixed into JSON output
+
+`checkpoint --ci --format json` also includes:
+
+* `baseline_source`
+* `baseline_path`
+* `baseline_found`
 
 Examples:
 
@@ -776,10 +792,10 @@ harbor workspace migrate --write is not implemented in v1.3.0.
 | `harbor config list`             | View config                              |
 | `harbor config add <pattern>`    | Add scan path                            |
 | `harbor config remove <pattern>` | Remove scan path                         |
-| `harbor lock`                    | Low-level baseline / index operation     |
-| `harbor accept`                  | Human-facing baseline acceptance command |
+| `harbor lock`                    | Low-level runtime cache / index rebuild command |
+| `harbor accept`                  | Writes the accepted baseline artifact and can refresh local cache |
 
-For daily usage, prefer `harbor accept` over direct `harbor lock`.
+For daily usage, use `harbor accept` as the human acceptance command; CI should run `checkpoint --ci` and not `lock`.
 
 ---
 

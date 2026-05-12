@@ -463,6 +463,8 @@ CLI / JSON output rules:
 - JSON output should be deterministic where practical.
 - Paths in JSON output should be normalized.
 - Avoid leaking machine-local absolute paths unless explicitly required.
+- `checkpoint --ci` must read the repo-owned accepted baseline artifact at `.harbor/baseline/accepted-checkpoint.json`.
+- CI mode must not fall back to runtime cache when the accepted baseline artifact is missing or invalid.
 ```
 
 Workspace rules:

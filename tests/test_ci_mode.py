@@ -23,6 +23,22 @@ def _disable_change_window_writes(monkeypatch):
     monkeypatch.setattr(cli_main, "write_change_window_snapshot", lambda *args, **kwargs: None)
 
 
+@pytest.fixture(autouse=True)
+def _stub_checkpoint_baseline_artifact(monkeypatch):
+    monkeypatch.setattr(
+        cli_main,
+        "load_checkpoint_baseline_artifact",
+        lambda *args, **kwargs: {
+            "schema_version": "1.0",
+            "kind": "accepted_checkpoint_baseline",
+            "accepted_at": "2026-05-12T00:00:00Z",
+            "accepted_by": "harbor accept",
+            "harbor_version": "1.4.1",
+            "baseline": {"items": []},
+        },
+    )
+
+
 def run_cmd(argv):
     out = StringIO()
     code = 0

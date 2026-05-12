@@ -188,6 +188,9 @@ class CheckpointCIResult:
     advice_mode: str = "basic"
     include_in_ci_json: bool = True
     include_in_text: bool = True
+    baseline_source: Optional[str] = None
+    baseline_path: Optional[str] = None
+    baseline_found: bool = False
 
 
 def build_checkpoint_ci_result(
@@ -197,11 +200,31 @@ def build_checkpoint_ci_result(
     contract_impact_report,
     check_errors: Optional[Sequence[str]] = None,
     advice_settings: Optional[AdviceSettings] = None,
+    baseline_source: Optional[str] = None,
+    baseline_path: Optional[str] = None,
+    baseline_found: bool = False,
+    baseline_error_category: Optional[str] = None,
+    baseline_error_reason: Optional[str] = None,
 ) -> CheckpointCIResult:
     settings = advice_settings or AdviceSettings()
     check_errors = list(check_errors or [])
     failures: List[CheckpointCIItem] = []
     advisory: List[CheckpointCIItem] = []
+
+    if baseline_error_category:
+        failures.append(
+            CheckpointCIItem(
+                category=str(baseline_error_category),
+                file_path=baseline_path,
+                reason=str(baseline_error_reason or ""),
+                suggested_action=(
+                    t("cli.ci.checkpoint.action.accepted_baseline_missing")
+                    if baseline_error_category == "accepted_baseline_missing"
+                    else t("cli.ci.checkpoint.action.accepted_baseline_invalid")
+                ),
+                guidance=guidance_for_checkpoint_category(str(baseline_error_category)) if settings.enabled else None,
+            )
+        )
 
     for typ, binding, message in list(getattr(ddt_report, "violations", []) or []):
         defaults = _ddt_identity_defaults(str(getattr(binding, "func_id", "") or ""))
@@ -433,6 +456,8 @@ def build_checkpoint_ci_result(
     exit_code = 1 if deduped_failures else 0
     status = "fail" if deduped_failures else "pass"
     summary = {
+        "accepted_baseline_missing": 1 if baseline_error_category == "accepted_baseline_missing" else 0,
+        "accepted_baseline_invalid": 1 if baseline_error_category == "accepted_baseline_invalid" else 0,
         "drift": len(list(getattr(status_report, "drift", []) or [])),
         "modified": len(list(getattr(status_report, "modified", []) or [])),
         "contract_changed": len(list(getattr(status_report, "contract_changed", []) or [])),
@@ -460,6 +485,9 @@ def build_checkpoint_ci_result(
         advice_mode=settings.mode,
         include_in_ci_json=settings.include_in_ci_json,
         include_in_text=settings.include_in_text,
+        baseline_source=baseline_source,
+        baseline_path=baseline_path,
+        baseline_found=baseline_found,
     )
 
 
@@ -787,6 +815,9 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
         "status": result.status,
         "exit_code": result.exit_code,
         "writes_files": False,
+        "baseline_source": _sanitize_json_text(str(result.baseline_source or "")),
+        "baseline_path": _sanitize_single_path(result.baseline_path),
+        "baseline_found": bool(result.baseline_found),
         "summary": _sanitize_summary(result.summary),
         "ci_failures": [item.to_dict(include_guidance=include_guidance) for item in result.ci_failures],
         "advisory": [item.to_dict(include_guidance=include_guidance) for item in result.advisory],
@@ -802,6 +833,9 @@ def format_checkpoint_ci_result(result: CheckpointCIResult) -> str:
     lines.append(t("cli.ci.mode_enabled"))
     lines.append(t("cli.ci.gate", status=t(f"cli.ci.status.{result.status.lower()}")))
     lines.append(f"{t('cli.ci.writes_files')}: false")
+    lines.append(f"{t('cli.ci.checkpoint.baseline_source')}: {_sanitize_json_text(str(result.baseline_source or ''))}")
+    lines.append(f"{t('cli.ci.checkpoint.baseline_path')}: {_sanitize_single_path(result.baseline_path)}")
+    lines.append(f"{t('cli.ci.checkpoint.baseline_found')}: {str(bool(result.baseline_found)).lower()}")
     if result.ci_failures:
         lines.append("")
         lines.append(t("cli.ci.blocking_failures"))
@@ -911,22 +945,24 @@ def _checkpoint_reason_for_entry(*, category: str, default_reason: str, entry: o
 
 def _dedupe_checkpoint_items(items: Sequence[CheckpointCIItem]) -> List[CheckpointCIItem]:
     priority = {
-        "checkpoint_internal_error": 0,
-        "ddt_binding": 1,
-        "contract_and_body_changed": 2,
-        "contract_changed": 3,
-        "possible_semantic_drift": 4,
-        "missing_function": 5,
-        "untracked_function": 6,
-        "contract_gap": 7,
-        "contract_parse_error": 8,
-        "confirmed_contract_impact": 9,
-        "possible_contract_impact": 10,
-        "unknown_contract_impact": 11,
-        "skipped_no_contract": 12,
-        "unsupported_syntax_advisory": 13,
-        "ddt_version_baseline_missing": 14,
-        "ddt_binding_advisory": 15,
+        "accepted_baseline_missing": 0,
+        "accepted_baseline_invalid": 1,
+        "checkpoint_internal_error": 2,
+        "ddt_binding": 3,
+        "contract_and_body_changed": 4,
+        "contract_changed": 5,
+        "possible_semantic_drift": 6,
+        "missing_function": 7,
+        "untracked_function": 8,
+        "contract_gap": 9,
+        "contract_parse_error": 10,
+        "confirmed_contract_impact": 11,
+        "possible_contract_impact": 12,
+        "unknown_contract_impact": 13,
+        "skipped_no_contract": 14,
+        "unsupported_syntax_advisory": 15,
+        "ddt_version_baseline_missing": 16,
+        "ddt_binding_advisory": 17,
     }
     selected: Dict[Tuple[str, str], CheckpointCIItem] = {}
     out: List[CheckpointCIItem] = []
@@ -943,9 +979,22 @@ def _dedupe_checkpoint_items(items: Sequence[CheckpointCIItem]) -> List[Checkpoi
 
 
 def _collect_checkpoint_next_steps(ci_failures: Sequence[CheckpointCIItem]) -> List[str]:
+    categories = {str(item.category or "") for item in ci_failures}
     if not ci_failures:
         return [
             t("cli.ci.checkpoint.next_steps.pass"),
+            t("cli.ci.checkpoint.next_steps.rerun"),
+        ]
+    if "accepted_baseline_missing" in categories:
+        return [
+            t("cli.ci.checkpoint.next_steps.accepted_baseline_missing"),
+            t("cli.ci.checkpoint.next_steps.commit_artifact"),
+            t("cli.ci.checkpoint.next_steps.rerun"),
+        ]
+    if "accepted_baseline_invalid" in categories:
+        return [
+            t("cli.ci.checkpoint.next_steps.accepted_baseline_invalid"),
+            t("cli.ci.checkpoint.next_steps.commit_artifact"),
             t("cli.ci.checkpoint.next_steps.rerun"),
         ]
     return [

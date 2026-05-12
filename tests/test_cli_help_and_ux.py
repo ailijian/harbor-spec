@@ -44,7 +44,9 @@ def test_workflow_help_exposes_start_checkpoint_finish_accept():
     assert "--format" in out_checkpoint
     assert "CI mode only" in out_checkpoint
     assert "--sync-context" in out_finish
-    assert "semantic alias of harbor lock" in out_accept
+    assert "accepted checkpoint baseline artifact" in out_accept
+    assert "--output" in out_accept
+    assert "--no-cache-refresh" in out_accept
 
 
 def test_doctor_help_lists_changed_all_and_module_flags():

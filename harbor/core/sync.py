@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
+from harbor.adapters.python.compat import function_contract_to_subject
 from harbor.adapters.python.parser import PythonAdapter
 from harbor.adapters.registry import AdapterRegistry
 from harbor.core.contract_presence import evaluate_contract_presence
@@ -72,7 +73,11 @@ class SyncEngine:
             raise RuntimeError("Python adapter is disabled in registry config")
         return adapter
 
-    def check_status(self) -> StatusReport:
+    def check_status(
+        self,
+        baseline_snapshot: Optional[object] = None,
+        baseline_source: str = "runtime_cache",
+    ) -> StatusReport:
         """对比缓存索引与当前代码，输出 Harbor 上下文状态。
 
         功能:
@@ -110,6 +115,15 @@ class SyncEngine:
         Raises:
           Exception: 可能透传文件系统读取、源码解析或存储层异常；该方法不会统一包装异常类型。
         """
+        if baseline_snapshot is not None:
+            current_snapshot = self.collect_current_snapshot()
+            previous_snapshot = self._load_previous_snapshot_from_artifact(baseline_snapshot)
+            return self._compare_snapshots(
+                old_snapshot=previous_snapshot,
+                new_snapshot=current_snapshot,
+                baseline_source=baseline_source,
+            )
+
         drift: List[StatusEntry] = []
         modified: List[StatusEntry] = []
         contract_changed: List[StatusEntry] = []
@@ -308,6 +322,281 @@ class SyncEngine:
             missing=missing,
             counts=counts,
         )
+
+    def collect_current_snapshot(self) -> Dict[str, Dict[str, Dict[str, Any]]]:
+        """Collect the current comparable checkpoint snapshot from source files."""
+        snapshot: Dict[str, Dict[str, Dict[str, Any]]] = {}
+        files = self._iter_files_by_enabled_adapters()
+        for path in files:
+            file_path = self._normalize_repo_file_path(path)
+            if self._is_typescript_path(file_path):
+                items = self._collect_typescript_snapshot_items(file_path)
+            else:
+                items = self._collect_python_snapshot_items(path, file_path=file_path)
+            snapshot[file_path] = items
+        return snapshot
+
+    def _load_previous_snapshot_from_artifact(self, payload: object) -> Dict[str, Dict[str, Dict[str, Any]]]:
+        if isinstance(payload, dict) and "baseline" in payload:
+            items = list((((payload.get("baseline") or {}) if isinstance(payload.get("baseline"), dict) else {}).get("items") or []))
+        elif isinstance(payload, list):
+            items = list(payload)
+        elif isinstance(payload, dict):
+            maybe_items = list(payload.values())
+            if maybe_items and all(isinstance(value, dict) for value in maybe_items):
+                return {
+                    str(file_path): {
+                        str(item_id): dict(item_payload)
+                        for item_id, item_payload in (items_for_file or {}).items()
+                        if isinstance(item_payload, dict)
+                    }
+                    for file_path, items_for_file in payload.items()
+                    if isinstance(items_for_file, dict)
+                }
+            items = []
+        else:
+            items = []
+
+        snapshot: Dict[str, Dict[str, Dict[str, Any]]] = {}
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            file_path = str(item.get("file_path") or "").strip()
+            item_id = str(item.get("id") or item.get("func_id") or "").strip()
+            if not file_path or not item_id:
+                continue
+            snapshot.setdefault(file_path, {})[item_id] = dict(item)
+        return snapshot
+
+    def _compare_snapshots(
+        self,
+        *,
+        old_snapshot: Dict[str, Dict[str, Dict[str, Any]]],
+        new_snapshot: Dict[str, Dict[str, Dict[str, Any]]],
+        baseline_source: str,
+    ) -> StatusReport:
+        drift: List[StatusEntry] = []
+        modified: List[StatusEntry] = []
+        contract_changed: List[StatusEntry] = []
+        contract_gap: List[StatusEntry] = []
+        skipped_no_contract: List[StatusEntry] = []
+        unsupported_syntax_advisory: List[StatusEntry] = []
+        contract_parse_error: List[StatusEntry] = []
+        untracked: List[StatusEntry] = []
+        missing: List[StatusEntry] = []
+
+        all_files = sorted(set(old_snapshot.keys()) | set(new_snapshot.keys()))
+        for file_path in all_files:
+            old_items = old_snapshot.get(file_path, {})
+            new_items = new_snapshot.get(file_path, {})
+            all_ids = sorted(set(old_items.keys()) | set(new_items.keys()))
+            for item_id in all_ids:
+                current = new_items.get(item_id)
+                previous = old_items.get(item_id)
+                current_presence = str((current or {}).get("contract_presence") or "present")
+
+                if current and current_presence == "unsupported_syntax":
+                    unsupported_syntax_advisory.append(
+                        self._status_entry_from_snapshot_item(
+                            current,
+                            change_type="Unsupported Syntax Advisory",
+                            details="TypeScript MVP parser could not safely classify this target.",
+                        )
+                    )
+                    continue
+
+                if current and previous:
+                    body_changed = str(previous.get("body_hash") or "") != str(current.get("body_hash") or "")
+                    contract_changed_flag = str(previous.get("contract_hash") or "") != str(current.get("contract_hash") or "")
+                    if (not body_changed) and (not contract_changed_flag):
+                        continue
+                    if current_presence == "malformed":
+                        contract_parse_error.append(
+                            self._status_entry_from_snapshot_item(
+                                current,
+                                change_type="Contract Parse Error",
+                                details=str(current.get("contract_reason") or "Contract source malformed"),
+                            )
+                        )
+                        continue
+                    if current_presence != "present":
+                        required = bool(current.get("contract_required"))
+                        target = contract_gap if required else skipped_no_contract
+                        target.append(
+                            self._status_entry_from_snapshot_item(
+                                current,
+                                change_type="Contract Gap" if required else "Skipped No Contract",
+                                details=(
+                                    "No contract source found for required target"
+                                    if required
+                                    else "No contract required for this target"
+                                ),
+                            )
+                        )
+                        continue
+                    if body_changed and not contract_changed_flag:
+                        drift.append(
+                            self._status_entry_from_snapshot_item(
+                                current,
+                                change_type="Drift",
+                                details="Body changed, Contract static",
+                            )
+                        )
+                    elif body_changed and contract_changed_flag:
+                        modified.append(
+                            self._status_entry_from_snapshot_item(
+                                current,
+                                change_type="Modified",
+                                details="Body + Contract changed",
+                            )
+                        )
+                    elif (not body_changed) and contract_changed_flag:
+                        contract_changed.append(
+                            self._status_entry_from_snapshot_item(
+                                current,
+                                change_type="Contract Changed",
+                                details="Contract updated",
+                            )
+                        )
+                    continue
+
+                if current and not previous:
+                    if current_presence == "malformed":
+                        contract_parse_error.append(
+                            self._status_entry_from_snapshot_item(
+                                current,
+                                change_type="Contract Parse Error",
+                                details=str(current.get("contract_reason") or "Contract source malformed"),
+                            )
+                        )
+                    elif current_presence != "present":
+                        required = bool(current.get("contract_required"))
+                        target = contract_gap if required else skipped_no_contract
+                        target.append(
+                            self._status_entry_from_snapshot_item(
+                                current,
+                                change_type="Contract Gap" if required else "Skipped No Contract",
+                                details=(
+                                    "No contract source found for required target"
+                                    if required
+                                    else "No contract required for this target"
+                                ),
+                            )
+                        )
+                    else:
+                        untracked.append(
+                            self._status_entry_from_snapshot_item(
+                                current,
+                                change_type="Untracked",
+                                details=f"New function detected against {baseline_source} baseline",
+                            )
+                        )
+                    continue
+
+                if previous and not current:
+                    missing.append(
+                        self._status_entry_from_snapshot_item(
+                            previous,
+                            change_type="Missing",
+                            details="Function removed",
+                        )
+                    )
+
+        counts = {
+            "drift": len(drift),
+            "modified": len(modified),
+            "contract_changed": len(contract_changed),
+            "contract_gap": len(contract_gap),
+            "skipped_no_contract": len(skipped_no_contract),
+            "unsupported_syntax_advisory": len(unsupported_syntax_advisory),
+            "contract_parse_error": len(contract_parse_error),
+            "untracked": len(untracked),
+            "missing": len(missing),
+        }
+        return StatusReport(
+            drift=drift,
+            modified=modified,
+            contract_changed=contract_changed,
+            contract_gap=contract_gap,
+            skipped_no_contract=skipped_no_contract,
+            unsupported_syntax_advisory=unsupported_syntax_advisory,
+            contract_parse_error=contract_parse_error,
+            untracked=untracked,
+            missing=missing,
+            counts=counts,
+        )
+
+    def _collect_python_snapshot_items(self, path: Path, *, file_path: str) -> Dict[str, Dict[str, Any]]:
+        source = path.read_text(encoding="utf-8")
+        items: Dict[str, Dict[str, Any]] = {}
+        for contract in self.adapter.parse_file(file_path):
+            node = find_function_node(source, contract.lineno, contract.name)
+            body_hash = compute_body_hash(source, node) if node else ""
+            presence = evaluate_contract_presence(contract, file_path)
+            contract.contract_presence = presence.presence
+            contract.contract_required = presence.required
+            subject = function_contract_to_subject(contract, file_path)
+            items[contract.id] = {
+                "id": contract.id,
+                "name": contract.name,
+                "file_path": file_path,
+                "target_id": subject.target_id,
+                "func_id": contract.id,
+                "language": "python",
+                "symbol_kind": subject.symbol_kind,
+                "adapter": "python",
+                "body_hash": body_hash,
+                "contract_hash": str(contract.contract_hash or ""),
+                "contract_presence": presence.presence,
+                "contract_required": bool(presence.required),
+                "contract_reason": presence.reason,
+            }
+        return items
+
+    def _collect_typescript_snapshot_items(self, file_path: str) -> Dict[str, Dict[str, Any]]:
+        adapter = self.registry.get_adapter("typescript")
+        if adapter is None:
+            return {}
+        items: Dict[str, Dict[str, Any]] = {}
+        for subject in adapter.parse_file(file_path):
+            item_id = str(subject.legacy_func_id or subject.target_id or "").strip()
+            if not item_id:
+                continue
+            items[item_id] = {
+                "id": item_id,
+                "name": str(subject.qualified_name or item_id),
+                "file_path": file_path,
+                "target_id": str(subject.target_id or ""),
+                "func_id": item_id,
+                "language": str(subject.language or "typescript"),
+                "symbol_kind": str(subject.symbol_kind or ""),
+                "adapter": "typescript",
+                "body_hash": str(subject.body_hash or ""),
+                "contract_hash": str(subject.contract_hash or ""),
+                "contract_presence": str(subject.contract_presence or "missing"),
+                "contract_required": bool(subject.contract_required),
+                "contract_reason": str(subject.metadata.get("contract_required_reason") or ""),
+            }
+        return items
+
+    def _status_entry_from_snapshot_item(self, item: Dict[str, Any], *, change_type: str, details: str) -> StatusEntry:
+        return StatusEntry(
+            id=str(item.get("id") or item.get("func_id") or ""),
+            name=str(item.get("name") or item.get("func_id") or item.get("target_id") or ""),
+            file_path=str(item.get("file_path") or ""),
+            change_type=change_type,
+            details=details,
+            target_id=str(item.get("target_id") or "") or None,
+            language=str(item.get("language") or "") or None,
+            symbol_kind=str(item.get("symbol_kind") or "") or None,
+            adapter=str(item.get("adapter") or "") or None,
+        )
+
+    def _normalize_repo_file_path(self, path: Path) -> str:
+        try:
+            return path.resolve().relative_to(Path.cwd()).as_posix()
+        except Exception:
+            return path.resolve().as_posix()
 
     def _load_config(self, path: Path) -> Dict[str, Any]:
         if not path.exists():

@@ -28,6 +28,22 @@ def _disable_change_window_writes(monkeypatch):
     monkeypatch.setattr(cli_main, "write_change_window_snapshot", lambda *args, **kwargs: None)
 
 
+@pytest.fixture(autouse=True)
+def _stub_checkpoint_baseline_artifact(monkeypatch):
+    monkeypatch.setattr(
+        cli_main,
+        "load_checkpoint_baseline_artifact",
+        lambda *args, **kwargs: {
+            "schema_version": "1.0",
+            "kind": "accepted_checkpoint_baseline",
+            "accepted_at": "2026-05-12T00:00:00Z",
+            "accepted_by": "harbor accept",
+            "harbor_version": "1.4.1",
+            "baseline": {"items": []},
+        },
+    )
+
+
 def run_cmd(argv):
     out = StringIO()
     err = StringIO()
@@ -125,7 +141,7 @@ def _contract_report(*, findings=None):
 
 def _patch_checkpoint_inputs(monkeypatch, *, status=None, ddt=None, contract_report=None):
     class _FakeSyncEngine:
-        def check_status(self):
+        def check_status(self, baseline_snapshot=None, baseline_source="runtime_cache"):
             return status or _status_report()
 
     class _FakeDDTScanner:
@@ -282,6 +298,9 @@ def test_checkpoint_ci_json_single_object_and_required_fields(monkeypatch):
     assert payload["command"] == "checkpoint"
     assert payload["ci"] is True
     assert payload["writes_files"] is False
+    assert payload["baseline_source"] == "accepted_artifact"
+    assert payload["baseline_path"] == ".harbor/baseline/accepted-checkpoint.json"
+    assert payload["baseline_found"] is True
     assert payload["exit_code"] == 1
     assert "ci_failures" in payload
     assert "advisory" in payload
