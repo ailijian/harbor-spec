@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from harbor.core.change_window import ChangeWindowSnapshot, collect_git_workspace_state, list_change_windows
@@ -1506,10 +1506,11 @@ def _resolve_cli_input_path(path: Path, *, repo_root: Path) -> Tuple[Path, str]:
     normalized_path = _normalize_cli_input_path(path)
     display_path = str(normalized_path or "").strip().replace("\\", "/")
     if _looks_like_windows_absolute_path(display_path):
-        candidate = Path(display_path)
+        normalized_display = PureWindowsPath(display_path).as_posix()
+        candidate = Path(normalized_display)
         if not candidate.is_absolute():
-            raise LogDraftError(f"Path is outside the current repository: '{display_path}'.")
-        return candidate.resolve(), display_path
+            candidate = Path("/") / normalized_display.lstrip("/")
+        return candidate.resolve(), normalized_display
     candidate = normalized_path if normalized_path.is_absolute() else (repo_root / normalized_path)
     return candidate.resolve(), display_path or candidate.resolve().as_posix()
 

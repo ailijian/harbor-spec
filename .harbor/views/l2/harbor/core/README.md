@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-12T11:48:57Z"
+generated_at: "2026-05-12T12:31:20Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 32
@@ -41,8 +41,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:307a0d123aa09e56b7ac00e9f4026277f37f4314c7969770090aefb2c8751632"
-contract_fingerprint: "sha256:269717262fc5f0232c5304e976947b2fb0b867552ae8ca198655ea1e014be162"
+source_fingerprint: "sha256:e698166a1776374f1b1554c4802619b3534a3deaffc99487c9559a088cb24dda"
+contract_fingerprint: "sha256:d494220fa78edb6f38f45421e54742925b265c284d8312db6564c1adc3ed7e34"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -98,7 +98,9 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.log_draft.write_diary_entry_from_draft | Write one structured diary entry from an approved draft s... | strict | ❌ Missing |
 | harbor.core.log_draft.write_last_log_marker | Best-effort update of `.harbor/state/log/last_log_marker.... | strict | ❌ Missing |
 | harbor.core.log_draft.write_latest_diary_draft_cache | Best-effort write of latest diary draft runtime cache und... | strict | ❌ Missing |
-| harbor.core.project_structure.write_project_structure | — | strict | ❌ Missing |
+| harbor.core.module_capsule.write_module_capsule | Write the canonical Module Capsule views for one module. | strict | ❌ Missing |
+| harbor.core.project_structure.write_project_structure | Write the canonical project-structure view and optional e... | strict | ❌ Missing |
+| harbor.core.workspace.write_workspace_config | — | strict | ❌ Missing |
 
 ## Internal Details (optional)
 <details>
@@ -268,6 +270,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.init_wizard._load_template_text | — | standard | ⚪ Missing |
 | harbor.core.contract_presence._looks_like_contract_doc | — | standard | ⚪ Missing |
 | harbor.core.project_structure._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
+| harbor.core.workspace._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.l2._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._mask_key | — | standard | ⚪ Missing |
@@ -282,7 +285,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_changed_file | — | standard | ⚪ Missing |
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
-| harbor.core.log_draft._normalize_cli_input_path | — | standard | ⚪ Missing |
+| harbor.core.log_draft._normalize_cli_input_path | Normalize repo-relative CLI paths so Windows separators s... | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
@@ -325,6 +328,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.log_draft._resolve_allowed_from_draft_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_author | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
+| harbor.core.log_draft._resolve_cli_input_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_diary_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_diary_draft_boundary | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | — | standard | ⚪ Missing |
@@ -513,9 +517,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.workspace_inspect.workspace_inspect_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.workspace_migrate_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.write | — | standard | ⚪ Missing |
-| harbor.core.module_capsule.write_module_capsule | — | standard | ⚪ Missing |
 | harbor.core.module_skill.write_module_skill | — | standard | ⚪ Missing |
-| harbor.core.workspace.write_workspace_config | — | standard | ⚪ Missing |
 
 </details>
 

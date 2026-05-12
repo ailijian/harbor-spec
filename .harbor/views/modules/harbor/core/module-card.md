@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-12T11:48:59Z"
+generated_at: "2026-05-12T12:31:24Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 32
@@ -41,11 +41,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:307a0d123aa09e56b7ac00e9f4026277f37f4314c7969770090aefb2c8751632"
-contract_fingerprint: "sha256:5ab6bcd3ba52be4e5ad266c2c034a77dd4aa3ee2e3a4612e97090747371213c8"
+source_fingerprint: "sha256:e698166a1776374f1b1554c4802619b3534a3deaffc99487c9559a088cb24dda"
+contract_fingerprint: "sha256:becc56daf516faa32ca8faa8eacb5153146fba4ea7b47f50b404da0b58e6bd8b"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "bf378547917b84528cdf8fa8bd0765fb39cfb7b90e51a3b5048c46b6d4785cae"
-fingerprint: "bf378547917b84528cdf8fa8bd0765fb39cfb7b90e51a3b5048c46b6d4785cae"
+view_fingerprint: "2edf770f100238557994dc3680d42b03c9523c78b474e97d30817f8e231fb44e"
+fingerprint: "2edf770f100238557994dc3680d42b03c9523c78b474e97d30817f8e231fb44e"
 ---
 
 # Module Card: harbor/core
@@ -407,6 +407,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.log_draft._read_marker_value | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._reject_diary_output_path | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._resolve_allowed_from_draft_path | harbor/core/log_draft.py | unknown | standard |
+| harbor.core.log_draft._resolve_cli_input_path | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._resolve_diary_draft_boundary | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._resolve_latest_draft_source | harbor/core/log_draft.py | unknown | standard |
 | harbor.core.log_draft._resolve_output_path | harbor/core/log_draft.py | unknown | standard |
@@ -458,7 +459,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.module_capsule.preview_module_capsule | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.read_capsule_fingerprint | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.resolve_module_capsule_paths | harbor/core/module_capsule.py | unknown | standard |
-| harbor.core.module_capsule.write_module_capsule | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule.write_module_capsule | harbor/core/module_capsule.py | public | strict |
 | harbor.core.module_skill.check_capsule_ready_for_skill | harbor/core/module_skill.py | unknown | standard |
 | harbor.core.module_skill.generate_module_skill | harbor/core/module_skill.py | unknown | standard |
 | harbor.core.module_skill.normalize_skill_slug | harbor/core/module_skill.py | unknown | standard |
@@ -531,6 +532,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.utils.find_function_node | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.iter_project_files | harbor/core/utils.py | public | strict |
 | harbor.core.workspace._build_path | harbor/core/workspace.py | unknown | standard |
+| harbor.core.workspace._looks_like_windows_absolute_path | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace._normalize_path_like | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace._to_bool | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace._validate_within_repo | harbor/core/workspace.py | unknown | standard |
@@ -539,7 +541,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.workspace.load_workspace_paths | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace.parse_workspace_export_options | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace.resolve_workspace_config_path | harbor/core/workspace.py | unknown | standard |
-| harbor.core.workspace.write_workspace_config | harbor/core/workspace.py | unknown | standard |
+| harbor.core.workspace.write_workspace_config | harbor/core/workspace.py | public | strict |
 | harbor.core.workspace_inspect.WorkspaceGeneratedViewsStatus.to_dict | harbor/core/workspace_inspect.py | unknown | standard |
 | harbor.core.workspace_inspect.WorkspaceGitTrackingStatus.to_dict | harbor/core/workspace_inspect.py | unknown | standard |
 | harbor.core.workspace_inspect.WorkspaceLegacyPathStatus.to_dict | harbor/core/workspace_inspect.py | unknown | standard |

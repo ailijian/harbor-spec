@@ -94,6 +94,12 @@ def _build_path(
     enforce_within_repo: bool,
 ) -> Path:
     raw_value = value if value not in (None, "") else default
+    if enforce_within_repo and value not in (None, "") and _looks_like_windows_absolute_path(value):
+        normalized = str(value or "").strip().replace("\\", "/")
+        raise ValueError(
+            f"Invalid workspace path for '{field_name}': '{value}'. "
+            f"Resolved path '{normalized}' escapes repo root '{repo_root.as_posix()}'."
+        )
     resolved = _normalize_path_like(raw_value, repo_root=repo_root)
     if enforce_within_repo:
         _validate_within_repo(resolved, repo_root=repo_root, field_name=field_name, raw_value=raw_value)

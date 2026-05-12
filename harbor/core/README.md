@@ -50,7 +50,9 @@
 | harbor.core.log_draft.write_diary_entry_from_draft | Write one structured diary entry from an approved draft s... | strict | ❌ Missing |
 | harbor.core.log_draft.write_last_log_marker | Best-effort update of `.harbor/state/log/last_log_marker.... | strict | ❌ Missing |
 | harbor.core.log_draft.write_latest_diary_draft_cache | Best-effort write of latest diary draft runtime cache und... | strict | ❌ Missing |
-| harbor.core.project_structure.write_project_structure | — | strict | ❌ Missing |
+| harbor.core.module_capsule.write_module_capsule | Write the canonical Module Capsule views for one module. | strict | ❌ Missing |
+| harbor.core.project_structure.write_project_structure | Write the canonical project-structure view and optional e... | strict | ❌ Missing |
+| harbor.core.workspace.write_workspace_config | — | strict | ❌ Missing |
 
 ## Internal Details (optional)
 <details>
@@ -220,6 +222,7 @@
 | harbor.core.init_wizard._load_template_text | — | standard | ⚪ Missing |
 | harbor.core.contract_presence._looks_like_contract_doc | — | standard | ⚪ Missing |
 | harbor.core.project_structure._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
+| harbor.core.workspace._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.l2._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._mask_key | — | standard | ⚪ Missing |
@@ -234,7 +237,7 @@
 | harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_changed_file | — | standard | ⚪ Missing |
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
-| harbor.core.log_draft._normalize_cli_input_path | — | standard | ⚪ Missing |
+| harbor.core.log_draft._normalize_cli_input_path | Normalize repo-relative CLI paths so Windows separators s... | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
@@ -277,6 +280,7 @@
 | harbor.core.log_draft._resolve_allowed_from_draft_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_author | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
+| harbor.core.log_draft._resolve_cli_input_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_diary_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_diary_draft_boundary | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | — | standard | ⚪ Missing |
@@ -465,9 +469,7 @@
 | harbor.core.workspace_inspect.workspace_inspect_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.workspace_migrate_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.write | — | standard | ⚪ Missing |
-| harbor.core.module_capsule.write_module_capsule | — | standard | ⚪ Missing |
 | harbor.core.module_skill.write_module_skill | — | standard | ⚪ Missing |
-| harbor.core.workspace.write_workspace_config | — | standard | ⚪ Missing |
 
 </details>
 
