@@ -110,7 +110,8 @@ class L2Generator:
         功能:
           - 从索引缓存聚合该模块下的 L3 函数（public/internal）。
           - 调用 DDT 校验，生成每个函数的绑定状态。
-          - 稳定排序并渲染为 Markdown 文本。
+          - 按稳定多键顺序排序并渲染为 Markdown 文本。
+          - 当多个符号短名相同时，跨平台保持一致的 README 行顺序。
 
         使用场景:
           - CLI `harbor gen l2`。
@@ -152,8 +153,18 @@ class L2Generator:
         for typ, b, msg in rep.violations:
             bind_bad.setdefault(b.func_id, []).append((typ, msg))
 
-        def name_key(it: Dict[str, Any]) -> str:
-            return it.get("qualified_name", it["id"]).split(".")[-1]
+        def item_sort_key(it: Dict[str, Any]) -> Tuple[str, str, str, int, str]:
+            qualified = str(it.get("qualified_name") or it.get("id") or "")
+            short_name = qualified.split(".")[-1] if qualified else str(it.get("name") or "")
+            file_path = _to_repo_relative(str(it.get("_file_path") or ""), cwd) or str(it.get("_file_path") or "").replace(
+                "\\",
+                "/",
+            )
+            try:
+                lineno = int(it.get("lineno") or 0)
+            except Exception:
+                lineno = 0
+            return (short_name, qualified, file_path, lineno, str(it.get("id") or ""))
 
         def ddt_status(it: Dict[str, Any]) -> str:
             fid = it["id"]
@@ -180,8 +191,8 @@ class L2Generator:
 
         pub = [it for it in items if (it.get("scope") or "internal") == "public"]
         internal = [it for it in items if (it.get("scope") or "internal") != "public"]
-        pub_sorted = sorted(pub, key=name_key)
-        int_sorted = sorted(internal, key=name_key)
+        pub_sorted = sorted(pub, key=item_sort_key)
+        int_sorted = sorted(internal, key=item_sort_key)
 
         lines: List[str] = []
         lines.append(f"# Module: {module_path}")

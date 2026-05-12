@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-12T15:26:34Z",
+  "accepted_at": "2026-05-12T17:30:59Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -3760,7 +3760,7 @@
         "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator.compute_meta_hash"
       },
       {
-        "body_hash": "92c56ee4eee7a5dcb8133ff58cae45ecab321ba924a8a8777a54ed5284139a38",
+        "body_hash": "dbbcbb58ee092c7817c897b0d32cc909444e46ce0d7c62541bd6b40bb467b420",
         "contract_hash": "eae31c8837771e4cb8e048739e41db02b79a313b27fe543ef06a8af8047e24a9",
         "contract_presence": "present",
         "contract_required": true,
@@ -5404,6 +5404,18 @@
         "target_id": "python:harbor/core/readonly_index.py:function:harbor.core.readonly_index._build_transient_index"
       },
       {
+        "body_hash": "0c104534f41f1c1bccae9dcb208f96015c20eebebc7c529a01aa9619dfc61191",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/readonly_index.py",
+        "func_id": "harbor.core.readonly_index._load_existing_db_index",
+        "id": "harbor.core.readonly_index._load_existing_db_index",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/readonly_index.py:function:harbor.core.readonly_index._load_existing_db_index"
+      },
+      {
         "body_hash": "f213b4f86a5f073164e7678e74177983c2b76be6b2bb553dd1bf68643cf7118e",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -5416,7 +5428,7 @@
         "target_id": "python:harbor/core/readonly_index.py:function:harbor.core.readonly_index._resolve_index_path"
       },
       {
-        "body_hash": "d535cca693c088e65f780e25745e6a125b5ddba4af037bca2f3d949af090b8f7",
+        "body_hash": "d1cc4546d563524569736723a1ecb365a9163a0dbfa78089c35040e2ae7bd7e2",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -14606,6 +14618,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_stale.py:function:tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_missing"
+      },
+      {
+        "body_hash": "0fe37ad9b3579b0a3b7579f313d22a65a680c131e508b77db6085c17d7a9d4df",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_stale.py",
+        "func_id": "tests.test_stale.test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order",
+        "id": "tests.test_stale.test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_stale.py:function:tests.test_stale.test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order"
       },
       {
         "body_hash": "b583c5717383dc72bc68867e3b041a028d9d02872a3a7eb44228e412dfde34ea",

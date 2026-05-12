@@ -1,4 +1,5 @@
 import json
+from types import SimpleNamespace
 from pathlib import Path
 
 from harbor.core.l2 import L2Generator
@@ -305,3 +306,56 @@ def test_check_module_derived_views_stale_is_up_to_date_without_runtime_index_ca
     assert summary.module_capsule.status == "up_to_date"
     assert not (tmp_path / ".harbor" / "cache" / "l3_index.json").exists()
     assert not (tmp_path / ".harbor" / "cache" / "harbor.db").exists()
+
+
+def test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order(
+    tmp_path: Path, monkeypatch
+):
+    monkeypatch.chdir(tmp_path)
+    idx = tmp_path / ".harbor" / "cache" / "l3_index.json"
+    idx.parent.mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr("harbor.core.l2.DDTScanner.scan_tests", lambda self: [])
+    monkeypatch.setattr(
+        "harbor.core.l2.DDTValidator.validate",
+        lambda self, bindings: SimpleNamespace(valid=[], violations=[]),
+    )
+
+    entries = {
+        "harbor/core/a.py": {
+            "items": [
+                {
+                    "id": "harbor.core.a.Alpha.to_dict",
+                    "qualified_name": "harbor.core.a.Alpha.to_dict",
+                    "name": "to_dict",
+                    "scope": "public",
+                    "strictness": "strict",
+                    "lineno": 1,
+                }
+            ]
+        },
+        "harbor/core/b.py": {
+            "items": [
+                {
+                    "id": "harbor.core.b.Beta.to_dict",
+                    "qualified_name": "harbor.core.b.Beta.to_dict",
+                    "name": "to_dict",
+                    "scope": "public",
+                    "strictness": "strict",
+                    "lineno": 1,
+                }
+            ]
+        },
+    }
+
+    idx.write_text(json.dumps({"files": entries}, ensure_ascii=False), encoding="utf-8")
+    first = L2Generator().generate("harbor/core")
+
+    reversed_entries = {
+        "harbor/core/b.py": entries["harbor/core/b.py"],
+        "harbor/core/a.py": entries["harbor/core/a.py"],
+    }
+    idx.write_text(json.dumps({"files": reversed_entries}, ensure_ascii=False), encoding="utf-8")
+    second = L2Generator().generate("harbor/core")
+
+    assert first == second
+    assert first.index("harbor.core.a.Alpha.to_dict") < first.index("harbor.core.b.Beta.to_dict")

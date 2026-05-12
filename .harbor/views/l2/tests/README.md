@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-12T16:01:48Z"
+generated_at: "2026-05-12T17:29:36Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 93
@@ -102,8 +102,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:c5720559a991ac0296349fcba9971903f68dbd91756f2af8fe5ef36cb7e28ee0"
-contract_fingerprint: "sha256:2330bfdd622141276ec6593bf7afcf6c13ae56b750fa916166ec29892b083c59"
+source_fingerprint: "sha256:4d6f0be73bd2a4a8a1a4a398f1438ab5c07691daa83a6957d4559030c95d9f6c"
+contract_fingerprint: "sha256:eaa4f6175beb1f9d35397d7408416a8c69652f1dac6267b6dbde2dffb6e3e02b"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -587,6 +587,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_stale.test_l2_export_skips_compare_when_canonical_unavailable | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_mismatch | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_missing | — | standard | ⚪ Missing |
+| tests.test_stale.test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | — | standard | ⚪ Missing |

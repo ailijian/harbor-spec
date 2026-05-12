@@ -478,6 +478,7 @@
 | tests.test_stale.test_l2_export_skips_compare_when_canonical_unavailable | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_mismatch | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_missing | — | standard | ⚪ Missing |
+| tests.test_stale.test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | — | standard | ⚪ Missing |
