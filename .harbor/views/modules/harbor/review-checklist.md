@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "review_checklist"
 module: "harbor"
-generated_at: "2026-05-13T09:02:56Z"
+generated_at: "2026-05-13T10:35:47Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
-source_path_count: 56
+source_path_count: 57
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -48,6 +48,7 @@ source_paths:
   - "harbor/core/log_draft.py"
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
+  - "harbor/core/path_normalization.py"
   - "harbor/core/project_structure.py"
   - "harbor/core/readonly_index.py"
   - "harbor/core/repair_guidance.py"
@@ -65,8 +66,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:df6dfb1a74a28dea562a6fb9c8fadf1d53d53e23fb6c8d9d4fd1138b723db4eb"
-contract_fingerprint: "sha256:18ab753a662af2bca7bfb26380f145048bc5e07db3111ccb87390aa9dbe75355"
+source_fingerprint: "sha256:d7dd6c7b5908c1a15c10b952dd6929cd07126522d976a31faad37f26eb2228d3"
+contract_fingerprint: "sha256:f2adcd9dd75181808e3fba31bfab62ce00dde3ea17accfa2a920c7af774ef9b7"
 generator_fingerprint: "sha256:045bb540a24521f96101c225aaa2874da1e7d4c5bdc7e724231e449cada8461a"
 ---
 

@@ -380,6 +380,7 @@
 | harbor.core.doctor._status_text | — | standard | ⚪ Missing |
 | harbor.core.doctor._status_to_json | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._strictness_rank | — | standard | ⚪ Missing |
+| harbor.core.path_normalization._strip_root_prefix | — | standard | ⚪ Missing |
 | harbor.core.log_draft._summarize_affected_areas_for_details | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._summarize_strictness | — | standard | ⚪ Missing |
 | harbor.core.log_draft._summarize_validation_for_details | — | standard | ⚪ Missing |
@@ -502,6 +503,7 @@
 | harbor.core.readonly_index.load_readonly_index | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_config | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_paths | — | standard | ⚪ Missing |
+| harbor.core.path_normalization.looks_like_absolute_path | — | standard | ⚪ Missing |
 | harbor.adapters.base.ContractSubject.make_target_id | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.merge_generated_at | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.module_capsule_dir | — | standard | ⚪ Missing |
@@ -509,6 +511,7 @@
 | harbor.core.changed_scope.normalize_changed_path | — | standard | ⚪ Missing |
 | harbor.core.l2.normalize_indexed_module_candidate | 将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。 | standard | ⚪ Missing |
 | harbor.core.module_capsule.normalize_module_path | — | standard | ⚪ Missing |
+| harbor.core.path_normalization.normalize_path_separators | — | standard | ⚪ Missing |
 | harbor.core.module_skill.normalize_skill_slug | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.hashing.normalize_text | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.hashing.normalized_sha256 | — | standard | ⚪ Missing |
@@ -523,6 +526,7 @@
 | harbor.core.project_structure.rank_key_file | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.read_capsule_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.render_frontmatter | — | standard | ⚪ Missing |
+| harbor.core.path_normalization.repo_relative_path | — | standard | ⚪ Missing |
 | harbor.core.advice_config.resolve_advice_settings | — | standard | ⚪ Missing |
 | harbor.core.log_draft.resolve_draft_source | Resolve and parse one authorized draft source for `harbor... | standard | ⚪ Missing |
 | harbor.core.module_capsule.resolve_module_capsule_paths | — | standard | ⚪ Missing |
@@ -534,6 +538,7 @@
 | harbor.core.doctor.run_derived_views_check | 检查模块派生视图状态并汇总为 Doctor 结果。 | standard | ⚪ Missing |
 | harbor.core.doctor.run_skill_reference_check | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_workspace_status_check | — | standard | ⚪ Missing |
+| harbor.core.path_normalization.sanitize_path_for_display | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.sanitize_text | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.sanitize_text | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine.scan | — | standard | ⚪ Missing |

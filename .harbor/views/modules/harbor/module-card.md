@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-13T09:02:56Z"
+generated_at: "2026-05-13T10:35:47Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
-source_path_count: 56
+source_path_count: 57
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -48,6 +48,7 @@ source_paths:
   - "harbor/core/log_draft.py"
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
+  - "harbor/core/path_normalization.py"
   - "harbor/core/project_structure.py"
   - "harbor/core/readonly_index.py"
   - "harbor/core/repair_guidance.py"
@@ -65,11 +66,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:df6dfb1a74a28dea562a6fb9c8fadf1d53d53e23fb6c8d9d4fd1138b723db4eb"
-contract_fingerprint: "sha256:18ab753a662af2bca7bfb26380f145048bc5e07db3111ccb87390aa9dbe75355"
+source_fingerprint: "sha256:d7dd6c7b5908c1a15c10b952dd6929cd07126522d976a31faad37f26eb2228d3"
+contract_fingerprint: "sha256:f2adcd9dd75181808e3fba31bfab62ce00dde3ea17accfa2a920c7af774ef9b7"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "409b1a0b9aadee4ad647b2d01badb3f0e13a3f1301526425818b5347c74a4ad5"
-fingerprint: "409b1a0b9aadee4ad647b2d01badb3f0e13a3f1301526425818b5347c74a4ad5"
+view_fingerprint: "9f43b8d8b3fb453b62044d215251238fc8b4974fc3ff3392b983043233499a52"
+fingerprint: "9f43b8d8b3fb453b62044d215251238fc8b4974fc3ff3392b983043233499a52"
 ---
 
 # Module Card: harbor
@@ -129,6 +130,7 @@ harbor/core/l2.py
 harbor/core/log_draft.py
 harbor/core/module_capsule.py
 harbor/core/module_skill.py
+harbor/core/path_normalization.py
 harbor/core/project_structure.py
 harbor/core/readonly_index.py
 harbor/core/repair_guidance.py
@@ -583,6 +585,11 @@ harbor/utils/i18n.py
 | harbor.core.module_skill.normalize_skill_slug | harbor/core/module_skill.py | unknown | standard |
 | harbor.core.module_skill.skill_dir_for_module | harbor/core/module_skill.py | unknown | standard |
 | harbor.core.module_skill.write_module_skill | harbor/core/module_skill.py | unknown | standard |
+| harbor.core.path_normalization._strip_root_prefix | harbor/core/path_normalization.py | unknown | standard |
+| harbor.core.path_normalization.looks_like_absolute_path | harbor/core/path_normalization.py | unknown | standard |
+| harbor.core.path_normalization.normalize_path_separators | harbor/core/path_normalization.py | unknown | standard |
+| harbor.core.path_normalization.repo_relative_path | harbor/core/path_normalization.py | unknown | standard |
+| harbor.core.path_normalization.sanitize_path_for_display | harbor/core/path_normalization.py | unknown | standard |
 | harbor.core.project_structure._area_purpose | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._belongs_to_module | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._build_transient_index_from_files | harbor/core/project_structure.py | unknown | standard |

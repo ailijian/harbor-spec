@@ -192,6 +192,39 @@ def test_stale_changed_windows_path_and_stable_order(monkeypatch):
     assert out.index("harbor/cli") < out.index("harbor/core")
 
 
+def test_stale_changed_duplicate_repo_name_root_does_not_emit_wrong_module_prefix(tmp_path: Path, monkeypatch):
+    repo_root = tmp_path / "harbor-spec" / "harbor-spec"
+    (repo_root / "harbor" / "core").mkdir(parents=True, exist_ok=True)
+    (repo_root / "tests").mkdir(parents=True, exist_ok=True)
+    monkeypatch.chdir(repo_root)
+
+    rep = SimpleNamespace(
+        drift=[
+            SimpleNamespace(file_path=str((repo_root / "harbor" / "core" / "sync.py").resolve())),
+            SimpleNamespace(file_path=str((repo_root / "tests" / "test_sync_engine.py").resolve())),
+        ],
+        modified=[],
+        contract_changed=[],
+        untracked=[],
+        missing=[],
+    )
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: rep)
+    monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda: ["harbor", "harbor/core", "tests"])
+    checked = []
+    monkeypatch.setattr(
+        cli_main,
+        "check_module_derived_views_stale",
+        lambda module: checked.append(module) or _sample_summary(module),
+    )
+
+    out = run_cmd(["stale", "--changed"])
+
+    assert checked == ["harbor/core", "tests"]
+    assert "harbor-spec/harbor" not in out
+    assert "harbor-spec/tests" not in out
+    assert "no indexed records found for module" not in out
+
+
 def test_stale_all_scope_runs(monkeypatch):
     monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda: ["harbor/cli", "harbor/core"])
     checked = []

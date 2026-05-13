@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-13T09:03:04Z"
+generated_at: "2026-05-13T10:36:23Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 35
+source_path_count: 36
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
@@ -33,6 +33,7 @@ source_paths:
   - "harbor/core/log_draft.py"
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
+  - "harbor/core/path_normalization.py"
   - "harbor/core/project_structure.py"
   - "harbor/core/readonly_index.py"
   - "harbor/core/repair_guidance.py"
@@ -44,11 +45,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:514a497e92734c36d7cb432b080319be0a742731faf4457925ade969704b46c3"
-contract_fingerprint: "sha256:547aa9d93e684aa93823c2e30369b04f1c1a3aac2184e6543823903844165504"
+source_fingerprint: "sha256:722e835bf2bc0a6a710094b14a432b1c4b1e6207101b8cc6dd80888460699b71"
+contract_fingerprint: "sha256:c6d88a9b52a8fcc4c95c60571722aaa98f046bf2ef66f582b3b41c2a2962e0b1"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "21da972a562c839c4d7a1645d0bf47d9b7f6e34c42964ffcdf4a58573e3dffbc"
-fingerprint: "21da972a562c839c4d7a1645d0bf47d9b7f6e34c42964ffcdf4a58573e3dffbc"
+view_fingerprint: "57097046bd0d43c05fe1b8aa6fde96343920380540c0637336e2f856f6f0b785"
+fingerprint: "57097046bd0d43c05fe1b8aa6fde96343920380540c0637336e2f856f6f0b785"
 ---
 
 # Module Card: harbor/core
@@ -93,6 +94,7 @@ harbor/core/l2.py
 harbor/core/log_draft.py
 harbor/core/module_capsule.py
 harbor/core/module_skill.py
+harbor/core/path_normalization.py
 harbor/core/project_structure.py
 harbor/core/readonly_index.py
 harbor/core/repair_guidance.py
@@ -486,6 +488,11 @@ harbor/core/workspace_migrate.py
 | harbor.core.module_skill.normalize_skill_slug | harbor/core/module_skill.py | unknown | standard |
 | harbor.core.module_skill.skill_dir_for_module | harbor/core/module_skill.py | unknown | standard |
 | harbor.core.module_skill.write_module_skill | harbor/core/module_skill.py | unknown | standard |
+| harbor.core.path_normalization._strip_root_prefix | harbor/core/path_normalization.py | unknown | standard |
+| harbor.core.path_normalization.looks_like_absolute_path | harbor/core/path_normalization.py | unknown | standard |
+| harbor.core.path_normalization.normalize_path_separators | harbor/core/path_normalization.py | unknown | standard |
+| harbor.core.path_normalization.repo_relative_path | harbor/core/path_normalization.py | unknown | standard |
+| harbor.core.path_normalization.sanitize_path_for_display | harbor/core/path_normalization.py | unknown | standard |
 | harbor.core.project_structure._area_purpose | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._belongs_to_module | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._build_transient_index_from_files | harbor/core/project_structure.py | unknown | standard |

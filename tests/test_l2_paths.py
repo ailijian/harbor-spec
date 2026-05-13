@@ -1,3 +1,4 @@
+import os
 import hashlib
 import json
 from pathlib import Path
@@ -5,7 +6,12 @@ from pathlib import Path
 import pytest
 import yaml
 
-from harbor.core.l2 import L2Generator, normalize_indexed_module_candidate
+from harbor.core.l2 import (
+    L2Generator,
+    _repo_relative_index_path,
+    _to_repo_relative,
+    normalize_indexed_module_candidate,
+)
 
 
 def _write_yaml(path: Path, payload: dict) -> None:
@@ -116,6 +122,33 @@ def test_normalize_indexed_module_candidate_maps_repo_absolute_file_path(tmp_pat
     abs_file = (tmp_path / "harbor" / "core" / "l2.py").resolve()
     module = normalize_indexed_module_candidate(str(abs_file), repo_root=tmp_path.resolve())
     assert module == "harbor/core"
+
+
+def test_l2_repo_relative_helpers_handle_duplicate_repo_name_root(tmp_path: Path, monkeypatch):
+    repo_root = tmp_path / "harbor-spec" / "harbor-spec"
+    file_path = repo_root / "tests" / "test_sync_engine.py"
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text("def test_ok():\n    assert True\n", encoding="utf-8")
+    monkeypatch.chdir(repo_root)
+
+    rel = _repo_relative_index_path(str(file_path.resolve()), repo_root=repo_root)
+    display = _to_repo_relative(str(file_path.resolve()), repo_root=repo_root)
+    module = normalize_indexed_module_candidate(str(file_path.resolve()), repo_root=repo_root)
+
+    assert rel == "tests/test_sync_engine.py"
+    assert display == "tests/test_sync_engine.py"
+    assert module == "tests"
+    assert not rel.startswith("harbor-spec/")
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows path normalization scenario")
+def test_l2_repo_relative_helpers_normalize_github_actions_windows_path():
+    repo_root = Path(r"D:\a\harbor-spec\harbor-spec")
+    path_text = r"D:\a\harbor-spec\harbor-spec\tests\test_sync_engine.py"
+
+    assert _repo_relative_index_path(path_text, repo_root=repo_root) == "tests/test_sync_engine.py"
+    assert _to_repo_relative(path_text, repo_root=repo_root) == "tests/test_sync_engine.py"
+    assert normalize_indexed_module_candidate(path_text, repo_root=repo_root) == "tests"
 
 
 def test_l2_repeat_write_keeps_canonical_content_when_body_unchanged(tmp_path: Path, monkeypatch):

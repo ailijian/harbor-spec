@@ -1,5 +1,8 @@
+import os
 from pathlib import Path
 from types import SimpleNamespace
+
+import pytest
 
 from harbor.core.changed_scope import (
     collect_changed_modules_from_status,
@@ -84,3 +87,41 @@ def test_detect_generator_integrity_changes_matches_only_guarded_files(tmp_path,
         "harbor/core/l2.py",
         "harbor/core/module_capsule.py",
     ]
+
+
+def test_collect_changed_modules_from_status_uses_full_repo_root_for_duplicate_repo_name_paths(tmp_path, monkeypatch):
+    repo_root = tmp_path / "harbor-spec" / "harbor-spec"
+    (repo_root / "harbor" / "core").mkdir(parents=True, exist_ok=True)
+    (repo_root / "tests").mkdir(parents=True, exist_ok=True)
+    monkeypatch.chdir(repo_root)
+    report = _status_report(
+        str((repo_root / "harbor" / "core" / "sync.py").resolve()),
+        str((repo_root / "tests" / "test_sync_engine.py").resolve()),
+    )
+
+    modules = collect_changed_modules_from_status(
+        report,
+        repo_root=repo_root,
+        indexed_modules=["harbor", "harbor/core", "tests"],
+    )
+
+    assert modules == ["harbor", "harbor/core", "tests"]
+    assert all(not module.startswith("harbor-spec/") for module in modules)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows path normalization scenario")
+def test_collect_changed_modules_from_status_normalizes_github_actions_windows_paths():
+    report = _status_report(
+        r"D:\a\harbor-spec\harbor-spec\harbor\core\sync.py",
+        r"D:\a\harbor-spec\harbor-spec\tests\test_sync_engine.py",
+    )
+
+    modules = collect_changed_modules_from_status(
+        report,
+        repo_root=Path(r"D:\a\harbor-spec\harbor-spec"),
+        indexed_modules=["harbor", "harbor/core", "tests"],
+    )
+
+    assert modules == ["harbor", "harbor/core", "tests"]
+    assert "harbor-spec/harbor" not in modules
+    assert "harbor-spec/tests" not in modules

@@ -1,11 +1,15 @@
 import json
+import os
 from types import SimpleNamespace
 from pathlib import Path
+
+import pytest
 
 from harbor.core.l2 import L2Generator
 from harbor.core.module_capsule import collect_module_context
 from harbor.core.module_capsule import write_module_capsule
 from harbor.core.stale import (
+    _sanitize_single_path,
     check_l2_readme_stale,
     check_module_derived_views_stale,
     stale_report_to_dict,
@@ -162,6 +166,29 @@ def test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_re
     assert summary.l2_readme_export.status == "unknown"
     assert summary.module_capsule.status == "unknown"
     assert summary.module_capsule.reason == "no indexed records found for module"
+
+
+def test_stale_sanitize_single_path_uses_full_repo_root_for_duplicate_repo_name(tmp_path: Path, monkeypatch):
+    repo_root = tmp_path / "harbor-spec" / "harbor-spec"
+    module_dir = repo_root / "harbor" / "core"
+    module_dir.mkdir(parents=True, exist_ok=True)
+    monkeypatch.chdir(repo_root)
+
+    sanitized = _sanitize_single_path(str(module_dir.resolve()))
+
+    assert sanitized == "harbor/core"
+    assert sanitized != "harbor-spec/harbor/core"
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows path normalization scenario")
+def test_stale_sanitize_single_path_normalizes_github_actions_windows_module_path():
+    repo_root = Path(r"D:\a\harbor-spec\harbor-spec")
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr("harbor.core.stale.Path.cwd", lambda: repo_root)
+        sanitized = _sanitize_single_path(r"D:\a\harbor-spec\harbor-spec\harbor\core")
+
+    assert sanitized == "harbor/core"
+    assert sanitized != "harbor-spec/harbor/core"
 
 
 def test_l2_export_ok_when_canonical_up_to_date_and_export_matches(tmp_path: Path, monkeypatch):

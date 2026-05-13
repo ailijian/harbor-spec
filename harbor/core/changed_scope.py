@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import re
 from pathlib import Path
 from typing import Iterable, List, Optional, Sequence
 
 from harbor.core.l2 import collect_all_indexed_modules, collect_modules_from_paths
+from harbor.core.path_normalization import repo_relative_path
 
 
 _STATUS_REPORT_BUCKETS = (
@@ -40,27 +40,7 @@ def collect_changed_paths_from_status(report) -> List[str]:
 
 def normalize_changed_path(path: str | Path, *, repo_root: Optional[Path] = None) -> Optional[str]:
     root = (repo_root or Path.cwd()).resolve()
-    raw = str(path or "").strip()
-    if not raw:
-        return None
-
-    normalized = raw.replace("\\", "/")
-    if re.match(r"(?i)^[a-z]:/", normalized) or normalized.startswith("//"):
-        marker = f"/{root.name.lower()}/"
-        lower = normalized.lower()
-        idx = lower.find(marker)
-        if idx == -1:
-            return None
-        rel = normalized[idx + len(marker) :].strip("/")
-        return rel or None
-
-    candidate = Path(normalized)
-    absolute_candidate = candidate if candidate.is_absolute() else (root / candidate)
-    try:
-        rel = absolute_candidate.resolve().relative_to(root).as_posix()
-    except Exception:
-        return None
-    return rel or None
+    return repo_relative_path(path, repo_root=root)
 
 
 def expand_modules_with_indexed_parents(

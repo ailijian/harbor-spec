@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T09:03:12Z"
+generated_at: "2026-05-13T10:36:59Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -104,11 +104,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:51eeb0cd12be75cfade66fd205ff69fd26cd3da81ac16d5de6793f9ff0a2a12d"
-contract_fingerprint: "sha256:3485fbaced34fdb6bd158f20707444b5d6c41cc43a2eb121763628e299333eb3"
+source_fingerprint: "sha256:eeeccc11053f8b71a4d206bba162e78faf760ce52609bbd14c872d4e454f90ed"
+contract_fingerprint: "sha256:bdf1f7b95f393e3e6b1b9628848a2ef3ca132a4aaa0772d0d6738c2924674d9a"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "5bdd7296c3fac377d4524487c9ee18647ca576a6125efc4bba8ecd328c78adcf"
-fingerprint: "5bdd7296c3fac377d4524487c9ee18647ca576a6125efc4bba8ecd328c78adcf"
+view_fingerprint: "958c67249ded0c5a46e1460f6931c8bd4d85b276cc1fe2204b103a0b832d3c59"
+fingerprint: "958c67249ded0c5a46e1460f6931c8bd4d85b276cc1fe2204b103a0b832d3c59"
 ---
 
 # Module Card: tests
@@ -295,7 +295,9 @@ tests/test_workspace_paths.py
 | tests.test_change_window_snapshot.test_snapshot_does_not_store_file_content_or_diff_body | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_write_snapshot_creates_json_with_required_schema | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_changed_scope._status_report | tests/test_changed_scope.py | unknown | standard |
+| tests.test_changed_scope.test_collect_changed_modules_from_status_normalizes_github_actions_windows_paths | tests/test_changed_scope.py | unknown | standard |
 | tests.test_changed_scope.test_collect_changed_modules_from_status_normalizes_repo_absolute_paths_and_adds_indexed_parents | tests/test_changed_scope.py | unknown | standard |
+| tests.test_changed_scope.test_collect_changed_modules_from_status_uses_full_repo_root_for_duplicate_repo_name_paths | tests/test_changed_scope.py | unknown | standard |
 | tests.test_changed_scope.test_collect_changed_paths_from_status_includes_all_relevant_buckets | tests/test_changed_scope.py | unknown | standard |
 | tests.test_changed_scope.test_detect_generator_integrity_changes_matches_only_guarded_files | tests/test_changed_scope.py | unknown | standard |
 | tests.test_checkpoint_ci._contract_report | tests/test_checkpoint_ci.py | unknown | standard |
@@ -551,6 +553,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_stale.test_stale_all_scope_runs | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_changed_and_all_args_are_recognized | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_changed_checks_both_views | tests/test_cli_stale.py | unknown | standard |
+| tests.test_cli_stale.test_stale_changed_duplicate_repo_name_root_does_not_emit_wrong_module_prefix | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_changed_windows_path_and_stable_order | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_ci_all_passes_without_runtime_index_cache | tests/test_cli_stale.py | unknown | standard |
 | tests.test_cli_stale.test_stale_ci_arg_is_recognized | tests/test_cli_stale.py | unknown | standard |
@@ -755,6 +758,8 @@ tests/test_workspace_paths.py
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_repeat_write_keeps_canonical_content_when_body_unchanged | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_repo_relative_helpers_handle_duplicate_repo_name_root | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_repo_relative_helpers_normalize_github_actions_windows_path | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | tests/test_l2_paths.py | unknown | standard |
 | tests.test_lock_flags._prepare_proj | tests/test_lock_flags.py | unknown | standard |
@@ -930,6 +935,8 @@ tests/test_workspace_paths.py
 | tests.test_stale.test_l2_readme_unknown_when_no_indexed_records | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_up_to_date_when_content_matches_except_timestamp | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_stale_json_contains_l2_readme_export_view_name | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_stale_sanitize_single_path_normalizes_github_actions_windows_module_path | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_stale_sanitize_single_path_uses_full_repo_root_for_duplicate_repo_name | tests/test_stale.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_contract_gap_for_required_target_without_docstring | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_contract_parse_error_when_contract_presence_is_malformed | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_drift_detection | tests/test_sync_engine.py | unknown | standard |

@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-13T09:01:59Z"
+generated_at: "2026-05-13T10:35:32Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
-source_path_count: 56
+source_path_count: 57
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -48,6 +48,7 @@ source_paths:
   - "harbor/core/log_draft.py"
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
+  - "harbor/core/path_normalization.py"
   - "harbor/core/project_structure.py"
   - "harbor/core/readonly_index.py"
   - "harbor/core/repair_guidance.py"
@@ -65,8 +66,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:df6dfb1a74a28dea562a6fb9c8fadf1d53d53e23fb6c8d9d4fd1138b723db4eb"
-contract_fingerprint: "sha256:4e24c9adaa090be8da104c0a467bd991ef9e856ff2a663dc6d1ef43a8f7d574c"
+source_fingerprint: "sha256:d7dd6c7b5908c1a15c10b952dd6929cd07126522d976a31faad37f26eb2228d3"
+contract_fingerprint: "sha256:741988f4d92a94141a42cd2f04c62aa1db86473f7391d4c97b4d9d78a04b766f"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -452,6 +453,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.doctor._status_text | — | standard | ⚪ Missing |
 | harbor.core.doctor._status_to_json | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._strictness_rank | — | standard | ⚪ Missing |
+| harbor.core.path_normalization._strip_root_prefix | — | standard | ⚪ Missing |
 | harbor.core.log_draft._summarize_affected_areas_for_details | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._summarize_strictness | — | standard | ⚪ Missing |
 | harbor.core.log_draft._summarize_validation_for_details | — | standard | ⚪ Missing |
@@ -574,6 +576,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.readonly_index.load_readonly_index | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_config | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_paths | — | standard | ⚪ Missing |
+| harbor.core.path_normalization.looks_like_absolute_path | — | standard | ⚪ Missing |
 | harbor.adapters.base.ContractSubject.make_target_id | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.merge_generated_at | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.module_capsule_dir | — | standard | ⚪ Missing |
@@ -581,6 +584,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.changed_scope.normalize_changed_path | — | standard | ⚪ Missing |
 | harbor.core.l2.normalize_indexed_module_candidate | 将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。 | standard | ⚪ Missing |
 | harbor.core.module_capsule.normalize_module_path | — | standard | ⚪ Missing |
+| harbor.core.path_normalization.normalize_path_separators | — | standard | ⚪ Missing |
 | harbor.core.module_skill.normalize_skill_slug | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.hashing.normalize_text | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.hashing.normalized_sha256 | — | standard | ⚪ Missing |
@@ -595,6 +599,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.project_structure.rank_key_file | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.read_capsule_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.render_frontmatter | — | standard | ⚪ Missing |
+| harbor.core.path_normalization.repo_relative_path | — | standard | ⚪ Missing |
 | harbor.core.advice_config.resolve_advice_settings | — | standard | ⚪ Missing |
 | harbor.core.log_draft.resolve_draft_source | Resolve and parse one authorized draft source for `harbor... | standard | ⚪ Missing |
 | harbor.core.module_capsule.resolve_module_capsule_paths | — | standard | ⚪ Missing |
@@ -606,6 +611,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.doctor.run_derived_views_check | 检查模块派生视图状态并汇总为 Doctor 结果。 | standard | ⚪ Missing |
 | harbor.core.doctor.run_skill_reference_check | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_workspace_status_check | — | standard | ⚪ Missing |
+| harbor.core.path_normalization.sanitize_path_for_display | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.sanitize_text | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.sanitize_text | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine.scan | — | standard | ⚪ Missing |

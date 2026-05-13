@@ -12,6 +12,7 @@ from harbor.core.module_capsule import (
     collect_module_context,
     normalize_module_path,
 )
+from harbor.core.path_normalization import sanitize_path_for_display
 from harbor.core.workspace import load_workspace_config, parse_workspace_export_options
 from harbor.utils.i18n import t
 
@@ -393,25 +394,4 @@ def _sanitize_json_text(value: Optional[str]) -> Optional[str]:
 
 
 def _sanitize_single_path(path_text: str) -> str:
-    raw = str(path_text or "").strip()
-    if not raw:
-        return ""
-    normalized = raw.replace("\\", "/")
-    repo_root = Path.cwd().resolve()
-    if re.match(r"(?i)^[a-z]:/", normalized) or normalized.startswith("//"):
-        marker = f"/{repo_root.name.lower()}/"
-        lower = normalized.lower()
-        idx = lower.find(marker)
-        if idx != -1:
-            rel = normalized[idx + len(marker) :].strip("/")
-            if rel:
-                return rel
-        base = Path(normalized.rstrip("/")).name or Path(normalized).name
-        return base or normalized
-    candidate = Path(normalized)
-    if candidate.is_absolute():
-        try:
-            return candidate.resolve().relative_to(repo_root).as_posix()
-        except Exception:
-            return candidate.name or normalized
-    return normalized
+    return sanitize_path_for_display(path_text, repo_root=Path.cwd().resolve())

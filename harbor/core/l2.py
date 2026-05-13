@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from harbor.core.context_integrity import build_context_integrity_metadata, compose_markdown_with_frontmatter
 from harbor.core.ddt import DDTScanner, DDTValidator
+from harbor.core.path_normalization import looks_like_absolute_path, repo_relative_path
 from harbor.core.readonly_index import load_readonly_index
 from harbor.core.utils import find_function_node
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
@@ -47,24 +48,10 @@ def _repo_relative_index_path(path: str | Path, *, repo_root: Path) -> Optional[
     raw = str(path or "").strip()
     if not raw:
         return None
-
     normalized = raw.replace("\\", "/")
-    candidate = Path(normalized)
-    if candidate.is_absolute():
-        try:
-            return candidate.resolve().relative_to(repo_root.resolve()).as_posix()
-        except Exception:
-            return None
-
-    if _looks_like_windows_absolute_path(normalized):
-        marker = f"/{repo_root.name.lower()}/"
-        lower = normalized.lower()
-        idx = lower.find(marker)
-        if idx == -1:
-            return None
-        return normalized[idx + len(marker) :].strip("/")
-
-    return None
+    if not looks_like_absolute_path(normalized):
+        return None
+    return repo_relative_path(normalized, repo_root=repo_root)
 
 
 def normalize_indexed_module_candidate(path: str | Path, *, repo_root: Optional[Path] = None) -> str:
@@ -406,20 +393,4 @@ class L2Generator:
 
 
 def _to_repo_relative(path_text: str, repo_root: Path) -> str:
-    raw = str(path_text or "").strip().replace("\\", "/")
-    if not raw:
-        return ""
-    if _looks_like_windows_absolute_path(raw):
-        marker = f"/{repo_root.name.lower()}/"
-        lower = raw.lower()
-        idx = lower.find(marker)
-        if idx == -1:
-            return ""
-        return raw[idx + len(marker) :].strip("/")
-    path_obj = Path(raw)
-    if path_obj.is_absolute():
-        try:
-            return path_obj.resolve().relative_to(repo_root.resolve()).as_posix()
-        except Exception:
-            return ""
-    return raw.strip("/")
+    return repo_relative_path(path_text, repo_root=repo_root) or ""

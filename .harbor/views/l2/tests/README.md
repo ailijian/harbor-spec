@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-13T09:02:19Z"
+generated_at: "2026-05-13T10:36:45Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -104,8 +104,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:51eeb0cd12be75cfade66fd205ff69fd26cd3da81ac16d5de6793f9ff0a2a12d"
-contract_fingerprint: "sha256:a17efe09443836f0442f8298cea40589a47329097c2e12f7c742c9ad0559b5ca"
+source_fingerprint: "sha256:eeeccc11053f8b71a4d206bba162e78faf760ce52609bbd14c872d4e454f90ed"
+contract_fingerprint: "sha256:7f339143128c60e28c7140b3937cd176caf394682e9b99df7a36afe7f4299068"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -419,7 +419,9 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_workspace_migrate.test_cli_workspace_migrate_without_dry_run_fails | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_collect_all_indexed_modules_from_index_records | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_collect_all_indexed_modules_normalizes_repo_absolute_file_paths | — | standard | ⚪ Missing |
+| tests.test_changed_scope.test_collect_changed_modules_from_status_normalizes_github_actions_windows_paths | — | standard | ⚪ Missing |
 | tests.test_changed_scope.test_collect_changed_modules_from_status_normalizes_repo_absolute_paths_and_adds_indexed_parents | — | standard | ⚪ Missing |
+| tests.test_changed_scope.test_collect_changed_modules_from_status_uses_full_repo_root_for_duplicate_repo_name_paths | — | standard | ⚪ Missing |
 | tests.test_changed_scope.test_collect_changed_paths_from_status_includes_all_relevant_buckets | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_collect_module_context_falls_back_to_transient_source_scan_without_cache | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | — | standard | ⚪ Missing |
@@ -613,6 +615,8 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_stale.test_l2_readme_unknown_when_no_indexed_records | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_readme_up_to_date_when_content_matches_except_timestamp | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_repeat_write_keeps_canonical_content_when_body_unchanged | — | standard | ⚪ Missing |
+| tests.test_l2_paths.test_l2_repo_relative_helpers_handle_duplicate_repo_name_root | — | standard | ⚪ Missing |
+| tests.test_l2_paths.test_l2_repo_relative_helpers_normalize_github_actions_windows_path | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_last_log_marker_round_trip_prefers_last_log_at_and_keeps_legacy_aliases | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_legacy_chore_type_remains_supported | — | standard | ⚪ Missing |
@@ -823,6 +827,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_stale.test_stale_all_scope_runs | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_changed_and_all_args_are_recognized | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_changed_checks_both_views | — | standard | ⚪ Missing |
+| tests.test_cli_stale.test_stale_changed_duplicate_repo_name_root_does_not_emit_wrong_module_prefix | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_changed_windows_path_and_stable_order | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_ci_all_passes_without_runtime_index_cache | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_ci_arg_is_recognized | — | standard | ⚪ Missing |
@@ -839,6 +844,8 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_stale.test_stale_modes_are_mutually_exclusive | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_module_mode_runs | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_reports_all_up_to_date_message | — | standard | ⚪ Missing |
+| tests.test_stale.test_stale_sanitize_single_path_normalizes_github_actions_windows_module_path | — | standard | ⚪ Missing |
+| tests.test_stale.test_stale_sanitize_single_path_uses_full_repo_root_for_duplicate_repo_name | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_stale_view_guidance_maps_context_refresh | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_stale_when_fingerprint_mismatch | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_stale_when_fingerprint_missing | — | standard | ⚪ Missing |
