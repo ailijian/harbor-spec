@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-13T17:51:05Z",
+  "accepted_at": "2026-05-13T21:05:56Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -712,8 +712,8 @@
         "target_id": "python:harbor/adapters/typescript/parser.py:method:harbor.adapters.typescript.parser.TypeScriptLightweightParser.parse"
       },
       {
-        "body_hash": "30eb32bf26d005f1966689df014ecd33e7429c1feafd3ff1c2e5bd92773f01b9",
-        "contract_hash": "fb50110b8e6ef601d9453e4c1bcf5906e47292fa974c7487641ccc71c4af9749",
+        "body_hash": "f5dd3d7af7660ca0300042a990edaefe6051c55958d006ebd5925d1d0ed33f85",
+        "contract_hash": "24139aaf7370d246314996bcc84ccc1b2e7c557f65e3e0e687cf060e027fb9e1",
         "contract_presence": "non_contract_doc",
         "contract_required": false,
         "file_path": "harbor/cli/main.py",
@@ -722,6 +722,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._configure_redirected_windows_stdio"
+      },
+      {
+        "body_hash": "9ee7184b1d9e14b2e061f6dc7e59c6f82bcec4c9b7aa8653a1f35d74f7a890d9",
+        "contract_hash": "66d50c8d2633d57aba34e9c6a73c59c057db34634388a1d8d21686ede132ef4e",
+        "contract_presence": "non_contract_doc",
+        "contract_required": false,
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main._configure_windows_stdio",
+        "id": "harbor.cli.main._configure_windows_stdio",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._configure_windows_stdio"
       },
       {
         "body_hash": "2322d9ca66f9edf093e66a829672e2360d996199c94d55cd3bd8304f35683f4f",
@@ -736,8 +748,44 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._is_log_write_interactive"
       },
       {
-        "body_hash": "69076ab93ff263d28f15c188700ef7541f8251219ad8da52bcf18ed67e54da83",
-        "contract_hash": "e265d74f84b0d9bd927e0a7addbe2b462e48a73ef1ad91059adc458c39ccc975",
+        "body_hash": "0e44b52f07b598d93b3ca3ce235d40003666cdb0dba996faf7c5e3891ec596ea",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main._is_utf8_compatible_stdio_encoding",
+        "id": "harbor.cli.main._is_utf8_compatible_stdio_encoding",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._is_utf8_compatible_stdio_encoding"
+      },
+      {
+        "body_hash": "36dbc9b239c2041520759daed188e7f0c868bb1581317419f5057513b94eed95",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main._normalize_windows_stdio_encoding_name",
+        "id": "harbor.cli.main._normalize_windows_stdio_encoding_name",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._normalize_windows_stdio_encoding_name"
+      },
+      {
+        "body_hash": "64769f44677403cd1346af05a883dba1684690aecc8ad45cf7eaf487725cf5ea",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main._resolve_windows_explicit_stdio_config",
+        "id": "harbor.cli.main._resolve_windows_explicit_stdio_config",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._resolve_windows_explicit_stdio_config"
+      },
+      {
+        "body_hash": "6ce3541a28ee0525c71d043fe33db1ea784646757c336af3e9d97965a7689bbe",
+        "contract_hash": "039bc69236ab6a3dc75e570ec0462545c41c2e8486b2d86780636393ebcdf929",
         "contract_presence": "non_contract_doc",
         "contract_required": false,
         "file_path": "harbor/cli/main.py",
@@ -748,7 +796,19 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._resolve_windows_redirected_stdio_encoding"
       },
       {
-        "body_hash": "8ddbc19f672ec9dc9cceaa81e5c856583a4b491e8b01ce255f91b2f74f899065",
+        "body_hash": "4e1c2a1dd3ecd91df8d723878e4c6910e311fcab9ffa88041f73b7abaa503faf",
+        "contract_hash": "c582411196ab7cdf4a90723cef3d0e4ef1fdc47eafbf8744546c0f232842847c",
+        "contract_presence": "non_contract_doc",
+        "contract_required": false,
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main._resolve_windows_stdio_target",
+        "id": "harbor.cli.main._resolve_windows_stdio_target",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._resolve_windows_stdio_target"
+      },
+      {
+        "body_hash": "442af069a6a7d946414c924e80e6874ba355eba2b414d788c17cb982a2ce0836",
         "contract_hash": "b7e20b383bd355b0238b6b8e52193625a74e9b2e3718b40fc78d8faf3a03f526",
         "contract_presence": "present",
         "contract_required": true,
@@ -9364,7 +9424,7 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_changed_scope_consistency_across_finish_docs_module_seal_and_stale"
       },
       {
-        "body_hash": "b29ffd0d674c460c2eca39e2c22d151cafd62e72f5e43015d89ad8c926fba05d",
+        "body_hash": "7b34cec2ca6a7708f6d08250ed2455b605743bfb8ef0459e6348303184394e0e",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -9376,7 +9436,7 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_locale_encoding"
       },
       {
-        "body_hash": "ad94d090db27b77cb80547473b9abcb1bfb39b2133ee7a6acb04f68d2b8ed72d",
+        "body_hash": "7d2c681e31df50f35b9330b1c797f565eca714191b1a5ba53c891061e03ac703",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -9386,6 +9446,78 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_respects_pythonioencoding"
+      },
+      {
+        "body_hash": "8ff35b44268611fff3f9f5c503c46a2cc3a23091148a9e2d4f6e0099f928473d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_defaults_non_tty_to_utf8",
+        "id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_defaults_non_tty_to_utf8",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_defaults_non_tty_to_utf8"
+      },
+      {
+        "body_hash": "458844f3b8d2c550f191fbde1a14bfedb134369d20688dfcd654b5b0bad3bf52",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_normalizes_non_utf8_tty",
+        "id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_normalizes_non_utf8_tty",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_normalizes_non_utf8_tty"
+      },
+      {
+        "body_hash": "8e567871f592eaef9b1954730887dfce08a0de95e5d8cc1a15965d2e21136af8",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_prefers_utf8_mode",
+        "id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_prefers_utf8_mode",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_prefers_utf8_mode"
+      },
+      {
+        "body_hash": "e34e4e26fb6fd92ee7adf44d22224641d12debeeff80dbca75653327f264be3c",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_reconfigure_failure_does_not_interrupt",
+        "id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_reconfigure_failure_does_not_interrupt",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_reconfigure_failure_does_not_interrupt"
+      },
+      {
+        "body_hash": "326b59a960d7c4250a8d833f06b44e929fa6ba025ab8f8e16e98def2819eef7e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_respects_pythonioencoding",
+        "id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_respects_pythonioencoding",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_respects_pythonioencoding"
+      },
+      {
+        "body_hash": "b9f4dcffcdfbd3c21572b20a5e44d3b43fd83cf824f447c19a482e18d5f7997d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_skips_utf8_tty",
+        "id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_skips_utf8_tty",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_skips_utf8_tty"
       },
       {
         "body_hash": "def61c7c368aa9bec89a3c87119c9700870e676cb8055c5af866a42047cce43b",
@@ -9496,7 +9628,7 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_write_boundary_only_allows_docs_and_capsules"
       },
       {
-        "body_hash": "b6e430781adf734c6a9dfbbce1e55701f34b8ab3753aa442d150eb307fcee9e3",
+        "body_hash": "fca1f61c30294724743b5aecdf321c9f3f1615bd39e0c5859e82adf1e2c254ca",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -9508,7 +9640,7 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._FakeRedirectedStream.__init__"
       },
       {
-        "body_hash": "e706fa9325ded821b93ed8bde1093c7c1394b3342739239f6f5f848b8ea76eb4",
+        "body_hash": "f7259db242822a5f57b8c97835c4d802c75433c528aeeb4d3d2b452f62a4aad7",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -9520,7 +9652,7 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._FakeRedirectedStream.isatty"
       },
       {
-        "body_hash": "617ddd34c6fcf1dfded95c51c98e07bb9c2f53b98b54fc076e00d546bc2b610f",
+        "body_hash": "f087d4a6f95105f1a79a13ad1a6fc52a82bf9216da981bff67e4bb47e60681a1",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -9530,6 +9662,54 @@
         "language": "python",
         "symbol_kind": "method",
         "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._FakeRedirectedStream.reconfigure"
+      },
+      {
+        "body_hash": "7d869073f6c92f8621102478e9b189dad00b3a1c1401a04385343f368b25130e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._FakeWindowsStream.__init__",
+        "id": "tests.test_cli_finish_sync_context._FakeWindowsStream.__init__",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._FakeWindowsStream.__init__"
+      },
+      {
+        "body_hash": "0417fdbe990b103ba130001e3f806db94740b3e871b1e1b04def2464ce3c1700",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._FakeWindowsStream.isatty",
+        "id": "tests.test_cli_finish_sync_context._FakeWindowsStream.isatty",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._FakeWindowsStream.isatty"
+      },
+      {
+        "body_hash": "94f1567012ad6c599c7a159675e333b58a9064d7888cff81c387289dc607d712",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigure",
+        "id": "tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigure",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigure"
+      },
+      {
+        "body_hash": "18b0256cab4dff7d44e3d5b0e496da5439e61d5e39b258f4c595e4e84f404405",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigured_to",
+        "id": "tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigured_to",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigured_to"
       },
       {
         "body_hash": "85b4914c6cedc9a0c6855bb8e81f9a73f9ae899bd5fe05cdeafcc8f91d8713d8",
@@ -9832,6 +10012,30 @@
         "target_id": "python:tests/test_cli_i18n.py:function:tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n"
       },
       {
+        "body_hash": "8ac2e6c9137d8b2e9db7765f1364bf1a5186f47caaac2d7f25323ef65e64c403",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_i18n_env.py",
+        "func_id": "tests.test_cli_i18n_env._run_real_cli",
+        "id": "tests.test_cli_i18n_env._run_real_cli",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_i18n_env.py:function:tests.test_cli_i18n_env._run_real_cli"
+      },
+      {
+        "body_hash": "b5fb41e2d30391f697486781bd8a5293c9fbb1eda9f813a9a242a6f407f4cadc",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_i18n_env.py",
+        "func_id": "tests.test_cli_i18n_env._write_subprocess_workspace",
+        "id": "tests.test_cli_i18n_env._write_subprocess_workspace",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_i18n_env.py:function:tests.test_cli_i18n_env._write_subprocess_workspace"
+      },
+      {
         "body_hash": "24740205eda1f09a9d63e08341b54991dce434e597d5f1a14a69a94464f1bae2",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -9878,6 +10082,30 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_cli_i18n_env.py:function:tests.test_cli_i18n_env.test_env_language_overrides_config"
+      },
+      {
+        "body_hash": "941738444ecd5077eb0fb982054dec2978a64129ef7d5f8b1994d1d16c031062",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_i18n_env.py",
+        "func_id": "tests.test_cli_i18n_env.test_real_cli_doctor_zh_subprocess_output_is_utf8_readable",
+        "id": "tests.test_cli_i18n_env.test_real_cli_doctor_zh_subprocess_output_is_utf8_readable",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_i18n_env.py:function:tests.test_cli_i18n_env.test_real_cli_doctor_zh_subprocess_output_is_utf8_readable"
+      },
+      {
+        "body_hash": "2f3cbb96ee036aa32cea17557d20e59dcb484ed3d0d1fddb96e395f56563d084",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_i18n_env.py",
+        "func_id": "tests.test_cli_i18n_env.test_real_cli_stale_zh_subprocess_output_is_utf8_readable",
+        "id": "tests.test_cli_i18n_env.test_real_cli_stale_zh_subprocess_output_is_utf8_readable",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_i18n_env.py:function:tests.test_cli_i18n_env.test_real_cli_stale_zh_subprocess_output_is_utf8_readable"
       },
       {
         "body_hash": "24740205eda1f09a9d63e08341b54991dce434e597d5f1a14a69a94464f1bae2",
@@ -17285,7 +17513,7 @@
       }
     ]
   },
-  "harbor_version": "1.4.1",
+  "harbor_version": "1.4.2",
   "kind": "accepted_checkpoint_baseline",
   "schema_version": "1.0"
 }

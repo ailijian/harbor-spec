@@ -1,4 +1,6 @@
 import json
+import os
+import subprocess
 import sys
 from contextlib import redirect_stdout
 from io import StringIO
@@ -44,22 +46,48 @@ def run_cmd_with_exit_code(argv):
     return code, buf.getvalue()
 
 
-class _FakeRedirectedStream:
-    def __init__(self, encoding="utf-8"):
+class _FakeWindowsStream:
+    def __init__(self, encoding="utf-8", *, is_tty=False, errors="strict", fail_reconfigure=False):
         self.encoding = encoding
-        self.reconfigured_to = None
+        self.errors = errors
+        self._is_tty = is_tty
+        self._fail_reconfigure = fail_reconfigure
+        self.reconfigure_calls = []
 
     def isatty(self):
-        return False
+        return self._is_tty
 
-    def reconfigure(self, *, encoding, errors):
-        self.reconfigured_to = (encoding, errors)
-        self.encoding = encoding
+    @property
+    def reconfigured_to(self):
+        if not self.reconfigure_calls:
+            return None
+        last_call = self.reconfigure_calls[-1]
+        return last_call.get("encoding"), last_call.get("errors")
+
+    def reconfigure(self, *, encoding=None, errors=None):
+        if self._fail_reconfigure:
+            raise OSError("reconfigure blocked")
+        self.reconfigure_calls.append({"encoding": encoding, "errors": errors})
+        if encoding is not None:
+            self.encoding = encoding
+        if errors is not None:
+            self.errors = errors
 
 
-def test_configure_redirected_windows_stdio_prefers_locale_encoding(monkeypatch):
-    stdout = _FakeRedirectedStream()
-    stderr = _FakeRedirectedStream()
+class _FakeRedirectedStream(_FakeWindowsStream):
+    def __init__(self, encoding="utf-8"):
+        super().__init__(encoding=encoding, is_tty=False)
+
+    def isatty(self):
+        return super().isatty()
+
+    def reconfigure(self, *, encoding=None, errors=None):
+        super().reconfigure(encoding=encoding, errors=errors)
+
+
+def test_configure_windows_stdio_defaults_non_tty_to_utf8(monkeypatch):
+    stdout = _FakeWindowsStream(encoding="cp936")
+    stderr = _FakeWindowsStream(encoding="cp936")
     fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=0))
 
     monkeypatch.setattr(cli_main.os, "name", "nt")
@@ -67,30 +95,31 @@ def test_configure_redirected_windows_stdio_prefers_locale_encoding(monkeypatch)
     monkeypatch.delenv("PYTHONIOENCODING", raising=False)
     monkeypatch.delenv("PYTHONUTF8", raising=False)
 
-    cli_main._configure_redirected_windows_stdio()
+    cli_main._configure_windows_stdio()
 
     assert stdout.reconfigured_to == ("utf-8", "strict")
     assert stderr.reconfigured_to == ("utf-8", "strict")
 
 
-def test_configure_redirected_windows_stdio_respects_pythonioencoding(monkeypatch):
-    stdout = _FakeRedirectedStream(encoding="cp936")
-    stderr = _FakeRedirectedStream(encoding="cp936")
+def test_configure_windows_stdio_respects_pythonioencoding(monkeypatch):
+    stdout = _FakeWindowsStream(encoding="cp936", is_tty=True)
+    stderr = _FakeWindowsStream(encoding="cp936", is_tty=True)
     fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=0))
 
     monkeypatch.setattr(cli_main.os, "name", "nt")
     monkeypatch.setattr(cli_main, "sys", fake_sys)
-    monkeypatch.setenv("PYTHONIOENCODING", "utf-8:strict")
+    monkeypatch.setenv("PYTHONIOENCODING", "cp1252:replace")
+    monkeypatch.delenv("PYTHONUTF8", raising=False)
 
-    cli_main._configure_redirected_windows_stdio()
+    cli_main._configure_windows_stdio()
 
-    assert stdout.reconfigured_to == ("utf-8", "strict")
-    assert stderr.reconfigured_to == ("utf-8", "strict")
+    assert stdout.reconfigured_to == ("cp1252", "replace")
+    assert stderr.reconfigured_to == ("cp1252", "replace")
 
 
-def test_configure_redirected_windows_stdio_prefers_utf8_mode(monkeypatch):
-    stdout = _FakeRedirectedStream(encoding="cp936")
-    stderr = _FakeRedirectedStream(encoding="cp936")
+def test_configure_windows_stdio_prefers_utf8_mode(monkeypatch):
+    stdout = _FakeWindowsStream(encoding="cp936", is_tty=True)
+    stderr = _FakeWindowsStream(encoding="cp936", is_tty=True)
     fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=1))
 
     monkeypatch.setattr(cli_main.os, "name", "nt")
@@ -98,10 +127,66 @@ def test_configure_redirected_windows_stdio_prefers_utf8_mode(monkeypatch):
     monkeypatch.delenv("PYTHONIOENCODING", raising=False)
     monkeypatch.delenv("PYTHONUTF8", raising=False)
 
-    cli_main._configure_redirected_windows_stdio()
+    cli_main._configure_windows_stdio()
 
     assert stdout.reconfigured_to == ("utf-8", "strict")
     assert stderr.reconfigured_to == ("utf-8", "strict")
+
+
+def test_configure_windows_stdio_normalizes_non_utf8_tty(monkeypatch):
+    stdout = _FakeWindowsStream(encoding="cp936", is_tty=True)
+    stderr = _FakeWindowsStream(encoding="utf8", is_tty=True)
+    fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=0))
+
+    monkeypatch.setattr(cli_main.os, "name", "nt")
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+    monkeypatch.delenv("PYTHONIOENCODING", raising=False)
+    monkeypatch.delenv("PYTHONUTF8", raising=False)
+
+    cli_main._configure_windows_stdio()
+
+    assert stdout.reconfigured_to == ("utf-8", "strict")
+    assert stderr.reconfigured_to is None
+
+
+def test_configure_windows_stdio_skips_utf8_tty(monkeypatch):
+    stdout = _FakeWindowsStream(encoding="utf-8-sig", is_tty=True)
+    stderr = _FakeWindowsStream(encoding="utf-8", is_tty=True)
+    fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=0))
+
+    monkeypatch.setattr(cli_main.os, "name", "nt")
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+    monkeypatch.delenv("PYTHONIOENCODING", raising=False)
+    monkeypatch.delenv("PYTHONUTF8", raising=False)
+
+    cli_main._configure_windows_stdio()
+
+    assert stdout.reconfigured_to is None
+    assert stderr.reconfigured_to is None
+
+
+def test_configure_windows_stdio_reconfigure_failure_does_not_interrupt(monkeypatch):
+    stdout = _FakeWindowsStream(encoding="cp936", is_tty=True, fail_reconfigure=True)
+    stderr = _FakeWindowsStream(encoding="cp936")
+    fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=0))
+
+    monkeypatch.setattr(cli_main.os, "name", "nt")
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+    monkeypatch.delenv("PYTHONIOENCODING", raising=False)
+    monkeypatch.delenv("PYTHONUTF8", raising=False)
+
+    cli_main._configure_windows_stdio()
+
+    assert stdout.reconfigured_to is None
+    assert stderr.reconfigured_to == ("utf-8", "strict")
+
+
+def test_configure_redirected_windows_stdio_prefers_locale_encoding(monkeypatch):
+    test_configure_windows_stdio_defaults_non_tty_to_utf8(monkeypatch)
+
+
+def test_configure_redirected_windows_stdio_respects_pythonioencoding(monkeypatch):
+    test_configure_windows_stdio_respects_pythonioencoding(monkeypatch)
 
 
 def _status_report_with_changed():

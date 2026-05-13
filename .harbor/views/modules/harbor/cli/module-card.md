@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.1"
+harbor_version: "1.4.2"
 view_type: "module_card"
 module: "harbor/cli"
-generated_at: "2026-05-13T18:55:15Z"
+generated_at: "2026-05-13T20:54:36Z"
 generation_command: "harbor module seal harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -11,11 +11,11 @@ source_paths_truncated: false
 source_paths:
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
-source_fingerprint: "sha256:164696f7add08eaafa55b3aa837835ae3576b1a0c9cfd7ee980957c7ba6930de"
-contract_fingerprint: "sha256:3c04f55479a7b0a7509279ad3617b4cc1065668e9d73b74d25097ce87bce7347"
-generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "cc4c20517b860a1d1d01e94b8561e20c37ea67bfdc898792609c4080db4e4274"
-fingerprint: "cc4c20517b860a1d1d01e94b8561e20c37ea67bfdc898792609c4080db4e4274"
+source_fingerprint: "sha256:b18efc6bafba74986b028d7b00c0f1dc4edf89346582f8c717885590680f8243"
+contract_fingerprint: "sha256:c12e675b19c11aa306cfdc286995f6b5f41e74b0fabd346088ad8620f09a334f"
+generator_fingerprint: "sha256:397ed303b344c4694fd3842fbc3ccf02c9a40345ba4f92f0de83e5ac2e3a2149"
+view_fingerprint: "0a9ee29f9ca211fc17880a06d830d7331915b427f533e8eebad6ada071dad00a"
+fingerprint: "0a9ee29f9ca211fc17880a06d830d7331915b427f533e8eebad6ada071dad00a"
 ---
 
 # Module Card: harbor/cli
@@ -45,8 +45,13 @@ harbor/cli/main.py
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
 | harbor.cli.main._configure_redirected_windows_stdio | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._configure_windows_stdio | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._is_log_write_interactive | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._is_utf8_compatible_stdio_encoding | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._normalize_windows_stdio_encoding_name | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._resolve_windows_explicit_stdio_config | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._resolve_windows_redirected_stdio_encoding | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._resolve_windows_stdio_target | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main.main | harbor/cli/main.py | public | strict |
 
 ## Tests

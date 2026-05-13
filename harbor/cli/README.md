@@ -11,9 +11,14 @@
 
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
-| harbor.cli.main._configure_redirected_windows_stdio | Default redirected Windows localized output to UTF-8 unle... | standard | ⚪ Missing |
+| harbor.cli.main._configure_redirected_windows_stdio | Backward-compatible wrapper for the Windows CLI-wide stdi... | standard | ⚪ Missing |
+| harbor.cli.main._configure_windows_stdio | Apply a Windows CLI-wide UTF-8-first stdio strategy when ... | standard | ⚪ Missing |
 | harbor.cli.main._is_log_write_interactive | — | standard | ⚪ Missing |
-| harbor.cli.main._resolve_windows_redirected_stdio_encoding | Choose a Windows redirected stdio encoding with UTF-8 def... | standard | ⚪ Missing |
+| harbor.cli.main._is_utf8_compatible_stdio_encoding | — | standard | ⚪ Missing |
+| harbor.cli.main._normalize_windows_stdio_encoding_name | — | standard | ⚪ Missing |
+| harbor.cli.main._resolve_windows_explicit_stdio_config | — | standard | ⚪ Missing |
+| harbor.cli.main._resolve_windows_redirected_stdio_encoding | Backward-compatible access to the resolved Windows stdio ... | standard | ⚪ Missing |
+| harbor.cli.main._resolve_windows_stdio_target | Resolve the preferred Windows stdio strategy for one CLI ... | standard | ⚪ Missing |
 
 </details>
 

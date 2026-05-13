@@ -109,20 +109,60 @@ def _is_log_write_interactive() -> bool:
     return bool(sys.stdin.isatty() and sys.stdout.isatty())
 
 
-def _resolve_windows_redirected_stdio_encoding(stream) -> Optional[str]:
-    """Choose a Windows redirected stdio encoding with UTF-8 defaulting."""
+def _normalize_windows_stdio_encoding_name(value: Optional[str]) -> Optional[str]:
+    if not isinstance(value, str):
+        return None
+    normalized = value.strip().lower().replace("_", "-")
+    return normalized or None
+
+
+def _is_utf8_compatible_stdio_encoding(value: Optional[str]) -> bool:
+    return _normalize_windows_stdio_encoding_name(value) in {"utf-8", "utf8", "utf-8-sig"}
+
+
+def _resolve_windows_explicit_stdio_config() -> Optional[Tuple[Optional[str], Optional[str]]]:
     explicit = os.environ.get("PYTHONIOENCODING", "").strip()
-    if explicit:
-        return explicit.split(":", 1)[0].strip() or None
+    if not explicit:
+        return None
+
+    encoding, sep, errors = explicit.partition(":")
+    resolved_encoding = encoding.strip() or None
+    resolved_errors = errors.strip() if sep else None
+    return resolved_encoding, resolved_errors or None
+
+
+def _resolve_windows_stdio_target(stream) -> Optional[Tuple[Optional[str], Optional[str]]]:
+    """Resolve the preferred Windows stdio strategy for one CLI output stream."""
+    explicit = _resolve_windows_explicit_stdio_config()
+    if explicit is not None:
+        return explicit
 
     if os.environ.get("PYTHONUTF8") == "1" or getattr(sys.flags, "utf8_mode", 0):
-        return "utf-8"
+        return "utf-8", "strict"
 
-    return "utf-8"
+    try:
+        is_tty = bool(stream.isatty())
+    except Exception:
+        return None
+
+    if is_tty:
+        if _is_utf8_compatible_stdio_encoding(getattr(stream, "encoding", None)):
+            return None
+        return "utf-8", "strict"
+
+    return "utf-8", "strict"
 
 
-def _configure_redirected_windows_stdio() -> None:
-    """Default redirected Windows localized output to UTF-8 unless overridden."""
+def _resolve_windows_redirected_stdio_encoding(stream) -> Optional[str]:
+    """Backward-compatible access to the resolved Windows stdio encoding."""
+    target = _resolve_windows_stdio_target(stream)
+    if target is None:
+        return None
+    return target[0]
+
+
+def _configure_windows_stdio() -> None:
+    """Apply a Windows CLI-wide UTF-8-first stdio strategy when possible."""
     if os.name != "nt":
         return
     for name in ("stdout", "stderr"):
@@ -130,17 +170,37 @@ def _configure_redirected_windows_stdio() -> None:
         if stream is None or not hasattr(stream, "reconfigure"):
             continue
         try:
-            if stream.isatty():
+            target_encoding, target_errors = _resolve_windows_stdio_target(stream) or (None, None)
+            if target_encoding is None and target_errors is None:
                 continue
+
+            current_encoding = getattr(stream, "encoding", None)
+            current_errors = getattr(stream, "errors", None)
+            same_encoding = (
+                target_encoding is None
+                or _normalize_windows_stdio_encoding_name(current_encoding)
+                == _normalize_windows_stdio_encoding_name(target_encoding)
+            )
+            same_errors = target_errors is None or current_errors == target_errors
+            if same_encoding and same_errors:
+                continue
+
+            kwargs = {}
+            if target_encoding is not None:
+                kwargs["encoding"] = target_encoding
+            if target_errors is not None:
+                kwargs["errors"] = target_errors
+            if not kwargs:
+                continue
+
+            stream.reconfigure(**kwargs)
         except Exception:
             continue
-        try:
-            encoding = _resolve_windows_redirected_stdio_encoding(stream)
-            if not encoding:
-                continue
-            stream.reconfigure(encoding=encoding, errors="strict")
-        except Exception:
-            continue
+
+
+def _configure_redirected_windows_stdio() -> None:
+    """Backward-compatible wrapper for the Windows CLI-wide stdio policy."""
+    _configure_windows_stdio()
 
 
 def main():
@@ -159,10 +219,9 @@ def main():
         friendly CLI errors for caller-visible handling.
       - Invalid legacy `harbor log` args exit with code 1 and must not print a
         Python traceback in normal CLI output.
-      - On Windows, redirected `stdout` / `stderr` default to UTF-8 before
-        command dispatch unless the caller explicitly overrides stdio encoding,
-        so localized CLI text remains readable in non-interactive subprocess
-        execution.
+      - On Windows, CLI output streams apply a consistent UTF-8-first strategy
+        for localized text across redirected outputs and eligible interactive
+        TTY streams unless the caller explicitly overrides stdio encoding.
       - `harbor log draft` / `harbor log write` dispatch order remains explicit:
         draft/write subcommands are handled before legacy direct `harbor log`
         message or LLM-assisted draft flows.
@@ -374,7 +433,7 @@ def main():
     @harbor.idempotency: once
     @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; `finish --sync-context`, `docs --changed`, `module seal --changed`, `stale --changed`, `stale --ci`, and `doctor --changed` share one changed-scope resolver for changed-module detection, repo-relative normalization, and indexed parent aggregate expansion; generated-context write paths plus `stale` / `doctor` enumeration paths use fresh/source-compatible readonly index helpers to reduce local-cache versus clean-CI drift without changing user-visible CLI routing semantics; `finish --sync-context` writes changed-scope L2 README / Module Capsule outputs, then runs a same-scope stale self-check that prints an explicit pass message or residual stale rows with deterministic repair guidance; generator / integrity file hits print broader-refresh advisory text recommending explicit `harbor docs --all --write` and `harbor module seal --all --write` only, without auto-running full refresh or project-structure refresh; docs/module batch flows reject outside-repo absolute module paths and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
     """
-    _configure_redirected_windows_stdio()
+    _configure_windows_stdio()
 
     try:
         from dotenv import load_dotenv

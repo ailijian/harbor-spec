@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.1"
+harbor_version: "1.4.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T18:55:15Z"
+generated_at: "2026-05-13T20:54:36Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -104,11 +104,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:96c66c7b34625245afe3a8a447ea336498fd3535f2312a296fd70fcabaa0ce98"
-contract_fingerprint: "sha256:915d4cce44b6099602e59bba200d9f3bd23244856ef4051253dc3e3199aa2da3"
-generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "9de1068a9ea3a36ae1cbb842463a8d958d7f3f3d1b8381ca83ac52f44648df10"
-fingerprint: "9de1068a9ea3a36ae1cbb842463a8d958d7f3f3d1b8381ca83ac52f44648df10"
+source_fingerprint: "sha256:8551e5e78a853a392516c52e0ead5bdf92b4075ceb6e88c0825d3001a752e5ca"
+contract_fingerprint: "sha256:8292a69ae796a0fa65e1f97cbdf8ff47cc339815879f1cfb34b819f096d4ca97"
+generator_fingerprint: "sha256:397ed303b344c4694fd3842fbc3ccf02c9a40345ba4f92f0de83e5ac2e3a2149"
+view_fingerprint: "9b449d698f8f357a5eb70135fed82e1f68bc3657bbc9b28b67138dacebb066c6"
+fingerprint: "9b449d698f8f357a5eb70135fed82e1f68bc3657bbc9b28b67138dacebb066c6"
 ---
 
 # Module Card: tests
@@ -422,6 +422,10 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.__init__ | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.isatty | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.reconfigure | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._FakeWindowsStream.__init__ | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._FakeWindowsStream.isatty | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigure | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigured_to | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._disable_change_window_writes | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_status_report | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_validation_report | tests/test_cli_finish_sync_context.py | unknown | standard |
@@ -435,8 +439,13 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context.run_cmd_with_exit_code | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_changed_scope_consistency_across_finish_docs_module_seal_and_stale | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_locale_encoding | tests/test_cli_finish_sync_context.py | unknown | standard |
-| tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_utf8_mode | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_respects_pythonioencoding | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_defaults_non_tty_to_utf8 | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_normalizes_non_utf8_tty | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_prefers_utf8_mode | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_reconfigure_failure_does_not_interrupt | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_respects_pythonioencoding | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_skips_utf8_tty | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | tests/test_cli_finish_sync_context.py | unknown | standard |
@@ -471,10 +480,14 @@ tests/test_workspace_paths.py
 | tests.test_cli_i18n.test_log_draft_next_actions_use_zh_i18n | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.test_log_message_invalid_type_uses_friendly_zh_error_without_traceback | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.test_log_write_non_interactive_requires_yes_uses_zh_i18n | tests/test_cli_i18n.py | unknown | standard |
+| tests.test_cli_i18n_env._run_real_cli | tests/test_cli_i18n_env.py | unknown | standard |
+| tests.test_cli_i18n_env._write_subprocess_workspace | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.run_cmd | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.run_cmd_with_code | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_env_language_controls_ci_text | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_env_language_overrides_config | tests/test_cli_i18n_env.py | unknown | standard |
+| tests.test_cli_i18n_env.test_real_cli_doctor_zh_subprocess_output_is_utf8_readable | tests/test_cli_i18n_env.py | unknown | standard |
+| tests.test_cli_i18n_env.test_real_cli_stale_zh_subprocess_output_is_utf8_readable | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_init_output.run_cmd | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_init_output.test_harbor_wrapper_output_matches_python_module | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_init_output.test_init_detects_django | tests/test_cli_init_output.py | unknown | standard |

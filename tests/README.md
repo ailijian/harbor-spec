@@ -13,6 +13,7 @@
 |---|---|---|---|
 | tests.test_change_window_snapshot._FakeSyncEngine.__init__ | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.__init__ | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeWindowsStream.__init__ | — | standard | ⚪ Missing |
 | tests.test_init_wizard.StrictEncodingTextIO.__init__ | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | — | standard | ⚪ Missing |
 | tests.test_baseline_artifact._baseline_item | — | standard | ⚪ Missing |
@@ -104,6 +105,7 @@
 | tests.test_cli_stale._run_cmd_with_exit_code | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._run_git | — | standard | ⚪ Missing |
 | tests.test_release_packaging._run_help | — | standard | ⚪ Missing |
+| tests.test_cli_i18n_env._run_real_cli | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat._sample_contract | — | standard | ⚪ Missing |
 | tests.test_cli_json_output._sample_doctor_report | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._sample_draft_payload | — | standard | ⚪ Missing |
@@ -168,6 +170,7 @@
 | tests.test_log_draft._write_snapshot | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli._write_snapshot | — | standard | ⚪ Missing |
 | tests.test_stale._write_stale_cache_index | — | standard | ⚪ Missing |
+| tests.test_cli_i18n_env._write_subprocess_workspace | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact._write_typescript_repo | — | standard | ⚪ Missing |
 | tests.test_stale._write_typescript_sample_repo | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_batch._write_workspace_config | — | standard | ⚪ Missing |
@@ -187,9 +190,12 @@
 | tests.test_drafting._OKProvider.infer | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.isatty | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeWindowsStream.isatty | — | standard | ⚪ Missing |
 | tests.test_init_wizard.StrictEncodingTextIO.isatty | — | standard | ⚪ Missing |
 | tests.test_index_builder.read_index | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.reconfigure | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigure | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigured_to | — | standard | ⚪ Missing |
 | tests.test_accept_cli.run_cmd | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.run_cmd | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact.run_cmd | — | standard | ⚪ Missing |
@@ -340,8 +346,13 @@
 | tests.test_adapter_registry.test_config_can_disable_python | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_config_list_zh | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_locale_encoding | — | standard | ⚪ Missing |
-| tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_utf8_mode | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_respects_pythonioencoding | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_defaults_non_tty_to_utf8 | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_normalizes_non_utf8_tty | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_prefers_utf8_mode | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_reconfigure_failure_does_not_interrupt | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_respects_pythonioencoding | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_skips_utf8_tty | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_configured_diary_root_within_repo_is_used | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_chinese_yes_no | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_english_yes_no | — | standard | ⚪ Missing |
@@ -709,6 +720,8 @@
 | tests.test_index_builder_registry_integration.test_readonly_index_prefer_fresh_source_ignores_stale_cache_snapshot | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_readonly_transient_index_discovers_typescript_when_ts_enabled | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled | — | standard | ⚪ Missing |
+| tests.test_cli_i18n_env.test_real_cli_doctor_zh_subprocess_output_is_utf8_readable | — | standard | ⚪ Missing |
+| tests.test_cli_i18n_env.test_real_cli_stale_zh_subprocess_output_is_utf8_readable | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_real_harbor_init_dry_run_is_encoding_safe_under_cp1252 | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_real_harbor_init_is_encoding_safe_under_cp1252 | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | — | standard | ⚪ Missing |

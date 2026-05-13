@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.1"
+harbor_version: "1.4.2"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-13T18:55:15Z"
+generated_at: "2026-05-13T20:54:36Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 59
@@ -68,11 +68,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:7af0384320aab70dd3c4418b31eaf7a58554045f9f0ce049213f50af0ca123a7"
-contract_fingerprint: "sha256:8225fe6c35c8e9eb6ddef78ad12b99807648536d545a5ff17e5eb0d5d7fdef3b"
-generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "0043285c34eb3d9a9d6105c7bc5d8fdea3a0531907627698eaefdb9df4086f7f"
-fingerprint: "0043285c34eb3d9a9d6105c7bc5d8fdea3a0531907627698eaefdb9df4086f7f"
+source_fingerprint: "sha256:35eeccf3ea54bdbf59de1bddf5b2d5f9da28ae698e4f9b3f5790836bfb14ea09"
+contract_fingerprint: "sha256:591f4851bd9b20860d03eec406946ab6fd17e566ae165af0a14b2e0411327dbb"
+generator_fingerprint: "sha256:397ed303b344c4694fd3842fbc3ccf02c9a40345ba4f92f0de83e5ac2e3a2149"
+view_fingerprint: "82b3928f6fec2e8f9a68962382f0dff928da7c3958459829a8a0cd55611ce1ed"
+fingerprint: "82b3928f6fec2e8f9a68962382f0dff928da7c3958459829a8a0cd55611ce1ed"
 ---
 
 # Module Card: harbor
@@ -218,8 +218,13 @@ harbor/utils/i18n.py
 | harbor.adapters.typescript.parser._skip_ws | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser._to_lineno | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.cli.main._configure_redirected_windows_stdio | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._configure_windows_stdio | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._is_log_write_interactive | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._is_utf8_compatible_stdio_encoding | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._normalize_windows_stdio_encoding_name | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._resolve_windows_explicit_stdio_config | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._resolve_windows_redirected_stdio_encoding | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._resolve_windows_stdio_target | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main.main | harbor/cli/main.py | public | strict |
 | harbor.core.advice_config.AdviceSettings.enabled | harbor/core/advice_config.py | unknown | standard |
 | harbor.core.advice_config._load_config_advice | harbor/core/advice_config.py | unknown | standard |
