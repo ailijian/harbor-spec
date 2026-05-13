@@ -436,6 +436,8 @@
 | harbor.core.project_structure.classify_project_area | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | — | standard | ⚪ Missing |
 | harbor.core.l2.collect_all_indexed_modules | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.collect_changed_modules_from_status | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.collect_changed_paths_from_status | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine.collect_current_snapshot | Collect the current comparable checkpoint snapshot from s... | standard | ⚪ Missing |
 | harbor.core.change_window.collect_git_workspace_state | Collect lightweight git metadata for change-window snapsh... | standard | ⚪ Missing |
 | harbor.core.module_capsule.collect_module_context | — | standard | ⚪ Missing |
@@ -453,11 +455,13 @@
 | harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
 | harbor.adapters.registry.AdapterRegistry.default | — | standard | ⚪ Missing |
 | harbor.core.utils.derive_adopted_roots | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.detect_generator_integrity_changes | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
 | harbor.adapters.base.LanguageAdapter.discover_files | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files | — | standard | ⚪ Missing |
 | harbor.core.advice_config.AdviceSettings.enabled | — | standard | ⚪ Missing |
 | harbor.core.contract_presence.evaluate_contract_presence | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.expand_modules_with_indexed_parents | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager.export_markdown | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.jsdoc.extract_adjacent_tsdoc | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.extract_integrity_fingerprints | — | standard | ⚪ Missing |
@@ -502,6 +506,7 @@
 | harbor.core.context_integrity.merge_generated_at | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.module_capsule_dir | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact.normalize_baseline_item_path | Normalize one baseline item path into repo-relative POSIX... | standard | ⚪ Missing |
+| harbor.core.changed_scope.normalize_changed_path | — | standard | ⚪ Missing |
 | harbor.core.l2.normalize_indexed_module_candidate | 将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。 | standard | ⚪ Missing |
 | harbor.core.module_capsule.normalize_module_path | — | standard | ⚪ Missing |
 | harbor.core.module_skill.normalize_skill_slug | — | standard | ⚪ Missing |

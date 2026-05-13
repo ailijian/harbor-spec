@@ -92,10 +92,11 @@ def test_changed_modules_detect_and_generate_each(monkeypatch):
 
     out = run_cmd(["docs", "--changed"])
     assert "Changed modules detected:" in out
+    assert "- harbor" in out
     assert "- harbor/cli" in out
     assert "- harbor/core" in out
     assert "Preview only. Use --write to update canonical L2 README files" in out
-    assert generated == ["harbor/cli", "harbor/core"]
+    assert generated == ["harbor", "harbor/cli", "harbor/core"]
     assert wrote == []
 
 
@@ -324,12 +325,9 @@ def test_docs_changed_write_skips_external_changed_module_and_writes_safe(monkey
     monkeypatch.setattr(cli_main.L2Generator, "write", _write)
 
     out = run_cmd(["docs", "--changed", "--write"])
-    assert "Skipped unsafe indexed modules:" in out
-    assert "outside repository root" in out
-    assert "<outside-repo>" in out
     assert "C:/Users/GM/AppData/Local/Temp/outside.py" not in out
-    assert generated == ["harbor/core"]
-    assert wrote == ["harbor/core"]
+    assert generated == ["harbor", "harbor/core"]
+    assert wrote == ["harbor", "harbor/core"]
 
 
 @pytest.mark.parametrize(

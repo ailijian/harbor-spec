@@ -434,7 +434,10 @@ harbor doctor
 
 说明：
 
-* `finish --sync-context` 会刷新 changed modules 的派生上下文。
+* `finish --sync-context` 仍是 changed-scope sync，不是 full rebuild。
+* 它会刷新 changed modules，以及相关 indexed parent aggregate modules 的派生上下文。
+* 同步后会对同一 scope 做一次 stale 自检；若仍有 residual stale，会输出具体 module/view 与确定性修复指引。
+* 当变更命中 generator / integrity 关键文件时，会提示你考虑显式执行 `harbor docs --all --write` 与 `harbor module seal --all --write`，但不会自动执行。
 * `stale` 精确检查 L2 README 与 Module Capsule 是否过期。
 * `doctor` 做整体健康检查。
 
@@ -1150,7 +1153,7 @@ HarborSpec 默认遵守以下原则：
 * 只读检查不写文件
 * `--ci` 不自动修复
 * `workspace migrate --dry-run` 不写文件
-* `finish --sync-context` 只刷新派生上下文
+* `finish --sync-context` 只做 changed-scope 派生上下文刷新与同 scope stale 自检，不会自动全量重建
 * `accept` 必须人工授权
 * `log` 必须人工授权
 * `lock` 不应由 AI 自动执行

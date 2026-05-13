@@ -433,7 +433,10 @@ harbor doctor
 
 Notes:
 
-* `finish --sync-context` refreshes generated context for changed modules.
+* `finish --sync-context` remains a changed-scope sync, not a full rebuild.
+* It refreshes changed modules plus any indexed parent aggregate modules in the same scope.
+* After syncing, it runs a same-scope stale self-check; if residual stale remains, it prints concrete module/view repair guidance.
+* When generator / integrity key files changed, it warns that you may need an explicit `harbor docs --all --write` and `harbor module seal --all --write`, but it does not run them automatically.
 * `stale` checks whether L2 README and Module Capsule views are stale.
 * `doctor` runs broader workspace health checks.
 
@@ -1145,7 +1148,7 @@ HarborSpec follows these principles by default:
 * read-only checks do not write files
 * `--ci` does not auto-fix
 * `workspace migrate --dry-run` does not write files
-* `finish --sync-context` only refreshes generated context
+* `finish --sync-context` only performs changed-scope generated-context refresh plus same-scope stale self-check; it does not auto-run a full rebuild
 * `accept` requires human authorization
 * `log` requires human authorization
 * `lock` should not be run automatically by AI

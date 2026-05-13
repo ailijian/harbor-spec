@@ -638,6 +638,13 @@ harbor finish --sync-context
 
 用于在任务收尾时显式同步 changed L2 README 与 Module Capsule。
 
+补充说明：
+
+* `finish --sync-context` 保持 changed-scope sync，不自动升级为全量刷新。
+* changed scope 解析与 `docs --changed` / `module seal --changed` / `stale --changed` / `stale --ci` 保持一致。
+* 同步完成后会执行同 scope 的 stale 自检；若仍存在 residual stale，则输出具体 module/view 与确定性修复指引。
+* 当变更命中 generator / integrity 关键文件时，只输出 broader refresh advisory，不自动执行 `--all`。
+
 `harbor accept` 仍保留为 `harbor lock` 的语义化别名，但不属于默认 facade 工作流，只有在用户明确要接受新基线时才运行。
 
 ---

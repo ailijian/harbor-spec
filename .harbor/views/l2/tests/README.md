@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-13T08:17:22Z"
+generated_at: "2026-05-13T09:02:19Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
-source_path_count: 94
+source_path_count: 95
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -22,6 +22,7 @@ source_paths:
   - "tests/test_baseline_artifact.py"
   - "tests/test_cache_isolation_hardening.py"
   - "tests/test_change_window_snapshot.py"
+  - "tests/test_changed_scope.py"
   - "tests/test_checkpoint_ci.py"
   - "tests/test_checkpoint_ci_baseline_artifact.py"
   - "tests/test_checkpoint_ci_guidance.py"
@@ -103,8 +104,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:3aa69b8d9e17686c5c0351664b116f58a7c01a2d5b53ef132a24f0d3c036bb0c"
-contract_fingerprint: "sha256:7383ddb8ecc8645517f1f6a05bff3d4650124a20c216592591745a8067764127"
+source_fingerprint: "sha256:51eeb0cd12be75cfade66fd205ff69fd26cd3da81ac16d5de6793f9ff0a2a12d"
+contract_fingerprint: "sha256:a17efe09443836f0442f8298cea40589a47329097c2e12f7c742c9ad0559b5ca"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -227,9 +228,11 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_checkpoint_ci_guidance._status_entry | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat._status_entry | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._status_report | — | standard | ⚪ Missing |
+| tests.test_changed_scope._status_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._status_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._status_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat._status_report | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._status_report_for_paths | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._status_report_with_changed | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._stub_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._stub_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
@@ -239,6 +242,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_typescript_adapter_mvp._to_rel | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect._touch | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._touch | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._view_summary | — | standard | ⚪ Missing |
 | tests.test_python_ddt_regression._write | — | standard | ⚪ Missing |
 | tests.test_sync_engine_registry_integration._write | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._write | — | standard | ⚪ Missing |
@@ -266,6 +270,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_typescript_next_guidance._write_report | — | standard | ⚪ Missing |
 | tests.test_accept_cli._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact._write_sample_repo | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_cli_stale._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_module_capsule._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_stale._write_sample_repo | — | standard | ⚪ Missing |
@@ -320,6 +325,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_json_output.run_cmd_with_err | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_inspect.run_cmd_with_err | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_migrate.run_cmd_with_err | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.run_cmd_with_exit_code | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.run_help | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._FakeDDTScanner.scan_tests | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_accept_and_finish_invoke_snapshot_events | — | standard | ⚪ Missing |
@@ -345,6 +351,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_capsule_stale_uses_view_fingerprint_not_source_fingerprint | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_changed_modules_detect_and_generate_each | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_changed_scope_consistency_across_finish_docs_module_seal_and_stale | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_check_capsule_ready_legacy_exists_but_canonical_missing | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_check_capsule_ready_missing_capsule | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_check_capsule_ready_stale_capsule | — | standard | ⚪ Missing |
@@ -412,6 +419,8 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_workspace_migrate.test_cli_workspace_migrate_without_dry_run_fails | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_collect_all_indexed_modules_from_index_records | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_collect_all_indexed_modules_normalizes_repo_absolute_file_paths | — | standard | ⚪ Missing |
+| tests.test_changed_scope.test_collect_changed_modules_from_status_normalizes_repo_absolute_paths_and_adds_indexed_parents | — | standard | ⚪ Missing |
+| tests.test_changed_scope.test_collect_changed_paths_from_status_includes_all_relevant_buckets | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_collect_module_context_falls_back_to_transient_source_scan_without_cache | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | — | standard | ⚪ Missing |
 | tests.test_doctor.test_collect_next_steps_filters_high_impact_commands | — | standard | ⚪ Missing |
@@ -457,6 +466,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_doctor.test_derived_views_check_warns_for_legacy_metadata_but_never_fail | — | standard | ⚪ Missing |
 | tests.test_doctor.test_derived_views_check_warns_when_frontmatter_missing | — | standard | ⚪ Missing |
 | tests.test_initializer.test_detect_fallback | — | standard | ⚪ Missing |
+| tests.test_changed_scope.test_detect_generator_integrity_changes_matches_only_guarded_files | — | standard | ⚪ Missing |
 | tests.test_initializer.test_detect_package_layout | — | standard | ⚪ Missing |
 | tests.test_initializer.test_detect_script_layout | — | standard | ⚪ Missing |
 | tests.test_initializer.test_detect_src_layout | — | standard | ⚪ Missing |
@@ -522,7 +532,10 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_no_changed_modules_friendly | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_reports_residual_stale_guidance | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_runs_status_check_docs_seal_stale | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_then_stale_ci_pass_for_changed_scope | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_warns_on_generator_integrity_changes | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_write_boundary_only_allows_docs_and_capsules | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_finish_sync_context_writes_finish_snapshot_and_can_be_read | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_finish_writes_finish_snapshot_and_can_be_read | — | standard | ⚪ Missing |

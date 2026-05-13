@@ -103,8 +103,19 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.finish.sync_context.title": "Context Sync:",
         "cli.finish.sync_context.docs": "- Refreshing L2 README for changed modules...",
         "cli.finish.sync_context.capsules": "- Refreshing Module Capsules for changed modules...",
-        "cli.finish.sync_context.stale": "- Checking Module Capsule stale status...",
+        "cli.finish.sync_context.stale": "- Running changed-scope stale self-check...",
         "cli.finish.sync_context.none": "No changed modules detected. Context sync skipped.",
+        "cli.finish.sync_context.self_check.skipped": "Changed-scope stale self-check skipped: no modules in scope.",
+        "cli.finish.sync_context.self_check.pass": "Changed-scope stale self-check passed for {count} modules.",
+        "cli.finish.sync_context.self_check.residual": "Residual stale detected after sync ({count} items):",
+        "cli.finish.sync_context.self_check.item": "- {module} | {view} | {status}: {reason}",
+        "cli.finish.sync_context.self_check.guidance": "Deterministic repair guidance:",
+        "cli.finish.sync_context.advisory.title": "Changed generator/integrity files detected.",
+        "cli.finish.sync_context.advisory.body": (
+            "Changed-scope sync may be insufficient. Consider:\n"
+            "  - harbor docs --all --write\n"
+            "  - harbor module seal --all --write"
+        ),
         "cli.finish.sync_context.next_steps": (
             "Next steps:\n"
             "  - harbor checkpoint --ci --format json --advice basic\n"
@@ -490,8 +501,19 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.finish.sync_context.title": "上下文同步：",
         "cli.finish.sync_context.docs": "- 刷新变更模块的 L2 README...",
         "cli.finish.sync_context.capsules": "- 刷新变更模块的 Module Capsule...",
-        "cli.finish.sync_context.stale": "- 检查变更模块的 Module Capsule 过时状态...",
+        "cli.finish.sync_context.stale": "- 执行同 scope 的 stale 自检...",
         "cli.finish.sync_context.none": "未检测到变更模块。已跳过上下文同步。",
+        "cli.finish.sync_context.self_check.skipped": "同 scope stale 自检已跳过：当前 scope 无模块。",
+        "cli.finish.sync_context.self_check.pass": "同 scope stale 自检通过，共检查 {count} 个模块。",
+        "cli.finish.sync_context.self_check.residual": "同步后仍检测到 residual stale（{count} 项）：",
+        "cli.finish.sync_context.self_check.item": "- {module} | {view} | {status}: {reason}",
+        "cli.finish.sync_context.self_check.guidance": "确定性修复指引：",
+        "cli.finish.sync_context.advisory.title": "检测到 generator/integrity 关键文件变更。",
+        "cli.finish.sync_context.advisory.body": (
+            "changed-scope sync 可能不足。可考虑：\n"
+            "  - harbor docs --all --write\n"
+            "  - harbor module seal --all --write"
+        ),
         "cli.finish.sync_context.next_steps": (
             "建议下一步：\n"
             "  - harbor checkpoint --ci --format json --advice basic\n"

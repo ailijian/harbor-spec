@@ -124,7 +124,7 @@ def test_stale_default_is_changed_scope(monkeypatch):
     )
     out = run_cmd(["stale"])
     assert "Scope: changed modules" in out
-    assert checked == ["harbor/core"]
+    assert checked == ["harbor", "harbor/core"]
 
 
 def test_stale_changed_and_all_args_are_recognized(monkeypatch):

@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-13T06:51:25Z",
+  "accepted_at": "2026-05-13T09:33:23Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -652,8 +652,8 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._is_log_write_interactive"
       },
       {
-        "body_hash": "8a02d16c2454c7d3a6bcbcefa3f3d60fe0d3c4d0f8fba2fd80c8b1fae4121aa7",
-        "contract_hash": "3e0c9e0706ab3cfdc6e90fdb885284997ab20e4ac3ed1e13bd49d49c1d22fe81",
+        "body_hash": "b318f582cca63d154503dca84605494fcebdc966d9a9a9e96faa1ed5ea5eb5d7",
+        "contract_hash": "e368ec849a30f86c462a2c335641b8e62719615b7b48367429f0f6caf0c7b00c",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/cli/main.py",
@@ -1154,6 +1154,66 @@
         "language": "python",
         "symbol_kind": "method",
         "target_id": "python:harbor/core/change_window.py:method:harbor.core.change_window.ChangeWindowSnapshot.to_dict"
+      },
+      {
+        "body_hash": "21b46e0b1e96fa04e228525fb0d9f52ddb8de7d0107c1af9f1ed77b1650a30e2",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/changed_scope.py",
+        "func_id": "harbor.core.changed_scope.collect_changed_modules_from_status",
+        "id": "harbor.core.changed_scope.collect_changed_modules_from_status",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/changed_scope.py:function:harbor.core.changed_scope.collect_changed_modules_from_status"
+      },
+      {
+        "body_hash": "1d14765005512e9b864730699690f9ef6cb28a5b3f01484d560c922920402275",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/changed_scope.py",
+        "func_id": "harbor.core.changed_scope.collect_changed_paths_from_status",
+        "id": "harbor.core.changed_scope.collect_changed_paths_from_status",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/changed_scope.py:function:harbor.core.changed_scope.collect_changed_paths_from_status"
+      },
+      {
+        "body_hash": "447221ad5e935800b4786aa3d14e407d6cbdf2240936556856b81eff59e32fa8",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/changed_scope.py",
+        "func_id": "harbor.core.changed_scope.detect_generator_integrity_changes",
+        "id": "harbor.core.changed_scope.detect_generator_integrity_changes",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/changed_scope.py:function:harbor.core.changed_scope.detect_generator_integrity_changes"
+      },
+      {
+        "body_hash": "e761e6bf9e9ca5b67e4ff427e23b1be43aee473e6313064ef7c5b9b39ef319f4",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/changed_scope.py",
+        "func_id": "harbor.core.changed_scope.expand_modules_with_indexed_parents",
+        "id": "harbor.core.changed_scope.expand_modules_with_indexed_parents",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/changed_scope.py:function:harbor.core.changed_scope.expand_modules_with_indexed_parents"
+      },
+      {
+        "body_hash": "e4db3aa97c1ff731f08e198d26046df37cc6b093134e06abd2b19a12cab8db9b",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/changed_scope.py",
+        "func_id": "harbor.core.changed_scope.normalize_changed_path",
+        "id": "harbor.core.changed_scope.normalize_changed_path",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/changed_scope.py:function:harbor.core.changed_scope.normalize_changed_path"
       },
       {
         "body_hash": "551fb51f0b4682f5c252c8c78d63f40b5d570a10ffe6a031bacfce6d4e44fb2e",
@@ -7252,6 +7312,54 @@
         "target_id": "python:tests/test_change_window_snapshot.py:method:tests.test_change_window_snapshot._FakeSyncEngine.check_status"
       },
       {
+        "body_hash": "1c45e490604666f3fc65559b4d3f4f2e25fa3b9e059f9a873b1dded0a8ff28ff",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_changed_scope.py",
+        "func_id": "tests.test_changed_scope._status_report",
+        "id": "tests.test_changed_scope._status_report",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_changed_scope.py:function:tests.test_changed_scope._status_report"
+      },
+      {
+        "body_hash": "27271c908cca5a40d157e4cf7de3fa1f95323b74d3ba9689a2ba69de378026b0",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_changed_scope.py",
+        "func_id": "tests.test_changed_scope.test_collect_changed_modules_from_status_normalizes_repo_absolute_paths_and_adds_indexed_parents",
+        "id": "tests.test_changed_scope.test_collect_changed_modules_from_status_normalizes_repo_absolute_paths_and_adds_indexed_parents",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_changed_scope.py:function:tests.test_changed_scope.test_collect_changed_modules_from_status_normalizes_repo_absolute_paths_and_adds_indexed_parents"
+      },
+      {
+        "body_hash": "8ebf4f955316d9aa6e601c4d896f2740909077edbccda54590197d643875953e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_changed_scope.py",
+        "func_id": "tests.test_changed_scope.test_collect_changed_paths_from_status_includes_all_relevant_buckets",
+        "id": "tests.test_changed_scope.test_collect_changed_paths_from_status_includes_all_relevant_buckets",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_changed_scope.py:function:tests.test_changed_scope.test_collect_changed_paths_from_status_includes_all_relevant_buckets"
+      },
+      {
+        "body_hash": "2ebc2f00dd7e95b880ed687e499f933035dc951ce9159297af1b657f44d4e244",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_changed_scope.py",
+        "func_id": "tests.test_changed_scope.test_detect_generator_integrity_changes_matches_only_guarded_files",
+        "id": "tests.test_changed_scope.test_detect_generator_integrity_changes_matches_only_guarded_files",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_changed_scope.py:function:tests.test_changed_scope.test_detect_generator_integrity_changes_matches_only_guarded_files"
+      },
+      {
         "body_hash": "d87675689f67cb40aaba69ad418f642ff0ff8fdc4f0ced22047d395f72fcca10",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -8248,7 +8356,7 @@
         "target_id": "python:tests/test_cli_docs_modes.py:function:tests.test_cli_docs_modes.run_cmd"
       },
       {
-        "body_hash": "d0b32acd01db8e05322bc7f2d9946d4e7a8688a5c994c21e734242488f92e98a",
+        "body_hash": "b8c647f23ad5de6859fbc227291d2f707fd552eb10e2a222d8c9bf780c1c5fb1",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -8356,7 +8464,7 @@
         "target_id": "python:tests/test_cli_docs_modes.py:function:tests.test_cli_docs_modes.test_docs_changed_and_all_args_are_recognized"
       },
       {
-        "body_hash": "dca11a4ae9728a1ee5570ff5b4480b739bc3e379e7d6641b1a5e1155c664f3ea",
+        "body_hash": "338f397233a328325cd5614cc72efc82276f348eb454f4c05e202d7639502856",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -8536,7 +8644,7 @@
         "target_id": "python:tests/test_cli_doctor.py:function:tests.test_cli_doctor.test_doctor_ci_arg_is_recognized"
       },
       {
-        "body_hash": "ac1524fc338fa56bd288d7920eb48195f7cbc7778e36ed4e26c01100f6a8bdf0",
+        "body_hash": "c4201dce44f6f0b056a63f8e3d01646ffd5af95d13ee8f651a36998877c60957",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -8668,6 +8776,18 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context._patch_finish_basics"
       },
       {
+        "body_hash": "ea2d57c3b547bf6f2b5884644d231f4e64f25f0544c5001df5d44d4d6c2e11c6",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._status_report_for_paths",
+        "id": "tests.test_cli_finish_sync_context._status_report_for_paths",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context._status_report_for_paths"
+      },
+      {
         "body_hash": "38b3c4f773fd60153570478fe4671033510793c06249789d7f6bfffb4abf2a0e",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -8678,6 +8798,30 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context._status_report_with_changed"
+      },
+      {
+        "body_hash": "8116ae05af37fa33b2dc88e6f11e90e4f86fb19846baf2c00019ad0b4d77bfff",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._view_summary",
+        "id": "tests.test_cli_finish_sync_context._view_summary",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context._view_summary"
+      },
+      {
+        "body_hash": "4dfce7b083ceecb0d69d826e31ce577bb8c7d59e0aaa80388e7ff8e65601c888",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._write_sample_repo",
+        "id": "tests.test_cli_finish_sync_context._write_sample_repo",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context._write_sample_repo"
       },
       {
         "body_hash": "24740205eda1f09a9d63e08341b54991dce434e597d5f1a14a69a94464f1bae2",
@@ -8692,6 +8836,30 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.run_cmd"
       },
       {
+        "body_hash": "e3540f0fe1a1738988b7808793c9d1ed515cb11526856cd23d2f626bd0663a9d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.run_cmd_with_exit_code",
+        "id": "tests.test_cli_finish_sync_context.run_cmd_with_exit_code",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.run_cmd_with_exit_code"
+      },
+      {
+        "body_hash": "4d7ca0eca2eca2c3170fc9bfe7554c1ee10121a368188bd775ea5dad4dfe09da",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_changed_scope_consistency_across_finish_docs_module_seal_and_stale",
+        "id": "tests.test_cli_finish_sync_context.test_changed_scope_consistency_across_finish_docs_module_seal_and_stale",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_changed_scope_consistency_across_finish_docs_module_seal_and_stale"
+      },
+      {
         "body_hash": "def61c7c368aa9bec89a3c87119c9700870e676cb8055c5af866a42047cce43b",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -8704,7 +8872,19 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow"
       },
       {
-        "body_hash": "324ec6cf1c51c7e1b86c19a69007cb29ea19772edd763ecc6f56ea38e28fecce",
+        "body_hash": "48ca2f0091fb6f7eeb87d6f002917bf504d53e034c40508d3e99ef10483241d3",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules",
+        "id": "tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules"
+      },
+      {
+        "body_hash": "04c2527ab3b93aeaab8a551512edc007dac462d683e351ff3a34b92a2d8fcdca",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -8716,7 +8896,7 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace"
       },
       {
-        "body_hash": "7e0d905c6b55a72de02b6cad5c259d0612c6cbbe5b28d750e4ff8594cb407ca0",
+        "body_hash": "8d95bd2a7d5f266cb883f49f935f709981e699b946709dac702609d22aa23945",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -8728,7 +8908,19 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_no_changed_modules_friendly"
       },
       {
-        "body_hash": "5a8ae62e828405e711367533910fec56db2b7ac6430263463938f3c1f84ac0be",
+        "body_hash": "c4709b31a02708ce5afb753169a2bd1568ee6a6fa7c3836b2aba1679a31b7cf2",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_finish_sync_context_reports_residual_stale_guidance",
+        "id": "tests.test_cli_finish_sync_context.test_finish_sync_context_reports_residual_stale_guidance",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_reports_residual_stale_guidance"
+      },
+      {
+        "body_hash": "1466b417bbda265041be187e6694634b09d9deaa42187bc17ff830ec7905c783",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -8740,7 +8932,31 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_runs_status_check_docs_seal_stale"
       },
       {
-        "body_hash": "cc736c19fec5f408acd0a5746d7d365b56fb19b093e524a28a678539ebbb3198",
+        "body_hash": "3009660af79162ea05ce9571d4536c697caee6e6a165d79ad2b3b53f2cf72cd9",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_finish_sync_context_then_stale_ci_pass_for_changed_scope",
+        "id": "tests.test_cli_finish_sync_context.test_finish_sync_context_then_stale_ci_pass_for_changed_scope",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_then_stale_ci_pass_for_changed_scope"
+      },
+      {
+        "body_hash": "f275247f647597c0fdc517494a65e27acb300d2f5ebb1289375b516ed6403864",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_finish_sync_context_warns_on_generator_integrity_changes",
+        "id": "tests.test_cli_finish_sync_context.test_finish_sync_context_warns_on_generator_integrity_changes",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_warns_on_generator_integrity_changes"
+      },
+      {
+        "body_hash": "4c10b5deb0a7d0267da895271d987baa93f2b7ad25f2f757bbb3af9b73af0f19",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10216,7 +10432,7 @@
         "target_id": "python:tests/test_cli_stale.py:function:tests.test_cli_stale.test_stale_ci_arg_is_recognized"
       },
       {
-        "body_hash": "8ab0751c32496b5edbe9cd55205785687288775fa72a3d1a43d378c15bcc0205",
+        "body_hash": "4b46ff29650424e2f4ce682eed68b42c30f7739550d845bede34d934c9a59086",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,

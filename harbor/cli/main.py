@@ -17,7 +17,12 @@ from harbor.utils.i18n import t, get_lang
 from harbor.core.index import IndexBuilder
 from harbor.core.sync import SyncEngine
 from harbor.core.ddt import DDTScanner, DDTValidator
-from harbor.core.l2 import L2Generator, collect_all_indexed_modules, collect_modules_from_paths
+from harbor.core.changed_scope import (
+    collect_changed_modules_from_status,
+    collect_changed_paths_from_status,
+    detect_generator_integrity_changes,
+)
+from harbor.core.l2 import L2Generator, collect_all_indexed_modules
 from harbor.core.module_capsule import (
     check_module_capsule_stale,
     collect_module_context,
@@ -149,6 +154,25 @@ def main():
       - `finish --sync-context` refreshes changed modules plus any indexed
         parent aggregate modules so module-level L2 README / Capsule views stay
         aligned when a nested module change also affects an ancestor summary.
+      - `finish --sync-context`, `docs --changed`, `module seal --changed`,
+        `stale --changed`, and `stale --ci` share the same changed-scope
+        resolver for changed-module detection, repo-relative path
+        normalization, and indexed parent aggregate expansion.
+      - After writing changed-scope L2 README and Module Capsule outputs,
+        `finish --sync-context` runs a same-scope stale self-check.
+      - When the self-check passes, `finish --sync-context` prints an explicit
+        same-scope completion message and keeps its original success semantics.
+      - When residual stale remains after sync, `finish --sync-context` prints
+        module / view / status / reason rows and deterministic repair guidance
+        instead of ending silently.
+      - When changed files hit generator / integrity core files,
+        `finish --sync-context` prints a broader-refresh advisory recommending
+        explicit `harbor docs --all --write` and `harbor module seal --all
+        --write`, but does not run full refresh automatically.
+      - These `finish --sync-context` enhancements do not relax
+        `stale --ci`, do not change `checkpoint` / `doctor` gate semantics, do
+        not auto-refresh project structure, and do not auto-run docs/module
+        `--all` write paths.
       - Successful `checkpoint` / `accept` / `finish` dispatch paths also attempt
         to write lightweight change-window runtime snapshots under
         `.harbor/state/change-windows/`.
@@ -250,6 +274,15 @@ def main():
       are additive runtime state only and do not change the original command
       exit semantics. Snapshot write failures may append runtime-only
       diagnostics under `.harbor/state/change-window-diagnostics.jsonl`.
+      `finish --sync-context` reuses the shared changed-scope resolver used by
+      `docs --changed`, `module seal --changed`, `stale --changed`, and
+      `stale --ci`; after writing changed-scope L2 README / Module Capsule
+      outputs it reports either an explicit same-scope stale self-check pass or
+      residual stale rows with deterministic repair guidance. Generator /
+      integrity file hits add advisory text recommending explicit
+      `harbor docs --all --write` and `harbor module seal --all --write` only;
+      they do not trigger automatic full refresh, project-structure refresh, or
+      gate-semantic changes for `checkpoint` / `stale` / `doctor`.
       `harbor log draft` emits a reviewable markdown/json draft only, may write
       latest draft runtime cache under `.harbor/state/log/latest-draft.*` only
       when evidence is sufficient for a writable draft, may write one non-diary
@@ -285,13 +318,17 @@ def main():
       still requires explicit `--yes` authorization unless the user confirms in
       an interactive session; cancel/deny paths must not write
       `.harbor/diary/**`. These UX-polish paths do not call LLM, do not print
-      file bodies / diff bodies / secrets, and do not change checkpoint /
-      stale / doctor gate semantics or legacy `harbor log` behavior.
+      file bodies / diff bodies / secrets. `finish --sync-context` stale
+      self-check and generator/integrity advisory remain guidance/output
+      behavior only: they do not introduce a new blocking exception path, do
+      not change `checkpoint` / `stale` / `doctor` gate semantics, and do not
+      auto-run project-structure refresh or docs/module `--all` writes. Legacy
+      `harbor log` behavior remains unchanged.
 
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: once
-    @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; docs/module batch flows normalize repo-absolute file candidates, reject outside-repo absolute module paths, and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
+    @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; `finish --sync-context`, `docs --changed`, `module seal --changed`, `stale --changed`, and `stale --ci` share one changed-scope resolver for changed-module detection, repo-relative normalization, and indexed parent aggregate expansion; `finish --sync-context` writes changed-scope L2 README / Module Capsule outputs, then runs a same-scope stale self-check that prints an explicit pass message or residual stale rows with deterministic repair guidance; generator / integrity file hits print broader-refresh advisory text recommending explicit `harbor docs --all --write` and `harbor module seal --all --write` only, without auto-running full refresh or project-structure refresh; docs/module batch flows reject outside-repo absolute module paths and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
     """
     _configure_redirected_windows_stdio()
 
@@ -1309,79 +1346,15 @@ def main():
         records.extend(getattr(rep, "missing", []))
         return records
 
-    def _collect_changed_paths_from_status(rep):
-        changed_paths = []
-        changed_paths.extend([e.file_path for e in rep.drift])
-        changed_paths.extend([e.file_path for e in rep.modified])
-        changed_paths.extend([e.file_path for e in rep.contract_changed])
-        changed_paths.extend([e.file_path for e in getattr(rep, "contract_gap", [])])
-        changed_paths.extend([e.file_path for e in getattr(rep, "skipped_no_contract", [])])
-        changed_paths.extend([e.file_path for e in getattr(rep, "contract_parse_error", [])])
-        changed_paths.extend([e.file_path for e in getattr(rep, "unsupported_syntax_advisory", [])])
-        changed_paths.extend([e.file_path for e in rep.untracked])
-        changed_paths.extend([e.file_path for e in rep.missing])
-        return changed_paths
-
-    def _expand_modules_with_indexed_parents(modules):
-        normalized_modules = []
-        seen = set()
-        for module in modules:
-            text = str(module or "").strip().replace("\\", "/").strip("/")
-            if not text or text in seen:
-                continue
-            seen.add(text)
-            normalized_modules.append(text)
-        if not normalized_modules:
-            return []
-
-        indexed_modules = {str(module or "").strip().replace("\\", "/").strip("/") for module in collect_all_indexed_modules()}
-        indexed_modules.discard("")
-        if not indexed_modules:
-            return sorted(normalized_modules)
-
-        expanded = set(normalized_modules)
-        for module in normalized_modules:
-            parts = [part for part in module.split("/") if part]
-            for depth in range(1, len(parts)):
-                parent = "/".join(parts[:depth])
-                if parent in indexed_modules:
-                    expanded.add(parent)
-        return sorted(expanded)
-
     def _collect_changed_modules_from_status(rep):
-        changed_paths = _collect_changed_paths_from_status(rep)
-        cwd = Path.cwd().resolve()
-        workspace_paths = []
-        for raw_path in changed_paths:
-            raw = str(raw_path or "").strip()
-            if not raw:
-                continue
-            normalized = raw.replace("\\", "/")
-            if re.match(r"(?i)^[a-z]:/", normalized) or normalized.startswith("//"):
-                marker = f"/{cwd.name.lower()}/"
-                lower = normalized.lower()
-                idx = lower.find(marker)
-                if idx == -1:
-                    continue
-                workspace_paths.append(normalized[idx + len(marker) :].strip("/"))
-                continue
-            p = Path(normalized)
-            abs_path = p if p.is_absolute() else (cwd / p)
-            try:
-                rel = abs_path.resolve().relative_to(cwd).as_posix()
-            except Exception:
-                continue
-            workspace_paths.append(rel)
-        return collect_modules_from_paths(workspace_paths)
+        return collect_changed_modules_from_status(rep, repo_root=Path.cwd())
+
+    def _collect_changed_paths_from_status(rep):
+        return collect_changed_paths_from_status(rep)
 
     def _collect_changed_modules():
         rep = SyncEngine().check_status()
         return _collect_changed_modules_from_status(rep)
-
-    def _collect_changed_modules_for_docs():
-        rep = SyncEngine().check_status()
-        changed_paths = _collect_changed_paths_from_status(rep)
-        return collect_modules_from_paths(changed_paths)
 
     def _to_repo_relative_display(path: Path) -> str:
         try:
@@ -1562,9 +1535,78 @@ def main():
         for display, reason in skipped:
             print(f"- {display} ({reason})")
 
+    def _finish_self_check_rows(results):
+        rows = []
+        for summary in results:
+            for label, view_result in (
+                (t("cli.stale.l2"), summary.l2_readme),
+                (t("cli.stale.l2_export"), summary.l2_readme_export),
+                (t("cli.stale.capsule"), summary.module_capsule),
+            ):
+                if view_result.status in ("up_to_date", "disabled"):
+                    continue
+                rows.append(
+                    {
+                        "module": summary.module,
+                        "view": label,
+                        "status": view_result.status,
+                        "reason": view_result.reason or view_result.status,
+                        "suggested_command": view_result.suggested_command,
+                    }
+                )
+        return rows
+
+    def _print_finish_sync_context_self_check(modules: List[str]) -> bool:
+        if not modules:
+            print(t("cli.finish.sync_context.self_check.skipped"))
+            return True
+        results = [check_module_derived_views_stale(module) for module in modules]
+        residual = _finish_self_check_rows(results)
+        if not residual:
+            print(t("cli.finish.sync_context.self_check.pass", count=len(modules)))
+            return True
+
+        print(t("cli.finish.sync_context.self_check.residual", count=len(residual)))
+        for row in residual:
+            print(
+                t(
+                    "cli.finish.sync_context.self_check.item",
+                    module=row["module"],
+                    view=row["view"],
+                    status=row["status"],
+                    reason=row["reason"],
+                )
+            )
+
+        commands = []
+        seen = set()
+        for row in residual:
+            command = str(row.get("suggested_command") or "").strip()
+            if not command or command in seen:
+                continue
+            seen.add(command)
+            commands.append(command)
+        if commands:
+            print(t("cli.finish.sync_context.self_check.guidance"))
+            for command in commands:
+                print(f"  - {command}")
+        return False
+
+    def _print_finish_sync_context_advisory(changed_paths: List[str]) -> None:
+        advisory_paths = detect_generator_integrity_changes(changed_paths, repo_root=Path.cwd())
+        if not advisory_paths:
+            return
+        print("")
+        print(t("cli.finish.sync_context.advisory.title"))
+        for path in advisory_paths:
+            print(f"- {path}")
+        print(t("cli.finish.sync_context.advisory.body"))
+        print("  - harbor docs --all --write")
+        print("  - harbor module seal --all --write")
+
     def _run_docs_changed(*, write=False, force=False, modules=None):
         gen = L2Generator()
-        raw_modules = modules if modules is not None else _collect_changed_modules_for_docs()
+        raw_modules = modules if modules is not None else _collect_changed_modules()
         target_modules, skipped = _select_safe_modules(list(raw_modules), strict=False)
         _print_skipped_unsafe_modules(skipped)
         if not target_modules:
@@ -1979,19 +2021,20 @@ def main():
         else:
             print("")
             print(t("cli.finish.sync_context.title"))
-            changed_modules = _expand_modules_with_indexed_parents(_collect_changed_modules())
-            docs_modules = _expand_modules_with_indexed_parents(_collect_changed_modules_for_docs())
-            if not changed_modules and not docs_modules:
+            changed_paths = _collect_changed_paths_from_status(status_report)
+            changed_modules = _collect_changed_modules_from_status(status_report)
+            if not changed_modules:
                 print(t("cli.finish.sync_context.none"))
             else:
                 print(t("cli.finish.sync_context.docs"))
-                _run_docs_changed(write=True, modules=docs_modules)
+                _run_docs_changed(write=True, modules=changed_modules)
                 print("")
                 print(t("cli.finish.sync_context.capsules"))
                 _run_module_seal_changed(write=True, modules=changed_modules)
                 print("")
                 print(t("cli.finish.sync_context.stale"))
-                _run_module_stale_changed(modules=changed_modules)
+                _print_finish_sync_context_self_check(changed_modules)
+            _print_finish_sync_context_advisory(changed_paths)
             print("")
             print(t("cli.finish.sync_context.next_steps"))
         _write_change_window_snapshot_safe(

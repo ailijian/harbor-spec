@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T08:14:40Z"
+generated_at: "2026-05-13T09:03:12Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 94
+source_path_count: 95
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -22,6 +22,7 @@ source_paths:
   - "tests/test_baseline_artifact.py"
   - "tests/test_cache_isolation_hardening.py"
   - "tests/test_change_window_snapshot.py"
+  - "tests/test_changed_scope.py"
   - "tests/test_checkpoint_ci.py"
   - "tests/test_checkpoint_ci_baseline_artifact.py"
   - "tests/test_checkpoint_ci_guidance.py"
@@ -103,11 +104,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:3aa69b8d9e17686c5c0351664b116f58a7c01a2d5b53ef132a24f0d3c036bb0c"
-contract_fingerprint: "sha256:e7a2ce89cf932f72094e6ac44dfb4e943e3ade0c4d09f0ecd3a52c416c9853f3"
+source_fingerprint: "sha256:51eeb0cd12be75cfade66fd205ff69fd26cd3da81ac16d5de6793f9ff0a2a12d"
+contract_fingerprint: "sha256:3485fbaced34fdb6bd158f20707444b5d6c41cc43a2eb121763628e299333eb3"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "ac4ce3c4cc8c795e1d5974b22a52f24fe85015ef86b09905491bf3694a7093d3"
-fingerprint: "ac4ce3c4cc8c795e1d5974b22a52f24fe85015ef86b09905491bf3694a7093d3"
+view_fingerprint: "5bdd7296c3fac377d4524487c9ee18647ca576a6125efc4bba8ecd328c78adcf"
+fingerprint: "5bdd7296c3fac377d4524487c9ee18647ca576a6125efc4bba8ecd328c78adcf"
 ---
 
 # Module Card: tests
@@ -141,6 +142,7 @@ tests/test_audit.py
 tests/test_baseline_artifact.py
 tests/test_cache_isolation_hardening.py
 tests/test_change_window_snapshot.py
+tests/test_changed_scope.py
 tests/test_checkpoint_ci.py
 tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py
@@ -292,6 +294,10 @@ tests/test_workspace_paths.py
 | tests.test_change_window_snapshot.test_retention_keeps_latest_fifty_snapshots | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_snapshot_does_not_store_file_content_or_diff_body | tests/test_change_window_snapshot.py | unknown | standard |
 | tests.test_change_window_snapshot.test_write_snapshot_creates_json_with_required_schema | tests/test_change_window_snapshot.py | unknown | standard |
+| tests.test_changed_scope._status_report | tests/test_changed_scope.py | unknown | standard |
+| tests.test_changed_scope.test_collect_changed_modules_from_status_normalizes_repo_absolute_paths_and_adds_indexed_parents | tests/test_changed_scope.py | unknown | standard |
+| tests.test_changed_scope.test_collect_changed_paths_from_status_includes_all_relevant_buckets | tests/test_changed_scope.py | unknown | standard |
+| tests.test_changed_scope.test_detect_generator_integrity_changes_matches_only_guarded_files | tests/test_changed_scope.py | unknown | standard |
 | tests.test_checkpoint_ci._contract_report | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci._ddt_report | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci._disable_change_window_writes | tests/test_checkpoint_ci.py | unknown | standard |
@@ -410,13 +416,21 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context._empty_validation_report | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._force_en_locale | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._patch_finish_basics | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._status_report_for_paths | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._status_report_with_changed | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._view_summary | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._write_sample_repo | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.run_cmd | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.run_cmd_with_exit_code | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_changed_scope_consistency_across_finish_docs_module_seal_and_stale | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_no_changed_modules_friendly | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_reports_residual_stale_guidance | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_runs_status_check_docs_seal_stale | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_then_stale_ci_pass_for_changed_scope | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_warns_on_generator_integrity_changes | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_write_boundary_only_allows_docs_and_capsules | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_help_and_ux._force_en_locale | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.run_cmd | tests/test_cli_help_and_ux.py | unknown | standard |
@@ -1045,6 +1059,7 @@ tests/test_audit.py
 tests/test_baseline_artifact.py
 tests/test_cache_isolation_hardening.py
 tests/test_change_window_snapshot.py
+tests/test_changed_scope.py
 tests/test_checkpoint_ci.py
 tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py

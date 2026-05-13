@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-13T07:07:01Z"
+generated_at: "2026-05-13T09:01:59Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
-source_path_count: 55
+source_path_count: 56
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -29,6 +29,7 @@ source_paths:
   - "harbor/core/audit.py"
   - "harbor/core/baseline_artifact.py"
   - "harbor/core/change_window.py"
+  - "harbor/core/changed_scope.py"
   - "harbor/core/ci.py"
   - "harbor/core/context_integrity.py"
   - "harbor/core/contract_impact.py"
@@ -64,8 +65,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:23219d24753268cc12ef871395cc3e5a6b2bc9e6e0a9be097461f20eee79c5ec"
-contract_fingerprint: "sha256:5e25eacd79c94f2c1f5ce46bf42c5825265976b6183ff0e1f37586cc98515283"
+source_fingerprint: "sha256:df6dfb1a74a28dea562a6fb9c8fadf1d53d53e23fb6c8d9d4fd1138b723db4eb"
+contract_fingerprint: "sha256:4e24c9adaa090be8da104c0a467bd991ef9e856ff2a663dc6d1ef43a8f7d574c"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -507,6 +508,8 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.project_structure.classify_project_area | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | — | standard | ⚪ Missing |
 | harbor.core.l2.collect_all_indexed_modules | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.collect_changed_modules_from_status | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.collect_changed_paths_from_status | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine.collect_current_snapshot | Collect the current comparable checkpoint snapshot from s... | standard | ⚪ Missing |
 | harbor.core.change_window.collect_git_workspace_state | Collect lightweight git metadata for change-window snapsh... | standard | ⚪ Missing |
 | harbor.core.module_capsule.collect_module_context | — | standard | ⚪ Missing |
@@ -524,11 +527,13 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
 | harbor.adapters.registry.AdapterRegistry.default | — | standard | ⚪ Missing |
 | harbor.core.utils.derive_adopted_roots | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.detect_generator_integrity_changes | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
 | harbor.adapters.base.LanguageAdapter.discover_files | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files | — | standard | ⚪ Missing |
 | harbor.core.advice_config.AdviceSettings.enabled | — | standard | ⚪ Missing |
 | harbor.core.contract_presence.evaluate_contract_presence | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.expand_modules_with_indexed_parents | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager.export_markdown | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.jsdoc.extract_adjacent_tsdoc | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.extract_integrity_fingerprints | — | standard | ⚪ Missing |
@@ -573,6 +578,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.context_integrity.merge_generated_at | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.module_capsule_dir | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact.normalize_baseline_item_path | Normalize one baseline item path into repo-relative POSIX... | standard | ⚪ Missing |
+| harbor.core.changed_scope.normalize_changed_path | — | standard | ⚪ Missing |
 | harbor.core.l2.normalize_indexed_module_candidate | 将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。 | standard | ⚪ Missing |
 | harbor.core.module_capsule.normalize_module_path | — | standard | ⚪ Missing |
 | harbor.core.module_skill.normalize_skill_slug | — | standard | ⚪ Missing |

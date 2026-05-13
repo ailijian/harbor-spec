@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-13T07:49:34Z"
+generated_at: "2026-05-13T09:02:56Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
-source_path_count: 55
+source_path_count: 56
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -29,6 +29,7 @@ source_paths:
   - "harbor/core/audit.py"
   - "harbor/core/baseline_artifact.py"
   - "harbor/core/change_window.py"
+  - "harbor/core/changed_scope.py"
   - "harbor/core/ci.py"
   - "harbor/core/context_integrity.py"
   - "harbor/core/contract_impact.py"
@@ -64,11 +65,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:55359d0a291afa4cf5f2840db720f8bece81a9dd09e81b36cd675ee729ec50b3"
-contract_fingerprint: "sha256:3bd343319e9fa2bc7103578dfde4616fabbe47606a1438a2e2da0e334b73a093"
+source_fingerprint: "sha256:df6dfb1a74a28dea562a6fb9c8fadf1d53d53e23fb6c8d9d4fd1138b723db4eb"
+contract_fingerprint: "sha256:18ab753a662af2bca7bfb26380f145048bc5e07db3111ccb87390aa9dbe75355"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "c4af99ae65cb233cbc3fab8cf7fe8b01f107970f879c018f6e6942cf2c749e23"
-fingerprint: "c4af99ae65cb233cbc3fab8cf7fe8b01f107970f879c018f6e6942cf2c749e23"
+view_fingerprint: "409b1a0b9aadee4ad647b2d01badb3f0e13a3f1301526425818b5347c74a4ad5"
+fingerprint: "409b1a0b9aadee4ad647b2d01badb3f0e13a3f1301526425818b5347c74a4ad5"
 ---
 
 # Module Card: harbor
@@ -109,6 +110,7 @@ harbor/core/advice_config.py
 harbor/core/audit.py
 harbor/core/baseline_artifact.py
 harbor/core/change_window.py
+harbor/core/changed_scope.py
 harbor/core/ci.py
 harbor/core/context_integrity.py
 harbor/core/contract_impact.py
@@ -246,6 +248,11 @@ harbor/utils/i18n.py
 | harbor.core.change_window.list_change_windows | harbor/core/change_window.py | unknown | standard |
 | harbor.core.change_window.prune_change_windows | harbor/core/change_window.py | unknown | standard |
 | harbor.core.change_window.write_change_window_snapshot | harbor/core/change_window.py | public | strict |
+| harbor.core.changed_scope.collect_changed_modules_from_status | harbor/core/changed_scope.py | unknown | standard |
+| harbor.core.changed_scope.collect_changed_paths_from_status | harbor/core/changed_scope.py | unknown | standard |
+| harbor.core.changed_scope.detect_generator_integrity_changes | harbor/core/changed_scope.py | unknown | standard |
+| harbor.core.changed_scope.expand_modules_with_indexed_parents | harbor/core/changed_scope.py | unknown | standard |
+| harbor.core.changed_scope.normalize_changed_path | harbor/core/changed_scope.py | unknown | standard |
 | harbor.core.ci.CIFailure.to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.CheckpointCIItem.to_dict | harbor/core/ci.py | public | strict |
@@ -701,6 +708,7 @@ tests/test_adapter_registry.py
 tests/test_audit.py
 tests/test_baseline_artifact.py
 tests/test_change_window_snapshot.py
+tests/test_changed_scope.py
 tests/test_checkpoint_ci.py
 tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py

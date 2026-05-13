@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-12T17:29:34Z"
+generated_at: "2026-05-13T09:02:10Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 34
+source_path_count: 35
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
@@ -14,6 +14,7 @@ source_paths:
   - "harbor/core/audit.py"
   - "harbor/core/baseline_artifact.py"
   - "harbor/core/change_window.py"
+  - "harbor/core/changed_scope.py"
   - "harbor/core/ci.py"
   - "harbor/core/context_integrity.py"
   - "harbor/core/contract_impact.py"
@@ -43,8 +44,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:58af842ca352b75d9a83b121a35e648d8589b4584ad0ded6696ee491d5fe878e"
-contract_fingerprint: "sha256:ba8491327babe40b360b9c4e9af326650ff7ac9f17ad36f42d3ce5133050f06c"
+source_fingerprint: "sha256:514a497e92734c36d7cb432b080319be0a742731faf4457925ade969704b46c3"
+contract_fingerprint: "sha256:b4f6348be7576353dce8e4db7afa5967ec1232c8cadcea2c3f27df01493c3413"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -446,6 +447,8 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.project_structure.classify_project_area | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | — | standard | ⚪ Missing |
 | harbor.core.l2.collect_all_indexed_modules | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.collect_changed_modules_from_status | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.collect_changed_paths_from_status | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine.collect_current_snapshot | Collect the current comparable checkpoint snapshot from s... | standard | ⚪ Missing |
 | harbor.core.change_window.collect_git_workspace_state | Collect lightweight git metadata for change-window snapsh... | standard | ⚪ Missing |
 | harbor.core.module_capsule.collect_module_context | — | standard | ⚪ Missing |
@@ -461,9 +464,11 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.context_integrity.content_without_generated_at_for_compare | — | standard | ⚪ Missing |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
 | harbor.core.utils.derive_adopted_roots | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.detect_generator_integrity_changes | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
 | harbor.core.advice_config.AdviceSettings.enabled | — | standard | ⚪ Missing |
 | harbor.core.contract_presence.evaluate_contract_presence | — | standard | ⚪ Missing |
+| harbor.core.changed_scope.expand_modules_with_indexed_parents | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager.export_markdown | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.extract_integrity_fingerprints | — | standard | ⚪ Missing |
 | harbor.core.utils.find_function_node | — | standard | ⚪ Missing |
@@ -499,6 +504,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.context_integrity.merge_generated_at | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.module_capsule_dir | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact.normalize_baseline_item_path | Normalize one baseline item path into repo-relative POSIX... | standard | ⚪ Missing |
+| harbor.core.changed_scope.normalize_changed_path | — | standard | ⚪ Missing |
 | harbor.core.l2.normalize_indexed_module_candidate | 将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。 | standard | ⚪ Missing |
 | harbor.core.module_capsule.normalize_module_path | — | standard | ⚪ Missing |
 | harbor.core.module_skill.normalize_skill_slug | — | standard | ⚪ Missing |

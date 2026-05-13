@@ -106,7 +106,7 @@ def test_doctor_default_is_changed_scope(monkeypatch):
     monkeypatch.setattr(cli_main, "format_doctor_report", lambda report: f"Scope: {report.scope}")
     out = run_cmd(["doctor"])
     assert "Scope: changed modules" in out
-    assert captured["modules"] == ["harbor/core"]
+    assert captured["modules"] == ["harbor", "harbor/core"]
 
 
 def test_doctor_changed_and_all_args_are_recognized(monkeypatch):

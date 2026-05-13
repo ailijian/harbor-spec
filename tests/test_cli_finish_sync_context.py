@@ -1,3 +1,4 @@
+import json
 import sys
 from contextlib import redirect_stdout
 from io import StringIO
@@ -8,6 +9,9 @@ import pytest
 
 import harbor.cli.main as cli_main
 from harbor.cli.main import main
+from harbor.core.l2 import L2Generator
+from harbor.core.module_capsule import collect_module_context, write_module_capsule
+from harbor.core.stale import ModuleStaleSummary, ViewStaleResult
 
 
 @pytest.fixture(autouse=True)
@@ -26,6 +30,18 @@ def run_cmd(argv):
         sys.argv = ["harbor"] + argv
         main()
     return buf.getvalue()
+
+
+def run_cmd_with_exit_code(argv):
+    buf = StringIO()
+    code = 0
+    with redirect_stdout(buf):
+        sys.argv = ["harbor"] + argv
+        try:
+            main()
+        except SystemExit as ex:
+            code = ex.code if isinstance(ex.code, int) else 1
+    return code, buf.getvalue()
 
 
 def _status_report_with_changed():
@@ -76,6 +92,100 @@ def _empty_status_report():
 
 def _empty_validation_report():
     return SimpleNamespace(valid=[], violations=[], advisory=[], counts={"valid": 0, "violations": 0, "advisory": 0})
+
+
+def _status_report_for_paths(*paths):
+    entries = [SimpleNamespace(id=f"item-{idx}", details=f"changed-{idx}", file_path=path) for idx, path in enumerate(paths, start=1)]
+    return SimpleNamespace(
+        counts={
+            "drift": 0,
+            "contract_changed": 0,
+            "modified": len(entries),
+            "contract_gap": 0,
+            "skipped_no_contract": 0,
+            "contract_parse_error": 0,
+            "unsupported_syntax_advisory": 0,
+            "untracked": 0,
+            "missing": 0,
+        },
+        drift=[],
+        contract_changed=[],
+        modified=entries,
+        contract_gap=[],
+        skipped_no_contract=[],
+        contract_parse_error=[],
+        unsupported_syntax_advisory=[],
+        untracked=[],
+        missing=[],
+    )
+
+
+def _view_summary(module: str, *, l2="up_to_date", export="up_to_date", capsule="up_to_date") -> ModuleStaleSummary:
+    return ModuleStaleSummary(
+        module=module,
+        l2_readme=ViewStaleResult("L2 README", l2, "l2 reason", f"harbor docs --module {module} --write"),
+        l2_readme_export=ViewStaleResult("L2 README Export", export, "export reason", f"harbor docs --module {module} --write"),
+        module_capsule=ViewStaleResult("Module Capsule", capsule, "capsule reason", f"harbor module seal {module} --write"),
+    )
+
+
+def _write_sample_repo(tmp_path: Path) -> None:
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text("code_roots:\n- harbor/**\n- tests/**\nexclude_paths: []\n", encoding="utf-8")
+
+    harbor_pkg = tmp_path / "harbor"
+    harbor_pkg.mkdir(parents=True, exist_ok=True)
+    (harbor_pkg / "__init__.py").write_text(
+        '''def version() -> str:
+    """Return a stable version marker.
+
+    Behavior:
+      - Returns a deterministic string for generated-view tests.
+
+    Returns:
+      str: Stable version marker.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    """
+    return "1.0"
+''',
+        encoding="utf-8",
+    )
+
+    core_pkg = harbor_pkg / "core"
+    core_pkg.mkdir(parents=True, exist_ok=True)
+    (core_pkg / "__init__.py").write_text("", encoding="utf-8")
+    (core_pkg / "sample.py").write_text(
+        '''def run(value: int) -> int:
+    """Return the provided value.
+
+    Behavior:
+      - Returns the provided integer unchanged.
+
+    Args:
+      value (int): Input integer.
+
+    Returns:
+      int: Same integer value.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    """
+    return value
+''',
+        encoding="utf-8",
+    )
+
+    tests_dir = tmp_path / "tests"
+    tests_dir.mkdir(parents=True, exist_ok=True)
+    (tests_dir / "__init__.py").write_text("", encoding="utf-8")
+    (tests_dir / "test_sample.py").write_text(
+        "def test_sample():\n"
+        "    assert True\n",
+        encoding="utf-8",
+    )
 
 
 def _patch_finish_basics(monkeypatch):
@@ -168,12 +278,11 @@ def test_finish_sync_context_runs_status_check_docs_seal_stale(monkeypatch):
 
     monkeypatch.setattr(cli_main, "write_module_capsule", _write_capsule)
 
-    def _check_stale(context):
-        module = context.get("module", "")
+    def _check_stale(module):
         stale_checked.append(module)
-        return {"status": "up_to_date"}
+        return _view_summary(module)
 
-    monkeypatch.setattr(cli_main, "check_module_capsule_stale", _check_stale)
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", _check_stale)
     monkeypatch.setattr(
         cli_main.IndexBuilder,
         "iter_build",
@@ -195,11 +304,12 @@ def test_finish_sync_context_runs_status_check_docs_seal_stale(monkeypatch):
     assert "Context Sync:" in out
     assert "Refreshing L2 README for changed modules" in out
     assert "Refreshing Module Capsules for changed modules" in out
-    assert "Checking Module Capsule stale status" in out
+    assert "Running changed-scope stale self-check" in out
+    assert "Changed-scope stale self-check passed for 3 modules." in out
     assert "harbor checkpoint --ci --format json --advice basic" in out
     assert "harbor stale --ci --format json --advice basic" in out
     assert "harbor doctor --ci --format json --advice basic" in out
-    assert status_calls["count"] >= 3
+    assert status_calls["count"] >= 1
     assert docs_generated == ["harbor", "harbor/cli", "harbor/core"]
     assert docs_written == ["harbor", "harbor/cli", "harbor/core"]
     assert capsule_written == ["harbor", "harbor/cli", "harbor/core"]
@@ -224,11 +334,7 @@ def test_finish_sync_context_no_changed_modules_friendly(monkeypatch):
         "write_module_capsule",
         lambda context: calls.__setitem__("seal_write", calls["seal_write"] + 1),
     )
-    monkeypatch.setattr(
-        cli_main,
-        "check_module_capsule_stale",
-        lambda context: calls.__setitem__("stale", calls["stale"] + 1),
-    )
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: calls.__setitem__("stale", calls["stale"] + 1))
 
     out = run_cmd(["finish", "--sync-context"])
     assert "No changed modules detected. Context sync skipped." in out
@@ -267,7 +373,7 @@ def test_finish_sync_context_write_boundary_only_allows_docs_and_capsules(monkey
         return SimpleNamespace(canonical_paths=[p], exported_paths=[])
 
     monkeypatch.setattr(cli_main, "write_module_capsule", _write_capsule)
-    monkeypatch.setattr(cli_main, "check_module_capsule_stale", lambda context: {"status": "up_to_date"})
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _view_summary(module))
 
     out = run_cmd(["finish", "--sync-context"])
     assert "Context Sync:" in out
@@ -335,7 +441,7 @@ def test_finish_sync_context_ignores_changed_modules_outside_workspace(monkeypat
         return SimpleNamespace(canonical_paths=canonical_paths, exported_paths=[])
 
     monkeypatch.setattr(cli_main, "write_module_capsule", _write_capsule)
-    monkeypatch.setattr(cli_main, "check_module_capsule_stale", lambda context: {"status": "up_to_date"})
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _view_summary(module))
 
     out = run_cmd(["finish", "--sync-context"])
     assert "C:/Users/GM/AppData/Local/Temp/outside.py" not in out
@@ -402,7 +508,158 @@ def test_finish_sync_context_adds_only_indexed_parent_modules(monkeypatch):
         "write_module_capsule",
         lambda context: SimpleNamespace(canonical_paths=[], exported_paths=[]),
     )
-    monkeypatch.setattr(cli_main, "check_module_capsule_stale", lambda context: {"status": "up_to_date"})
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _view_summary(module))
 
     _ = run_cmd(["finish", "--sync-context"])
     assert written_modules == ["harbor", "harbor/cli", "tests"]
+
+
+def test_changed_scope_consistency_across_finish_docs_module_seal_and_stale(monkeypatch):
+    _patch_finish_basics(monkeypatch)
+    report = _status_report_for_paths("harbor/core/sample.py", "tests/test_sample.py")
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: report)
+    monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda: ["harbor", "harbor/core", "tests"])
+
+    seen = {
+        "finish_docs": [],
+        "finish_seal": [],
+        "finish_stale": [],
+        "docs": [],
+        "seal": [],
+        "stale": [],
+        "stale_ci": [],
+    }
+    current = {"command": ""}
+
+    def _generate(self, module):
+        target = "finish_docs" if current["command"] == "finish" else "docs"
+        seen[target].append(module)
+        return f"# {module}"
+
+    def _write_readme(self, module, md, force=False):
+        return []
+
+    def _context(module):
+        return {"module": module, "key_files": [f"{module}/x.py"], "contracts": []}
+
+    def _write_capsule(context):
+        module = context.get("module", "")
+        target = "finish_seal" if current["command"] == "finish" else "seal"
+        seen[target].append(module)
+        return SimpleNamespace(canonical_paths=[], exported_paths=[])
+
+    def _check_stale(module):
+        target = "finish_stale" if current["command"] == "finish" else ("stale_ci" if current["command"] == "stale_ci" else "stale")
+        seen[target].append(module)
+        return _view_summary(module)
+
+    monkeypatch.setattr(cli_main.L2Generator, "generate", _generate)
+    monkeypatch.setattr(cli_main.L2Generator, "write", _write_readme)
+    monkeypatch.setattr(cli_main, "collect_module_context", _context)
+    monkeypatch.setattr(cli_main, "write_module_capsule", _write_capsule)
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", _check_stale)
+
+    current["command"] = "finish"
+    _ = run_cmd(["finish", "--sync-context"])
+    current["command"] = "docs"
+    _ = run_cmd(["docs", "--changed", "--write"])
+    current["command"] = "seal"
+    _ = run_cmd(["module", "seal", "--changed", "--write"])
+    current["command"] = "stale"
+    _ = run_cmd(["stale", "--changed"])
+    current["command"] = "stale_ci"
+    code, out = run_cmd_with_exit_code(["stale", "--ci", "--format", "json"])
+
+    payload = json.loads(out)
+    expected = ["harbor", "harbor/core", "tests"]
+    assert code == 0
+    assert payload["status"] == "pass"
+    assert seen["finish_docs"] == expected
+    assert seen["finish_seal"] == expected
+    assert seen["finish_stale"] == expected
+    assert seen["docs"] == expected
+    assert seen["seal"] == expected
+    assert seen["stale"] == expected
+    assert seen["stale_ci"] == expected
+
+
+def test_finish_sync_context_reports_residual_stale_guidance(monkeypatch):
+    _patch_finish_basics(monkeypatch)
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _status_report_for_paths("harbor/core/sample.py"))
+    monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda: ["harbor", "harbor/core"])
+    monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# {module}")
+    monkeypatch.setattr(cli_main.L2Generator, "write", lambda self, module, md, force=False: [])
+    monkeypatch.setattr(
+        cli_main,
+        "collect_module_context",
+        lambda module: {"module": module, "key_files": [f"{module}/x.py"], "contracts": []},
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "write_module_capsule",
+        lambda context: SimpleNamespace(canonical_paths=[], exported_paths=[]),
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "check_module_derived_views_stale",
+        lambda module: _view_summary(module, l2="stale", capsule="stale"),
+    )
+
+    out = run_cmd(["finish", "--sync-context"])
+    assert "Residual stale detected after sync" in out
+    assert "- harbor | L2 README | stale: l2 reason" in out
+    assert "- harbor/core | Module Capsule | stale: capsule reason" in out
+    assert "Deterministic repair guidance:" in out
+    assert "harbor docs --module harbor --write" in out
+    assert "harbor module seal harbor/core --write" in out
+
+
+def test_finish_sync_context_warns_on_generator_integrity_changes(monkeypatch):
+    _patch_finish_basics(monkeypatch)
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: _status_report_for_paths("harbor/core/l2.py"))
+    monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda: ["harbor", "harbor/core"])
+    monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# {module}")
+    monkeypatch.setattr(cli_main.L2Generator, "write", lambda self, module, md, force=False: [])
+    monkeypatch.setattr(
+        cli_main,
+        "collect_module_context",
+        lambda module: {"module": module, "key_files": [f"{module}/x.py"], "contracts": []},
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "write_module_capsule",
+        lambda context: SimpleNamespace(canonical_paths=[], exported_paths=[]),
+    )
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _view_summary(module))
+
+    out = run_cmd(["finish", "--sync-context"])
+    assert "Changed generator/integrity files detected." in out
+    assert "- harbor/core/l2.py" in out
+    assert "Changed-scope sync may be insufficient. Consider:" in out
+    assert "harbor docs --all --write" in out
+    assert "harbor module seal --all --write" in out
+
+
+@pytest.mark.parametrize(
+    ("changed_path", "expected_module"),
+    [
+        ("tests/test_sample.py", "tests"),
+        ("harbor/core/sample.py", "harbor/core"),
+    ],
+)
+def test_finish_sync_context_then_stale_ci_pass_for_changed_scope(tmp_path: Path, monkeypatch, changed_path: str, expected_module: str):
+    monkeypatch.chdir(tmp_path)
+    _write_sample_repo(tmp_path)
+    _patch_finish_basics(monkeypatch)
+    report = _status_report_for_paths(changed_path)
+    monkeypatch.setattr(cli_main.SyncEngine, "check_status", lambda self: report)
+
+    finish_out = run_cmd(["finish", "--sync-context"])
+    code, stale_out = run_cmd_with_exit_code(["stale", "--ci", "--format", "json"])
+    payload = json.loads(stale_out)
+
+    assert expected_module in finish_out
+    assert "Changed-scope stale self-check passed" in finish_out
+    assert code == 0
+    assert payload["status"] == "pass"
+    assert payload["summary"]["ci_failures"] == 0
