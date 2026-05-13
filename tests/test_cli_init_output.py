@@ -111,6 +111,7 @@ def test_real_harbor_init_writes_config_without_dangerous_py_excludes(tmp_path: 
         cwd=tmp_path,
         check=True,
         capture_output=True,
+        encoding="utf-8",
         text=True,
     )
     cfg = yaml.safe_load((tmp_path / ".harbor" / "config" / "harbor.yaml").read_text(encoding="utf-8")) or {}
@@ -136,8 +137,22 @@ def test_harbor_wrapper_output_matches_python_module(tmp_path: Path):
         "--update-gitignore",
         "--dry-run",
     ]
-    wrap = subprocess.run([harbor_cmd] + args, cwd=tmp_path, check=True, capture_output=True, text=True)
-    mod = subprocess.run([sys.executable, "-m", "harbor.cli.main"] + args, cwd=tmp_path, check=True, capture_output=True, text=True)
+    wrap = subprocess.run(
+        [harbor_cmd] + args,
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        encoding="utf-8",
+        text=True,
+    )
+    mod = subprocess.run(
+        [sys.executable, "-m", "harbor.cli.main"] + args,
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        encoding="utf-8",
+        text=True,
+    )
     for marker in ["检测到：技术栈", "默认扫描范围", "已自动排除", "完整配置可稍后运行：harbor config list"]:
         assert marker in wrap.stdout
         assert marker in mod.stdout

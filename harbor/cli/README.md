@@ -11,6 +11,7 @@
 
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
+| harbor.cli.main._configure_redirected_windows_stdio | Force UTF-8 on redirected Windows stdio for localized CLI... | standard | ⚪ Missing |
 | harbor.cli.main._is_log_write_interactive | — | standard | ⚪ Missing |
 
 </details>

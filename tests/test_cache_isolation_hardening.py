@@ -77,7 +77,9 @@ def test_external_temp_paths_only_land_in_isolated_workspace_index(tmp_path, mon
         builder.build(incremental=True)
         payload = json.loads((cache_dir / "l3_index.json").read_text(encoding="utf-8"))
         assert payload.get("files")
-        assert any(str(ext_root).replace("\\", "/") in fp for fp in payload["files"].keys())
+        normalized_root = ext_root.resolve().as_posix().lower().rstrip("/")
+        indexed_paths = [str(Path(fp)).replace("\\", "/").lower() for fp in payload["files"].keys()]
+        assert any(fp == normalized_root or fp.startswith(f"{normalized_root}/") for fp in indexed_paths)
 
     assert _snapshot_repo_cache() == before
 

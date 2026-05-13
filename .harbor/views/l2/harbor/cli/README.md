@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "harbor/cli"
-generated_at: "2026-05-11T18:42:50Z"
+generated_at: "2026-05-13T06:48:15Z"
 generation_command: "harbor docs --module harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -11,8 +11,8 @@ source_paths_truncated: false
 source_paths:
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
-source_fingerprint: "sha256:42aea20beb1c247ed4f581fd0ae118a6c14566c42f1a44ef0fa4b9e562fc3d73"
-contract_fingerprint: "sha256:e55befcb38f2b2138a55d1f98bb9ee101987dfcd2c42caa8088e7724ba96e512"
+source_fingerprint: "sha256:a4594ba210e525316c6b13f391be97867e6125d65d9984050d98c84566918464"
+contract_fingerprint: "sha256:bc7df7f57c499867ae0d87d5229891e5a5f48993ff267725be5f471edf07f919"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -29,6 +29,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
+| harbor.cli.main._configure_redirected_windows_stdio | Force UTF-8 on redirected Windows stdio for localized CLI... | standard | ⚪ Missing |
 | harbor.cli.main._is_log_write_interactive | — | standard | ⚪ Missing |
 
 </details>

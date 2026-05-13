@@ -1,4 +1,5 @@
 import argparse
+import os
 from datetime import datetime, timezone
 import re
 import sys
@@ -103,6 +104,25 @@ def _is_log_write_interactive() -> bool:
     return bool(sys.stdin.isatty() and sys.stdout.isatty())
 
 
+def _configure_redirected_windows_stdio() -> None:
+    """Force UTF-8 on redirected Windows stdio for localized CLI output."""
+    if os.name != "nt":
+        return
+    for name in ("stdout", "stderr"):
+        stream = getattr(sys, name, None)
+        if stream is None or not hasattr(stream, "reconfigure"):
+            continue
+        try:
+            if stream.isatty():
+                continue
+        except Exception:
+            continue
+        try:
+            stream.reconfigure(encoding="utf-8", errors="strict")
+        except Exception:
+            continue
+
+
 def main():
     """Harbor CLI entrypoint and public command dispatch contract.
 
@@ -119,6 +139,9 @@ def main():
         friendly CLI errors for caller-visible handling.
       - Invalid legacy `harbor log` args exit with code 1 and must not print a
         Python traceback in normal CLI output.
+      - On Windows, redirected `stdout` / `stderr` are reconfigured to UTF-8
+        before command dispatch so localized CLI text remains pipe-safe in
+        non-interactive subprocess execution.
       - `harbor log draft` / `harbor log write` dispatch order remains explicit:
         draft/write subcommands are handled before legacy direct `harbor log`
         message or LLM-assisted draft flows.
@@ -153,6 +176,8 @@ def main():
       - Successful non-JSON `harbor log draft` output prints localized next
         actions for formal Diary write/save flows only when the current evidence
         is sufficient to generate a writable Diary Draft.
+      - Redirected stdio UTF-8 normalization must not change CLI arguments,
+        exit-code semantics, JSON payload structure, or file-write targets.
       - `harbor log draft` refreshes latest draft runtime cache under
         `.harbor/state/log/latest-draft.md` and
         `.harbor/state/log/latest-draft.json` only when it produced a writable
@@ -263,6 +288,8 @@ def main():
     @harbor.idempotency: once
     @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; docs/module batch flows normalize repo-absolute file candidates, reject outside-repo absolute module paths, and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
     """
+    _configure_redirected_windows_stdio()
+
     try:
         from dotenv import load_dotenv
         load_dotenv()
