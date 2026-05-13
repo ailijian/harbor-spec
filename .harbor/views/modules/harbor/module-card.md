@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-12T16:01:55Z"
+generated_at: "2026-05-13T06:03:40Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 55
@@ -64,11 +64,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:62ca7d919b0b18a929390208edc6cbe18c0a133bb47e5d0a3496b60fdcf3d1ea"
+source_fingerprint: "sha256:364c67038f5ca20dc8d8b136b63571d7059db1fb24d164deaf943c11d6cb6e93"
 contract_fingerprint: "sha256:e9128976914bd5db6d99e73a6e7b2a43c03a27d675f6820bff701be0b5ec972e"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "c1f7fdd15e7f275c937c218241c457251f489c23ac3e6efa8775001a6c3ed590"
-fingerprint: "c1f7fdd15e7f275c937c218241c457251f489c23ac3e6efa8775001a6c3ed590"
+view_fingerprint: "a1ca5787fcb2af812ebcad26b5dc4f6390d004663b9e432a408b031c57db61e3"
+fingerprint: "a1ca5787fcb2af812ebcad26b5dc4f6390d004663b9e432a408b031c57db61e3"
 ---
 
 # Module Card: harbor
@@ -705,6 +705,7 @@ tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_checkpoint_json_additive_compat.py
 tests/test_ci_mode.py
+tests/test_ci_workflow.py
 tests/test_cli_doctor.py
 tests/test_cli_finish_sync_context.py
 tests/test_cli_i18n.py

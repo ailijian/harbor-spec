@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-12T17:29:36Z"
+generated_at: "2026-05-13T06:03:48Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 34
@@ -46,8 +46,8 @@ source_paths:
 source_fingerprint: "sha256:58af842ca352b75d9a83b121a35e648d8589b4584ad0ded6696ee491d5fe878e"
 contract_fingerprint: "sha256:cf83f9d7f1b8e622a55a7fbae54587f94aed52b3ccb52d356ac2493a9352a50f"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "0c944a32ce384ed0bd10e2370600699e42f2ec13acab8969c36885007c1addb2"
-fingerprint: "0c944a32ce384ed0bd10e2370600699e42f2ec13acab8969c36885007c1addb2"
+view_fingerprint: "62c1e3bbafa6e3b095eed0fa0e207c698e1efe60ed58ad6b023089389b72cf34"
+fingerprint: "62c1e3bbafa6e3b095eed0fa0e207c698e1efe60ed58ad6b023089389b72cf34"
 ---
 
 # Module Card: harbor/core
@@ -602,6 +602,7 @@ tests/test_checkpoint_ci.py
 tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_ci_mode.py
+tests/test_ci_workflow.py
 tests/test_cli_doctor.py
 tests/test_cli_finish_sync_context.py
 tests/test_cli_init_output.py
