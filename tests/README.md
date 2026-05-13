@@ -285,6 +285,7 @@
 | tests.test_ci_mode.test_ci_mode_i18n_labels_follow_language | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_ci_mode_no_write_regression | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_ci_next_steps_excludes_accept_log_lock | — | standard | ⚪ Missing |
+| tests.test_ci_workflow.test_ci_workflow_keeps_ubuntu_matrix_and_adds_windows_full_governance | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_classify_project_area_is_stable | — | standard | ⚪ Missing |
 | tests.test_cli_decorate.test_cli_dry_run_preview_counts | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_cli_log_message_accepts_supported_legacy_types_in_isolated_workspace | — | standard | ⚪ Missing |

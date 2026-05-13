@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-12T17:29:36Z"
+generated_at: "2026-05-13T05:41:17Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 93
+source_path_count: 94
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -27,6 +27,7 @@ source_paths:
   - "tests/test_checkpoint_ci_guidance.py"
   - "tests/test_checkpoint_json_additive_compat.py"
   - "tests/test_ci_mode.py"
+  - "tests/test_ci_workflow.py"
   - "tests/test_cli_config.py"
   - "tests/test_cli_decorate.py"
   - "tests/test_cli_docs_modes.py"
@@ -102,11 +103,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:4d6f0be73bd2a4a8a1a4a398f1438ab5c07691daa83a6957d4559030c95d9f6c"
-contract_fingerprint: "sha256:8041d7d0d12e9adae0edd010fe12937e98913c0422e70b5709bf70e6b42f5ea9"
+source_fingerprint: "sha256:d09dec79c2b985c4f402121880e9df3cb73011238724ab68abca4f5dd28f9311"
+contract_fingerprint: "sha256:4935dba07c57ed6ea655e7f4507f3cbd3cc214fc3e7c3efbb084681a0ef888cf"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "1cece5ab4afe4b9f4611152d2af0c3a37da8689576f6eb35ff00c931732ad414"
-fingerprint: "1cece5ab4afe4b9f4611152d2af0c3a37da8689576f6eb35ff00c931732ad414"
+view_fingerprint: "cc8b6c79560cac0f3acbe67c9e604565d8313f7fe88f388a9aa7e20ad9a609ad"
+fingerprint: "cc8b6c79560cac0f3acbe67c9e604565d8313f7fe88f388a9aa7e20ad9a609ad"
 ---
 
 # Module Card: tests
@@ -145,6 +146,7 @@ tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_checkpoint_json_additive_compat.py
 tests/test_ci_mode.py
+tests/test_ci_workflow.py
 tests/test_cli_config.py
 tests/test_cli_decorate.py
 tests/test_cli_docs_modes.py
@@ -367,6 +369,7 @@ tests/test_workspace_paths.py
 | tests.test_ci_mode.test_stale_ci_fail_on_module_capsule_stale | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.test_stale_ci_json_single_object_and_no_abs_path | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode.test_stale_ci_pass_no_canonical_stale | tests/test_ci_mode.py | unknown | standard |
+| tests.test_ci_workflow.test_ci_workflow_keeps_ubuntu_matrix_and_adds_windows_full_governance | tests/test_ci_workflow.py | unknown | standard |
 | tests.test_cli_config.test_config_add_list_remove | tests/test_cli_config.py | unknown | standard |
 | tests.test_cli_decorate.test_cli_dry_run_preview_counts | tests/test_cli_decorate.py | unknown | standard |
 | tests.test_cli_docs_modes._empty_status_report | tests/test_cli_docs_modes.py | unknown | standard |
@@ -1046,6 +1049,7 @@ tests/test_checkpoint_ci_baseline_artifact.py
 tests/test_checkpoint_ci_guidance.py
 tests/test_checkpoint_json_additive_compat.py
 tests/test_ci_mode.py
+tests/test_ci_workflow.py
 tests/test_cli_config.py
 tests/test_cli_decorate.py
 tests/test_cli_docs_modes.py
