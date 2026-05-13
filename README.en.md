@@ -40,6 +40,61 @@ It is a repo-local **context governance layer**.
 
 ---
 
+## 🚀 v1.4.2: TypeScript Contract Source Strengthening
+
+Harbor-spec v1.4.2 resumes the TypeScript roadmap after `v1.4.1` and tightens the governance foundation required before broader contract-source expansion.
+
+### What v1.4.2 includes
+
+* TypeScript subject generalized persistence through `IndexBuilder`, SQLite `entries`, and runtime cache snapshots
+* additive identity metadata across persistence and checkpoint JSON:
+  * `target_id`
+  * `func_id` / `legacy_func_id`
+  * `language`
+  * `symbol_kind`
+  * `qualified_name`
+  * `lineno` / `end_lineno`
+  * `visibility`
+* richer TypeScript contract-source evidence:
+  * exported `interface` / `type` advisory-first discovery
+  * shallow `z.object(...)` / `z.enum(...)` recognition
+  * `export default function` / `export default class` public-surface evidence
+  * `contract_hash` from normalized contract source bundle hash
+* additive checkpoint / `harbor next` metadata:
+  * `export_mode`
+  * `public_surface_evidence`
+  * `data_contract_kind`
+  * `schema_source_kind`
+  * `contract_source_kinds`
+  * `contract_source_fingerprints`
+  * `source_confidence_summary`
+* release-closure expectations:
+  * Windows redirected CLI stdout/stderr default to UTF-8 unless explicitly overridden
+  * generated context clean parity is restored
+  * generated context closure follows `harbor finish --sync-context -> harbor stale --ci --format json -> harbor doctor --ci --format json`
+
+### Not supported in v1.4.2
+
+* re-export graph
+* `.d.ts` scanning
+* `package exports` / `tsconfig` path alias resolution
+* framework presets
+* TypeScript DDT
+* TypeScript semantic audit
+* JavaScript as first-class governance
+* full Zod schema semantics / schema-to-type consistency audit
+* automatic blocking-gate expansion for `interface/type`, Zod, or default-export evidence
+
+### Compatibility and release boundaries
+
+* Python behavior remains zero-regression-compatible
+* `checkpoint --ci` still uses `.harbor/baseline/accepted-checkpoint.json` as the accepted baseline source of truth
+* runtime cache remains local acceleration only and does not become CI truth
+* Windows full-governance remains a formal release gate alongside the Ubuntu Python matrix
+* the `v1.4.1` Log Draft / Controlled Write workflow remains zero-regression-compatible
+
+---
+
 ## 🚀 v1.4.0: Core Neutralization + TypeScript Contract Governance MVP
 
 Harbor-spec v1.4.0 introduces **first-class TypeScript contract governance**.  
@@ -679,7 +734,7 @@ Example:
 ```yaml
 ---
 generated_by: harbor-spec
-harbor_version: 1.4.1
+harbor_version: 1.4.2
 view_type: l2_readme
 module: harbor/core
 generation_command: harbor docs --module harbor/core --write

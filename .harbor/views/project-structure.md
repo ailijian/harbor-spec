@@ -2,7 +2,7 @@
 generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "project_structure"
-generated_at: "2026-05-13T18:54:51Z"
+generated_at: "2026-05-13T19:39:53Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
 source_path_count: 154
@@ -128,7 +128,7 @@ source_paths:
   - "tests/test_init_detector.py"
   - "tests/test_init_governance.py"
   - "tests/test_init_llm_env.py"
-source_fingerprint: "sha256:56178e0dec746dd2c952cbcc5130ea188c5fb8d3777916f94c5b0796bc82cb3f"
+source_fingerprint: "sha256:d5f5fce6886f45b3a736314769ffb480d5958b23e9989713d7dcf01f9e62927a"
 contract_fingerprint: "sha256:338d2c06c49f23b101ececc5b01d8c7b126ae51c1d7ad7ad58bde642624b1bf7"
 generator_fingerprint: "sha256:23ede01e946f15789329e98cc70551d240aa807690a0da420bddfae426745494"
 ---
@@ -143,7 +143,7 @@ generator_fingerprint: "sha256:23ede01e946f15789329e98cc70551d240aa807690a0da420
 | Field | Value |
 |---|---|
 | Name | harbor-spec |
-| Version | 1.4.1 |
+| Version | 1.4.2 |
 | Description | Harbor-spec: context governance engine for AI coding, with contract drift detection, DDT validation, workflow facades, L2 README generation, module capsules, and advisory health checks. |
 | CLI Entrypoint | harbor.cli.main:main |
 

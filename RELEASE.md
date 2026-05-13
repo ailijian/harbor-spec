@@ -1,6 +1,6 @@
 # Harbor-spec v1.4.2 — TypeScript Contract Source Strengthening
 
-状态：计划发布  
+状态：发布就绪
 发布类型：TypeScript Contract Source Strengthening
 
 ## Added
@@ -36,6 +36,11 @@
 - generated context closure for v1.4.2 is explicitly `harbor finish --sync-context -> harbor stale --ci --format json -> harbor doctor --ci --format json`.
 - Windows full-governance remains a formal release gate, not a best-effort compatibility check.
 
+## Fixed
+
+- Windows redirected CLI stdout/stderr now default to UTF-8 unless explicitly overridden, restoring cross-stream encoding parity under redirected execution.
+- generated context clean parity and committed views alignment are restored for the v1.4.2 release closure path.
+
 ## Not Supported Yet
 
 - re-export graph
@@ -63,12 +68,12 @@
 
 ## Validation
 
-- `pytest`: pending final release run
-- `harbor checkpoint --ci --format json`: pending final release run
-- `harbor stale --ci --format json`: pending final release run
-- `harbor doctor --ci --format json`: pending final release run
-- Ubuntu Python matrix CI: pending GitHub Actions confirmation
-- Windows full-governance CI: pending GitHub Actions confirmation
+- `pytest`: `652 passed`
+- `harbor checkpoint --ci --format json`: `pass`
+- `harbor stale --ci --format json`: `pass`
+- `harbor doctor --ci --format json`: `pass`
+- Ubuntu Python matrix CI: `pass`
+- Windows full-governance CI: `pass`
 
 ---
 
