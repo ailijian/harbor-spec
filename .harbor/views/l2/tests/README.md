@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-13T05:41:09Z"
+generated_at: "2026-05-13T08:17:22Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 94
@@ -103,8 +103,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:d09dec79c2b985c4f402121880e9df3cb73011238724ab68abca4f5dd28f9311"
-contract_fingerprint: "sha256:79f139b1705309d05f94f07482b72d343671fc761ce445e855bf5e230cd64c06"
+source_fingerprint: "sha256:3aa69b8d9e17686c5c0351664b116f58a7c01a2d5b53ef132a24f0d3c036bb0c"
+contract_fingerprint: "sha256:7383ddb8ecc8645517f1f6a05bff3d4650124a20c216592591745a8067764127"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -519,6 +519,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_finish_does_not_auto_run_docs_log_lock | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_finish_snapshot_write_failure_does_not_change_exit_code | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_no_changed_modules_friendly | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_runs_status_check_docs_seal_stale | — | standard | ⚪ Missing |

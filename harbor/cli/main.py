@@ -146,6 +146,9 @@ def main():
         draft/write subcommands are handled before legacy direct `harbor log`
         message or LLM-assisted draft flows.
       - `checkpoint` / `stale` / `doctor` support `--advice off|basic`.
+      - `finish --sync-context` refreshes changed modules plus any indexed
+        parent aggregate modules so module-level L2 README / Capsule views stay
+        aligned when a nested module change also affects an ancestor summary.
       - Successful `checkpoint` / `accept` / `finish` dispatch paths also attempt
         to write lightweight change-window runtime snapshots under
         `.harbor/state/change-windows/`.
@@ -237,6 +240,8 @@ def main():
     Side Effects:
       - Depends on subcommand. Gate commands are read-only by contract; write
         commands such as `lock` / `log` / `docs --write` may write files.
+      - `finish --sync-context` may write derived L2 README / Module Capsule
+        views for changed modules and indexed parent aggregate modules.
       - `checkpoint` / `accept` / `finish` may additionally write change-window
         runtime state under `.harbor/state/change-windows/`.
 
@@ -1317,6 +1322,32 @@ def main():
         changed_paths.extend([e.file_path for e in rep.missing])
         return changed_paths
 
+    def _expand_modules_with_indexed_parents(modules):
+        normalized_modules = []
+        seen = set()
+        for module in modules:
+            text = str(module or "").strip().replace("\\", "/").strip("/")
+            if not text or text in seen:
+                continue
+            seen.add(text)
+            normalized_modules.append(text)
+        if not normalized_modules:
+            return []
+
+        indexed_modules = {str(module or "").strip().replace("\\", "/").strip("/") for module in collect_all_indexed_modules()}
+        indexed_modules.discard("")
+        if not indexed_modules:
+            return sorted(normalized_modules)
+
+        expanded = set(normalized_modules)
+        for module in normalized_modules:
+            parts = [part for part in module.split("/") if part]
+            for depth in range(1, len(parts)):
+                parent = "/".join(parts[:depth])
+                if parent in indexed_modules:
+                    expanded.add(parent)
+        return sorted(expanded)
+
     def _collect_changed_modules_from_status(rep):
         changed_paths = _collect_changed_paths_from_status(rep)
         cwd = Path.cwd().resolve()
@@ -1948,8 +1979,8 @@ def main():
         else:
             print("")
             print(t("cli.finish.sync_context.title"))
-            changed_modules = _collect_changed_modules()
-            docs_modules = _collect_changed_modules_for_docs()
+            changed_modules = _expand_modules_with_indexed_parents(_collect_changed_modules())
+            docs_modules = _expand_modules_with_indexed_parents(_collect_changed_modules_for_docs())
             if not changed_modules and not docs_modules:
                 print(t("cli.finish.sync_context.none"))
             else:

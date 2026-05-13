@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T05:41:17Z"
+generated_at: "2026-05-13T08:14:40Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 94
@@ -103,11 +103,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:d09dec79c2b985c4f402121880e9df3cb73011238724ab68abca4f5dd28f9311"
-contract_fingerprint: "sha256:4935dba07c57ed6ea655e7f4507f3cbd3cc214fc3e7c3efbb084681a0ef888cf"
+source_fingerprint: "sha256:3aa69b8d9e17686c5c0351664b116f58a7c01a2d5b53ef132a24f0d3c036bb0c"
+contract_fingerprint: "sha256:e7a2ce89cf932f72094e6ac44dfb4e943e3ade0c4d09f0ecd3a52c416c9853f3"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "cc8b6c79560cac0f3acbe67c9e604565d8313f7fe88f388a9aa7e20ad9a609ad"
-fingerprint: "cc8b6c79560cac0f3acbe67c9e604565d8313f7fe88f388a9aa7e20ad9a609ad"
+view_fingerprint: "ac4ce3c4cc8c795e1d5974b22a52f24fe85015ef86b09905491bf3694a7093d3"
+fingerprint: "ac4ce3c4cc8c795e1d5974b22a52f24fe85015ef86b09905491bf3694a7093d3"
 ---
 
 # Module Card: tests
@@ -413,6 +413,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context._status_report_with_changed | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.run_cmd | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_no_changed_modules_friendly | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_runs_status_check_docs_seal_stale | tests/test_cli_finish_sync_context.py | unknown | standard |

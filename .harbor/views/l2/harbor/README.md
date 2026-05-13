@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-13T04:52:55Z"
+generated_at: "2026-05-13T07:07:01Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
 source_path_count: 55
@@ -64,8 +64,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:364c67038f5ca20dc8d8b136b63571d7059db1fb24d164deaf943c11d6cb6e93"
-contract_fingerprint: "sha256:df5b789b79b802225ad620dc5d654701770c4c8aa9c4d65dd22c6694f1f6601e"
+source_fingerprint: "sha256:23219d24753268cc12ef871395cc3e5a6b2bc9e6e0a9be097461f20eee79c5ec"
+contract_fingerprint: "sha256:5e25eacd79c94f2c1f5ce46bf42c5825265976b6183ff0e1f37586cc98515283"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -201,6 +201,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.sync.SyncEngine._compare_snapshots | — | standard | ⚪ Missing |
 | harbor.core.log_draft._compose_written_details | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._confidence_for_level | — | standard | ⚪ Missing |
+| harbor.cli.main._configure_redirected_windows_stdio | Force UTF-8 on redirected Windows stdio for localized CLI... | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._current_file_path | — | standard | ⚪ Missing |

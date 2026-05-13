@@ -130,6 +130,7 @@
 | harbor.core.sync.SyncEngine._compare_snapshots | — | standard | ⚪ Missing |
 | harbor.core.log_draft._compose_written_details | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._confidence_for_level | — | standard | ⚪ Missing |
+| harbor.cli.main._configure_redirected_windows_stdio | Force UTF-8 on redirected Windows stdio for localized CLI... | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._current_file_path | — | standard | ⚪ Missing |

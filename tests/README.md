@@ -409,6 +409,7 @@
 | tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_finish_does_not_auto_run_docs_log_lock | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_finish_snapshot_write_failure_does_not_change_exit_code | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_no_changed_modules_friendly | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_runs_status_check_docs_seal_stale | — | standard | ⚪ Missing |

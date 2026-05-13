@@ -200,10 +200,10 @@ def test_finish_sync_context_runs_status_check_docs_seal_stale(monkeypatch):
     assert "harbor stale --ci --format json --advice basic" in out
     assert "harbor doctor --ci --format json --advice basic" in out
     assert status_calls["count"] >= 3
-    assert docs_generated == ["harbor/cli", "harbor/core"]
-    assert docs_written == ["harbor/cli", "harbor/core"]
-    assert capsule_written == ["harbor/cli", "harbor/core"]
-    assert stale_checked == ["harbor/cli", "harbor/core"]
+    assert docs_generated == ["harbor", "harbor/cli", "harbor/core"]
+    assert docs_written == ["harbor", "harbor/cli", "harbor/core"]
+    assert capsule_written == ["harbor", "harbor/cli", "harbor/core"]
+    assert stale_checked == ["harbor", "harbor/cli", "harbor/core"]
     assert side_effect_calls["lock"] == 0
     assert side_effect_calls["log"] == 0
     assert side_effect_calls["promote"] == 0
@@ -338,14 +338,71 @@ def test_finish_sync_context_ignores_changed_modules_outside_workspace(monkeypat
     monkeypatch.setattr(cli_main, "check_module_capsule_stale", lambda context: {"status": "up_to_date"})
 
     out = run_cmd(["finish", "--sync-context"])
-    assert "Skipped unsafe indexed modules:" in out
-    assert "outside repository root" in out
-    assert "<outside-repo>" in out
+    assert "C:/Users/GM/AppData/Local/Temp/outside.py" not in out
+    assert ".harbor/views/l2/harbor/README.md" in written_paths
+    assert "harbor/README.md" in written_paths
     assert ".harbor/views/l2/harbor/core/README.md" in written_paths
     assert "harbor/core/README.md" in written_paths
+    assert ".harbor/views/modules/harbor/module-card.md" in written_paths
+    assert ".harbor/views/modules/harbor/review-checklist.md" in written_paths
+    assert ".harbor/views/modules/harbor/debug-playbook.md" in written_paths
     assert ".harbor/views/modules/harbor/core/module-card.md" in written_paths
     assert ".harbor/views/modules/harbor/core/review-checklist.md" in written_paths
     assert ".harbor/views/modules/harbor/core/debug-playbook.md" in written_paths
     context_sync_output = out.split("Context Sync:", 1)[1]
     assert "C:/Users/GM/AppData/Local/Temp/outside.py" not in context_sync_output
     assert all("C:/Users/GM/AppData/Local/Temp" not in path for path in written_paths)
+
+
+def test_finish_sync_context_adds_only_indexed_parent_modules(monkeypatch):
+    _patch_finish_basics(monkeypatch)
+    monkeypatch.setattr(
+        cli_main.SyncEngine,
+        "check_status",
+        lambda self: SimpleNamespace(
+            counts={
+                "drift": 0,
+                "contract_changed": 0,
+                "modified": 2,
+                "contract_gap": 0,
+                "skipped_no_contract": 0,
+                "contract_parse_error": 0,
+                "untracked": 0,
+                "missing": 0,
+            },
+            drift=[],
+            contract_changed=[],
+            modified=[
+                SimpleNamespace(id="a", details="x", file_path="harbor/cli/main.py"),
+                SimpleNamespace(id="b", details="y", file_path="tests/test_cli_finish_sync_context.py"),
+            ],
+            contract_gap=[],
+            skipped_no_contract=[],
+            contract_parse_error=[],
+            untracked=[],
+            missing=[],
+        ),
+    )
+    monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda: ["harbor", "harbor/cli", "tests"])
+
+    written_modules = []
+    monkeypatch.setattr(cli_main.L2Generator, "generate", lambda self, module: f"# {module}")
+    monkeypatch.setattr(
+        cli_main.L2Generator,
+        "write",
+        lambda self, module, md, force=False: written_modules.append(module) or [],
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "collect_module_context",
+        lambda module: {"module": module, "key_files": [f"{module}/x.py"], "contracts": []},
+    )
+    monkeypatch.setattr(
+        cli_main,
+        "write_module_capsule",
+        lambda context: SimpleNamespace(canonical_paths=[], exported_paths=[]),
+    )
+    monkeypatch.setattr(cli_main, "check_module_capsule_stale", lambda context: {"status": "up_to_date"})
+
+    _ = run_cmd(["finish", "--sync-context"])
+    assert written_modules == ["harbor", "harbor/cli", "tests"]
