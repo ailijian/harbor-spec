@@ -15,9 +15,64 @@ from harbor.core.workspace import load_workspace_config
 _TRANSIENT_INDEX_CACHE: Dict[str, Dict[str, Any]] = {}
 
 
-def load_readonly_index(index_path: Path | None = None, *, repo_root: Path | None = None) -> Dict[str, Any]:
+def load_readonly_index(
+    index_path: Path | None = None,
+    *,
+    repo_root: Path | None = None,
+    prefer_fresh_source: bool = False,
+) -> Dict[str, Any]:
+    """Load a read-only Harbor index snapshot for analysis paths.
+
+    Behavior:
+      - Uses the repo-local runtime cache snapshot when available by default.
+      - When `prefer_fresh_source=True`, prefers a transient source-derived scan
+        before any runtime cache snapshot so generated-context and stale checks
+        can use the same source-of-truth input as clean CI.
+      - Generated-context writers and stale validators can use
+        `prefer_fresh_source=True` to bypass `.harbor/cache/l3_index.json`
+        whenever transient source-derived records are available.
+      - Fresh/source fallback remains read-only: it may read cache or database
+        snapshots only when source-derived records are unavailable.
+      - Remains read-only and never writes cache snapshots or database state.
+
+    Args:
+      index_path (Path | None): Optional explicit cache snapshot path.
+      repo_root (Path | None): Repository root used for path resolution.
+      prefer_fresh_source (bool): Prefer transient source-derived records over
+        runtime cache snapshots when possible.
+
+    Returns:
+      Dict[str, Any]: JSON-compatible readonly index payload.
+
+    Side Effects:
+      - Reads workspace config, source files, or runtime cache state.
+      - Writes no files.
+
+    Idempotency:
+      - Deterministic for the same repository state and arguments.
+
+    Security:
+      - Must not write cache state or mutate source files.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+    """
     root = (repo_root or Path.cwd()).resolve()
     target = _resolve_index_path(index_path, repo_root=root)
+    if prefer_fresh_source:
+        transient_payload = _build_transient_index(root)
+        if transient_payload.get("files"):
+            return transient_payload
+        if target.exists():
+            try:
+                return json.loads(target.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        db_payload = _load_existing_db_index(repo_root=root)
+        if db_payload is not None:
+            return db_payload
+        return transient_payload
     if target.exists():
         try:
             return json.loads(target.read_text(encoding="utf-8"))

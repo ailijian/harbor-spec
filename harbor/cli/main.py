@@ -188,9 +188,16 @@ def main():
         parent aggregate modules so module-level L2 README / Capsule views stay
         aligned when a nested module change also affects an ancestor summary.
       - `finish --sync-context`, `docs --changed`, `module seal --changed`,
-        `stale --changed`, and `stale --ci` share the same changed-scope
-        resolver for changed-module detection, repo-relative path
+        `stale --changed`, `stale --ci`, and `doctor --changed` share the same
+        changed-scope resolver for changed-module detection, repo-relative path
         normalization, and indexed parent aggregate expansion.
+      - Generated-context write paths plus `stale` / `doctor` module discovery
+        and stale-validation paths prefer the same fresh/source-derived
+        readonly index truth before falling back to local runtime cache
+        snapshots, reducing local-cache versus clean-CI drift.
+      - Fresh/source-compatible helper wrappers in these CLI routes preserve
+        existing user-visible command semantics while keeping legacy internal
+        call sites monkeypatch-compatible.
       - After writing changed-scope L2 README and Module Capsule outputs,
         `finish --sync-context` runs a same-scope stale self-check.
       - When the self-check passes, `finish --sync-context` prints an explicit
@@ -318,14 +325,17 @@ def main():
       exit semantics. Snapshot write failures may append runtime-only
       diagnostics under `.harbor/state/change-window-diagnostics.jsonl`.
       `finish --sync-context` reuses the shared changed-scope resolver used by
-      `docs --changed`, `module seal --changed`, `stale --changed`, and
-      `stale --ci`; after writing changed-scope L2 README / Module Capsule
-      outputs it reports either an explicit same-scope stale self-check pass or
-      residual stale rows with deterministic repair guidance. Generator /
-      integrity file hits add advisory text recommending explicit
-      `harbor docs --all --write` and `harbor module seal --all --write` only;
-      they do not trigger automatic full refresh, project-structure refresh, or
-      gate-semantic changes for `checkpoint` / `stale` / `doctor`.
+      `docs --changed`, `module seal --changed`, `stale --changed`,
+      `stale --ci`, and `doctor --changed`; after writing changed-scope L2
+      README / Module Capsule outputs it reports either an explicit same-scope
+      stale self-check pass or residual stale rows with deterministic repair
+      guidance. Generated-context write paths plus `stale` / `doctor`
+      enumeration paths use fresh/source-compatible readonly index helpers to
+      reduce local-cache versus clean-CI drift. Generator / integrity file hits
+      add advisory text recommending explicit `harbor docs --all --write` and
+      `harbor module seal --all --write` only; they do not trigger automatic
+      full refresh, project-structure refresh, or gate-semantic changes for
+      `checkpoint` / `stale` / `doctor`.
       `harbor log draft` emits a reviewable markdown/json draft only, may write
       latest draft runtime cache under `.harbor/state/log/latest-draft.*` only
       when evidence is sufficient for a writable draft, may write one non-diary
@@ -379,7 +389,7 @@ def main():
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: once
-    @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; `finish --sync-context`, `docs --changed`, `module seal --changed`, `stale --changed`, and `stale --ci` share one changed-scope resolver for changed-module detection, repo-relative normalization, and indexed parent aggregate expansion; `finish --sync-context` writes changed-scope L2 README / Module Capsule outputs, then runs a same-scope stale self-check that prints an explicit pass message or residual stale rows with deterministic repair guidance; generator / integrity file hits print broader-refresh advisory text recommending explicit `harbor docs --all --write` and `harbor module seal --all --write` only, without auto-running full refresh or project-structure refresh; docs/module batch flows reject outside-repo absolute module paths and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
+    @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; `finish --sync-context`, `docs --changed`, `module seal --changed`, `stale --changed`, `stale --ci`, and `doctor --changed` share one changed-scope resolver for changed-module detection, repo-relative normalization, and indexed parent aggregate expansion; generated-context write paths plus `stale` / `doctor` enumeration paths use fresh/source-compatible readonly index helpers to reduce local-cache versus clean-CI drift without changing user-visible CLI routing semantics; `finish --sync-context` writes changed-scope L2 README / Module Capsule outputs, then runs a same-scope stale self-check that prints an explicit pass message or residual stale rows with deterministic repair guidance; generator / integrity file hits print broader-refresh advisory text recommending explicit `harbor docs --all --write` and `harbor module seal --all --write` only, without auto-running full refresh or project-structure refresh; docs/module batch flows reject outside-repo absolute module paths and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
     """
     _configure_redirected_windows_stdio()
 
@@ -1398,7 +1408,11 @@ def main():
         return records
 
     def _collect_changed_modules_from_status(rep):
-        return collect_changed_modules_from_status(rep, repo_root=Path.cwd())
+        return collect_changed_modules_from_status(
+            rep,
+            repo_root=Path.cwd(),
+            indexed_modules=_collect_all_indexed_modules_for_generated_context(),
+        )
 
     def _collect_changed_paths_from_status(rep):
         return collect_changed_paths_from_status(rep)
@@ -1406,6 +1420,18 @@ def main():
     def _collect_changed_modules():
         rep = SyncEngine().check_status()
         return _collect_changed_modules_from_status(rep)
+
+    def _collect_all_indexed_modules_for_generated_context():
+        try:
+            return collect_all_indexed_modules(prefer_fresh_source=True)
+        except TypeError:
+            return collect_all_indexed_modules()
+
+    def _collect_module_context_for_generated_context(module: str):
+        try:
+            return collect_module_context(module, prefer_fresh_source=True)
+        except TypeError:
+            return collect_module_context(module)
 
     def _to_repo_relative_display(path: Path) -> str:
         try:
@@ -1656,7 +1682,7 @@ def main():
         print("  - harbor module seal --all --write")
 
     def _run_docs_changed(*, write=False, force=False, modules=None):
-        gen = L2Generator()
+        gen = L2Generator(prefer_fresh_source=True)
         raw_modules = modules if modules is not None else _collect_changed_modules()
         target_modules, skipped = _select_safe_modules(list(raw_modules), strict=False)
         _print_skipped_unsafe_modules(skipped)
@@ -1699,7 +1725,7 @@ def main():
 
         valid_contexts = []
         for module in target_modules:
-            context = collect_module_context(module)
+            context = _collect_module_context_for_generated_context(module)
             if context.get("key_files") or context.get("contracts"):
                 valid_contexts.append(context)
 
@@ -1740,7 +1766,7 @@ def main():
             return []
         print(t("cli.module.stale.changed.found"))
         for module in target_modules:
-            context = collect_module_context(module)
+            context = _collect_module_context_for_generated_context(module)
             result = check_module_capsule_stale(context)
             status_text = t("cli.module.stale.up_to_date") if result.get("status") == "up_to_date" else t(
                 "cli.module.stale.stale"
@@ -2218,7 +2244,7 @@ def main():
         docs_mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
         if docs_mode_count != 1:
             parser.error(t("cli.docs.mode_conflict"))
-        gen = L2Generator()
+        gen = L2Generator(prefer_fresh_source=True)
         if args.module:
             module_name = args.module
             if args.write:
@@ -2240,7 +2266,7 @@ def main():
                 _run_docs_changed(write=args.write, force=args.force)
                 return
             else:
-                raw_modules = collect_all_indexed_modules()
+                raw_modules = _collect_all_indexed_modules_for_generated_context()
                 modules, skipped = _select_safe_modules(raw_modules, strict=False)
                 _print_skipped_unsafe_modules(skipped)
                 if not modules:
@@ -2281,7 +2307,7 @@ def main():
             scope_text = t("cli.stale.scope.module", module=args.module)
             scope_value = f"module:{args.module}"
         elif args.all_modules:
-            modules = collect_all_indexed_modules()
+            modules = _collect_all_indexed_modules_for_generated_context()
             scope_text = t("cli.stale.scope.all")
             scope_value = "all"
             if not modules:
@@ -2341,7 +2367,7 @@ def main():
             scope_text = t("cli.doctor.scope.module", module=args.module)
             scope_value = f"module:{args.module}"
         elif args.all_modules:
-            modules = collect_all_indexed_modules()
+            modules = _collect_all_indexed_modules_for_generated_context()
             scope_text = t("cli.doctor.scope.all")
             scope_value = "all"
         else:
@@ -2420,7 +2446,7 @@ def main():
             parser.error(t("cli.module.seal.mode_conflict"))
 
         if args.module:
-            context = collect_module_context(args.module)
+            context = _collect_module_context_for_generated_context(args.module)
             module_name = context.get("module", "")
             if not module_name:
                 print(t("cli.module.seal.none", module=args.module))
@@ -2450,7 +2476,7 @@ def main():
             _run_module_seal_changed(write=args.write)
             return
         else:
-            modules = collect_all_indexed_modules()
+            modules = _collect_all_indexed_modules_for_generated_context()
             if not modules:
                 print(t("cli.module.seal.all.none"))
                 return
@@ -2461,7 +2487,7 @@ def main():
 
         valid_contexts = []
         for module in modules:
-            context = collect_module_context(module)
+            context = _collect_module_context_for_generated_context(module)
             if context.get("key_files") or context.get("contracts"):
                 valid_contexts.append(context)
 
@@ -2502,7 +2528,7 @@ def main():
             parser.error(t("cli.module.stale.mode_conflict"))
 
         if args.module:
-            context = collect_module_context(args.module)
+            context = _collect_module_context_for_generated_context(args.module)
             module_name = context.get("module", "") or args.module
             result = check_module_capsule_stale(context)
             print(t("cli.module.stale.title", module=module_name))
@@ -2521,14 +2547,14 @@ def main():
             _run_module_stale_changed()
             return
         else:
-            modules = collect_all_indexed_modules()
+            modules = _collect_all_indexed_modules_for_generated_context()
             if not modules:
                 print(t("cli.module.stale.none_all"))
                 return
             print(t("cli.module.stale.all.found"))
 
         for module in modules:
-            context = collect_module_context(module)
+            context = _collect_module_context_for_generated_context(module)
             result = check_module_capsule_stale(context)
             status_text = t("cli.module.stale.up_to_date") if result.get("status") == "up_to_date" else t(
                 "cli.module.stale.stale"

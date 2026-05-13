@@ -104,6 +104,31 @@ export function run(value: number): number { return value; }
     )
 
 
+def _write_stale_cache_index(tmp_path: Path) -> None:
+    idx = tmp_path / ".harbor" / "cache" / "l3_index.json"
+    idx.parent.mkdir(parents=True, exist_ok=True)
+    idx.write_text(
+        json.dumps(
+            {
+                "files": {
+                    "stale/ghost.py": {
+                        "items": [
+                            {
+                                "id": "stale.ghost.run",
+                                "qualified_name": "stale.ghost.run",
+                                "scope": "public",
+                                "strictness": "strict",
+                            }
+                        ]
+                    }
+                }
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+
 def test_l2_readme_stale_when_missing(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
@@ -377,6 +402,48 @@ def test_check_module_derived_views_stale_uses_ts_aware_transient_index_without_
     assert summary.module_capsule.status == "up_to_date"
     assert not (tmp_path / ".harbor" / "cache" / "l3_index.json").exists()
     assert not (tmp_path / ".harbor" / "cache" / "harbor.db").exists()
+
+
+def test_l2_generator_prefer_fresh_source_ignores_stale_cache_snapshot(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    _write_stale_cache_index(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    markdown = L2Generator(prefer_fresh_source=True).generate("harbor/core")
+
+    assert "harbor.core.sample.run" in markdown
+    assert "stale.ghost.run" not in markdown
+
+
+def test_collect_module_context_prefer_fresh_source_ignores_stale_cache_snapshot(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    _write_stale_cache_index(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    context = collect_module_context("harbor/core", prefer_fresh_source=True)
+
+    assert "harbor/core/sample.py" in context["key_files"]
+    assert all(path != "stale/ghost.py" for path in context["key_files"])
+    assert any(contract["symbol"] == "harbor.core.sample.run" for contract in context["contracts"])
+
+
+def test_generated_context_stays_up_to_date_across_cache_and_clean_fresh_checks(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    _write_stale_cache_index(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    generator = L2Generator(prefer_fresh_source=True)
+    generator.write("harbor/core", generator.generate("harbor/core"), force=True)
+    write_module_capsule(collect_module_context("harbor/core", prefer_fresh_source=True))
+
+    summary_with_cache = check_module_derived_views_stale("harbor/core")
+    (tmp_path / ".harbor" / "cache" / "l3_index.json").unlink()
+    summary_without_cache = check_module_derived_views_stale("harbor/core")
+
+    assert summary_with_cache.l2_readme.status == "up_to_date"
+    assert summary_with_cache.module_capsule.status == "up_to_date"
+    assert summary_without_cache.l2_readme.status == "up_to_date"
+    assert summary_without_cache.module_capsule.status == "up_to_date"
 
 
 def test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order(

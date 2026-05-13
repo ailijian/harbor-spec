@@ -219,7 +219,7 @@ def test_stale_changed_duplicate_repo_name_root_does_not_emit_wrong_module_prefi
 
     out = run_cmd(["stale", "--changed"])
 
-    assert checked == ["harbor/core", "tests"]
+    assert checked == ["harbor", "harbor/core", "tests"]
     assert "harbor-spec/harbor" not in out
     assert "harbor-spec/tests" not in out
     assert "no indexed records found for module" not in out

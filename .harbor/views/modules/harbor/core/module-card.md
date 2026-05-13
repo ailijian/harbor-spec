@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-13T16:21:36Z"
+generated_at: "2026-05-13T17:51:52Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 37
+source_path_count: 38
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
@@ -16,6 +16,7 @@ source_paths:
   - "harbor/core/change_window.py"
   - "harbor/core/changed_scope.py"
   - "harbor/core/ci.py"
+  - "harbor/core/console_output.py"
   - "harbor/core/context_integrity.py"
   - "harbor/core/contract_impact.py"
   - "harbor/core/contract_presence.py"
@@ -46,11 +47,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:07c22f0036a09f1585cb6935dedc3f1afa0a0a1f0caefd5f2c22eb85abbee1c3"
-contract_fingerprint: "sha256:50f2dab5ae09f6aa85475e0a81d3bb3376e85734f060868819e4059fc60a0a12"
+source_fingerprint: "sha256:a27ccacf11d29297b6d2e9428911aec291901b633f3a71f5940935292ab7eedc"
+contract_fingerprint: "sha256:21644e6e1f2b1f579f8e84e7471cf10a89220cec5d4f32efeeb0eae0aad2dc69"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "9229b27a4dc3ba9e51cea28c3ed1f77003fec2681a104dc3d9237f226b440039"
-fingerprint: "9229b27a4dc3ba9e51cea28c3ed1f77003fec2681a104dc3d9237f226b440039"
+view_fingerprint: "811a0ae904686a41c4c2aa7ec2b56537dac4e9fe9d03f579ee2c3dc31ca88c51"
+fingerprint: "811a0ae904686a41c4c2aa7ec2b56537dac4e9fe9d03f579ee2c3dc31ca88c51"
 ---
 
 # Module Card: harbor/core
@@ -78,6 +79,7 @@ harbor/core/baseline_artifact.py
 harbor/core/change_window.py
 harbor/core/changed_scope.py
 harbor/core/ci.py
+harbor/core/console_output.py
 harbor/core/context_integrity.py
 harbor/core/contract_impact.py
 harbor/core/contract_presence.py
@@ -190,6 +192,8 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci.ci_result_to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci.format_checkpoint_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.format_ci_result | harbor/core/ci.py | unknown | standard |
+| harbor.core.console_output.detect_console_encoding | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output.safe_console_print | harbor/core/console_output.py | unknown | standard |
 | harbor.core.context_integrity._as_repo_relative | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._decode_scalar | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._json_stable_hash | harbor/core/context_integrity.py | unknown | standard |
@@ -360,6 +364,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.init_wizard.InitWizard._emit_ide_guidance | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._print | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard.run | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard._append_missing_env_keys | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard._default_language | harbor/core/init_wizard.py | unknown | standard |
@@ -371,7 +376,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.init_wizard._read_env_keys | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard._update_managed_block | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard._write_file_with_policy | harbor/core/init_wizard.py | unknown | standard |
-| harbor.core.l2.L2Generator.__init__ | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator.__init__ | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator._collect_integrity_inputs | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._ensure_within_root | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_index | harbor/core/l2.py | unknown | standard |
@@ -390,7 +395,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.l2._looks_like_windows_absolute_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._repo_relative_index_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._to_repo_relative | harbor/core/l2.py | unknown | standard |
-| harbor.core.l2.collect_all_indexed_modules | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.collect_all_indexed_modules | harbor/core/l2.py | public | strict |
 | harbor.core.l2.collect_modules_from_paths | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.infer_module_from_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.normalize_indexed_module_candidate | harbor/core/l2.py | unknown | standard |
@@ -487,7 +492,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.module_capsule._summarize_strictness | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.build_module_card_frontmatter | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.check_module_capsule_stale | harbor/core/module_capsule.py | unknown | standard |
-| harbor.core.module_capsule.collect_module_context | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule.collect_module_context | harbor/core/module_capsule.py | public | strict |
 | harbor.core.module_capsule.compute_module_fingerprint | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.detect_tests_for_module | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.generate_debug_playbook | harbor/core/module_capsule.py | unknown | standard |
@@ -536,7 +541,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.readonly_index._build_transient_index | harbor/core/readonly_index.py | unknown | standard |
 | harbor.core.readonly_index._load_existing_db_index | harbor/core/readonly_index.py | unknown | standard |
 | harbor.core.readonly_index._resolve_index_path | harbor/core/readonly_index.py | unknown | standard |
-| harbor.core.readonly_index.load_readonly_index | harbor/core/readonly_index.py | unknown | standard |
+| harbor.core.readonly_index.load_readonly_index | harbor/core/readonly_index.py | public | strict |
 | harbor.core.repair_guidance.RepairGuidance.to_dict | harbor/core/repair_guidance.py | public | strict |
 | harbor.core.repair_guidance.generic_conservative_guidance | harbor/core/repair_guidance.py | unknown | standard |
 | harbor.core.repair_guidance.guidance_for_checkpoint_category | harbor/core/repair_guidance.py | unknown | standard |
@@ -552,7 +557,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.stale._sanitize_single_path | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale.check_l2_readme_export_stale | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale.check_l2_readme_stale | harbor/core/stale.py | unknown | standard |
-| harbor.core.stale.check_module_derived_views_stale | harbor/core/stale.py | unknown | standard |
+| harbor.core.stale.check_module_derived_views_stale | harbor/core/stale.py | public | strict |
 | harbor.core.stale.format_stale_summary | harbor/core/stale.py | unknown | standard |
 | harbor.core.stale.stale_report_to_dict | harbor/core/stale.py | unknown | standard |
 | harbor.core.storage.HarborDB.__init__ | harbor/core/storage.py | unknown | standard |

@@ -63,13 +63,61 @@ def normalize_indexed_module_candidate(path: str | Path, *, repo_root: Optional[
     return infer_module_from_path(path)
 
 
-def collect_all_indexed_modules(index_path: Optional[Path] = None) -> List[str]:
-    gen = L2Generator(index_path=index_path)
+def collect_all_indexed_modules(index_path: Optional[Path] = None, *, prefer_fresh_source: bool = False) -> List[str]:
+    """Collect normalized module paths from readonly index records.
+
+    Behavior:
+      - Aggregates module candidates from indexed files that still contain items.
+      - Supports `prefer_fresh_source=True` so generated-context and stale
+        workflows can derive modules from the same source-derived readonly
+        index used in clean CI.
+      - Keeps module discovery read-only and does not mutate runtime cache or
+        workspace files.
+
+    Args:
+      index_path (Optional[Path]): Optional explicit readonly index path.
+      prefer_fresh_source (bool): Prefer transient source-derived records over
+        runtime cache snapshots when possible.
+
+    Returns:
+      List[str]: Sorted unique repo-relative module paths with indexed records.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+    """
+    gen = L2Generator(index_path=index_path, prefer_fresh_source=prefer_fresh_source)
     return gen.collect_all_indexed_modules()
 
 
 class L2Generator:
-    def __init__(self, index_path: Optional[Path] = None, meta_path: Optional[Path] = None) -> None:
+    def __init__(
+        self,
+        index_path: Optional[Path] = None,
+        meta_path: Optional[Path] = None,
+        *,
+        prefer_fresh_source: bool = False,
+    ) -> None:
+        """Initialize the L2 generator against a readonly index source.
+
+        Behavior:
+          - Resolves canonical workspace paths for L2 README generation.
+          - Uses `prefer_fresh_source=True` to prefer transient source-derived
+            readonly index data over runtime cache snapshots.
+          - This option controls the same generated-context source-of-truth used
+            by L2 writes and stale validation paths.
+          - Keeps generation read-only until `write()` is called.
+
+        Args:
+          index_path (Optional[Path]): Optional explicit readonly index path.
+          meta_path (Optional[Path]): Optional L2 meta file path override.
+          prefer_fresh_source (bool): Prefer transient source-derived index
+            data over runtime cache snapshots when possible.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: read-only
+        """
         self.repo_root = Path.cwd().resolve()
         workspace_paths = load_workspace_paths(self.repo_root, enforce_write_safety=True)
         self.l2_view_root = workspace_paths.l2_view_root.resolve()
@@ -80,6 +128,7 @@ class L2Generator:
             raw_value=self.l2_view_root.as_posix(),
         )
         self.index_path = index_path or (Path(".harbor") / "cache" / "l3_index.json")
+        self.prefer_fresh_source = prefer_fresh_source
         self.meta_path = self._resolve_meta_path(meta_path)
         self.legacy_meta_path = (self.repo_root / ".harbor" / "l2_meta.json").resolve()
         loaded = load_workspace_config(self.repo_root)
@@ -277,7 +326,11 @@ class L2Generator:
         return sorted(set(modules))
 
     def _load_index(self, path: Path) -> Dict[str, Any]:
-        return load_readonly_index(index_path=path, repo_root=self.repo_root)
+        return load_readonly_index(
+            index_path=path,
+            repo_root=self.repo_root,
+            prefer_fresh_source=self.prefer_fresh_source,
+        )
 
     def _load_meta(self, path: Optional[Path] = None) -> Dict[str, Any]:
         if path is not None:

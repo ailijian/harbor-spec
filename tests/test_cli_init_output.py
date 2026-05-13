@@ -156,3 +156,73 @@ def test_harbor_wrapper_output_matches_python_module(tmp_path: Path):
     for marker in ["检测到：技术栈", "默认扫描范围", "已自动排除", "完整配置可稍后运行：harbor config list"]:
         assert marker in wrap.stdout
         assert marker in mod.stdout
+
+
+def test_real_harbor_init_is_encoding_safe_under_cp1252(tmp_path: Path):
+    harbor_cmd = shutil.which("harbor")
+    if not harbor_cmd:
+        return
+    (tmp_path / "src").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "src" / "app.py").write_text("print('hello')\n", encoding="utf-8")
+    env = dict(os.environ)
+    env["PYTHONIOENCODING"] = "cp1252"
+    subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True, text=True)
+
+    proc = subprocess.run(
+        [
+            harbor_cmd,
+            "init",
+            "--language",
+            "zh",
+            "--project",
+            "new",
+            "--governance",
+            "--no-governance-docs",
+            "--no-llm",
+            "--update-gitignore",
+        ],
+        cwd=tmp_path,
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+        text=True,
+        env=env,
+    )
+
+    assert proc.returncode == 0
+    assert "UnicodeEncodeError" not in proc.stdout
+    assert "UnicodeEncodeError" not in proc.stderr
+
+
+def test_real_harbor_init_dry_run_is_encoding_safe_under_cp1252(tmp_path: Path):
+    harbor_cmd = shutil.which("harbor")
+    if not harbor_cmd:
+        return
+    env = dict(os.environ)
+    env["PYTHONIOENCODING"] = "cp1252"
+
+    proc = subprocess.run(
+        [
+            harbor_cmd,
+            "init",
+            "--language",
+            "zh",
+            "--project",
+            "new",
+            "--governance",
+            "--no-governance-docs",
+            "--no-llm",
+            "--update-gitignore",
+            "--dry-run",
+        ],
+        cwd=tmp_path,
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+        text=True,
+        env=env,
+    )
+
+    assert proc.returncode == 0
+    assert "UnicodeEncodeError" not in proc.stdout
+    assert "UnicodeEncodeError" not in proc.stderr

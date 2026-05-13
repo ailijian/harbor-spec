@@ -4,6 +4,7 @@
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
 | harbor.core.drafting.DiaryDrafter.__init__ | AI 辅助生成 Diary 草稿。 | strict | ❌ Missing |
+| harbor.core.l2.L2Generator.__init__ | Initialize the L2 generator against a readonly index source. | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder._iter_py_files | 生成待扫描的 Python 文件列表（支持 Git 感知剪枝）。 | strict | ❌ Missing |
 | harbor.core.diary.DiaryManager.append_json_line | Append one structured JSON line to canonical diary storage. | strict | ❌ Missing |
 | harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
@@ -11,9 +12,12 @@
 | harbor.core.log_draft.build_diary_draft | Build a deterministic diary draft from existing change-wi... | strict | ❌ Missing |
 | harbor.core.log_draft.build_log_write_preview | Build summary-level preview data for interactive `harbor ... | strict | ❌ Missing |
 | harbor.core.log_draft.build_written_diary_entry | Build one structured written diary entry payload from an ... | strict | ❌ Missing |
+| harbor.core.stale.check_module_derived_views_stale | Check one module's derived-view stale status against fres... | strict | ❌ Missing |
 | harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
 | harbor.core.ci.checkpoint_ci_result_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci` 公开 CI JSON pa... | strict | ❌ Missing |
 | harbor.core.ci.ci_result_to_dict | 将通用 CIResult 序列化为 checkpoint 之外的公开 CI JSON payload。 | strict | ❌ Missing |
+| harbor.core.l2.collect_all_indexed_modules | Collect normalized module paths from readonly index records. | strict | ❌ Missing |
+| harbor.core.module_capsule.collect_module_context | Collect readonly context records used to render one modul... | strict | ❌ Missing |
 | harbor.core.project_structure.collect_project_structure_context | Collect the canonical project-structure context from inde... | strict | ❌ Missing |
 | harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
@@ -25,6 +29,7 @@
 | harbor.core.storage.HarborDB.get_file_entries | 查询指定文件的所有条目。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder.iter_build | 以生成器方式构建索引，逐文件产出进度事件。 | strict | ❌ Missing |
 | harbor.core.utils.iter_project_files | 生成待扫描的 Python 文件列表（统一剪枝逻辑）。 | strict | ❌ Missing |
+| harbor.core.readonly_index.load_readonly_index | Load a read-only Harbor index snapshot for analysis paths. | strict | ❌ Missing |
 | harbor.core.diary.DiaryManager.log | 写入一条 DiaryEntry 到当月 JSONL。 | strict | ❌ Missing |
 | harbor.core.git_utils.GitIgnoreMatcher.match_dir | 判断相对路径目录是否被忽略（用于剪枝）。 | strict | ❌ Missing |
 | harbor.core.git_utils.GitIgnoreMatcher.match_file | 判断相对路径文件是否被忽略。 | strict | ❌ Missing |
@@ -69,7 +74,6 @@
 | harbor.core.init.Initializer.__init__ | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector.__init__ | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard.__init__ | — | standard | ⚪ Missing |
-| harbor.core.l2.L2Generator.__init__ | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB.__init__ | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine.__init__ | — | standard | ⚪ Missing |
 | harbor.core.ci._append_checkpoint_guidance_lines | — | standard | ⚪ Missing |
@@ -280,6 +284,7 @@
 | harbor.core.log_draft._parse_validation_lines | — | standard | ⚪ Missing |
 | harbor.core.log_draft._pick_first_nonempty | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._posix_rel | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._print | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_draft_source_file | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._read_env_keys | — | standard | ⚪ Missing |
@@ -403,19 +408,16 @@
 | harbor.core.stale.check_l2_readme_export_stale | — | standard | ⚪ Missing |
 | harbor.core.stale.check_l2_readme_stale | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.check_module_capsule_stale | — | standard | ⚪ Missing |
-| harbor.core.stale.check_module_derived_views_stale | 检查单模块的 L2 / L2 export / Capsule 三类视图状态。 | standard | ⚪ Missing |
 | harbor.core.contract_impact.classify_contract_impact_for_docstring_diff | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.classify_contract_impact_for_file_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.classify_contract_impact_for_function_change | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.classify_contract_impact_from_status_record | — | standard | ⚪ Missing |
 | harbor.core.project_structure.classify_project_area | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | — | standard | ⚪ Missing |
-| harbor.core.l2.collect_all_indexed_modules | — | standard | ⚪ Missing |
 | harbor.core.changed_scope.collect_changed_modules_from_status | — | standard | ⚪ Missing |
 | harbor.core.changed_scope.collect_changed_paths_from_status | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine.collect_current_snapshot | Collect the current comparable checkpoint snapshot from s... | standard | ⚪ Missing |
 | harbor.core.change_window.collect_git_workspace_state | Collect lightweight git metadata for change-window snapsh... | standard | ⚪ Missing |
-| harbor.core.module_capsule.collect_module_context | — | standard | ⚪ Missing |
 | harbor.core.l2.collect_modules_from_paths | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.compose_markdown_with_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.utils.compute_body_hash | — | standard | ⚪ Missing |
@@ -429,6 +431,7 @@
 | harbor.core.index_entry.contract_subject_to_index_entry | — | standard | ⚪ Missing |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
 | harbor.core.utils.derive_adopted_roots | — | standard | ⚪ Missing |
+| harbor.core.console_output.detect_console_encoding | — | standard | ⚪ Missing |
 | harbor.core.changed_scope.detect_generator_integrity_changes | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
 | harbor.core.utils.discover_indexable_files | — | standard | ⚪ Missing |
@@ -466,7 +469,6 @@
 | harbor.core.change_window.list_change_windows | List readable change-window snapshots from newest to oldest. | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager.load_active | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact.load_checkpoint_baseline_artifact | Load and validate the accepted checkpoint baseline artifa... | standard | ⚪ Missing |
-| harbor.core.readonly_index.load_readonly_index | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_config | — | standard | ⚪ Missing |
 | harbor.core.workspace.load_workspace_paths | — | standard | ⚪ Missing |
 | harbor.core.path_normalization.looks_like_absolute_path | — | standard | ⚪ Missing |
@@ -499,6 +501,7 @@
 | harbor.core.doctor.run_derived_views_check | 检查模块派生视图状态并汇总为 Doctor 结果。 | standard | ⚪ Missing |
 | harbor.core.doctor.run_skill_reference_check | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_workspace_status_check | — | standard | ⚪ Missing |
+| harbor.core.console_output.safe_console_print | — | standard | ⚪ Missing |
 | harbor.core.path_normalization.sanitize_path_for_display | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.sanitize_text | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.sanitize_text | — | standard | ⚪ Missing |

@@ -424,6 +424,33 @@ def test_select_one_is_encoding_safe_for_cp1252(monkeypatch):
     assert stream.getvalue()
 
 
+def test_init_wizard_run_is_encoding_safe_for_cp1252_noninteractive_zh(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: False)
+    (tmp_path / ".gitignore").write_text("", encoding="utf-8")
+
+    stream = StrictEncodingTextIO("cp1252")
+    wiz = InitWizard(
+        cwd=tmp_path,
+        options=InitWizardOptions(
+            language="zh",
+            project="new",
+            governance=True,
+            governance_docs=False,
+            llm=False,
+            update_gitignore=True,
+        ),
+        console=Console(file=stream, force_terminal=False, width=200),
+    )
+
+    result = wiz.run()
+
+    assert result.language == "zh"
+    assert "UnicodeEncodeError" not in stream.getvalue()
+    assert "harbor config list" in stream.getvalue()
+    assert "AGENTS.md" in stream.getvalue()
+    assert ".harbor/config/harbor.yaml" in result.created
+
+
 def test_init_wizard_prompts_are_single_language_after_selection(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
     monkeypatch.setattr("harbor.core.init_prompt._is_interactive", lambda _interactive=None: True)

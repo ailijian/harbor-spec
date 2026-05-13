@@ -125,6 +125,39 @@ def test_readonly_transient_index_matches_index_builder_discovery_when_ts_enable
     assert readonly_files == builder_files == {"src/feature.ts", "src/main.py"}
 
 
+def test_readonly_index_prefer_fresh_source_ignores_stale_cache_snapshot(tmp_path: Path):
+    cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    _write_config(
+        cfg_path,
+        {
+            "code_roots": [str(tmp_path / "src")],
+            "languages": {
+                "python": {"enabled": True},
+            },
+        },
+    )
+    code_root = tmp_path / "src"
+    _write_file(code_root / "fresh.py", "def fresh():\n    return 1\n")
+    cache_path = tmp_path / ".harbor" / "cache" / "l3_index.json"
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(json.dumps({"files": {"stale/only.py": {"items": [{"id": "stale"}]}}}), encoding="utf-8")
+
+    payload = load_readonly_index(repo_root=tmp_path, prefer_fresh_source=True)
+
+    assert sorted(payload["files"].keys()) == ["src/fresh.py"]
+    assert payload["meta"]["source"] == "transient_filesystem"
+
+
+def test_readonly_index_default_mode_keeps_cache_compatibility(tmp_path: Path):
+    cache_path = tmp_path / ".harbor" / "cache" / "l3_index.json"
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(json.dumps({"files": {"cached.py": {"items": [{"id": "cached"}]}}}), encoding="utf-8")
+
+    payload = load_readonly_index(repo_root=tmp_path)
+
+    assert sorted(payload["files"].keys()) == ["cached.py"]
+
+
 def test_build_keeps_python_entry_shape_stable(tmp_path: Path):
     code_root = tmp_path / "pkg"
     _write_file(

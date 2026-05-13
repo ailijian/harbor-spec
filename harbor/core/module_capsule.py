@@ -180,8 +180,12 @@ def _summarize_strictness(contracts: List[Dict[str, str]]) -> str:
     return "standard"
 
 
-def _load_index(index_path: Optional[Path] = None) -> Dict[str, Any]:
-    return load_readonly_index(index_path=index_path, repo_root=Path.cwd())
+def _load_index(index_path: Optional[Path] = None, *, prefer_fresh_source: bool = False) -> Dict[str, Any]:
+    return load_readonly_index(
+        index_path=index_path,
+        repo_root=Path.cwd(),
+        prefer_fresh_source=prefer_fresh_source,
+    )
 
 
 def _belongs_to_module(file_path: str, module: str) -> bool:
@@ -212,9 +216,43 @@ def detect_tests_for_module(module: str, key_files: List[str], tests_root: Optio
     return _sort_unique(matches)
 
 
-def collect_module_context(module: str, index_path: Optional[Path] = None) -> Dict[str, Any]:
+def collect_module_context(
+    module: str,
+    index_path: Optional[Path] = None,
+    *,
+    prefer_fresh_source: bool = False,
+) -> Dict[str, Any]:
+    """Collect readonly context records used to render one module capsule.
+
+    Behavior:
+      - Loads indexed files, contracts, and detected tests for one module.
+      - Supports `prefer_fresh_source=True` so generated-context writes and
+        stale checks derive context from the same fresh/source readonly index
+        used by clean CI validation.
+      - Module capsule generation can therefore bypass runtime cache snapshots
+        when source-derived readonly records are available.
+      - Writes no files and does not mutate runtime cache state.
+
+    Args:
+      module (str): Repo-relative module path.
+      index_path (Optional[Path]): Optional explicit readonly index path.
+      prefer_fresh_source (bool): Prefer transient source-derived records over
+        runtime cache snapshots when possible.
+
+    Returns:
+      Dict[str, Any]: Stable module context used by capsule generation/checks.
+
+    Side Effects:
+      - Reads source-derived or cached readonly index state plus detected test
+        file names.
+      - Writes no files.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+    """
     normalized = normalize_module_path(module)
-    idx = _load_index(index_path=index_path)
+    idx = _load_index(index_path=index_path, prefer_fresh_source=prefer_fresh_source)
     key_files: List[str] = []
     contracts: List[Dict[str, str]] = []
 

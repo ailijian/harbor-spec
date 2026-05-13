@@ -113,7 +113,7 @@ def _normalize_l2_body_for_export_compare(text: str) -> str:
 def check_l2_readme_stale(module: str, *, generator: Optional[L2Generator] = None) -> ViewStaleResult:
     normalized = normalize_module_path(module)
     suggest = f"harbor docs --module {normalized} --write"
-    context = collect_module_context(normalized)
+    context = collect_module_context(normalized, prefer_fresh_source=True)
     if not context.get("key_files") and not context.get("contracts"):
         return ViewStaleResult(
             view="L2 README",
@@ -122,7 +122,7 @@ def check_l2_readme_stale(module: str, *, generator: Optional[L2Generator] = Non
             suggested_command=None,
         )
 
-    gen = generator or L2Generator()
+    gen = generator or L2Generator(prefer_fresh_source=True)
     expected = gen.generate(normalized)
     readme_path = gen.canonical_readme_path(normalized)
     if not readme_path.exists():
@@ -166,7 +166,7 @@ def check_l2_readme_export_stale(
     generator: Optional[L2Generator] = None,
 ) -> ViewStaleResult:
     normalized = normalize_module_path(module)
-    gen = generator or L2Generator()
+    gen = generator or L2Generator(prefer_fresh_source=True)
 
     loaded = load_workspace_config(Path.cwd())
     cfg = loaded.get("config") or {}
@@ -230,19 +230,38 @@ def check_l2_readme_export_stale(
 
 
 def check_module_derived_views_stale(module: str) -> ModuleStaleSummary:
-    """检查单模块的 L2 / L2 export / Capsule 三类视图状态。
+    """Check one module's derived-view stale status against fresh/source truth.
+
+    Behavior:
+      - Re-derives module context and expected L2 content from the same
+        fresh/source-derived readonly index truth used by clean CI.
+      - Keeps generated-context stale checks aligned across local/cache and
+        clean/no-cache repository states.
+      - Compares canonical L2 README first, then compares export README only
+        when the canonical L2 README is up to date.
+      - Maps module capsule fingerprint results into stable
+        `up_to_date|stale|unknown` view statuses without writing files.
 
     Args:
-        module: 模块路径（例如 ``harbor/core``）。
+      module (str): Repo-relative module path such as `harbor/core`.
 
     Returns:
-        ModuleStaleSummary: 聚合后的三视图状态。
-            - `l2_readme` 由 canonical L2 判定。
-            - `l2_readme_export` 仅在 canonical 可用时比较。
-            - `module_capsule` 基于 capsule stale 结果映射。
+      ModuleStaleSummary: Aggregated stale status for canonical L2 README,
+      exported L2 README, and module capsule views for the module.
+
+    Side Effects:
+      - Reads generated views and readonly index state.
+      - Writes no files.
+
+    Idempotency:
+      - Deterministic for the same repository state and module path.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
     """
     normalized = normalize_module_path(module)
-    context = collect_module_context(normalized)
+    context = collect_module_context(normalized, prefer_fresh_source=True)
     l2_result = check_l2_readme_stale(normalized)
     l2_export_result = check_l2_readme_export_stale(normalized, canonical_result=l2_result)
 

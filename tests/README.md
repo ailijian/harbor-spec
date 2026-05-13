@@ -167,6 +167,7 @@
 | tests.test_stale._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_log_draft._write_snapshot | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli._write_snapshot | — | standard | ⚪ Missing |
+| tests.test_stale._write_stale_cache_index | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact._write_typescript_repo | — | standard | ⚪ Missing |
 | tests.test_stale._write_typescript_sample_repo | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_batch._write_workspace_config | — | standard | ⚪ Missing |
@@ -327,6 +328,7 @@
 | tests.test_changed_scope.test_collect_changed_paths_from_status_includes_all_relevant_buckets | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_collect_module_context_falls_back_to_transient_source_scan_without_cache | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | — | standard | ⚪ Missing |
+| tests.test_stale.test_collect_module_context_prefer_fresh_source_ignores_stale_cache_snapshot | — | standard | ⚪ Missing |
 | tests.test_doctor.test_collect_next_steps_filters_high_impact_commands | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_builds_expected_flags_and_counts | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_filters_windows_absolute_paths_on_posix | — | standard | ⚪ Missing |
@@ -460,6 +462,7 @@
 | tests.test_drafting.test_generate_draft_returns_none_when_no_changes | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_generate_markdown_contains_required_sections_and_is_deterministic | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_generate_module_skill_contains_thin_template | — | standard | ⚪ Missing |
+| tests.test_stale.test_generated_context_stays_up_to_date_across_cache_and_clean_fresh_checks | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_generated_view_modules_hit_generated_view_format | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_generators_include_required_sections | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance | — | standard | ⚪ Missing |
@@ -495,6 +498,7 @@
 | tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_prompts_are_single_language_after_selection | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_repair_guidance_mode_prompt_is_localized | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_init_wizard_run_is_encoding_safe_for_cp1252_noninteractive_zh | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_init_wizard_source_removes_legacy_yes_no_brackets | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence.test_internal_helper_is_not_required | — | standard | ⚪ Missing |
@@ -514,6 +518,7 @@
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_mismatch | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_missing | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order | — | standard | ⚪ Missing |
+| tests.test_stale.test_l2_generator_prefer_fresh_source_ignores_stale_cache_snapshot | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | — | standard | ⚪ Missing |
@@ -700,8 +705,12 @@
 | tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_contains_release_key_commands | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_readonly_index_default_mode_keeps_cache_compatibility | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_readonly_index_prefer_fresh_source_ignores_stale_cache_snapshot | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_readonly_transient_index_discovers_typescript_when_ts_enabled | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled | — | standard | ⚪ Missing |
+| tests.test_cli_init_output.test_real_harbor_init_dry_run_is_encoding_safe_under_cp1252 | — | standard | ⚪ Missing |
+| tests.test_cli_init_output.test_real_harbor_init_is_encoding_safe_under_cp1252 | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior | — | standard | ⚪ Missing |

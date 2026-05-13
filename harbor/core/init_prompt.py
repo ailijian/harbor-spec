@@ -8,6 +8,8 @@ from typing import Dict, List, Optional, Tuple
 from rich.console import Console
 from rich.prompt import Prompt
 
+from harbor.core.console_output import detect_console_encoding, safe_console_print
+
 
 @dataclass
 class Choice:
@@ -41,40 +43,11 @@ def _title_with_marker(title: str) -> str:
 
 
 def _detect_console_encoding(console: Console) -> str:
-    stream = getattr(console, "file", None)
-    for candidate in (
-        getattr(stream, "encoding", None),
-        getattr(sys.stdout, "encoding", None),
-    ):
-        if isinstance(candidate, str) and candidate.strip():
-            return candidate
-    return "utf-8"
+    return detect_console_encoding(console)
 
 
-def _safe_console_print(console: Console, text: str) -> None:
-    try:
-        console.print(text)
-        return
-    except UnicodeEncodeError:
-        pass
-
-    encoding = _detect_console_encoding(console)
-    safe_text = text.encode(encoding, errors="replace").decode(encoding, errors="replace")
-    try:
-        console.print(safe_text)
-        return
-    except UnicodeEncodeError:
-        pass
-
-    stream = getattr(console, "file", None)
-    if stream is not None and hasattr(stream, "write"):
-        stream.write(f"{safe_text}\n")
-        flush = getattr(stream, "flush", None)
-        if callable(flush):
-            flush()
-        return
-    sys.stdout.write(f"{safe_text}\n")
-    sys.stdout.flush()
+def _safe_console_print(console: Console, text: object) -> None:
+    safe_console_print(console, text)
 
 
 def _render_inline_options(
@@ -85,10 +58,10 @@ def _render_inline_options(
     language: str,
     selected_idx: int,
 ) -> None:
-    _safe_console_print(console, _title_with_marker(title))
+    safe_console_print(console, _title_with_marker(title))
     for idx, opt in enumerate(options):
         marker = "❯" if idx == selected_idx else " "
-        _safe_console_print(console, f"  {marker} {_choice_label(opt, language)}")
+        safe_console_print(console, f"  {marker} {_choice_label(opt, language)}")
 
 
 def _try_arrow_select(
@@ -255,14 +228,14 @@ def select_one(
         if val in {x.value for x in options}:
             return val
 
-    _safe_console_print(c, _title_with_marker(title))
+    safe_console_print(c, _title_with_marker(title))
     for idx, opt in enumerate(options, start=1):
         label = _choice_label(opt, language)
         desc = opt.description_zh if language == "zh" else opt.description_en
         if desc:
-            _safe_console_print(c, f"{idx}. {label} - {desc}")
+            safe_console_print(c, f"{idx}. {label} - {desc}")
         else:
-            _safe_console_print(c, f"{idx}. {label}")
+            safe_console_print(c, f"{idx}. {label}")
 
     default_idx = "1"
     for idx, opt in enumerate(options, start=1):
@@ -275,9 +248,9 @@ def select_one(
         if raw in merged_aliases:
             return merged_aliases[raw]
         if language == "zh":
-            _safe_console_print(c, f"无效输入：{raw}。可选：{valid_tip} 或名称别名。")
+            safe_console_print(c, f"无效输入：{raw}。可选：{valid_tip} 或名称别名。")
         else:
-            _safe_console_print(c, f"Invalid input: {raw}. Available: {valid_tip} or option aliases.")
+            safe_console_print(c, f"Invalid input: {raw}. Available: {valid_tip} or option aliases.")
 
 
 def confirm(

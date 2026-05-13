@@ -11,6 +11,7 @@ from typing import Dict, List, Optional, Tuple
 from rich.console import Console
 from rich.prompt import Prompt
 
+from harbor.core.console_output import safe_console_print
 from harbor.core.init import Initializer
 from harbor.core.init_prompt import Choice, confirm, select_one
 
@@ -207,6 +208,9 @@ class InitWizard:
         self.interactive = _is_tty()
         self.result = InitWizardResult()
 
+    def _print(self, text: object) -> None:
+        safe_console_print(self.console, text)
+
     def _ask_language(self) -> str:
         if self.options.language in ("zh", "en"):
             return self.options.language
@@ -296,19 +300,19 @@ class InitWizard:
         stack_text = ", ".join(stacks) if stacks else ("Python" if language == "en" else "Python")
         root_text = ", ".join(roots) if roots else "**/*.py"
         if language == "zh":
-            self.console.print(f"检测到：技术栈 {stack_text}")
-            self.console.print(f"默认扫描范围：{root_text}")
-            self.console.print("已自动排除：缓存、虚拟环境、构建产物、.git、.harbor 等运行目录")
-            self.console.print("完整配置可稍后运行：harbor config list")
+            self._print(f"检测到：技术栈 {stack_text}")
+            self._print(f"默认扫描范围：{root_text}")
+            self._print("已自动排除：缓存、虚拟环境、构建产物、.git、.harbor 等运行目录")
+            self._print("完整配置可稍后运行：harbor config list")
             return
-        self.console.print(f"Detected stack: {stack_text}")
-        self.console.print(f"Default scan roots: {root_text}")
-        self.console.print("Auto-excluded: cache, virtual env, build artifacts, .git, .harbor and runtime directories")
-        self.console.print("See full config later with: harbor config list")
+        self._print(f"Detected stack: {stack_text}")
+        self._print(f"Default scan roots: {root_text}")
+        self._print("Auto-excluded: cache, virtual env, build artifacts, .git, .harbor and runtime directories")
+        self._print("See full config later with: harbor config list")
 
     def _emit_project_rules_guidance(self, language: str) -> None:
         if language == "zh":
-            self.console.print(
+            self._print(
                 "\n项目规则未自动生成。\n\n"
                 "请让你的 AI coding 工具读取：\n"
                 "- .harbor/rules/project-rules-guide.md\n\n"
@@ -317,7 +321,7 @@ class InitWizard:
                 "生成 .harbor/rules/project-rules.md。要求不要重复 AGENTS.md，不要覆盖 Harbor machine policy，只描述本项目专属规则。\""
             )
             return
-        self.console.print(
+        self._print(
             "\nProject Rules were not auto-generated.\n\n"
             "To create project-specific rules, ask your AI coding tool to read:\n"
             "- .harbor/rules/project-rules-guide.md\n\n"
@@ -329,7 +333,7 @@ class InitWizard:
 
     def _emit_ide_guidance(self, language: str) -> None:
         if language == "zh":
-            self.console.print(
+            self._print(
                 "\nAI IDE 接入说明：\n"
                 "- AGENTS.md：适合 AGENTS-compatible / Codex-style 工具读取\n"
                 "- .harbor/rules/role-rules.md：可复制或引用到 TRAE / IDE role rules\n"
@@ -338,7 +342,7 @@ class InitWizard:
                 "- GitHub Copilot：可根据 AGENTS.md 手动创建 .github/copilot-instructions.md"
             )
             return
-        self.console.print(
+        self._print(
             "\nAI IDE integration guidance:\n"
             "- AGENTS.md: best for AGENTS-compatible / Codex-style tools\n"
             "- .harbor/rules/role-rules.md: copy or reference in TRAE / IDE role rules\n"
@@ -350,7 +354,7 @@ class InitWizard:
     def _emit_next_steps(self, language: str, project: str) -> None:
         if project == "new":
             if language == "zh":
-                self.console.print(
+                self._print(
                     "\nHarborSpec 已为你的新项目准备就绪。\n\n"
                     "建议下一步：\n"
                     "1. 打开你的 AI coding 工具（如 TRAE、 Codex、 Cursor、 Claude Code等）并确认：\n"
@@ -370,7 +374,7 @@ class InitWizard:
                     "   harbor project structure --write"
                 )
             else:
-                self.console.print(
+                self._print(
                     "\nHarborSpec is ready for your new project.\n\n"
                     "Next steps:\n"
                     "1. Open your AI coding tool (such as TRAE, Codex, Cursor, Claude Code, etc.) and verify:\n"
@@ -391,7 +395,7 @@ class InitWizard:
                 )
             return
         if language == "zh":
-            self.console.print(
+            self._print(
                 "\nHarborSpec 已准备好检查你的已有项目。\n\n"
                 "建议下一步：\n"
                 "1. 查看探测到的扫描根：\n"
@@ -410,7 +414,7 @@ class InitWizard:
                 "   harbor accept"
             )
         else:
-            self.console.print(
+            self._print(
                 "\nHarborSpec is ready to inspect your existing project.\n\n"
                 "Recommended next steps:\n"
                 "1. Review detected scan roots:\n"
@@ -442,9 +446,9 @@ class InitWizard:
         self._emit_detected_summary(language, stacks, roots)
         for warn in detect_warnings:
             if language == "zh":
-                self.console.print(f"警告：{warn}")
+                self._print(f"警告：{warn}")
             else:
-                self.console.print(f"Warning: {warn}")
+                self._print(f"Warning: {warn}")
 
         use_detected = self._ask_yes_no(
             "使用这些扫描范围吗？" if language == "zh" else "Use detected scan roots?",
@@ -532,9 +536,9 @@ class InitWizard:
         llm_kv: Dict[str, str] = {}
         if llm_enabled:
             if language == "zh":
-                self.console.print("HarborSpec 核心检查不依赖 LLM。LLM 仅用于可选语义审计。")
+                self._print("HarborSpec 核心检查不依赖 LLM。LLM 仅用于可选语义审计。")
             else:
-                self.console.print("HarborSpec core checks do not require an LLM. LLM is optional for semantic audit.")
+                self._print("HarborSpec core checks do not require an LLM. LLM is optional for semantic audit.")
             provider = "openai"
             base_url = "https://api.openai.com/v1"
             api_key = ""
@@ -656,20 +660,20 @@ class InitWizard:
                     )
 
         if self.options.dry_run:
-            self.console.print("dry-run：未写入任何文件。" if language == "zh" else "dry-run: no files were written.")
+            self._print("dry-run：未写入任何文件。" if language == "zh" else "dry-run: no files were written.")
         if self.result.created:
-            self.console.print("已创建：" if language == "zh" else "Created:")
+            self._print("已创建：" if language == "zh" else "Created:")
             for x in self.result.created:
-                self.console.print(f"- {x}")
+                self._print(f"- {x}")
         if self.result.overwritten:
-            self.console.print("已覆盖：" if language == "zh" else "Overwritten:")
+            self._print("已覆盖：" if language == "zh" else "Overwritten:")
             for x in self.result.overwritten:
-                self.console.print(f"- {x}")
+                self._print(f"- {x}")
         if self.result.skipped:
-            self.console.print("已跳过：" if language == "zh" else "Skipped:")
+            self._print("已跳过：" if language == "zh" else "Skipped:")
             for x in self.result.skipped:
-                self.console.print(f"- {x}")
+                self._print(f"- {x}")
         for note in self.result.notes:
-            self.console.print(f"- {note}")
+            self._print(f"- {note}")
         self._emit_next_steps(language, project)
         return self.result

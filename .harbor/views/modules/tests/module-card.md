@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T16:21:36Z"
+generated_at: "2026-05-13T17:51:52Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -104,11 +104,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:09ab1dfbb935b82a5f4b3f7f1e1251c902ae6a25a7ff0dd52a19369bb4ca4832"
-contract_fingerprint: "sha256:d58bde39f76818ee13b7f1e730beb0651b88d35b174ab6376835e0db05c9dd06"
+source_fingerprint: "sha256:1788e21563ec9d0c39dbfb717b1b41c64bb8d0598ef379bed75920586672e40f"
+contract_fingerprint: "sha256:2fa3825a0cc7a8f68861370473985ff723359683a435cac53ae81ef577452021"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "21bb135d2ee00d61106803dfbe59563b8d11b1a9f77543553848fef5bc7cfd4c"
-fingerprint: "21bb135d2ee00d61106803dfbe59563b8d11b1a9f77543553848fef5bc7cfd4c"
+view_fingerprint: "eb7bc6780098a05aa5e9db5dbc2d17f36a4c9be2d017fe37da7caf9629558113"
+fingerprint: "eb7bc6780098a05aa5e9db5dbc2d17f36a4c9be2d017fe37da7caf9629558113"
 ---
 
 # Module Card: tests
@@ -478,6 +478,8 @@ tests/test_workspace_paths.py
 | tests.test_cli_init_output.test_harbor_wrapper_output_matches_python_module | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_init_output.test_init_detects_django | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_init_output.test_init_detects_node | tests/test_cli_init_output.py | unknown | standard |
+| tests.test_cli_init_output.test_real_harbor_init_dry_run_is_encoding_safe_under_cp1252 | tests/test_cli_init_output.py | unknown | standard |
+| tests.test_cli_init_output.test_real_harbor_init_is_encoding_safe_under_cp1252 | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | tests/test_cli_init_output.py | unknown | standard |
 | tests.test_cli_json_output._force_en_locale | tests/test_cli_json_output.py | unknown | standard |
 | tests.test_cli_json_output._sample_doctor_report | tests/test_cli_json_output.py | unknown | standard |
@@ -721,6 +723,8 @@ tests/test_workspace_paths.py
 | tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_readonly_index_default_mode_keeps_cache_compatibility | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_readonly_index_prefer_fresh_source_ignores_stale_cache_snapshot | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_readonly_transient_index_discovers_typescript_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_typescript_enabled_persists_ts_subjects_without_breaking_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
@@ -759,6 +763,7 @@ tests/test_workspace_paths.py
 | tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_init_wizard_prompts_are_single_language_after_selection | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_init_wizard_repair_guidance_mode_prompt_is_localized | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_init_wizard_run_is_encoding_safe_for_cp1252_noninteractive_zh | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_non_tty_does_not_try_arrow_selector | tests/test_init_wizard.py | unknown | standard |
@@ -944,11 +949,14 @@ tests/test_workspace_paths.py
 | tests.test_stale._write_index | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_l2_export_config | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_sample_repo | tests/test_stale.py | unknown | standard |
+| tests.test_stale._write_stale_cache_index | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_typescript_sample_repo | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_is_up_to_date_without_runtime_index_cache | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_uses_ts_aware_transient_index_without_runtime_cache | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_collect_module_context_prefer_fresh_source_ignores_stale_cache_snapshot | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_generated_context_stays_up_to_date_across_cache_and_clean_fresh_checks | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_disabled_is_explicit_and_not_warn_counter | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_ok_when_canonical_has_frontmatter_and_export_is_plain_body | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_ok_when_canonical_up_to_date_and_export_matches | tests/test_stale.py | unknown | standard |
@@ -956,6 +964,7 @@ tests/test_workspace_paths.py
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_mismatch | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_missing | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_l2_generator_prefer_fresh_source_ignores_stale_cache_snapshot | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_check_does_not_write_file | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_stale_when_content_differs | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_readme_stale_when_missing | tests/test_stale.py | unknown | standard |
