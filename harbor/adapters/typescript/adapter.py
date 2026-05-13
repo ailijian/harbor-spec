@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, List, Sequence, Tuple, Union
+from typing import Dict, Iterable, List, Sequence, Tuple, Union
 
-from harbor.adapters.base import ContractSubject
+from harbor.adapters.base import ContractSource, ContractSourceKind, ContractSubject
 from harbor.adapters.typescript.jsdoc import extract_adjacent_tsdoc
 from harbor.adapters.typescript.hashing import normalized_sha256
 from harbor.adapters.typescript.parser import TypeScriptLightweightParser
@@ -54,15 +54,22 @@ class TypeScriptAdapter:
 
         subjects: List[ContractSubject] = []
         for symbol in symbols:
-            contract_source = extract_adjacent_tsdoc(
+            tsdoc_source = extract_adjacent_tsdoc(
                 source=source,
                 symbol_lineno=symbol.lineno,
                 file_path=normalized_path,
             )
             contract_required, required_reason = _is_contract_required(symbol, normalized_path)
             unsupported_for_symbol = any(f"`{symbol.name}`" in msg for msg in parser.diagnostics)
+            contract_sources = _collect_contract_sources(
+                symbol=symbol,
+                file_path=normalized_path,
+                tsdoc_source=tsdoc_source,
+            )
             contract_presence = _resolve_contract_presence(
-                contract_source_confidence=contract_source.confidence if contract_source else None,
+                symbol=symbol,
+                contract_sources=contract_sources,
+                tsdoc_confidence=tsdoc_source.confidence if tsdoc_source else None,
                 unsupported_for_symbol=unsupported_for_symbol,
             )
             target_id = ContractSubject.make_target_id(
@@ -73,13 +80,17 @@ class TypeScriptAdapter:
             )
             metadata = {
                 "export_kind": symbol.export_kind,
+                "export_mode": symbol.export_mode,
                 "parser_backend": "lightweight",
+                "public_surface_evidence": symbol.public_surface_evidence,
+                "data_contract_kind": symbol.data_contract_kind,
+                "schema_source_kind": symbol.schema_source_kind,
             }
             if symbol.class_name:
                 metadata["class_name"] = symbol.class_name
             if parser.diagnostics:
                 metadata["diagnostics"] = tuple(parser.diagnostics)
-            metadata["jsdoc_confidence"] = contract_source.confidence if contract_source else None
+            metadata["jsdoc_confidence"] = tsdoc_source.confidence if tsdoc_source else None
             metadata["contract_required_reason"] = required_reason
 
             subjects.append(
@@ -97,11 +108,11 @@ class TypeScriptAdapter:
                     signature_text=symbol.signature_text,
                     signature_hash=normalized_sha256(symbol.signature_text),
                     body_hash=normalized_sha256(symbol.body_text) if symbol.body_text else None,
-                    contract_hash=None,
+                    contract_hash=_contract_hash_for_sources(contract_sources),
                     contract_presence=contract_presence,
                     contract_required=contract_required,
                     metadata=metadata,
-                    contract_sources=(contract_source,) if contract_source else (),
+                    contract_sources=tuple(contract_sources),
                 )
             )
         return subjects
@@ -125,6 +136,12 @@ def _is_contract_required(symbol: TypeScriptSymbol, normalized_path: str) -> Tup
         return False, "test_file"
     if _is_script_file(path_lower):
         return False, "script_file"
+    if symbol.symbol_kind in {"interface", "type_alias"}:
+        return False, "advisory_data_contract_target"
+    if symbol.schema_source_kind == "z.object" or symbol.schema_source_kind == "z.enum":
+        return False, "advisory_schema_target"
+    if symbol.symbol_kind == "class":
+        return False, "public_surface_target"
     if symbol.is_exported and symbol.visibility == "public":
         return True, "exported_public_symbol"
     return False, "internal_helper_or_non_exported"
@@ -147,13 +164,77 @@ def _is_script_file(path_lower: str) -> bool:
 
 
 def _resolve_contract_presence(
-    contract_source_confidence: Union[str, None],
+    *,
+    symbol: TypeScriptSymbol,
+    contract_sources: Iterable[ContractSource],
+    tsdoc_confidence: Union[str, None],
     unsupported_for_symbol: bool,
 ) -> str:
-    if contract_source_confidence == "high":
+    if symbol.symbol_kind in {"interface", "type_alias"}:
         return "present"
-    if contract_source_confidence == "medium":
+    if symbol.schema_source_kind in {"z.object", "z.enum"}:
+        return "present"
+    if tsdoc_confidence == "high":
+        return "present"
+    if tsdoc_confidence == "medium":
         return "non_contract_doc"
     if unsupported_for_symbol:
         return "unsupported_syntax"
     return "missing"
+
+
+def _collect_contract_sources(
+    *,
+    symbol: TypeScriptSymbol,
+    file_path: str,
+    tsdoc_source: ContractSource | None,
+) -> List[ContractSource]:
+    sources: List[ContractSource] = []
+    if tsdoc_source is not None:
+        sources.append(tsdoc_source)
+
+    if symbol.symbol_kind == "interface":
+        sources.append(
+            ContractSource(
+                kind=ContractSourceKind.TYPESCRIPT_INTERFACE,
+                text=symbol.signature_text,
+                fingerprint=normalized_sha256(symbol.signature_text),
+                confidence="high",
+                location=f"{file_path}:{symbol.lineno}",
+                metadata={"data_contract_kind": symbol.data_contract_kind},
+            )
+        )
+    elif symbol.symbol_kind == "type_alias":
+        sources.append(
+            ContractSource(
+                kind=ContractSourceKind.TYPESCRIPT_TYPE,
+                text=symbol.signature_text,
+                fingerprint=normalized_sha256(symbol.signature_text),
+                confidence="high",
+                location=f"{file_path}:{symbol.lineno}",
+                metadata={"data_contract_kind": symbol.data_contract_kind},
+            )
+        )
+    elif symbol.schema_source_kind in {"z.object", "z.enum"}:
+        sources.append(
+            ContractSource(
+                kind=ContractSourceKind.ZOD_SCHEMA,
+                text=symbol.signature_text,
+                fingerprint=normalized_sha256(symbol.signature_text),
+                confidence="high",
+                location=f"{file_path}:{symbol.lineno}",
+                metadata={"schema_source_kind": symbol.schema_source_kind},
+            )
+        )
+    return sources
+
+
+def _contract_hash_for_sources(contract_sources: Iterable[ContractSource]) -> str | None:
+    bundle: List[str] = []
+    for source in contract_sources:
+        if source.kind in {ContractSourceKind.TSDOC, ContractSourceKind.JSDOC} and source.confidence != "high":
+            continue
+        bundle.append(f"{source.kind.value}|{source.confidence}|{source.fingerprint}")
+    if not bundle:
+        return None
+    return normalized_sha256("\n".join(sorted(bundle)))

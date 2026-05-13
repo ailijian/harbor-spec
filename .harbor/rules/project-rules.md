@@ -465,6 +465,7 @@ CLI / JSON output rules:
 - Avoid leaking machine-local absolute paths unless explicitly required.
 - `checkpoint --ci` must read the repo-owned accepted baseline artifact at `.harbor/baseline/accepted-checkpoint.json`.
 - CI mode must not fall back to runtime cache when the accepted baseline artifact is missing or invalid.
+- Windows full-governance is a formal release acceptance dimension for cross-language governance changes.
 ```
 
 Workspace rules:
@@ -789,6 +790,13 @@ harbor module seal --changed --write
 harbor finish --sync-context
 harbor stale
 harbor doctor
+```
+
+v1.4.2 closure rule:
+
+```text
+- Preferred closure is harbor finish --sync-context -> harbor stale --ci --format json -> harbor doctor --ci --format json.
+- If residual stale guidance or broader refresh advisory remains, resolve it deterministically or record why it was deferred.
 ```
 
 Refresh generated context when changes affect:

@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from harbor.core.index import process_file_worker
+from harbor.core.index_entry import index_entry_to_cache_item
 from harbor.core.storage import HarborDB
 from harbor.core.utils import iter_project_files
 from harbor.core.workspace import load_workspace_config
@@ -57,7 +58,11 @@ def _build_transient_index(repo_root: Path) -> Dict[str, Any]:
         except Exception:
             rel = source_path.resolve().as_posix()
         _, mtime, items, _ = process_file_worker(str(source_path))
-        files[rel] = {"mtime": mtime, "file_hash": "", "items": items}
+        files[rel] = {
+            "mtime": mtime,
+            "file_hash": "",
+            "items": [index_entry_to_cache_item(item) for item in items],
+        }
 
     payload: Dict[str, Any] = {
         "meta": {"schema_version": "1.0.2", "source": "transient_filesystem"},

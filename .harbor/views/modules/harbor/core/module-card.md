@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-13T10:36:23Z"
+generated_at: "2026-05-13T12:26:10Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 36
+source_path_count: 37
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
@@ -26,6 +26,7 @@ source_paths:
   - "harbor/core/drafting.py"
   - "harbor/core/git_utils.py"
   - "harbor/core/index.py"
+  - "harbor/core/index_entry.py"
   - "harbor/core/init.py"
   - "harbor/core/init_prompt.py"
   - "harbor/core/init_wizard.py"
@@ -45,11 +46,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:722e835bf2bc0a6a710094b14a432b1c4b1e6207101b8cc6dd80888460699b71"
-contract_fingerprint: "sha256:c6d88a9b52a8fcc4c95c60571722aaa98f046bf2ef66f582b3b41c2a2962e0b1"
+source_fingerprint: "sha256:25b96020dda892b0177a115c1c576325cfd5a83445b8569e3423639b3453afdb"
+contract_fingerprint: "sha256:5216974d8cda62f0699e42688ae3dbddbfded063b22c4f720347b4c424d37f54"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "57097046bd0d43c05fe1b8aa6fde96343920380540c0637336e2f856f6f0b785"
-fingerprint: "57097046bd0d43c05fe1b8aa6fde96343920380540c0637336e2f856f6f0b785"
+view_fingerprint: "2649a617b9a08218544d7f4a0eeef1b2ad8c66862787923bb4285965d492f2f2"
+fingerprint: "2649a617b9a08218544d7f4a0eeef1b2ad8c66862787923bb4285965d492f2f2"
 ---
 
 # Module Card: harbor/core
@@ -87,6 +88,7 @@ harbor/core/doctor.py
 harbor/core/drafting.py
 harbor/core/git_utils.py
 harbor/core/index.py
+harbor/core/index_entry.py
 harbor/core/init.py
 harbor/core/init_prompt.py
 harbor/core/init_wizard.py
@@ -169,6 +171,8 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci._dedupe_checkpoint_items | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._derive_checkpoint_identity | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._derive_qualified_name_and_symbol_kind | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._get_optional_list | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._get_optional_text | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._is_blocking_checkpoint_target | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._module_qual_from_file_path | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._normalize_checkpoint_key_path | harbor/core/ci.py | unknown | standard |
@@ -177,6 +181,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci._sanitize_checkpoint_contract_impact | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_json_text | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_single_path | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._sanitize_string_list | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_summary | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.build_checkpoint_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.build_doctor_ci_result | harbor/core/ci.py | unknown | standard |
@@ -301,6 +306,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.index.IndexBuilder.__init__ | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._file_hash | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._index_entry | harbor/core/index.py | unknown | standard |
+| harbor.core.index.IndexBuilder._iter_code_roots | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._iter_files_by_enabled_adapters | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._iter_py_files | harbor/core/index.py | public | strict |
 | harbor.core.index.IndexBuilder._load_cache | harbor/core/index.py | unknown | standard |
@@ -310,6 +316,13 @@ harbor/core/workspace_migrate.py
 | harbor.core.index.IndexBuilder.build | harbor/core/index.py | public | strict |
 | harbor.core.index.IndexBuilder.iter_build | harbor/core/index.py | public | strict |
 | harbor.core.index.process_file_worker | harbor/core/index.py | public | strict |
+| harbor.core.index_entry._default_name | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry._source_confidence_summary | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry._source_fingerprints | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry._source_kinds | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry.contract_subject_to_index_entry | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry.function_contract_to_index_entry | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry.index_entry_to_cache_item | harbor/core/index_entry.py | unknown | standard |
 | harbor.core.init.Initializer.__init__ | harbor/core/init.py | unknown | standard |
 | harbor.core.init.Initializer.autodetect | harbor/core/init.py | public | strict |
 | harbor.core.init.Initializer.detect_code_roots | harbor/core/init.py | public | strict |
@@ -566,6 +579,9 @@ harbor/core/workspace_migrate.py
 | harbor.core.sync.SyncEngine.adapter | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine.check_status | harbor/core/sync.py | public | strict |
 | harbor.core.sync.SyncEngine.collect_current_snapshot | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync._subject_source_confidence_summary | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync._subject_source_fingerprints | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync._subject_source_kinds | harbor/core/sync.py | unknown | standard |
 | harbor.core.utils.compute_body_hash | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.derive_adopted_roots | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.find_function_node | harbor/core/utils.py | unknown | standard |

@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-13T10:35:47Z"
+generated_at: "2026-05-13T12:26:10Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
-source_path_count: 57
+source_path_count: 58
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -41,6 +41,7 @@ source_paths:
   - "harbor/core/drafting.py"
   - "harbor/core/git_utils.py"
   - "harbor/core/index.py"
+  - "harbor/core/index_entry.py"
   - "harbor/core/init.py"
   - "harbor/core/init_prompt.py"
   - "harbor/core/init_wizard.py"
@@ -66,11 +67,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:d7dd6c7b5908c1a15c10b952dd6929cd07126522d976a31faad37f26eb2228d3"
-contract_fingerprint: "sha256:f2adcd9dd75181808e3fba31bfab62ce00dde3ea17accfa2a920c7af774ef9b7"
+source_fingerprint: "sha256:0956ceed4f538af69e753121064629c5da1377c4f572244e6c04c26668587364"
+contract_fingerprint: "sha256:c7dbe23ee07b5370a092b0712a4969331176f71c2e17a5b71ee6e720800ee3f8"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "9f43b8d8b3fb453b62044d215251238fc8b4974fc3ff3392b983043233499a52"
-fingerprint: "9f43b8d8b3fb453b62044d215251238fc8b4974fc3ff3392b983043233499a52"
+view_fingerprint: "3eff6d4ef78f0edf2e9b884253f765d759094df7be562110609d1e4aad8e6a42"
+fingerprint: "3eff6d4ef78f0edf2e9b884253f765d759094df7be562110609d1e4aad8e6a42"
 ---
 
 # Module Card: harbor
@@ -123,6 +124,7 @@ harbor/core/doctor.py
 harbor/core/drafting.py
 harbor/core/git_utils.py
 harbor/core/index.py
+harbor/core/index_entry.py
 harbor/core/init.py
 harbor/core/init_prompt.py
 harbor/core/init_wizard.py
@@ -183,6 +185,8 @@ harbor/utils/i18n.py
 | harbor.adapters.typescript.adapter.TypeScriptAdapter._collect_file | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.parse_file | harbor/adapters/typescript/adapter.py | unknown | standard |
+| harbor.adapters.typescript.adapter._collect_contract_sources | harbor/adapters/typescript/adapter.py | unknown | standard |
+| harbor.adapters.typescript.adapter._contract_hash_for_sources | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter._is_contract_required | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter._is_script_file | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter._is_test_file | harbor/adapters/typescript/adapter.py | unknown | standard |
@@ -198,7 +202,12 @@ harbor/utils/i18n.py
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser.__init__ | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_arrow_functions | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_class_methods | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_default_classes | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_default_functions | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_functions | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_interfaces | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_types | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_zod_schemas | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_internal_arrow_functions | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_internal_functions | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser.parse | harbor/adapters/typescript/parser.py | unknown | standard |
@@ -266,6 +275,8 @@ harbor/utils/i18n.py
 | harbor.core.ci._dedupe_checkpoint_items | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._derive_checkpoint_identity | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._derive_qualified_name_and_symbol_kind | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._get_optional_list | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._get_optional_text | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._is_blocking_checkpoint_target | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._module_qual_from_file_path | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._normalize_checkpoint_key_path | harbor/core/ci.py | unknown | standard |
@@ -274,6 +285,7 @@ harbor/utils/i18n.py
 | harbor.core.ci._sanitize_checkpoint_contract_impact | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_json_text | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_single_path | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._sanitize_string_list | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_summary | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.build_checkpoint_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.build_doctor_ci_result | harbor/core/ci.py | unknown | standard |
@@ -398,6 +410,7 @@ harbor/utils/i18n.py
 | harbor.core.index.IndexBuilder.__init__ | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._file_hash | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._index_entry | harbor/core/index.py | unknown | standard |
+| harbor.core.index.IndexBuilder._iter_code_roots | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._iter_files_by_enabled_adapters | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder._iter_py_files | harbor/core/index.py | public | strict |
 | harbor.core.index.IndexBuilder._load_cache | harbor/core/index.py | unknown | standard |
@@ -407,6 +420,13 @@ harbor/utils/i18n.py
 | harbor.core.index.IndexBuilder.build | harbor/core/index.py | public | strict |
 | harbor.core.index.IndexBuilder.iter_build | harbor/core/index.py | public | strict |
 | harbor.core.index.process_file_worker | harbor/core/index.py | public | strict |
+| harbor.core.index_entry._default_name | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry._source_confidence_summary | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry._source_fingerprints | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry._source_kinds | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry.contract_subject_to_index_entry | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry.function_contract_to_index_entry | harbor/core/index_entry.py | unknown | standard |
+| harbor.core.index_entry.index_entry_to_cache_item | harbor/core/index_entry.py | unknown | standard |
 | harbor.core.init.Initializer.__init__ | harbor/core/init.py | unknown | standard |
 | harbor.core.init.Initializer.autodetect | harbor/core/init.py | public | strict |
 | harbor.core.init.Initializer.detect_code_roots | harbor/core/init.py | public | strict |
@@ -663,6 +683,9 @@ harbor/utils/i18n.py
 | harbor.core.sync.SyncEngine.adapter | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine.check_status | harbor/core/sync.py | public | strict |
 | harbor.core.sync.SyncEngine.collect_current_snapshot | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync._subject_source_confidence_summary | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync._subject_source_fingerprints | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync._subject_source_kinds | harbor/core/sync.py | unknown | standard |
 | harbor.core.utils.compute_body_hash | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.derive_adopted_roots | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.find_function_node | harbor/core/utils.py | unknown | standard |

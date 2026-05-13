@@ -107,6 +107,13 @@ class CheckpointCIItem:
     language: Optional[str] = None
     symbol_kind: Optional[str] = None
     adapter: Optional[str] = None
+    export_mode: Optional[str] = None
+    public_surface_evidence: Optional[str] = None
+    data_contract_kind: Optional[str] = None
+    schema_source_kind: Optional[str] = None
+    source_confidence_summary: Optional[str] = None
+    contract_source_kinds: Optional[List[str]] = None
+    contract_source_fingerprints: Optional[List[str]] = None
     suggested_action: Optional[str] = None
     guidance: Optional[RepairGuidance] = None
 
@@ -166,6 +173,20 @@ class CheckpointCIItem:
             payload["symbol_kind"] = _sanitize_json_text(self.symbol_kind)
         if self.adapter:
             payload["adapter"] = _sanitize_json_text(self.adapter)
+        if self.export_mode:
+            payload["export_mode"] = _sanitize_json_text(self.export_mode)
+        if self.public_surface_evidence:
+            payload["public_surface_evidence"] = _sanitize_json_text(self.public_surface_evidence)
+        if self.data_contract_kind:
+            payload["data_contract_kind"] = _sanitize_json_text(self.data_contract_kind)
+        if self.schema_source_kind:
+            payload["schema_source_kind"] = _sanitize_json_text(self.schema_source_kind)
+        if self.source_confidence_summary:
+            payload["source_confidence_summary"] = _sanitize_json_text(self.source_confidence_summary)
+        if self.contract_source_kinds:
+            payload["contract_source_kinds"] = _sanitize_string_list(self.contract_source_kinds)
+        if self.contract_source_fingerprints:
+            payload["contract_source_fingerprints"] = _sanitize_string_list(self.contract_source_fingerprints)
         if self.suggested_action:
             payload["suggested_action"] = _sanitize_json_text(self.suggested_action)
         if include_guidance and self.guidance is not None:
@@ -344,6 +365,13 @@ def build_checkpoint_ci_result(
                 language=identity["language"],
                 symbol_kind=identity["symbol_kind"],
                 adapter=identity["adapter"],
+                export_mode=_get_optional_text(entry, "export_mode"),
+                public_surface_evidence=_get_optional_text(entry, "public_surface_evidence"),
+                data_contract_kind=_get_optional_text(entry, "data_contract_kind"),
+                schema_source_kind=_get_optional_text(entry, "schema_source_kind"),
+                source_confidence_summary=_get_optional_text(entry, "source_confidence_summary"),
+                contract_source_kinds=_get_optional_list(entry, "contract_source_kinds"),
+                contract_source_fingerprints=_get_optional_list(entry, "contract_source_fingerprints"),
                 reason=_checkpoint_reason_for_entry(
                     category="skipped_no_contract",
                     default_reason=t("cli.ci.checkpoint.failure.skipped_no_contract"),
@@ -374,6 +402,13 @@ def build_checkpoint_ci_result(
                 language=identity["language"],
                 symbol_kind=identity["symbol_kind"],
                 adapter=identity["adapter"],
+                export_mode=_get_optional_text(entry, "export_mode"),
+                public_surface_evidence=_get_optional_text(entry, "public_surface_evidence"),
+                data_contract_kind=_get_optional_text(entry, "data_contract_kind"),
+                schema_source_kind=_get_optional_text(entry, "schema_source_kind"),
+                source_confidence_summary=_get_optional_text(entry, "source_confidence_summary"),
+                contract_source_kinds=_get_optional_list(entry, "contract_source_kinds"),
+                contract_source_fingerprints=_get_optional_list(entry, "contract_source_fingerprints"),
                 reason=_checkpoint_reason_for_entry(
                     category="unsupported_syntax_advisory",
                     default_reason="TypeScript MVP parser could not safely classify this target.",
@@ -919,6 +954,13 @@ def _push_status_failures(
                 language=identity["language"],
                 symbol_kind=identity["symbol_kind"],
                 adapter=identity["adapter"],
+                export_mode=_get_optional_text(entry, "export_mode"),
+                public_surface_evidence=_get_optional_text(entry, "public_surface_evidence"),
+                data_contract_kind=_get_optional_text(entry, "data_contract_kind"),
+                schema_source_kind=_get_optional_text(entry, "schema_source_kind"),
+                source_confidence_summary=_get_optional_text(entry, "source_confidence_summary"),
+                contract_source_kinds=_get_optional_list(entry, "contract_source_kinds"),
+                contract_source_fingerprints=_get_optional_list(entry, "contract_source_fingerprints"),
                 reason=_checkpoint_reason_for_entry(category=category, default_reason=reason, entry=entry),
                 suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
                 guidance=(
@@ -934,13 +976,52 @@ def _checkpoint_reason_for_entry(*, category: str, default_reason: str, entry: o
     language = str(getattr(entry, "language", "") or "").strip().lower()
     if language != "typescript":
         return default_reason
+    data_contract_kind = str(getattr(entry, "data_contract_kind", "") or "").strip().lower()
+    schema_source_kind = str(getattr(entry, "schema_source_kind", "") or "").strip().lower()
+    public_surface_evidence = str(getattr(entry, "public_surface_evidence", "") or "").strip().lower()
+    source_confidence_summary = str(getattr(entry, "source_confidence_summary", "") or "").strip().lower()
+    source_kinds = {
+        str(value or "").strip().lower()
+        for value in list(getattr(entry, "contract_source_kinds", []) or [])
+        if str(value or "").strip()
+    }
     if category == "contract_gap":
+        if source_confidence_summary in {"medium", "low"} and source_kinds & {"tsdoc", "jsdoc"}:
+            return "TypeScript doc comment was detected, but its confidence is not high enough to count as a contract source."
         return "Required TypeScript contract source is missing or not contract-like."
     if category == "skipped_no_contract":
+        if schema_source_kind in {"z.object", "z.enum"}:
+            return "TypeScript Zod schema is tracked as shallow contract evidence only; blocking semantic comparison is skipped."
+        if data_contract_kind:
+            return "TypeScript exported data contract target is tracked in advisory-first mode; blocking semantic comparison is skipped."
+        if public_surface_evidence == "default_export":
+            return "TypeScript default export is tracked as public surface evidence, not as a contract source."
         return "No contract required for this TypeScript target; semantic comparison skipped."
     if category == "unsupported_syntax_advisory":
         return "TypeScript MVP parser could not safely classify this target."
     return default_reason
+
+
+def _get_optional_text(source: object, field_name: str) -> Optional[str]:
+    value = str(getattr(source, field_name, "") or "").strip()
+    return value or None
+
+
+def _get_optional_list(source: object, field_name: str) -> Optional[List[str]]:
+    raw = getattr(source, field_name, None)
+    if not raw:
+        return None
+    values = [str(value).strip() for value in list(raw) if str(value or "").strip()]
+    return values or None
+
+
+def _sanitize_string_list(values: Sequence[str]) -> List[str]:
+    out: List[str] = []
+    for value in values:
+        text = _sanitize_json_text(str(value or "").strip())
+        if text:
+            out.append(text)
+    return out
 
 
 def _dedupe_checkpoint_items(items: Sequence[CheckpointCIItem]) -> List[CheckpointCIItem]:

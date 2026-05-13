@@ -1,3 +1,77 @@
+# Harbor-spec v1.4.2 — TypeScript Contract Source Strengthening
+
+状态：计划发布  
+发布类型：TypeScript Contract Source Strengthening
+
+## Added
+
+- TypeScript subject generalized persistence through `IndexBuilder`, SQLite `entries`, and runtime cache snapshot export.
+- Additive TypeScript identity metadata in persistence and checkpoint JSON:
+  - `target_id`
+  - `func_id` / `legacy_func_id`
+  - `language`
+  - `symbol_kind`
+  - `qualified_name`
+  - `lineno` / `end_lineno`
+  - `visibility`
+- Advisory-first exported `interface` / `type` discovery.
+- Shallow Zod source recognition for `z.object(...)` and `z.enum(...)`.
+- `export default function` / `export default class` discovery as public surface evidence.
+- TypeScript `contract_hash` based on normalized contract source bundle hash.
+- Additive checkpoint / `harbor next` JSON metadata:
+  - `export_mode`
+  - `public_surface_evidence`
+  - `data_contract_kind`
+  - `schema_source_kind`
+  - `contract_source_kinds`
+  - `contract_source_fingerprints`
+  - `source_confidence_summary`
+
+## Changed
+
+- `checkpoint --ci` continues to use `.harbor/baseline/accepted-checkpoint.json` as the accepted baseline source of truth.
+- runtime cache remains local acceleration / compatibility only and does not become CI truth.
+- TypeScript contract presence now treats exported `interface` / `type` and supported shallow Zod schemas as contract-like source evidence without turning them into new blocking categories.
+- `harbor next` now preserves additive TypeScript metadata so advisory-first data contracts, shallow Zod evidence, low-confidence docs, and default export public surface signals stay explainable downstream.
+- generated context closure for v1.4.2 is explicitly `harbor finish --sync-context -> harbor stale --ci --format json -> harbor doctor --ci --format json`.
+- Windows full-governance remains a formal release gate, not a best-effort compatibility check.
+
+## Not Supported Yet
+
+- re-export graph
+- `.d.ts` scanning
+- `package exports`
+- `tsconfig` path alias resolution
+- framework presets
+- TypeScript DDT
+- TypeScript semantic audit
+- JavaScript first-class governance
+- full Zod schema semantics / schema-to-type consistency audit
+- automatic blocking gate expansion for `interface/type`, Zod, or default export evidence
+
+## Compatibility
+
+- Python behavior remains zero-regression-compatible.
+- Existing baseline artifact fields remain stable:
+  - `baseline_source`
+  - `baseline_path`
+  - `baseline_found`
+  - `accepted_baseline_missing`
+  - `accepted_baseline_invalid`
+- Existing `func_id` consumers remain supported.
+- `v1.4.1` Log Draft / Controlled Write workflow remains unchanged.
+
+## Validation
+
+- `pytest`: pending final release run
+- `harbor checkpoint --ci --format json`: pending final release run
+- `harbor stale --ci --format json`: pending final release run
+- `harbor doctor --ci --format json`: pending final release run
+- Ubuntu Python matrix CI: pending GitHub Actions confirmation
+- Windows full-governance CI: pending GitHub Actions confirmation
+
+---
+
 # Harbor-spec v1.4.1 — Log Draft + Controlled Write Workflow MVP
 
 状态：正式版  

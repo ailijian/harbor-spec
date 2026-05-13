@@ -675,7 +675,11 @@ exported function
 exported async function
 exported const arrow function
 exported class public method
+exported interface/type advisory-first data contract
+z.object/z.enum shallow source recognition
+export default function/class public surface evidence
 JSDoc / TSDoc proximity extraction
+generalized persistence with additive identity/contract metadata
 contract_gap
 skipped_no_contract
 unsupported_syntax_advisory
@@ -687,9 +691,11 @@ Not supported in TypeScript v1.4.x:
 ```text
 JavaScript first-class governance
 .js/.jsx/.tsx/.d.ts default scanning
+re-export graph
+package exports / tsconfig path alias
 TypeScript semantic audit
 TypeScript DDT
-Zod governance
+full Zod semantics / schema-to-type consistency audit
 framework presets
 interface/type blocking gate
 ```
@@ -916,6 +922,15 @@ harbor check --format jsonl
 harbor checkpoint --ci --format json
 harbor stale --ci --format json
 harbor doctor --ci --format json
+```
+
+Release acceptance notes:
+
+```text
+- checkpoint --ci must keep .harbor/baseline/accepted-checkpoint.json as CI baseline truth.
+- runtime cache is local acceleration only and must not replace accepted baseline artifact in CI.
+- Windows full-governance is a formal v1.4.2 acceptance dimension alongside Ubuntu Python matrix.
+- Generated context closure for v1.4.2 is finish --sync-context -> stale --ci -> doctor --ci.
 ```
 
 Notes:

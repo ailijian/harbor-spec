@@ -41,6 +41,60 @@ HarborSpec 的目标是：
 
 ---
 
+## 🚀 v1.4.2：TypeScript Contract Source Strengthening
+
+Harbor-spec v1.4.2 在 `v1.4.1` 的 Log Draft / Controlled Write workflow 之上，恢复 TypeScript 主线，并先补齐 richer contract source 之前必须稳定的治理基础。
+
+### v1.4.2 当前支持
+
+* TypeScript subject generalized persistence：
+  * `IndexBuilder` / runtime cache / SQLite 持久化路径统一接入 `.ts`
+  * additive identity metadata：`target_id` / `func_id` / `language` / `symbol_kind` / `qualified_name`
+  * additive contract metadata：`contract_source_kinds` / `contract_source_fingerprints` / `source_confidence_summary`
+* accepted baseline artifact 继续作为 `checkpoint --ci` 的正式 baseline truth：
+  * `.harbor/baseline/accepted-checkpoint.json`
+  * runtime cache 仅做本地加速与兼容，不承担 CI truth
+* richer TypeScript source strengthening：
+  * exported `interface` / `type` advisory-first data contract discovery
+  * `z.object(...)` / `z.enum(...)` shallow Zod source recognition
+  * `export default function` / `export default class` public surface evidence
+  * `contract_hash = normalized contract source bundle hash`
+* additive checkpoint / `harbor next` / JSON metadata 输出：
+  * `export_mode`
+  * `data_contract_kind`
+  * `schema_source_kind`
+  * `contract_source_kinds`
+  * `contract_source_fingerprints`
+  * `source_confidence_summary`
+* generated context closure 收口：
+  * `harbor finish --sync-context`
+  * `harbor stale --ci --format json`
+  * `harbor doctor --ci --format json`
+
+### v1.4.2 明确不支持（Not Supported Yet）
+
+* re-export graph
+* `.d.ts` scanning
+* `package exports` / `tsconfig` path alias
+* framework preset
+* TypeScript DDT
+* TypeScript semantic audit
+* JavaScript first-class governance
+* full Zod schema semantics / schema-to-type consistency audit
+* `interface/type` 或 Zod 自动升级为 blocking gate
+
+### v1.4.2 兼容与验收边界
+
+* Python zero regression 是硬约束：
+  * Python parser / checkpoint / DDT / semantic audit / stale / doctor 不回归
+  * `func_id` / `target_id` 兼容不回归
+* Windows full-governance 是正式验收维度：
+  * Ubuntu Python matrix 仍必须通过
+  * Windows path normalization regression 必须覆盖
+* `v1.4.1` Log Draft / Controlled Write workflow 保持零回归
+
+---
+
 ## 🚀 v1.4.0：Core Neutralization + TypeScript Contract Governance MVP
 
 Harbor-spec v1.4.0 引入 **first-class TypeScript contract governance**。  

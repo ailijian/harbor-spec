@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/cli"
-generated_at: "2026-05-13T06:48:23Z"
+generated_at: "2026-05-13T12:26:10Z"
 generation_command: "harbor module seal harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -11,7 +11,7 @@ source_paths_truncated: false
 source_paths:
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
-source_fingerprint: "sha256:a4594ba210e525316c6b13f391be97867e6125d65d9984050d98c84566918464"
+source_fingerprint: "sha256:cc8ccfec4f7a5888da7b7a3fa6ced9e6d7ec2c0e7f71733b85168ce083993a00"
 contract_fingerprint: "sha256:64fa5bc1222ef802f02e102c8b8ef12f7eb2f257fd96358e7ef892a999e9a38d"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
 view_fingerprint: "0d8d802f1496cec0dd48dcd8bbae9fd967ca371e6bbd782ada8d3a3bbc9dab14"

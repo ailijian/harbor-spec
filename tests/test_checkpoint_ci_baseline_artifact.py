@@ -79,6 +79,34 @@ def _write_sample_repo(tmp_path: Path, *, body: str = "return value") -> Path:
     return sample
 
 
+def _write_typescript_repo(tmp_path: Path) -> Path:
+    sample = tmp_path / "src" / "service.ts"
+    sample.parent.mkdir(parents=True, exist_ok=True)
+    sample.write_text(
+        """/**
+ * @param value Input integer.
+ * @returns Same integer value.
+ */
+export function api(value: number): number { return value; }
+""",
+        encoding="utf-8",
+    )
+    config = tmp_path / ".harbor" / "config.yaml"
+    config.parent.mkdir(parents=True, exist_ok=True)
+    config.write_text(
+        """code_roots:
+  - src
+languages:
+  python:
+    enabled: true
+  typescript:
+    enabled: true
+""",
+        encoding="utf-8",
+    )
+    return sample
+
+
 def _write_artifact_from_current_snapshot(tmp_path: Path) -> Path:
     snapshot = SyncEngine().collect_current_snapshot()
     items = []
@@ -118,6 +146,21 @@ def test_checkpoint_ci_passes_with_accepted_baseline_artifact(tmp_path: Path, mo
     assert payload["baseline_path"] == ".harbor/baseline/accepted-checkpoint.json"
     assert payload["baseline_found"] is True
     assert payload["writes_files"] is False
+
+
+def test_checkpoint_ci_passes_with_typescript_subject_from_accepted_artifact(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_typescript_repo(tmp_path)
+    _write_artifact_from_current_snapshot(tmp_path)
+
+    code, out, err = run_cmd(["checkpoint", "--ci", "--format", "json"])
+    payload = json.loads(out)
+
+    assert code == 0
+    assert err == ""
+    assert payload["status"] == "pass"
+    assert payload["baseline_source"] == "accepted_artifact"
+    assert payload["baseline_found"] is True
 
 
 def test_checkpoint_ci_fails_when_accepted_baseline_artifact_missing(tmp_path: Path, monkeypatch):

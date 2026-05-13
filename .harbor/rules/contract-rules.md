@@ -157,6 +157,8 @@ TypeScript v1.4.x presence mapping:
 
 ```text
 high-confidence JSDoc/TSDoc near required target -> present
+exported interface/type -> present (advisory-first data contract source)
+supported shallow Zod source -> present (advisory-only source evidence)
 ordinary block comment (non-JSDoc/TSDoc contract signals) -> non_contract_doc
 no source -> missing
 unsupported TypeScript syntax -> unsupported_syntax
@@ -167,6 +169,7 @@ For TypeScript v1.4.x, present means usable for presence/checkpoint governance,
 not that TypeScript semantic audit is supported.
 Checkpoint maps unsupported_syntax to unsupported_syntax_advisory.
 Do not map unsupported TypeScript syntax to contract_parse_error.
+export default is public surface evidence, not a contract source.
 ```
 
 ---
@@ -203,6 +206,7 @@ not required by default:
   internal helper
   tests
   scripts
+  export default public surface evidence
 
 not blocking in v1.4.x:
   interface/type/schema-only targets

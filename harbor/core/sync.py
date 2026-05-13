@@ -27,6 +27,46 @@ class StatusEntry:
     language: Optional[str] = None
     symbol_kind: Optional[str] = None
     adapter: Optional[str] = None
+    export_mode: Optional[str] = None
+    public_surface_evidence: Optional[str] = None
+    data_contract_kind: Optional[str] = None
+    schema_source_kind: Optional[str] = None
+    contract_source_kinds: Optional[List[str]] = None
+    contract_source_fingerprints: Optional[List[str]] = None
+    source_confidence_summary: Optional[str] = None
+
+
+def _subject_source_kinds(subject: object) -> List[str]:
+    kinds: List[str] = []
+    for source in list(getattr(subject, "contract_sources", ()) or ()):
+        kind = getattr(source, "kind", None)
+        value = getattr(kind, "value", kind)
+        text = str(value or "").strip()
+        if text:
+            kinds.append(text)
+    return kinds
+
+
+def _subject_source_fingerprints(subject: object) -> List[str]:
+    values: List[str] = []
+    for source in list(getattr(subject, "contract_sources", ()) or ()):
+        fingerprint = str(getattr(source, "fingerprint", "") or "").strip()
+        if fingerprint:
+            values.append(fingerprint)
+    return values
+
+
+def _subject_source_confidence_summary(subject: object) -> Optional[str]:
+    priorities = {"high": 3, "medium": 2, "low": 1}
+    strongest: Optional[str] = None
+    best = 0
+    for source in list(getattr(subject, "contract_sources", ()) or ()):
+        confidence = str(getattr(source, "confidence", "") or "").strip().lower()
+        score = priorities.get(confidence, 0)
+        if score > best:
+            strongest = confidence
+            best = score
+    return strongest
 
 
 @dataclass
@@ -157,6 +197,13 @@ class SyncEngine:
                         "language": str(subject.language or "typescript").strip().lower(),
                         "symbol_kind": str(subject.symbol_kind or "").strip().lower() or None,
                         "adapter": "typescript",
+                        "export_mode": str(subject.metadata.get("export_mode") or "").strip() or None,
+                        "public_surface_evidence": str(subject.metadata.get("public_surface_evidence") or "").strip() or None,
+                        "data_contract_kind": str(subject.metadata.get("data_contract_kind") or "").strip() or None,
+                        "schema_source_kind": str(subject.metadata.get("schema_source_kind") or "").strip() or None,
+                        "contract_source_kinds": _subject_source_kinds(subject) or None,
+                        "contract_source_fingerprints": _subject_source_fingerprints(subject) or None,
+                        "source_confidence_summary": _subject_source_confidence_summary(subject),
                     }
                     presence = str(subject.contract_presence or "missing")
                     if presence == "unsupported_syntax":
@@ -576,6 +623,13 @@ class SyncEngine:
                 "contract_presence": str(subject.contract_presence or "missing"),
                 "contract_required": bool(subject.contract_required),
                 "contract_reason": str(subject.metadata.get("contract_required_reason") or ""),
+                "export_mode": str(subject.metadata.get("export_mode") or ""),
+                "public_surface_evidence": str(subject.metadata.get("public_surface_evidence") or ""),
+                "data_contract_kind": str(subject.metadata.get("data_contract_kind") or ""),
+                "schema_source_kind": str(subject.metadata.get("schema_source_kind") or ""),
+                "contract_source_kinds": _subject_source_kinds(subject),
+                "contract_source_fingerprints": _subject_source_fingerprints(subject),
+                "source_confidence_summary": str(_subject_source_confidence_summary(subject) or ""),
             }
         return items
 
@@ -590,6 +644,23 @@ class SyncEngine:
             language=str(item.get("language") or "") or None,
             symbol_kind=str(item.get("symbol_kind") or "") or None,
             adapter=str(item.get("adapter") or "") or None,
+            export_mode=str(item.get("export_mode") or "") or None,
+            public_surface_evidence=str(item.get("public_surface_evidence") or "") or None,
+            data_contract_kind=str(item.get("data_contract_kind") or "") or None,
+            schema_source_kind=str(item.get("schema_source_kind") or "") or None,
+            contract_source_kinds=[
+                str(value)
+                for value in list(item.get("contract_source_kinds") or [])
+                if str(value or "").strip()
+            ]
+            or None,
+            contract_source_fingerprints=[
+                str(value)
+                for value in list(item.get("contract_source_fingerprints") or [])
+                if str(value or "").strip()
+            ]
+            or None,
+            source_confidence_summary=str(item.get("source_confidence_summary") or "") or None,
         )
 
     def _normalize_repo_file_path(self, path: Path) -> str:

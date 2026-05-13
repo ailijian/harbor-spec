@@ -14,10 +14,20 @@ from typing import Any, Dict, List, Optional, Tuple, Iterator, Literal
 
 import yaml
 
+from harbor.adapters.base import ContractSubject
 from harbor.adapters.python.parser import PythonAdapter, FunctionContract
 from harbor.adapters.registry import AdapterRegistry
+from harbor.adapters.typescript.adapter import TypeScriptAdapter
+from harbor.adapters.typescript.hashing import normalized_sha256
+from harbor.adapters.typescript.parser import TypeScriptLightweightParser
+from harbor.adapters.typescript.symbols import TypeScriptSymbol
 from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
 from harbor.core.git_utils import GitIgnoreMatcher
+from harbor.core.index_entry import (
+    contract_subject_to_index_entry,
+    function_contract_to_index_entry,
+    index_entry_to_cache_item,
+)
 from harbor.core.storage import HarborDB
 from harbor.core.workspace import resolve_workspace_config_path
 
@@ -79,25 +89,24 @@ def process_file_worker(fp: str) -> Tuple[str, float, List[Dict[str, Any]], Opti
     try:
         p = Path(fp)
         mtime = p.stat().st_mtime
+        items: List[Dict[str, Any]] = []
+        if p.suffix.lower() == ".ts" and not str(p.name).lower().endswith(".d.ts"):
+            adapter = TypeScriptAdapter()
+            for subject in adapter.parse_file(fp):
+                items.append(contract_subject_to_index_entry(subject))
+            return fp, mtime, items, None
+
         source = p.read_text(encoding="utf-8")
         adapter = PythonAdapter()
-        items: List[Dict[str, Any]] = []
         for fc in adapter.parse_file(fp):
             node = find_function_node(source, fc.lineno, fc.name)
             body_hash = compute_body_hash(source, node) if node else ""
             items.append(
-                {
-                    "id": fc.id,
-                    "qualified_name": fc.qualified_name,
-                    "name": fc.name,
-                    "signature_hash": fc.signature_hash,
-                    "body_hash": body_hash,
-                    "contract_hash": fc.contract_hash,
-                    "docstring_raw_hash": fc.docstring_raw_hash,
-                    "scope": fc.scope,
-                    "strictness": fc.strictness,
-                    "lineno": fc.lineno,
-                }
+                function_contract_to_index_entry(
+                    fc,
+                    file_path=fp,
+                    body_hash=body_hash,
+                )
             )
         return fp, mtime, items, None
     except Exception as ex:
@@ -289,22 +298,8 @@ class IndexBuilder:
                         with self.db.transaction():
                             self.db.upsert_file(fp, mtime2 or mtime, "indexed")
                             for it in entries:
-                                meta = {
-                                    "name": it.get("name"),
-                                    "scope": it.get("scope"),
-                                    "strictness": it.get("strictness"),
-                                    "lineno": it.get("lineno"),
-                                    "qualified_name": it.get("qualified_name"),
-                                    "docstring_raw_hash": it.get("docstring_raw_hash"),
-                                }
-                                entry_obj = {
-                                    "id": it.get("id"),
-                                    "file_path": fp,
-                                    "signature_hash": it.get("signature_hash"),
-                                    "body_hash": it.get("body_hash"),
-                                    "contract_hash": it.get("contract_hash"),
-                                    "meta": meta,
-                                }
+                                entry_obj = dict(it)
+                                entry_obj["file_path"] = fp
                                 self.db.upsert_entry(entry_obj)
                     except Exception:
                         try:
@@ -328,20 +323,7 @@ class IndexBuilder:
             for fp, mtime in all_files:
                 items = []
                 for it in self.db.get_file_entries(fp):
-                    items.append(
-                        {
-                            "id": it.get("id"),
-                            "qualified_name": it.get("meta", {}).get("qualified_name"),
-                            "name": it.get("meta", {}).get("name"),
-                            "signature_hash": it.get("signature_hash"),
-                            "body_hash": it.get("body_hash"),
-                            "contract_hash": it.get("contract_hash"),
-                            "docstring_raw_hash": it.get("meta", {}).get("docstring_raw_hash"),
-                            "scope": it.get("meta", {}).get("scope"),
-                            "strictness": it.get("meta", {}).get("strictness"),
-                            "lineno": it.get("meta", {}).get("lineno"),
-                        }
-                    )
+                    items.append(index_entry_to_cache_item(it))
                 snapshot["files"][fp] = {"mtime": mtime, "file_hash": "", "items": items}
             self._save_cache(snapshot)
         except Exception:
@@ -368,10 +350,38 @@ class IndexBuilder:
         return iter_project_files(self.code_roots, self.exclude_paths)
 
     def _iter_files_by_enabled_adapters(self) -> List[Path]:
-        # Task 2B keeps Python-only behavior while routing discovery through registry.
-        if not self.registry.is_enabled("python"):
-            return []
-        return self._iter_py_files()
+        files: List[Path] = []
+        if self.registry.is_enabled("python"):
+            files.extend(self._iter_py_files())
+        if self.registry.is_enabled("typescript"):
+            adapter = self.registry.get_adapter("typescript")
+            if adapter is not None:
+                try:
+                    files.extend(adapter.discover_files(self._iter_code_roots()))
+                except Exception:
+                    pass
+
+        dedup: Dict[str, Path] = {}
+        for path in files:
+            dedup[path.resolve().as_posix()] = path.resolve()
+        return [dedup[key] for key in sorted(dedup.keys())]
+
+    def _iter_code_roots(self) -> List[Path]:
+        roots: Dict[str, Path] = {}
+        cwd = Path.cwd()
+        for raw in self.code_roots:
+            token = str(raw or "").strip()
+            if not token:
+                continue
+            if any(ch in token for ch in ("*", "?", "[")):
+                for matched in cwd.glob(token):
+                    roots[matched.resolve().as_posix()] = matched.resolve()
+                continue
+            path = Path(token)
+            if not path.is_absolute():
+                path = cwd / path
+            roots[path.resolve().as_posix()] = path.resolve()
+        return [roots[key] for key in sorted(roots.keys())]
 
     def _load_config(self, path: Path) -> Dict[str, Any]:
         if not path.exists():

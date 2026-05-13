@@ -104,3 +104,43 @@ def test_next_can_read_utf16_report(tmp_path: Path):
     payload = json.loads(out)
     assert code == 0
     assert payload["command"] == "next"
+
+
+def test_next_json_preserves_typescript_additive_checkpoint_metadata(tmp_path: Path):
+    report = {
+        "command": "checkpoint",
+        "ci_failures": [],
+        "advisory": [
+            {
+                "category": "skipped_no_contract",
+                "func_id": "typescript:src/models.ts:interface:User",
+                "file_path": "src/models.ts",
+                "reason": "TypeScript exported data contract target is tracked in advisory-first mode; blocking semantic comparison is skipped.",
+                "target_id": "typescript:src/models.ts:interface:User",
+                "language": "typescript",
+                "symbol_kind": "interface",
+                "adapter": "typescript",
+                "data_contract_kind": "interface",
+                "contract_source_kinds": ["typescript_interface"],
+                "contract_source_fingerprints": ["abc123"],
+                "source_confidence_summary": "high",
+            }
+        ],
+    }
+    report_path = tmp_path / "checkpoint-ts.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+    code, out, _ = run_cmd(["next", "--from", str(report_path), "--format", "json"])
+    payload = json.loads(out)
+
+    assert code == 0
+    row = payload["items"][0]
+    assert row["blocking"] is False
+    assert row["reason"] == report["advisory"][0]["reason"]
+    assert row["target_id"] == "typescript:src/models.ts:interface:User"
+    assert row["language"] == "typescript"
+    assert row["symbol_kind"] == "interface"
+    assert row["adapter"] == "typescript"
+    assert row["data_contract_kind"] == "interface"
+    assert row["contract_source_kinds"] == ["typescript_interface"]
+    assert row["contract_source_fingerprints"] == ["abc123"]
+    assert row["source_confidence_summary"] == "high"

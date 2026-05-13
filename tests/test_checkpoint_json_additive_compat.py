@@ -230,3 +230,78 @@ def test_checkpoint_json_additive_shape_is_stable_for_golden_assert():
         "symbol_kind",
         "adapter",
     }
+
+
+def test_typescript_checkpoint_json_adds_task6_metadata_without_changing_category():
+    status = _status_report(
+        skipped_no_contract=[
+            _status_entry(
+                "typescript:src/models.ts:interface:User",
+                "src/models.ts",
+                "No contract required for this target",
+                target_id="typescript:src/models.ts:interface:User",
+                language="typescript",
+                symbol_kind="interface",
+                adapter="typescript",
+                data_contract_kind="interface",
+                contract_source_kinds=["typescript_interface"],
+                contract_source_fingerprints=["abc123"],
+                source_confidence_summary="high",
+            )
+        ]
+    )
+    payload = checkpoint_ci_result_to_dict(
+        build_checkpoint_ci_result(
+            status_report=status,
+            ddt_report=_ddt_report(),
+            contract_impact_report=_contract_report(),
+        )
+    )
+
+    row = payload["advisory"][0]
+    assert row["category"] == "skipped_no_contract"
+    assert row["language"] == "typescript"
+    assert row["symbol_kind"] == "interface"
+    assert row["data_contract_kind"] == "interface"
+    assert row["contract_source_kinds"] == ["typescript_interface"]
+    assert row["contract_source_fingerprints"] == ["abc123"]
+    assert row["source_confidence_summary"] == "high"
+    assert (
+        row["reason"]
+        == "TypeScript exported data contract target is tracked in advisory-first mode; blocking semantic comparison is skipped."
+    )
+
+
+def test_typescript_checkpoint_json_explains_low_confidence_doc_as_contract_gap():
+    status = _status_report(
+        contract_gap=[
+            _status_entry(
+                "typescript:src/api.ts:function:api",
+                "src/api.ts",
+                "Required TypeScript contract source is missing or not contract-like.",
+                target_id="typescript:src/api.ts:function:api",
+                language="typescript",
+                symbol_kind="function",
+                adapter="typescript",
+                contract_source_kinds=["tsdoc"],
+                contract_source_fingerprints=["docfp"],
+                source_confidence_summary="medium",
+            )
+        ]
+    )
+    payload = checkpoint_ci_result_to_dict(
+        build_checkpoint_ci_result(
+            status_report=status,
+            ddt_report=_ddt_report(),
+            contract_impact_report=_contract_report(),
+        )
+    )
+
+    row = payload["ci_failures"][0]
+    assert row["category"] == "contract_gap"
+    assert row["contract_source_kinds"] == ["tsdoc"]
+    assert row["source_confidence_summary"] == "medium"
+    assert (
+        row["reason"]
+        == "TypeScript doc comment was detected, but its confidence is not high enough to count as a contract source."
+    )

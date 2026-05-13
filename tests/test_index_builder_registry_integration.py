@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import textwrap
 import yaml
 
@@ -37,7 +38,7 @@ def test_index_builder_default_registry_python_only(tmp_path: Path):
     assert builder._iter_files_by_enabled_adapters() == builder._iter_py_files()
 
 
-def test_index_builder_file_discovery_matches_python_only_when_ts_enabled(tmp_path: Path):
+def test_index_builder_file_discovery_includes_typescript_when_ts_enabled(tmp_path: Path):
     cfg_path = tmp_path / ".harbor" / "config.yaml"
     _write_config(
         cfg_path,
@@ -62,8 +63,7 @@ def test_index_builder_file_discovery_matches_python_only_when_ts_enabled(tmp_pa
 
     assert builder.registry.is_enabled("python") is True
     assert builder.registry.is_enabled("typescript") is True
-    assert len(files) == 1
-    assert files[0].suffix == ".py"
+    assert [path.suffix for path in files] == [".py", ".ts"]
 
 
 def test_build_keeps_python_entry_shape_stable(tmp_path: Path):
@@ -104,7 +104,7 @@ def test_build_keeps_python_entry_shape_stable(tmp_path: Path):
     }
 
 
-def test_typescript_enabled_unavailable_does_not_affect_python_index(tmp_path: Path):
+def test_typescript_enabled_persists_ts_subjects_without_breaking_python_index(tmp_path: Path):
     cfg_path = tmp_path / ".harbor" / "config.yaml"
     _write_config(
         cfg_path,
@@ -118,7 +118,7 @@ def test_typescript_enabled_unavailable_does_not_affect_python_index(tmp_path: P
     )
     code_root = tmp_path / "src"
     _write_file(code_root / "ok.py", "def ok():\n    return 1\n")
-    _write_file(code_root / "ignored.ts", "export const x = 1;\n")
+    _write_file(code_root / "ignored.ts", "export function run(): number { return 1; }\n")
 
     builder = IndexBuilder(
         code_roots=[str(code_root)],
@@ -128,6 +128,84 @@ def test_typescript_enabled_unavailable_does_not_affect_python_index(tmp_path: P
     report = builder.build(incremental=False)
 
     assert builder.registry.is_enabled("typescript") is True
-    assert report.scanned_files == 1
-    assert report.updated_files == 1
+    assert report.scanned_files == 2
+    assert report.updated_files == 2
     assert report.skipped_files == 0
+
+    entries_by_path = {file_path: builder.db.get_file_entries(file_path) for file_path, _ in builder.db.get_all_files()}
+    py_entries = next(entries for file_path, entries in entries_by_path.items() if file_path.endswith("ok.py"))
+    ts_entries = next(entries for file_path, entries in entries_by_path.items() if file_path.endswith("ignored.ts"))
+
+    assert py_entries and py_entries[0]["meta"]["scope"] in {"public", "internal", "unknown"}
+    assert ts_entries and len(ts_entries) == 1
+
+    ts_entry = ts_entries[0]
+    ts_meta = ts_entry["meta"]
+    assert ts_entry["id"].startswith("typescript:")
+    assert ts_meta["target_id"] == ts_entry["id"]
+    assert ts_meta["func_id"] == ts_entry["id"]
+    assert ts_meta["legacy_func_id"] == ts_entry["id"]
+    assert ts_meta["language"] == "typescript"
+    assert ts_meta["symbol_kind"] == "function"
+    assert ts_meta["qualified_name"] == "run"
+    assert ts_meta["file_path"].endswith("ignored.ts")
+    assert ts_meta["lineno"] == 1
+    assert ts_meta["end_lineno"] == 1
+    assert ts_meta["visibility"] == "public"
+    assert ts_entry["signature_hash"]
+    assert ts_entry["body_hash"]
+
+
+def test_build_writes_typescript_additive_fields_into_runtime_cache_snapshot(tmp_path: Path):
+    cfg_path = tmp_path / ".harbor" / "config.yaml"
+    _write_config(
+        cfg_path,
+        {
+            "code_roots": [str(tmp_path / "src")],
+            "languages": {
+                "python": {"enabled": True},
+                "typescript": {"enabled": True},
+            },
+        },
+    )
+    code_root = tmp_path / "src"
+    _write_file(
+        code_root / "service.ts",
+        textwrap.dedent(
+            """
+            /**
+             * @param x value
+             * @returns value
+             */
+            export function api(x: number): number { return x + 1; }
+            """
+        ).strip(),
+    )
+    cache_dir = tmp_path / ".harbor" / "cache"
+    builder = IndexBuilder(
+        code_roots=[str(code_root)],
+        cache_dir=cache_dir,
+        config_path=cfg_path,
+    )
+
+    report = builder.build(incremental=False)
+    payload = json.loads((cache_dir / "l3_index.json").read_text(encoding="utf-8"))
+    file_key = next(iter(payload["files"]))
+    items = payload["files"][file_key]["items"]
+
+    assert report.scanned_files == 1
+    assert file_key.endswith("service.ts")
+    assert len(items) == 1
+    item = items[0]
+    assert item["target_id"].startswith("typescript:")
+    assert item["target_id"].endswith(":function:api")
+    assert item["func_id"] == item["target_id"]
+    assert item["legacy_func_id"] == item["target_id"]
+    assert item["language"] == "typescript"
+    assert item["symbol_kind"] == "function"
+    assert item["file_path"].endswith("service.ts")
+    assert item["contract_presence"] == "present"
+    assert item["contract_required"] is True
+    assert item["contract_source_kinds"] == ["tsdoc"]
+    assert len(item["contract_source_fingerprints"]) == 1
+    assert item["source_confidence_summary"] == "high"

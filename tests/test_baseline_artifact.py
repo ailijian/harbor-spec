@@ -48,6 +48,16 @@ def test_normalize_baseline_item_path_converts_windows_style_input(tmp_path: Pat
     assert normalized == "harbor/core/sample.py"
 
 
+def test_normalize_baseline_item_path_converts_typescript_windows_duplicate_repo_checkout_path(tmp_path: Path):
+    repo_root = tmp_path / "harbor-spec" / "harbor-spec"
+    sample = repo_root / "src" / "models.ts"
+    sample.parent.mkdir(parents=True, exist_ok=True)
+    sample.write_text("export interface User { id: string }\n", encoding="utf-8")
+
+    normalized = normalize_baseline_item_path(str(sample).replace("/", "\\"), project_root=repo_root)
+    assert normalized == "src/models.ts"
+
+
 def test_build_checkpoint_baseline_artifact_rejects_duplicate_target_ids():
     with pytest.raises(AcceptedBaselineInvalidError, match="duplicate baseline item target_id"):
         build_checkpoint_baseline_artifact(

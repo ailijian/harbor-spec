@@ -160,20 +160,40 @@ class HarborDB:
                 self.upsert_file(path_posix, mtime, "indexed")
                 items = meta.get("items", []) or []
                 for it in items:
-                    entry_obj = {
-                        "id": it.get("id"),
-                        "file_path": path_posix,
-                        "signature_hash": it.get("signature_hash"),
-                        "body_hash": it.get("body_hash"),
-                        "contract_hash": it.get("contract_hash"),
-                        "meta": {
+                    item_meta = it.get("meta") if isinstance(it.get("meta"), dict) else None
+                    if item_meta is None:
+                        item_meta = {
                             "name": it.get("name"),
                             "scope": it.get("scope"),
                             "strictness": it.get("strictness"),
                             "lineno": it.get("lineno"),
                             "qualified_name": it.get("qualified_name"),
                             "docstring_raw_hash": it.get("docstring_raw_hash"),
-                        },
+                        }
+                    for key in (
+                        "target_id",
+                        "func_id",
+                        "legacy_func_id",
+                        "language",
+                        "symbol_kind",
+                        "file_path",
+                        "end_lineno",
+                        "visibility",
+                        "contract_presence",
+                        "contract_required",
+                        "contract_source_kinds",
+                        "contract_source_fingerprints",
+                        "source_confidence_summary",
+                    ):
+                        if key in it and key not in item_meta:
+                            item_meta[key] = it.get(key)
+                    entry_obj = {
+                        "id": it.get("id"),
+                        "file_path": path_posix,
+                        "signature_hash": it.get("signature_hash"),
+                        "body_hash": it.get("body_hash"),
+                        "contract_hash": it.get("contract_hash"),
+                        "meta": item_meta,
                     }
                     self.upsert_entry(entry_obj)
         try:

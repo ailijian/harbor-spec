@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "harbor/adapters/typescript"
-generated_at: "2026-05-12T15:21:01Z"
+generated_at: "2026-05-13T12:26:04Z"
 generation_command: "harbor docs --module harbor/adapters/typescript --write"
 stale_policy: "advisory"
 source_path_count: 6
@@ -15,8 +15,8 @@ source_paths:
   - "harbor/adapters/typescript/jsdoc.py"
   - "harbor/adapters/typescript/parser.py"
   - "harbor/adapters/typescript/symbols.py"
-source_fingerprint: "sha256:a5d7f9b291a5520c476dfaa6065c7e2ed6c4b123866f07437358abf09aaacde3"
-contract_fingerprint: "sha256:a5d6f65ce6c6600326c1d6796a395e7a3691113a47ce1432264bb95607014392"
+source_fingerprint: "sha256:84d1bc51bc64ac693278a8c468e34efb049cca3acd94f3fde08eb14c1ece068d"
+contract_fingerprint: "sha256:624337cae4082d58bc3ab66575c14af7f1b30b9c5cb94e7e2e83b1dcb4b96dda"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -34,7 +34,9 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 |---|---|---|---|
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser.__init__ | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.jsdoc._classify_comment | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.adapter._collect_contract_sources | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter._collect_file | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.adapter._contract_hash_for_sources | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser._extract_arrow_body | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.jsdoc._find_block_comment_start | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser._find_matching | — | standard | ⚪ Missing |
@@ -44,7 +46,12 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.adapters.typescript.adapter._is_test_file | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_arrow_functions | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_class_methods | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_default_classes | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_default_functions | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_functions | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_interfaces | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_types | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_zod_schemas | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_internal_arrow_functions | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_internal_functions | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._resolve_contract_presence | — | standard | ⚪ Missing |

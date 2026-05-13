@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests/core"
-generated_at: "2026-05-12T15:21:22Z"
+generated_at: "2026-05-13T12:26:10Z"
 generation_command: "harbor module seal tests/core --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -11,11 +11,11 @@ source_paths_truncated: false
 source_paths:
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"
-source_fingerprint: "sha256:2bb986e6e04f220aeb9e03f62bf21ad0033c181f68c335dad4f456319f28605f"
-contract_fingerprint: "sha256:a83ee116bc521d4bd7d98719658840aa382b3a9b30f4383abe30287238a15e92"
+source_fingerprint: "sha256:f845601656af7614649162258488b2b66d707e80a0783aaee2d241b0430797fc"
+contract_fingerprint: "sha256:0cce59270907e86271947c46342e0dc21bca9f22b1968883b3d54781530e24d2"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "bb6cc0e70b056745ea86d494ced625f302d2559801aa2e45ad05c40187f0661a"
-fingerprint: "bb6cc0e70b056745ea86d494ced625f302d2559801aa2e45ad05c40187f0661a"
+view_fingerprint: "9a5a0cbcdf26a8fa5382a2116ea2f5856a33977f518788c754983efa5c087e34"
+fingerprint: "9a5a0cbcdf26a8fa5382a2116ea2f5856a33977f518788c754983efa5c087e34"
 ---
 
 # Module Card: tests/core
@@ -46,6 +46,7 @@ tests/core/test_storage_migration.py
 | ------ | ---- | ----- | ---------- |
 | tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | standard |
 | tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | standard |
+| tests.core.test_storage_migration.test_storage_migration_preserves_additive_typescript_meta | tests/core/test_storage_migration.py | unknown | standard |
 
 ## Tests
 

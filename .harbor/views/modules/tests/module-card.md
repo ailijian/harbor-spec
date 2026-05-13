@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T10:36:59Z"
+generated_at: "2026-05-13T12:26:10Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -104,11 +104,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:eeeccc11053f8b71a4d206bba162e78faf760ce52609bbd14c872d4e454f90ed"
-contract_fingerprint: "sha256:bdf1f7b95f393e3e6b1b9628848a2ef3ca132a4aaa0772d0d6738c2924674d9a"
+source_fingerprint: "sha256:8b3ee9240622f775a62fd0553ff327adc63c37ff3f88d8419bc169352f380638"
+contract_fingerprint: "sha256:eef87e668f6d0987cd2b7f04770d9fbfb9a9766a0c7c96f681a6e482a909d4fe"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "958c67249ded0c5a46e1460f6931c8bd4d85b276cc1fe2204b103a0b832d3c59"
-fingerprint: "958c67249ded0c5a46e1460f6931c8bd4d85b276cc1fe2204b103a0b832d3c59"
+view_fingerprint: "5fb8c4d894739be69383b58e844ea50f100e25c6242472d88585e0e35da2024d"
+fingerprint: "5fb8c4d894739be69383b58e844ea50f100e25c6242472d88585e0e35da2024d"
 ---
 
 # Module Card: tests
@@ -233,6 +233,7 @@ tests/test_workspace_paths.py
 | tests.conftest._isolate_harbor_language_env | tests/conftest.py | unknown | standard |
 | tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | standard |
 | tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | standard |
+| tests.core.test_storage_migration.test_storage_migration_preserves_additive_typescript_meta | tests/core/test_storage_migration.py | unknown | standard |
 | tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict |
 | tests.test_accept_cli._disable_change_window_writes | tests/test_accept_cli.py | unknown | standard |
 | tests.test_accept_cli._force_en_locale | tests/test_accept_cli.py | unknown | standard |
@@ -257,6 +258,7 @@ tests/test_workspace_paths.py
 | tests.test_baseline_artifact._baseline_item | tests/test_baseline_artifact.py | unknown | standard |
 | tests.test_baseline_artifact.test_build_checkpoint_baseline_artifact_rejects_duplicate_target_ids | tests/test_baseline_artifact.py | unknown | standard |
 | tests.test_baseline_artifact.test_load_checkpoint_baseline_artifact_rejects_missing_required_field | tests/test_baseline_artifact.py | unknown | standard |
+| tests.test_baseline_artifact.test_normalize_baseline_item_path_converts_typescript_windows_duplicate_repo_checkout_path | tests/test_baseline_artifact.py | unknown | standard |
 | tests.test_baseline_artifact.test_normalize_baseline_item_path_converts_windows_style_input | tests/test_baseline_artifact.py | unknown | standard |
 | tests.test_baseline_artifact.test_write_and_load_checkpoint_baseline_artifact | tests/test_baseline_artifact.py | unknown | standard |
 | tests.test_cache_isolation_hardening._fingerprint | tests/test_cache_isolation_hardening.py | unknown | standard |
@@ -335,11 +337,13 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci_baseline_artifact._force_en_locale | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact._write_artifact_from_current_snapshot | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact._write_sample_repo | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact._write_typescript_repo | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact.run_cmd | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_on_body_change_against_artifact | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_when_accepted_baseline_artifact_invalid | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_when_accepted_baseline_artifact_missing | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_passes_with_accepted_baseline_artifact | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
+| tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_passes_with_typescript_subject_from_accepted_artifact | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance._ddt_report | tests/test_checkpoint_ci_guidance.py | unknown | standard |
 | tests.test_checkpoint_ci_guidance._patch_inputs | tests/test_checkpoint_ci_guidance.py | unknown | standard |
@@ -360,6 +364,8 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_json_additive_compat.test_python_checkpoint_json_keeps_legacy_fields_and_adds_identity_fields | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
 | tests.test_checkpoint_json_additive_compat.test_python_checkpoint_pass_fail_semantics_unchanged | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
 | tests.test_checkpoint_json_additive_compat.test_python_method_symbol_kind_and_func_id_stay_compatible | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat.test_typescript_checkpoint_json_adds_task6_metadata_without_changing_category | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
+| tests.test_checkpoint_json_additive_compat.test_typescript_checkpoint_json_explains_low_confidence_doc_as_contract_gap | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
 | tests.test_checkpoint_json_additive_compat.test_typescript_contract_subject_json_has_task6a_ready_fields | tests/test_checkpoint_json_additive_compat.py | unknown | standard |
 | tests.test_ci_mode._disable_change_window_writes | tests/test_ci_mode.py | unknown | standard |
 | tests.test_ci_mode._force_en_locale | tests/test_ci_mode.py | unknown | standard |
@@ -696,6 +702,7 @@ tests/test_workspace_paths.py
 | tests.test_harbor_next.test_next_can_read_utf16_report | tests/test_harbor_next.py | unknown | standard |
 | tests.test_harbor_next.test_next_json_items_include_blocking_and_status_is_ok_even_for_fail_report | tests/test_harbor_next.py | unknown | standard |
 | tests.test_harbor_next.test_next_json_output_contract | tests/test_harbor_next.py | unknown | standard |
+| tests.test_harbor_next.test_next_json_preserves_typescript_additive_checkpoint_metadata | tests/test_harbor_next.py | unknown | standard |
 | tests.test_harbor_next.test_next_reads_checkpoint_report_and_groups_output | tests/test_harbor_next.py | unknown | standard |
 | tests.test_harbor_next.test_next_unknown_category_graceful_degrade | tests/test_harbor_next.py | unknown | standard |
 | tests.test_index_builder.read_index | tests/test_index_builder.py | unknown | standard |
@@ -705,9 +712,10 @@ tests/test_workspace_paths.py
 | tests.test_index_builder_registry_integration._write_config | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration._write_file | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_build_writes_typescript_additive_fields_into_runtime_cache_snapshot | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | tests/test_index_builder_registry_integration.py | unknown | standard |
-| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
-| tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_typescript_enabled_persists_ts_subjects_without_breaking_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | tests/test_index_progress.py | unknown | standard |
 | tests.test_init_detector.test_django_detection | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_detector.test_excludes_do_not_override_code_roots | tests/test_init_detector.py | unknown | standard |
@@ -950,6 +958,8 @@ tests/test_workspace_paths.py
 | tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status | tests/test_sync_engine_registry_integration.py | unknown | standard |
 | tests.test_typescript_adapter_mvp._fixture_root | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp._to_rel | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_body_only_change_does_not_change_typescript_contract_hash | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_contract_source_change_updates_typescript_contract_hash | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_standard_build_directories | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_discover_files_default_excludes_tsx_js_jsx_dts | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_discover_files_default_only_ts | tests/test_typescript_adapter_mvp.py | unknown | standard |
@@ -957,8 +967,11 @@ tests/test_workspace_paths.py
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_export_default_targets_without_confusing_contract_source | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_function | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_exported_class_public_method | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_exported_interface_and_type_aliases | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_adapter_mvp.test_parse_file_detects_exported_zod_object_and_enum_as_shallow_sources | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_parse_file_does_not_crash_on_unsupported_or_malformed_ts | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_target_id_rule_for_typescript_subject | tests/test_typescript_adapter_mvp.py | unknown | standard |

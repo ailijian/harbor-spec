@@ -1726,6 +1726,18 @@ def main():
             "category": str(item.get("category") or item.get("kind") or "unknown"),
             "func_id": item.get("func_id"),
             "file_path": item.get("file_path"),
+            "reason": item.get("reason"),
+            "target_id": item.get("target_id"),
+            "language": item.get("language"),
+            "symbol_kind": item.get("symbol_kind"),
+            "adapter": item.get("adapter"),
+            "export_mode": item.get("export_mode"),
+            "public_surface_evidence": item.get("public_surface_evidence"),
+            "data_contract_kind": item.get("data_contract_kind"),
+            "schema_source_kind": item.get("schema_source_kind"),
+            "source_confidence_summary": item.get("source_confidence_summary"),
+            "contract_source_kinds": item.get("contract_source_kinds"),
+            "contract_source_fingerprints": item.get("contract_source_fingerprints"),
             "blocking": bool(blocking),
         }
         if include_guidance:
@@ -1783,6 +1795,25 @@ def main():
                 target = row.get("func_id") or row.get("file_path")
                 if target:
                     lines.append(f"   Target: {target}")
+                if row.get("reason"):
+                    lines.append(f"   Reason: {row.get('reason')}")
+                context_bits = []
+                if row.get("language"):
+                    context_bits.append(f"language={row.get('language')}")
+                if row.get("symbol_kind"):
+                    context_bits.append(f"symbol_kind={row.get('symbol_kind')}")
+                if row.get("export_mode"):
+                    context_bits.append(f"export_mode={row.get('export_mode')}")
+                if row.get("data_contract_kind"):
+                    context_bits.append(f"data_contract_kind={row.get('data_contract_kind')}")
+                if row.get("schema_source_kind"):
+                    context_bits.append(f"schema_source_kind={row.get('schema_source_kind')}")
+                if row.get("source_confidence_summary"):
+                    context_bits.append(
+                        f"source_confidence_summary={row.get('source_confidence_summary')}"
+                    )
+                if context_bits:
+                    lines.append(f"   Context: {', '.join(context_bits)}")
                 guidance = row.get("guidance")
                 if isinstance(guidance, dict):
                     lines.append(f"   What happened: {guidance.get('what_happened', '')}")

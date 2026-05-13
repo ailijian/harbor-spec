@@ -9,6 +9,13 @@ from harbor.adapters.typescript.symbols import TypeScriptSymbol
 _EXPORT_FUNCTION_RE = re.compile(r"export\s+(async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(")
 _EXPORT_ARROW_RE = re.compile(r"export\s+const\s+([A-Za-z_$][\w$]*)\s*=\s*(async\s+)?\(")
 _EXPORT_CLASS_RE = re.compile(r"export\s+class\s+([A-Za-z_$][\w$]*)\s*\{")
+_EXPORT_INTERFACE_RE = re.compile(r"export\s+interface\s+([A-Za-z_$][\w$]*)")
+_EXPORT_TYPE_RE = re.compile(r"export\s+type\s+([A-Za-z_$][\w$]*)\s*=")
+_EXPORT_DEFAULT_FUNCTION_RE = re.compile(
+    r"export\s+default\s+(async\s+)?function(?:\s+([A-Za-z_$][\w$]*))?\s*\("
+)
+_EXPORT_DEFAULT_CLASS_RE = re.compile(r"export\s+default\s+class(?:\s+([A-Za-z_$][\w$]*))?")
+_EXPORT_ZOD_RE = re.compile(r"export\s+const\s+([A-Za-z_$][\w$]*)\s*=\s*z\.(object|enum)\s*\(")
 _PUBLIC_METHOD_RE = re.compile(r"(?m)^\s*public\s+(?:async\s+)?([A-Za-z_$][\w$]*)\s*\(")
 _INTERNAL_FUNCTION_RE = re.compile(
     r"(?m)^\s*(?!export\b)(async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\("
@@ -134,7 +141,12 @@ class TypeScriptLightweightParser:
     def parse(self, source: str) -> List[TypeScriptSymbol]:
         symbols: List[TypeScriptSymbol] = []
         symbols.extend(self._parse_export_functions(source))
+        symbols.extend(self._parse_export_default_functions(source))
         symbols.extend(self._parse_export_arrow_functions(source))
+        symbols.extend(self._parse_export_interfaces(source))
+        symbols.extend(self._parse_export_types(source))
+        symbols.extend(self._parse_export_zod_schemas(source))
+        symbols.extend(self._parse_export_default_classes(source))
         symbols.extend(self._parse_export_class_methods(source))
         symbols.extend(self._parse_internal_functions(source))
         symbols.extend(self._parse_internal_arrow_functions(source))
@@ -216,6 +228,184 @@ class TypeScriptLightweightParser:
                     end_lineno=_to_lineno(source, body_end),
                     signature_text=signature_text,
                     body_text=body_text,
+                )
+            )
+        return symbols
+
+    def _parse_export_default_functions(self, source: str) -> List[TypeScriptSymbol]:
+        symbols: List[TypeScriptSymbol] = []
+        for match in _EXPORT_DEFAULT_FUNCTION_RE.finditer(source):
+            async_kw = (match.group(1) or "").strip()
+            name = (match.group(2) or "default").strip()
+            paren_start = match.end() - 1
+            paren_end = _find_matching(source, paren_start, "(", ")")
+            if paren_end is None:
+                self.diagnostics.append(f"skip export default function `{name}`: unmatched parentheses")
+                continue
+            i = _skip_ws(source, paren_end + 1)
+            while i < len(source) and source[i] != "{":
+                i += 1
+            if i >= len(source):
+                self.diagnostics.append(f"skip export default function `{name}`: missing body")
+                continue
+            body_end = _find_matching(source, i, "{", "}")
+            if body_end is None:
+                self.diagnostics.append(f"skip export default function `{name}`: unmatched braces")
+                continue
+            symbols.append(
+                TypeScriptSymbol(
+                    name=name,
+                    symbol_kind="function",
+                    qualified_name=name,
+                    export_kind="export_default_function_async" if async_kw else "export_default_function",
+                    is_exported=True,
+                    lineno=_to_lineno(source, match.start()),
+                    end_lineno=_to_lineno(source, body_end),
+                    signature_text=source[match.start() : i].strip(),
+                    body_text=source[i : body_end + 1],
+                    export_mode="default",
+                    public_surface_evidence="default_export",
+                )
+            )
+        return symbols
+
+    def _parse_export_interfaces(self, source: str) -> List[TypeScriptSymbol]:
+        symbols: List[TypeScriptSymbol] = []
+        for match in _EXPORT_INTERFACE_RE.finditer(source):
+            name = match.group(1)
+            i = match.end()
+            while i < len(source) and source[i] != "{":
+                i += 1
+            if i >= len(source):
+                self.diagnostics.append(f"skip export interface `{name}`: missing body")
+                continue
+            body_end = _find_matching(source, i, "{", "}")
+            if body_end is None:
+                self.diagnostics.append(f"skip export interface `{name}`: unmatched braces")
+                continue
+            end = body_end
+            semi = source.find(";", body_end)
+            if semi != -1 and semi < body_end + 4:
+                end = semi
+            symbols.append(
+                TypeScriptSymbol(
+                    name=name,
+                    symbol_kind="interface",
+                    qualified_name=name,
+                    export_kind="export_interface",
+                    is_exported=True,
+                    lineno=_to_lineno(source, match.start()),
+                    end_lineno=_to_lineno(source, end),
+                    signature_text=source[match.start() : end + 1].strip(),
+                    body_text=None,
+                    data_contract_kind="interface",
+                )
+            )
+        return symbols
+
+    def _parse_export_types(self, source: str) -> List[TypeScriptSymbol]:
+        symbols: List[TypeScriptSymbol] = []
+        for match in _EXPORT_TYPE_RE.finditer(source):
+            name = match.group(1)
+            value_start = _skip_ws(source, match.end())
+            if value_start >= len(source):
+                self.diagnostics.append(f"skip export type `{name}`: missing value")
+                continue
+            end = value_start
+            data_contract_kind = "type_alias"
+            if source[value_start] == "{":
+                body_end = _find_matching(source, value_start, "{", "}")
+                if body_end is None:
+                    self.diagnostics.append(f"skip export type `{name}`: unmatched braces")
+                    continue
+                end = body_end
+                semi = source.find(";", body_end)
+                if semi != -1 and semi < body_end + 4:
+                    end = semi
+                data_contract_kind = "type_object"
+            else:
+                semi = source.find(";", value_start)
+                if semi == -1:
+                    self.diagnostics.append(f"skip export type `{name}`: missing terminator")
+                    continue
+                end = semi
+                value_text = source[value_start:semi]
+                if "|" in value_text:
+                    data_contract_kind = "type_union"
+            symbols.append(
+                TypeScriptSymbol(
+                    name=name,
+                    symbol_kind="type_alias",
+                    qualified_name=name,
+                    export_kind="export_type",
+                    is_exported=True,
+                    lineno=_to_lineno(source, match.start()),
+                    end_lineno=_to_lineno(source, end),
+                    signature_text=source[match.start() : end + 1].strip(),
+                    body_text=None,
+                    data_contract_kind=data_contract_kind,
+                )
+            )
+        return symbols
+
+    def _parse_export_zod_schemas(self, source: str) -> List[TypeScriptSymbol]:
+        symbols: List[TypeScriptSymbol] = []
+        for match in _EXPORT_ZOD_RE.finditer(source):
+            name = match.group(1)
+            schema_kind = match.group(2)
+            paren_start = match.end() - 1
+            paren_end = _find_matching(source, paren_start, "(", ")")
+            if paren_end is None:
+                self.diagnostics.append(f"skip export zod `{name}`: unmatched parentheses")
+                continue
+            end = paren_end
+            semi = source.find(";", paren_end)
+            if semi != -1 and semi < paren_end + 4:
+                end = semi
+            symbols.append(
+                TypeScriptSymbol(
+                    name=name,
+                    symbol_kind="const",
+                    qualified_name=name,
+                    export_kind=f"export_zod_{schema_kind}",
+                    is_exported=True,
+                    lineno=_to_lineno(source, match.start()),
+                    end_lineno=_to_lineno(source, end),
+                    signature_text=source[match.start() : end + 1].strip(),
+                    body_text=None,
+                    data_contract_kind="schema",
+                    schema_source_kind=f"z.{schema_kind}",
+                )
+            )
+        return symbols
+
+    def _parse_export_default_classes(self, source: str) -> List[TypeScriptSymbol]:
+        symbols: List[TypeScriptSymbol] = []
+        for match in _EXPORT_DEFAULT_CLASS_RE.finditer(source):
+            name = (match.group(1) or "default").strip()
+            i = match.end()
+            while i < len(source) and source[i] != "{":
+                i += 1
+            if i >= len(source):
+                self.diagnostics.append(f"skip export default class `{name}`: missing body")
+                continue
+            body_end = _find_matching(source, i, "{", "}")
+            if body_end is None:
+                self.diagnostics.append(f"skip export default class `{name}`: unmatched braces")
+                continue
+            symbols.append(
+                TypeScriptSymbol(
+                    name=name,
+                    symbol_kind="class",
+                    qualified_name=name,
+                    export_kind="export_default_class",
+                    is_exported=True,
+                    lineno=_to_lineno(source, match.start()),
+                    end_lineno=_to_lineno(source, body_end),
+                    signature_text=source[match.start() : i].strip(),
+                    body_text=None,
+                    export_mode="default",
+                    public_surface_evidence="default_export",
                 )
             )
         return symbols

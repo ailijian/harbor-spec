@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/adapters"
-generated_at: "2026-05-12T15:21:22Z"
+generated_at: "2026-05-13T12:26:10Z"
 generation_command: "harbor module seal harbor/adapters --write"
 stale_policy: "advisory"
 source_path_count: 12
@@ -21,11 +21,11 @@ source_paths:
   - "harbor/adapters/typescript/jsdoc.py"
   - "harbor/adapters/typescript/parser.py"
   - "harbor/adapters/typescript/symbols.py"
-source_fingerprint: "sha256:021f82f309007694de04cd57ceee85a2635c9b07a82074db5b3f7cdcde3e362e"
-contract_fingerprint: "sha256:92fbc8470d93b0599f208fde89055c1d3479bd3cc851701518576fa69a3f79d1"
+source_fingerprint: "sha256:90efe02fe02b2bede811f6433faf182f52ff82a16a51ab20cdae9447b2d1263c"
+contract_fingerprint: "sha256:83de912fade1b48676d34269938ccc8d8853da13fe8e4da78e028cd43b4169ce"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "6e5eaf87244bcbd77f8f4cb60957b00fbb3203e1ed7085b95a739249d50a566d"
-fingerprint: "6e5eaf87244bcbd77f8f4cb60957b00fbb3203e1ed7085b95a739249d50a566d"
+view_fingerprint: "4e351f338ebd25768b82f2126ea050e937f1731ad92280aff7ba680ac31172bd"
+fingerprint: "4e351f338ebd25768b82f2126ea050e937f1731ad92280aff7ba680ac31172bd"
 ---
 
 # Module Card: harbor/adapters
@@ -93,6 +93,8 @@ harbor/adapters/typescript/symbols.py
 | harbor.adapters.typescript.adapter.TypeScriptAdapter._collect_file | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.parse_file | harbor/adapters/typescript/adapter.py | unknown | standard |
+| harbor.adapters.typescript.adapter._collect_contract_sources | harbor/adapters/typescript/adapter.py | unknown | standard |
+| harbor.adapters.typescript.adapter._contract_hash_for_sources | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter._is_contract_required | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter._is_script_file | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter._is_test_file | harbor/adapters/typescript/adapter.py | unknown | standard |
@@ -108,7 +110,12 @@ harbor/adapters/typescript/symbols.py
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser.__init__ | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_arrow_functions | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_class_methods | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_default_classes | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_default_functions | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_functions | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_interfaces | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_types | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_zod_schemas | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_internal_arrow_functions | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_internal_functions | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser.parse | harbor/adapters/typescript/parser.py | unknown | standard |
