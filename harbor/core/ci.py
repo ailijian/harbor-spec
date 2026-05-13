@@ -127,11 +127,29 @@ class CheckpointCIItem:
 
         此函数输出 shape 是 `harbor checkpoint --ci --format json` 公开契约之一。
 
+        Output Contract:
+          - 稳定核心字段为 `category` 与 `reason`；二者始终输出。
+          - 兼容字段 `func_id` / `file_path` / `suggested_action` 在存在且非空时输出，
+            保持既有 Python/checkpoint 消费方兼容。
+          - additive identity metadata 包括 `target_id` / `language` / `symbol_kind` / `adapter`：
+            仅在条目已携带对应 identity 时附加输出，不替换既有 `func_id` 语义。
+          - additive TypeScript/public-surface metadata 包括 `export_mode` /
+            `public_surface_evidence` / `data_contract_kind` / `schema_source_kind` /
+            `source_confidence_summary` / `contract_source_kinds` /
+            `contract_source_fingerprints`；仅在条目具备对应信息时输出。
+          - `guidance` 为既有公开 optional field：仅在 `include_guidance=True`
+            且 guidance 存在时输出，其值来自 `RepairGuidance.to_dict()`。
+          - 所有文本与路径字段在输出前都会 sanitize；None/空字段按规则省略。
+
         Behavior:
           - 输出固定包含 `category` 与 `reason`。
           - `func_id` / `file_path` / `suggested_action` 仅在字段存在且非空时输出。
-          - `target_id` / `language` / `symbol_kind` / `adapter` 为 additive 字段：
+          - `target_id` / `language` / `symbol_kind` / `adapter` 为 additive identity 字段：
             仅在条目具备对应 identity 信息时输出，不改变既有 gate 语义。
+          - `export_mode` / `public_surface_evidence` / `data_contract_kind` /
+            `schema_source_kind` / `source_confidence_summary` /
+            `contract_source_kinds` / `contract_source_fingerprints` 为 additive metadata 字段：
+            仅在条目具备对应 TypeScript/source 信息时输出，不改变现有 category/reason 判定。
           - `file_path` 会进行路径脱敏与规范化，文本字段会执行 sanitize。
           - `guidance` 为 optional additive field：
             仅在 `include_guidance=True` 且 guidance 存在时输出；
@@ -153,9 +171,10 @@ class CheckpointCIItem:
 
         Returns:
           dict: JSON-compatible checkpoint item dict；None/空字段按规则省略；
-            additive identity 字段（`target_id`/`language`/`symbol_kind`/`adapter`）
-            仅在可用时输出，guidance 仅为 deterministic advisory metadata，
-            不改变 exit_code/blocking/advisory 语义。
+            稳定保留核心字段 `category` / `reason` 与兼容字段 `func_id` / `file_path`；
+            additive identity 与 TypeScript/source metadata 仅在可用时输出；
+            guidance 为既有 optional public field，且不改变
+            exit_code/blocking/advisory 语义。
         """
         payload: Dict[str, object] = {
             "category": _sanitize_json_text(self.category),
