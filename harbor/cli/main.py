@@ -243,6 +243,16 @@ def main():
         must not write `.harbor/diary/**`.
       - `init` supports `--advice off|basic` and writes advice defaults into
         `.harbor/config/harbor.yaml` through initializer logic.
+      - `checkpoint --ci` 以 repo-owned accepted baseline artifact
+        `.harbor/baseline/accepted-checkpoint.json` 作为正式 CI baseline truth。
+      - `checkpoint --ci` 会稳定输出 `baseline_source` / `baseline_path` /
+        `baseline_found` 三个 baseline 字段，并在 `summary` / `ci_failures`
+        中暴露 accepted artifact 缺失或非法的 gate 结果。
+      - accepted artifact 缺失时，`checkpoint --ci` 使用
+        `accepted_baseline_missing` 阻断分类；artifact 非法时使用
+        `accepted_baseline_invalid` 阻断分类。
+      - `checkpoint --ci` 在 accepted artifact 缺失或非法时不会回退到
+        runtime cache；相关 baseline 字段语义保持稳定，便于 CI / agent 消费。
       - `checkpoint --ci` may emit TypeScript MVP advisory category
         `unsupported_syntax_advisory` as non-blocking output.
       - `next --from <report.json>` supports `--format text|json`.
@@ -292,6 +302,14 @@ def main():
       does not call LLM. Draft JSON output keeps stdout as one pure JSON object
       and may include additive boundary metadata fields `boundary_source`,
       `boundary_timestamp`, `boundary_note`, and `draft_status`. Successful
+      `checkpoint --ci --format json` emits one pure JSON object whose baseline
+      contract includes `baseline_source`, `baseline_path`, and
+      `baseline_found`; accepted artifact failures are reported as
+      `accepted_baseline_missing` / `accepted_baseline_invalid` without
+      changing the non-write gate contract.
+      Successful text-mode `checkpoint --ci` prints the same accepted artifact
+      baseline semantics in human-readable form while preserving gate behavior.
+      Successful
       non-JSON `harbor log draft` stdout appends localized next-action hints
       only for writable drafts. `draft_status="insufficient_evidence"` is a
       no-op draft result: stdout remains reviewable, latest draft cache is not

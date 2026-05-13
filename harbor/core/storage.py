@@ -123,10 +123,15 @@ class HarborDB:
 
         功能:
           - 读取 `.harbor/cache/l3_index.json`，导入 `files` 与 `entries`。
+          - 迁移旧版 Python 条目时保留既有 `id/signature_hash/body_hash/contract_hash` 兼容语义。
+          - 以 additive 方式迁移 generalized persistence metadata，包括 `target_id`、`legacy_func_id`、
+            `language`、`symbol_kind`、`contract_presence`、`contract_required` 与 `contract_source_*` 摘要字段。
+          - 若旧条目缺少 `meta`，会从兼容字段回填最小 metadata，再统一写入 SQLite `meta` 列。
           - 成功后将旧文件重命名为备份。
 
         使用场景:
-          - 项目升级到 v1.0.2 的 SQLite 存储后端时的兼容迁移。
+          - 项目升级到 SQLite 存储后端时的兼容迁移。
+          - 接受同时包含 Python 与 TypeScript additive metadata 的历史索引快照。
 
         依赖:
           - sqlite3
@@ -141,6 +146,7 @@ class HarborDB:
 
         Returns:
           bool: 若迁移发生且成功，返回 True；否则返回 False。
+            迁移为 additive compatibility 模式，不破坏旧 Python entry schema 的读取兼容性。
         """
         jp = Path(json_path)
         if not jp.exists():

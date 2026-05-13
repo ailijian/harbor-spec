@@ -69,11 +69,14 @@ def process_file_worker(fp: str) -> Tuple[str, float, List[Dict[str, Any]], Opti
     """并行 Worker：解析并计算单文件条目。
 
     功能:
-      - 读取 Python 源文件，使用 `PythonAdapter.parse_file` 提取契约。
-      - 查找函数节点并计算 `body_hash`，组装条目。
+      - 读取 Python / TypeScript 源文件，并按文件语言选择对应 adapter。
+      - Python 路径使用 `PythonAdapter.parse_file` 提取契约，查找函数节点并计算 `body_hash`。
+      - TypeScript 路径使用 `TypeScriptAdapter.parse_file` 提取 ContractSubject，并转换为统一 index entry。
+      - 产出可直接写入 HarborDB / 缓存快照的 normalized entry 列表，作为 generalized persistence 的统一入口。
 
     依赖:
       - harbor.adapters.python.PythonAdapter
+      - harbor.adapters.typescript.TypeScriptAdapter
       - harbor.core.utils.compute_body_hash/find_function_node
 
     @harbor.scope: public
@@ -84,7 +87,8 @@ def process_file_worker(fp: str) -> Tuple[str, float, List[Dict[str, Any]], Opti
       fp (str): 需要处理的文件路径（posix 相对路径）。
 
     Returns:
-      Tuple[str, float, List[Dict[str, Any]], Optional[str]]: (path, mtime, entries, error)
+      Tuple[str, float, List[Dict[str, Any]], Optional[str]]: `(path, mtime, entries, error)`；
+        `entries` 为统一持久化格式的条目列表，`error` 为可展示的 worker 错误文本或 `None`。
     """
     try:
         p = Path(fp)
@@ -215,18 +219,20 @@ class IndexBuilder:
         """以生成器方式构建索引，逐文件产出进度事件。
 
         功能:
-          - 通过 AdapterRegistry 的启用语言门控获取待扫描文件；v1.4.0 默认仅启用 Python。
+          - 通过 AdapterRegistry 的启用语言门控发现待扫描文件；启用 TypeScript 时会一并发现 `.ts` 文件。
           - 改为 Producer-Consumer 并行架构：子进程执行 Parse & Hash，主进程写入 SQLite。
           - 每个文件会在提交任务时产出一次 `scanning` 事件；完成后产出 `parsed/skipped/error` 事件。
           - 事件包含总数、当前序号、是否增量跳过、状态与产生条目数；构建完成后写入缓存快照。
-          - 本阶段仅完成 registry skeleton 接入，保持 Python-only index 语义与既有 entry schema（id/signature_hash/body_hash/contract_hash 等）不变。
+          - Python 条目继续保留既有 `id/signature_hash/body_hash/contract_hash` 等兼容字段语义。
+          - TypeScript subject 会通过统一 index entry 形状进入 generalized persistence 路径，并以 additive metadata 保持 Python 兼容。
 
         使用场景:
           - CLI 层的 Rich 进度条渲染。
 
         依赖:
           - harbor.adapters.registry.AdapterRegistry（文件发现门控）
-          - harbor.adapters.python.PythonAdapter（worker 解析与 FunctionContract 产出保持不变）
+          - harbor.adapters.python.PythonAdapter（Python worker 解析与 FunctionContract 产出）
+          - harbor.adapters.typescript.TypeScriptAdapter（TypeScript subject 解析与统一 entry 产出）
           - .harbor/config.yaml 中的 code_roots
           - concurrent.futures.ProcessPoolExecutor（Windows 兼容：顶层函数序列化）
 
@@ -235,12 +241,12 @@ class IndexBuilder:
         @harbor.idempotency: once
 
         Args:
-          incremental (bool): 是否启用增量构建，默认为 True；文件来源通过 AdapterRegistry 门控获取，
-            且 v1.4.0 默认仅启用 Python，因此保持 Python-only 索引行为。
+          incremental (bool): 是否启用增量构建，默认为 True；文件来源由启用的 adapters 决定，
+            允许在保持 Python 兼容的同时纳入 TypeScript 文件。
 
         Returns:
-          Iterator[ProgressEvent]: 逐文件的进度事件；worker 解析路径与 HarborDB entry schema 维持兼容，
-            不引入 TypeScript entry 或变更既有 body_hash/contract_hash 语义。
+          Iterator[ProgressEvent]: 逐文件的进度事件；解析结果会写入统一 HarborDB entry schema，
+            其中 TypeScript metadata 采用 additive 方式扩展，不破坏既有 Python 消费语义。
         """
         t0 = time.time()
         self.cache_dir.mkdir(parents=True, exist_ok=True)

@@ -121,9 +121,14 @@ class SyncEngine:
         """对比缓存索引与当前代码，输出 Harbor 上下文状态。
 
         功能:
-          - 基于 HarborDB 快照进行比对（初始化阶段会尝试从 `.harbor/cache/l3_index.json` 迁移旧索引）。
-          - 通过 AdapterRegistry 的启用语言门控获取待扫描文件；v1.4.0 默认仅启用 Python。
-          - 实时解析 `code_roots` 下的 Python 文件，计算 `body_hash` 与 `contract_hash`。
+          - 基于 HarborDB 快照或显式传入的 accepted baseline artifact 快照进行比对
+            （初始化阶段会尝试从 `.harbor/cache/l3_index.json` 迁移旧索引）。
+          - 在 `checkpoint --ci` 路径中，accepted baseline artifact 是正式 CI baseline truth；
+            缺失或非法 artifact 由 CLI 层单独归类，不回退到 runtime cache。
+          - 通过 AdapterRegistry 的启用语言门控获取待扫描文件，按语言收集 Python / TypeScript 快照项。
+          - Python 路径实时解析 `code_roots` 下源码并计算 `body_hash` 与 `contract_hash`。
+          - TypeScript 路径收集 additive snapshot metadata（如 `target_id`、`language`、`symbol_kind`、
+            `contract_source_*`），并纳入统一 comparison。
           - 当旧快照与当前文件的 `body_hash/contract_hash` 完全一致时，即使文件 mtime
             因 fresh clone / worktree 变化而不同，也保留 accepted baseline 语义，不重复报告
             历史 `contract_gap` / `skipped_no_contract` / `contract_parse_error`。
@@ -131,8 +136,8 @@ class SyncEngine:
             - Drift/Modified/Contract Changed
             - Contract Gap/Skipped No Contract/Contract Parse Error
             - Untracked/Missing
-          - 本阶段仅完成 registry skeleton 接入，不改变 `evaluate_contract_presence` 调用语义、
-            old/new item 比较规则、StatusReport/StatusEntry 字段或 checkpoint 分类语义。
+          - TypeScript comparison 采用 additive compatibility 方式扩展，不改变既有 Python gate 语义、
+            `evaluate_contract_presence` 结果解释或 StatusReport/StatusEntry 字段契约。
 
         使用场景:
           - CLI `harbor status`。
@@ -140,7 +145,8 @@ class SyncEngine:
 
         依赖:
           - AdapterRegistry（文件发现门控）
-          - PythonAdapter（仍返回 FunctionContract，保持 Python 状态比较路径兼容）
+          - PythonAdapter（保持 Python 状态比较路径兼容）
+          - TypeScript adapter（提供 TS snapshot item 与 identity metadata）
           - 与 IndexBuilder 一致的 body_hash 算法（harbor.core.utils.compute_body_hash）
 
         @harbor.scope: public
@@ -148,9 +154,10 @@ class SyncEngine:
         @harbor.idempotency: read-only
 
         Returns:
-          StatusReport: 包含各类状态分组与计数；文件集合经 AdapterRegistry 门控后仍按 Python-only
-            语义生成 drift/modified/contract_changed/contract_gap/skipped_no_contract/
-            unsupported_syntax_advisory/contract_parse_error/untracked/missing 分类。
+          StatusReport: 包含各类状态分组与计数；比较结果会统一生成
+            drift/modified/contract_changed/contract_gap/skipped_no_contract/
+            unsupported_syntax_advisory/contract_parse_error/untracked/missing 分类，
+            其中 TypeScript metadata 为 additive，既有 Python 分类语义保持不变。
 
         Raises:
           Exception: 可能透传文件系统读取、源码解析或存储层异常；该方法不会统一包装异常类型。

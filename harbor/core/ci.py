@@ -815,12 +815,23 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
 
     Output Contract:
       - 必含键：`command` / `ci` / `status` / `exit_code` / `writes_files` /
-        `summary` / `ci_failures` / `advisory` / `contract_impact` / `next_steps`。
+        `baseline_source` / `baseline_path` / `baseline_found` / `summary` /
+        `ci_failures` / `advisory` / `contract_impact` / `next_steps`。
       - `writes_files` 固定为 `false`。
+      - `baseline_source` / `baseline_path` / `baseline_found` 是稳定的 checkpoint CI baseline 字段：
+        分别表示 baseline 来源、repo-relative artifact 路径以及 accepted artifact 是否成功加载。
+      - 当 accepted artifact 缺失或非法时，payload 仍稳定输出上述 baseline 字段，
+        并通过 `summary` 与 `ci_failures` 暴露 `accepted_baseline_missing` /
+        `accepted_baseline_invalid` 分类。
       - `ci_failures` 承载阻断项（如 `contract_gap` / `contract_parse_error` /
         `possible_semantic_drift` / `contract_and_body_changed` / `modified` 等）。
       - `advisory` 保留非阻断项（包括 `ddt_version_baseline_missing`）。
       - 路径与文本字段在输出前会做 sanitize；item 内 None 字段按 item 规则省略。
+      - `ci_failures` / `advisory` item 可稳定包含 additive identity 与 adapter metadata，
+        例如 `target_id` / `language` / `symbol_kind` / `adapter` /
+        `contract_source_kinds` / `contract_source_fingerprints`；这些字段不破坏旧输出消费。
+      - `contract_impact` 保留 checkpoint contract-impact 摘要；TypeScript additive metadata
+        与 identity 相关信息仅作附加公开字段，不改变既有 gate 语义。
       - guidance 是 optional additive field：
         advice=basic 且 include_in_ci_json=true 时可输出 guidance；
         advice=off 时不输出 guidance。
@@ -840,7 +851,8 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
 
     Returns:
       dict: 单一 JSON-compatible payload。`writes_files` 固定 false，
-        guidance 为 optional additive field（advice=off 不输出），且不改变
+        baseline 字段稳定存在；guidance 与 identity / TypeScript additive metadata
+        为 optional additive field（advice=off 不输出 guidance），且不改变
         exit_code / blocking-failure / advisory 语义。
     """
     include_guidance = result.advice_mode == "basic" and result.include_in_ci_json
