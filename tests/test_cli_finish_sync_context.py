@@ -44,6 +44,52 @@ def run_cmd_with_exit_code(argv):
     return code, buf.getvalue()
 
 
+class _FakeRedirectedStream:
+    def __init__(self, encoding="utf-8"):
+        self.encoding = encoding
+        self.reconfigured_to = None
+
+    def isatty(self):
+        return False
+
+    def reconfigure(self, *, encoding, errors):
+        self.reconfigured_to = (encoding, errors)
+        self.encoding = encoding
+
+
+def test_configure_redirected_windows_stdio_prefers_locale_encoding(monkeypatch):
+    stdout = _FakeRedirectedStream()
+    stderr = _FakeRedirectedStream()
+    fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=0))
+
+    monkeypatch.setattr(cli_main.os, "name", "nt")
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+    monkeypatch.delenv("PYTHONIOENCODING", raising=False)
+    monkeypatch.delenv("PYTHONUTF8", raising=False)
+    monkeypatch.setattr(cli_main.locale, "getpreferredencoding", lambda do_setlocale=False: "cp936")
+
+    cli_main._configure_redirected_windows_stdio()
+
+    assert stdout.reconfigured_to == ("cp936", "strict")
+    assert stderr.reconfigured_to == ("cp936", "strict")
+
+
+def test_configure_redirected_windows_stdio_respects_pythonioencoding(monkeypatch):
+    stdout = _FakeRedirectedStream(encoding="cp936")
+    stderr = _FakeRedirectedStream(encoding="cp936")
+    fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=0))
+
+    monkeypatch.setattr(cli_main.os, "name", "nt")
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+    monkeypatch.setenv("PYTHONIOENCODING", "utf-8:strict")
+    monkeypatch.setattr(cli_main.locale, "getpreferredencoding", lambda do_setlocale=False: "cp936")
+
+    cli_main._configure_redirected_windows_stdio()
+
+    assert stdout.reconfigured_to == ("utf-8", "strict")
+    assert stderr.reconfigured_to == ("utf-8", "strict")
+
+
 def _status_report_with_changed():
     return SimpleNamespace(
         counts={

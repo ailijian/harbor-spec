@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T12:26:10Z"
+generated_at: "2026-05-13T13:47:55Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -104,11 +104,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:8b3ee9240622f775a62fd0553ff327adc63c37ff3f88d8419bc169352f380638"
-contract_fingerprint: "sha256:eef87e668f6d0987cd2b7f04770d9fbfb9a9766a0c7c96f681a6e482a909d4fe"
+source_fingerprint: "sha256:a47cb6a6ebc907bad0300025b6d388bf309566b4462b31cddfad203fdc8070a5"
+contract_fingerprint: "sha256:efcb762b423438db79e9caba188b9f4ce73ed4e3100d2db2c389b1310f7765bb"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "5fb8c4d894739be69383b58e844ea50f100e25c6242472d88585e0e35da2024d"
-fingerprint: "5fb8c4d894739be69383b58e844ea50f100e25c6242472d88585e0e35da2024d"
+view_fingerprint: "6059dc18c57fe7cf01b85a568cf05f2aaf2524be136fc3838ec120ab76924324"
+fingerprint: "6059dc18c57fe7cf01b85a568cf05f2aaf2524be136fc3838ec120ab76924324"
 ---
 
 # Module Card: tests
@@ -419,6 +419,9 @@ tests/test_workspace_paths.py
 | tests.test_cli_doctor.test_doctor_module_mode_runs | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_text_output_includes_legacy_diary_advisory | tests/test_cli_doctor.py | unknown | standard |
 | tests.test_cli_doctor.test_doctor_text_output_uses_unknown_for_no_indexed_records | tests/test_cli_doctor.py | unknown | standard |
+| tests.test_cli_finish_sync_context._FakeRedirectedStream.__init__ | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._FakeRedirectedStream.isatty | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._FakeRedirectedStream.reconfigure | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._disable_change_window_writes | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_status_report | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_validation_report | tests/test_cli_finish_sync_context.py | unknown | standard |
@@ -431,6 +434,8 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context.run_cmd | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.run_cmd_with_exit_code | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_changed_scope_consistency_across_finish_docs_module_seal_and_stale | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_locale_encoding | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_respects_pythonioencoding | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | tests/test_cli_finish_sync_context.py | unknown | standard |

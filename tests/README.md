@@ -12,6 +12,7 @@
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
 | tests.test_change_window_snapshot._FakeSyncEngine.__init__ | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeRedirectedStream.__init__ | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | — | standard | ⚪ Missing |
 | tests.test_baseline_artifact._baseline_item | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline._build_strict_target | — | standard | ⚪ Missing |
@@ -180,7 +181,9 @@
 | tests.test_drafting._EngStub.check_status | — | standard | ⚪ Missing |
 | tests.test_drafting._OKProvider.infer | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeRedirectedStream.isatty | — | standard | ⚪ Missing |
 | tests.test_index_builder.read_index | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeRedirectedStream.reconfigure | — | standard | ⚪ Missing |
 | tests.test_accept_cli.run_cmd | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.run_cmd | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact.run_cmd | — | standard | ⚪ Missing |
@@ -328,6 +331,8 @@
 | tests.test_cli_config.test_config_add_list_remove | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_config_can_disable_python | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_config_list_zh | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_locale_encoding | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_respects_pythonioencoding | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_configured_diary_root_within_repo_is_used | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_chinese_yes_no | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_english_yes_no | — | standard | ⚪ Missing |

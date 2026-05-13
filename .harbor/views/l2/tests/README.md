@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-13T12:26:09Z"
+generated_at: "2026-05-13T13:47:54Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -104,8 +104,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:8b3ee9240622f775a62fd0553ff327adc63c37ff3f88d8419bc169352f380638"
-contract_fingerprint: "sha256:bc8dc90a8d8e31a74d65905e19179ee67905813c1a4611a6e3bf4de4d64442f6"
+source_fingerprint: "sha256:a47cb6a6ebc907bad0300025b6d388bf309566b4462b31cddfad203fdc8070a5"
+contract_fingerprint: "sha256:230cf19830cc5b8a03a3ccf2675c5671b5651a8a4b21a5d97eb2892d74203f71"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -123,6 +123,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
 | tests.test_change_window_snapshot._FakeSyncEngine.__init__ | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeRedirectedStream.__init__ | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | — | standard | ⚪ Missing |
 | tests.test_baseline_artifact._baseline_item | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline._build_strict_target | — | standard | ⚪ Missing |
@@ -291,7 +292,9 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_drafting._EngStub.check_status | — | standard | ⚪ Missing |
 | tests.test_drafting._OKProvider.infer | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeRedirectedStream.isatty | — | standard | ⚪ Missing |
 | tests.test_index_builder.read_index | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._FakeRedirectedStream.reconfigure | — | standard | ⚪ Missing |
 | tests.test_accept_cli.run_cmd | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.run_cmd | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact.run_cmd | — | standard | ⚪ Missing |
@@ -439,6 +442,8 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_cli_config.test_config_add_list_remove | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_config_can_disable_python | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_config_list_zh | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_locale_encoding | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_respects_pythonioencoding | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_configured_diary_root_within_repo_is_used | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_chinese_yes_no | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_english_yes_no | — | standard | ⚪ Missing |

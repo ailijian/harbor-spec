@@ -1,10 +1,11 @@
 import argparse
+import locale
 import os
 from datetime import datetime, timezone
 import re
 import sys
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
@@ -109,8 +110,37 @@ def _is_log_write_interactive() -> bool:
     return bool(sys.stdin.isatty() and sys.stdout.isatty())
 
 
+def _resolve_windows_redirected_stdio_encoding(stream) -> Optional[str]:
+    """Choose a Windows redirected stdio encoding that matches the caller."""
+    explicit = os.environ.get("PYTHONIOENCODING", "").strip()
+    if explicit:
+        return explicit.split(":", 1)[0].strip() or None
+
+    if os.environ.get("PYTHONUTF8") == "1" or getattr(sys.flags, "utf8_mode", 0):
+        return "utf-8"
+
+    preferred = locale.getpreferredencoding(False)
+    if preferred:
+        return preferred
+
+    current = getattr(stream, "encoding", None)
+    if current and current.lower() not in {"ascii", "us-ascii"}:
+        return current
+
+    fileno = getattr(stream, "fileno", None)
+    if callable(fileno):
+        try:
+            device_encoding = os.device_encoding(fileno())
+        except Exception:
+            device_encoding = None
+        if device_encoding:
+            return device_encoding
+
+    return "utf-8"
+
+
 def _configure_redirected_windows_stdio() -> None:
-    """Force UTF-8 on redirected Windows stdio for localized CLI output."""
+    """Use a caller-compatible encoding for redirected Windows localized output."""
     if os.name != "nt":
         return
     for name in ("stdout", "stderr"):
@@ -123,7 +153,10 @@ def _configure_redirected_windows_stdio() -> None:
         except Exception:
             continue
         try:
-            stream.reconfigure(encoding="utf-8", errors="strict")
+            encoding = _resolve_windows_redirected_stdio_encoding(stream)
+            if not encoding:
+                continue
+            stream.reconfigure(encoding=encoding, errors="strict")
         except Exception:
             continue
 
@@ -144,9 +177,9 @@ def main():
         friendly CLI errors for caller-visible handling.
       - Invalid legacy `harbor log` args exit with code 1 and must not print a
         Python traceback in normal CLI output.
-      - On Windows, redirected `stdout` / `stderr` are reconfigured to UTF-8
-        before command dispatch so localized CLI text remains pipe-safe in
-        non-interactive subprocess execution.
+      - On Windows, redirected `stdout` / `stderr` are normalized to a
+        caller-compatible text encoding before command dispatch so localized
+        CLI text remains readable in non-interactive subprocess execution.
       - `harbor log draft` / `harbor log write` dispatch order remains explicit:
         draft/write subcommands are handled before legacy direct `harbor log`
         message or LLM-assisted draft flows.
@@ -203,7 +236,7 @@ def main():
       - Successful non-JSON `harbor log draft` output prints localized next
         actions for formal Diary write/save flows only when the current evidence
         is sufficient to generate a writable Diary Draft.
-      - Redirected stdio UTF-8 normalization must not change CLI arguments,
+      - Redirected stdio encoding normalization must not change CLI arguments,
         exit-code semantics, JSON payload structure, or file-write targets.
       - `harbor log draft` refreshes latest draft runtime cache under
         `.harbor/state/log/latest-draft.md` and
