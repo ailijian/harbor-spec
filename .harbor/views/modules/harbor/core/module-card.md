@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-13T13:39:44Z"
+generated_at: "2026-05-13T14:25:02Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 37
@@ -47,10 +47,10 @@ source_paths:
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
 source_fingerprint: "sha256:8a211d504b82ecefa67ada533cce2b0720704be3cd3ab800a27f9d1c42dad557"
-contract_fingerprint: "sha256:5216974d8cda62f0699e42688ae3dbddbfded063b22c4f720347b4c424d37f54"
+contract_fingerprint: "sha256:9894e8b88f4ed14ecd680487d21596e79ec41b6df566f206b7892d7ccd6dd13b"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "2649a617b9a08218544d7f4a0eeef1b2ad8c66862787923bb4285965d492f2f2"
-fingerprint: "2649a617b9a08218544d7f4a0eeef1b2ad8c66862787923bb4285965d492f2f2"
+view_fingerprint: "2fb7a7e126546c55829bd621404e433228dfd7e0e7bce6c064c7738f632c07e2"
+fingerprint: "2fb7a7e126546c55829bd621404e433228dfd7e0e7bce6c064c7738f632c07e2"
 ---
 
 # Module Card: harbor/core
@@ -266,6 +266,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.diary.DiaryManager._normalize_for_hash | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._parse_ts | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_author | harbor/core/diary.py | unknown | standard |
+| harbor.core.diary.DiaryManager._resolve_diary_dir | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_legacy_diary_dirs | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_repo_root | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._utc_now_iso | harbor/core/diary.py | unknown | standard |

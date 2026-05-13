@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T13:47:55Z"
+generated_at: "2026-05-13T14:25:02Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -105,10 +105,10 @@ source_paths:
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
 source_fingerprint: "sha256:a47cb6a6ebc907bad0300025b6d388bf309566b4462b31cddfad203fdc8070a5"
-contract_fingerprint: "sha256:efcb762b423438db79e9caba188b9f4ce73ed4e3100d2db2c389b1310f7765bb"
+contract_fingerprint: "sha256:eaa8a17c065a3d69559cde6f8f70f788dfc60f302cd38dc43867e722df592beb"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "6059dc18c57fe7cf01b85a568cf05f2aaf2524be136fc3838ec120ab76924324"
-fingerprint: "6059dc18c57fe7cf01b85a568cf05f2aaf2524be136fc3838ec120ab76924324"
+view_fingerprint: "ecf9a18b0fb9264b3074fe7a30ca5f4a0b8a6b18680ce637e0e71cf2e06d6952"
+fingerprint: "ecf9a18b0fb9264b3074fe7a30ca5f4a0b8a6b18680ce637e0e71cf2e06d6952"
 ---
 
 # Module Card: tests
@@ -720,7 +720,9 @@ tests/test_workspace_paths.py
 | tests.test_index_builder_registry_integration.test_build_writes_typescript_additive_fields_into_runtime_cache_snapshot | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_typescript_enabled_persists_ts_subjects_without_breaking_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | tests/test_index_progress.py | unknown | standard |
 | tests.test_init_detector.test_django_detection | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_detector.test_excludes_do_not_override_code_roots | tests/test_init_detector.py | unknown | standard |
