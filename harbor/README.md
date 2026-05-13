@@ -148,6 +148,7 @@
 | harbor.core.ci._derive_qualified_name_and_symbol_kind | — | standard | ⚪ Missing |
 | harbor.core.log_draft._derive_validation_statuses | — | standard | ⚪ Missing |
 | harbor.core.doctor._derived_view_detail_status | 将内部 view status 归一化为可展示文本。 | standard | ⚪ Missing |
+| harbor.core.init_prompt._detect_console_encoding | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_django | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_go | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_java | — | standard | ⚪ Missing |
@@ -341,7 +342,6 @@
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_cli_input_path | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._resolve_contract_presence | — | standard | ⚪ Missing |
-| harbor.core.diary.DiaryManager._resolve_diary_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_diary_draft_boundary | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | — | standard | ⚪ Missing |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | — | standard | ⚪ Missing |
@@ -355,6 +355,7 @@
 | harbor.core.diary.DiaryManager._resolve_repo_root | — | standard | ⚪ Missing |
 | harbor.cli.main._resolve_windows_redirected_stdio_encoding | Choose a Windows redirected stdio encoding that matches t... | standard | ⚪ Missing |
 | harbor.core.change_window._run_git | — | standard | ⚪ Missing |
+| harbor.core.init_prompt._safe_console_print | — | standard | ⚪ Missing |
 | harbor.core.log_draft._safe_excerpt | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._safe_json_parse | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._safe_module_subpath | — | standard | ⚪ Missing |
@@ -481,6 +482,7 @@
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
 | harbor.adapters.base.LanguageAdapter.discover_files | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files | — | standard | ⚪ Missing |
+| harbor.core.utils.discover_indexable_files | — | standard | ⚪ Missing |
 | harbor.core.advice_config.AdviceSettings.enabled | — | standard | ⚪ Missing |
 | harbor.core.contract_presence.evaluate_contract_presence | — | standard | ⚪ Missing |
 | harbor.core.changed_scope.expand_modules_with_indexed_parents | — | standard | ⚪ Missing |
@@ -551,6 +553,7 @@
 | harbor.core.context_integrity.render_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.path_normalization.repo_relative_path | — | standard | ⚪ Missing |
 | harbor.core.advice_config.resolve_advice_settings | — | standard | ⚪ Missing |
+| harbor.core.utils.resolve_code_roots | — | standard | ⚪ Missing |
 | harbor.core.log_draft.resolve_draft_source | Resolve and parse one authorized draft source for `harbor... | standard | ⚪ Missing |
 | harbor.core.module_capsule.resolve_module_capsule_paths | — | standard | ⚪ Missing |
 | harbor.core.audit.resolve_provider | — | standard | ⚪ Missing |

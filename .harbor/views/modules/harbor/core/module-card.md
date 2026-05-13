@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-13T14:25:02Z"
+generated_at: "2026-05-13T15:53:16Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 37
@@ -46,11 +46,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:8a211d504b82ecefa67ada533cce2b0720704be3cd3ab800a27f9d1c42dad557"
-contract_fingerprint: "sha256:9894e8b88f4ed14ecd680487d21596e79ec41b6df566f206b7892d7ccd6dd13b"
+source_fingerprint: "sha256:6651f70fa2109d5df540f31f17a0c39c21cd7936d6dabe67f499ad821d5308a1"
+contract_fingerprint: "sha256:2322fa02f99301a35ec7c76ac3189aef4e52c3598f327a4689b1b18fb4abf319"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "2fb7a7e126546c55829bd621404e433228dfd7e0e7bce6c064c7738f632c07e2"
-fingerprint: "2fb7a7e126546c55829bd621404e433228dfd7e0e7bce6c064c7738f632c07e2"
+view_fingerprint: "5d4ab1ebc76587b12119896c90524cd850f4fb1d9b281416f06728bdf9566d56"
+fingerprint: "5d4ab1ebc76587b12119896c90524cd850f4fb1d9b281416f06728bdf9566d56"
 ---
 
 # Module Card: harbor/core
@@ -266,7 +266,6 @@ harbor/core/workspace_migrate.py
 | harbor.core.diary.DiaryManager._normalize_for_hash | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._parse_ts | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_author | harbor/core/diary.py | unknown | standard |
-| harbor.core.diary.DiaryManager._resolve_diary_dir | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_legacy_diary_dirs | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._resolve_repo_root | harbor/core/diary.py | unknown | standard |
 | harbor.core.diary.DiaryManager._utc_now_iso | harbor/core/diary.py | unknown | standard |
@@ -343,8 +342,10 @@ harbor/core/workspace_migrate.py
 | harbor.core.init.ProjectDetector._parse_gitignore | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector.detect | harbor/core/init.py | public | strict |
 | harbor.core.init_prompt._choice_label | harbor/core/init_prompt.py | unknown | standard |
+| harbor.core.init_prompt._detect_console_encoding | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt._is_interactive | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt._render_inline_options | harbor/core/init_prompt.py | unknown | standard |
+| harbor.core.init_prompt._safe_console_print | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt._title_with_marker | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt._try_arrow_select | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt.confirm | harbor/core/init_prompt.py | unknown | standard |
@@ -585,8 +586,10 @@ harbor/core/workspace_migrate.py
 | harbor.core.sync._subject_source_kinds | harbor/core/sync.py | unknown | standard |
 | harbor.core.utils.compute_body_hash | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.derive_adopted_roots | harbor/core/utils.py | unknown | standard |
+| harbor.core.utils.discover_indexable_files | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.find_function_node | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.iter_project_files | harbor/core/utils.py | public | strict |
+| harbor.core.utils.resolve_code_roots | harbor/core/utils.py | unknown | standard |
 | harbor.core.workspace._build_path | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace._looks_like_windows_absolute_path | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace._normalize_path_like | harbor/core/workspace.py | unknown | standard |

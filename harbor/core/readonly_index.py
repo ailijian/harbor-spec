@@ -5,10 +5,11 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
+from harbor.adapters.registry import AdapterRegistry
 from harbor.core.index import process_file_worker
 from harbor.core.index_entry import index_entry_to_cache_item
 from harbor.core.storage import HarborDB
-from harbor.core.utils import iter_project_files
+from harbor.core.utils import discover_indexable_files
 from harbor.core.workspace import load_workspace_config
 
 _TRANSIENT_INDEX_CACHE: Dict[str, Dict[str, Any]] = {}
@@ -41,18 +42,32 @@ def _resolve_index_path(index_path: Path | None, *, repo_root: Path) -> Path:
 
 
 def _build_transient_index(repo_root: Path) -> Dict[str, Any]:
-    cache_key = repo_root.as_posix()
-    cached = _TRANSIENT_INDEX_CACHE.get(cache_key)
-    if cached is not None:
-        return copy.deepcopy(cached)
-
     loaded = load_workspace_config(repo_root)
     config = loaded.get("config") or {}
     code_roots = list(config.get("code_roots") or ["**/*.py"])
     exclude_paths = list(config.get("exclude_paths") or [])
+    registry = AdapterRegistry.from_config(config)
+    cache_key = json.dumps(
+        {
+            "repo_root": repo_root.as_posix(),
+            "code_roots": code_roots,
+            "exclude_paths": exclude_paths,
+            "enabled_languages": registry.get_enabled_languages(),
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    cached = _TRANSIENT_INDEX_CACHE.get(cache_key)
+    if cached is not None:
+        return copy.deepcopy(cached)
 
     files: Dict[str, Any] = {}
-    for source_path in iter_project_files(code_roots, exclude_paths):
+    for source_path in discover_indexable_files(
+        code_roots,
+        exclude_paths,
+        registry=registry,
+        repo_root=repo_root,
+    ):
         try:
             rel = source_path.resolve().relative_to(repo_root).as_posix()
         except Exception:

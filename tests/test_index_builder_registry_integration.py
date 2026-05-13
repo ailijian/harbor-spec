@@ -4,6 +4,7 @@ import textwrap
 import yaml
 
 from harbor.core.index import IndexBuilder
+from harbor.core.readonly_index import load_readonly_index
 
 
 def _write_file(path: Path, content: str) -> None:
@@ -64,6 +65,64 @@ def test_index_builder_file_discovery_includes_typescript_when_ts_enabled(tmp_pa
     assert builder.registry.is_enabled("python") is True
     assert builder.registry.is_enabled("typescript") is True
     assert [path.suffix for path in files] == [".py", ".ts"]
+
+
+def test_readonly_transient_index_discovers_typescript_when_ts_enabled(tmp_path: Path):
+    cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    _write_config(
+        cfg_path,
+        {
+            "code_roots": [str(tmp_path / "src")],
+            "languages": {
+                "python": {"enabled": True},
+                "typescript": {"enabled": True},
+            },
+        },
+    )
+    code_root = tmp_path / "src"
+    _write_file(code_root / "a.py", "def a():\n    return 1\n")
+    _write_file(code_root / "b.ts", "export function b(): number { return 2; }\n")
+
+    payload = load_readonly_index(repo_root=tmp_path)
+
+    assert sorted(payload["files"].keys()) == ["src/a.py", "src/b.ts"]
+    assert not (tmp_path / ".harbor" / "cache" / "l3_index.json").exists()
+    assert not (tmp_path / ".harbor" / "cache" / "harbor.db").exists()
+
+
+def test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled(tmp_path: Path):
+    cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    _write_config(
+        cfg_path,
+        {
+            "code_roots": [str(tmp_path / "src")],
+            "languages": {
+                "python": {"enabled": True},
+                "typescript": {"enabled": True},
+            },
+        },
+    )
+    code_root = tmp_path / "src"
+    _write_file(code_root / "main.py", "def main():\n    return 1\n")
+    _write_file(code_root / "feature.ts", "export function feature(): number { return 2; }\n")
+
+    readonly_files = set(load_readonly_index(repo_root=tmp_path)["files"].keys())
+    assert readonly_files == {"src/feature.ts", "src/main.py"}
+    assert not (tmp_path / ".harbor" / "cache" / "l3_index.json").exists()
+    assert not (tmp_path / ".harbor" / "cache" / "harbor.db").exists()
+
+    builder = IndexBuilder(
+        code_roots=[str(code_root)],
+        cache_dir=tmp_path / ".tmp-cache",
+        config_path=cfg_path,
+    )
+
+    builder_files = {
+        path.resolve().relative_to(tmp_path).as_posix()
+        for path in builder._iter_files_by_enabled_adapters()
+    }
+
+    assert readonly_files == builder_files == {"src/feature.ts", "src/main.py"}
 
 
 def test_build_keeps_python_entry_shape_stable(tmp_path: Path):

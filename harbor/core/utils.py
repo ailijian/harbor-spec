@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import ast
-import os
 import io
 import hashlib
+import os
 import tokenize
 from pathlib import Path
 from typing import List, Optional
 
+from harbor.adapters.registry import AdapterRegistry
 from harbor.core.git_utils import GitIgnoreMatcher
 
 
@@ -106,11 +107,61 @@ def compute_body_hash(source: str, fn_node: ast.AST) -> str:
     normalized = " ".join(parts)
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
-def iter_project_files(code_roots: List[str], exclude_paths: Optional[List[str]] = None) -> List[Path]:
+def resolve_code_roots(code_roots: List[str], *, repo_root: Optional[Path] = None) -> List[Path]:
+    base = (repo_root or Path.cwd()).resolve()
+    roots: dict[str, Path] = {}
+    for raw in code_roots or []:
+        token = str(raw or "").strip()
+        if not token:
+            continue
+        if any(ch in token for ch in ("*", "?", "[")):
+            for matched in base.glob(token):
+                roots[matched.resolve().as_posix()] = matched.resolve()
+            continue
+        path = Path(token)
+        if not path.is_absolute():
+            path = base / path
+        roots[path.resolve().as_posix()] = path.resolve()
+    return [roots[key] for key in sorted(roots.keys())]
+
+
+def discover_indexable_files(
+    code_roots: List[str],
+    exclude_paths: Optional[List[str]] = None,
+    *,
+    registry: Optional[AdapterRegistry] = None,
+    repo_root: Optional[Path] = None,
+) -> List[Path]:
+    active_registry = registry or AdapterRegistry.default()
+    resolved_root = (repo_root or Path.cwd()).resolve()
+    files: List[Path] = []
+    if active_registry.is_enabled("python"):
+        files.extend(iter_project_files(code_roots, exclude_paths, repo_root=resolved_root))
+    if active_registry.is_enabled("typescript"):
+        adapter = active_registry.get_adapter("typescript")
+        if adapter is not None:
+            try:
+                files.extend(adapter.discover_files(resolve_code_roots(code_roots, repo_root=resolved_root)))
+            except Exception:
+                pass
+
+    dedup: dict[str, Path] = {}
+    for path in files:
+        dedup[path.resolve().as_posix()] = path.resolve()
+    return [dedup[key] for key in sorted(dedup.keys())]
+
+
+def iter_project_files(
+    code_roots: List[str],
+    exclude_paths: Optional[List[str]] = None,
+    *,
+    repo_root: Optional[Path] = None,
+) -> List[Path]:
     """生成待扫描的 Python 文件列表（统一剪枝逻辑）。
 
     功能:
       - 根据 `code_roots` 计算遍历起点，支持绝对/相对与 glob 模式。
+      - 默认相对当前工作区解析路径；传入 `repo_root` 时相对指定仓库根解析。
       - 合并 `.gitignore` 与 `exclude_paths` 并进行目录层级剪枝（避免进入大体量无关目录）。
       - 仅返回 `.py` 文件，保证与 IndexBuilder/SyncEngine 行为一致。
 
@@ -128,11 +179,12 @@ def iter_project_files(code_roots: List[str], exclude_paths: Optional[List[str]]
     Args:
       code_roots (List[str]): 代码根路径或模式列表。
       exclude_paths (Optional[List[str]]): 额外排除模式（相对项目根的 gitwildmatch）。
+      repo_root (Optional[Path]): 可选仓库根；提供时用于解析相对 `code_roots` 与遍历基准目录。
 
     Returns:
       List[Path]: 去重后的 Python 文件绝对路径列表。
     """
-    base = Path.cwd().resolve()
+    base = (repo_root or Path.cwd()).resolve()
     patterns = code_roots or ["**/*.py"]
     defaults = [".git/**", ".harbor/**", ".venv/**", "venv/**", "env/**", "node_modules/**"]
     cfg_excludes = (exclude_paths or []) + defaults

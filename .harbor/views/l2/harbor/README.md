@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-13T14:24:41Z"
+generated_at: "2026-05-13T15:52:58Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
 source_path_count: 58
@@ -67,8 +67,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:876fe50f2a98b0f113ff71d0afcf27a63e11619901ed260f38050c02ee4c9799"
-contract_fingerprint: "sha256:df239e8c8c168ccfc4b1ecc9707e9123b07715274e2977de6d11db6aedd72baf"
+source_fingerprint: "sha256:fcbc7f71913c2fee0a1d5097e21b4be40a0efe1184469ff95d80a288270081b2"
+contract_fingerprint: "sha256:ad589ba0c0d547b059f80834fd8664431a2e175c587f5c383e04efcdf0c23cae"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -222,6 +222,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.ci._derive_qualified_name_and_symbol_kind | — | standard | ⚪ Missing |
 | harbor.core.log_draft._derive_validation_statuses | — | standard | ⚪ Missing |
 | harbor.core.doctor._derived_view_detail_status | 将内部 view status 归一化为可展示文本。 | standard | ⚪ Missing |
+| harbor.core.init_prompt._detect_console_encoding | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_django | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_go | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_java | — | standard | ⚪ Missing |
@@ -415,7 +416,6 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_cli_input_path | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._resolve_contract_presence | — | standard | ⚪ Missing |
-| harbor.core.diary.DiaryManager._resolve_diary_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_diary_draft_boundary | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | — | standard | ⚪ Missing |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | — | standard | ⚪ Missing |
@@ -429,6 +429,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.diary.DiaryManager._resolve_repo_root | — | standard | ⚪ Missing |
 | harbor.cli.main._resolve_windows_redirected_stdio_encoding | Choose a Windows redirected stdio encoding that matches t... | standard | ⚪ Missing |
 | harbor.core.change_window._run_git | — | standard | ⚪ Missing |
+| harbor.core.init_prompt._safe_console_print | — | standard | ⚪ Missing |
 | harbor.core.log_draft._safe_excerpt | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._safe_json_parse | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._safe_module_subpath | — | standard | ⚪ Missing |
@@ -555,6 +556,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
 | harbor.adapters.base.LanguageAdapter.discover_files | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files | — | standard | ⚪ Missing |
+| harbor.core.utils.discover_indexable_files | — | standard | ⚪ Missing |
 | harbor.core.advice_config.AdviceSettings.enabled | — | standard | ⚪ Missing |
 | harbor.core.contract_presence.evaluate_contract_presence | — | standard | ⚪ Missing |
 | harbor.core.changed_scope.expand_modules_with_indexed_parents | — | standard | ⚪ Missing |
@@ -625,6 +627,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.context_integrity.render_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.path_normalization.repo_relative_path | — | standard | ⚪ Missing |
 | harbor.core.advice_config.resolve_advice_settings | — | standard | ⚪ Missing |
+| harbor.core.utils.resolve_code_roots | — | standard | ⚪ Missing |
 | harbor.core.log_draft.resolve_draft_source | Resolve and parse one authorized draft source for `harbor... | standard | ⚪ Missing |
 | harbor.core.module_capsule.resolve_module_capsule_paths | — | standard | ⚪ Missing |
 | harbor.core.audit.resolve_provider | — | standard | ⚪ Missing |

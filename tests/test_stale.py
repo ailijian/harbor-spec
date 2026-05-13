@@ -79,6 +79,31 @@ def _write_sample_repo(tmp_path: Path) -> None:
     (tests_dir / "test_sample.py").write_text("def test_sample():\n    assert True\n", encoding="utf-8")
 
 
+def _write_typescript_sample_repo(tmp_path: Path) -> None:
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text(
+        "code_roots:\n- src/**\nexclude_paths: []\nlanguages:\n  python:\n    enabled: true\n  typescript:\n    enabled: true\n",
+        encoding="utf-8",
+    )
+
+    src_dir = tmp_path / "src"
+    src_dir.mkdir(parents=True, exist_ok=True)
+    (src_dir / "sample.ts").write_text(
+        '''/**
+ * Return the provided value.
+ *
+ * @param value Input integer.
+ * @returns Same integer value.
+ * @harbor.scope public
+ * @harbor.l3_strictness strict
+ */
+export function run(value: number): number { return value; }
+''',
+        encoding="utf-8",
+    )
+
+
 def test_l2_readme_stale_when_missing(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _write_index(tmp_path)
@@ -328,6 +353,25 @@ def test_check_module_derived_views_stale_is_up_to_date_without_runtime_index_ca
     write_module_capsule(collect_module_context("harbor/core"))
 
     summary = check_module_derived_views_stale("harbor/core")
+
+    assert summary.l2_readme.status == "up_to_date"
+    assert summary.module_capsule.status == "up_to_date"
+    assert not (tmp_path / ".harbor" / "cache" / "l3_index.json").exists()
+    assert not (tmp_path / ".harbor" / "cache" / "harbor.db").exists()
+
+
+def test_check_module_derived_views_stale_uses_ts_aware_transient_index_without_runtime_cache(
+    tmp_path: Path, monkeypatch
+):
+    _write_typescript_sample_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    gen = L2Generator()
+    markdown = gen.generate("src")
+    gen.write("src", markdown, force=True)
+    write_module_capsule(collect_module_context("src"))
+
+    summary = check_module_derived_views_stale("src")
 
     assert summary.l2_readme.status == "up_to_date"
     assert summary.module_capsule.status == "up_to_date"

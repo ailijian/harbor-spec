@@ -9,6 +9,26 @@ from harbor.core.init_prompt import Choice, confirm, select_one
 from harbor.core.init_wizard import InitWizard, InitWizardOptions
 
 
+class StrictEncodingTextIO:
+    def __init__(self, encoding: str = "cp1252") -> None:
+        self.encoding = encoding
+        self._chunks = []
+
+    def write(self, text: str) -> int:
+        text.encode(self.encoding, errors="strict")
+        self._chunks.append(text)
+        return len(text)
+
+    def flush(self) -> None:
+        return None
+
+    def isatty(self) -> bool:
+        return False
+
+    def getvalue(self) -> str:
+        return "".join(self._chunks)
+
+
 def test_wizard_language_prompt_comes_first(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("harbor.core.init_wizard._is_tty", lambda: True)
     monkeypatch.setattr("harbor.core.init_prompt._is_interactive", lambda _interactive=None: True)
@@ -347,6 +367,61 @@ def test_confirm_shows_yes_no_labels_by_language(monkeypatch):
     zh_out = zh_stream.getvalue()
     assert "1. 是" in zh_out
     assert "2. 否" in zh_out
+
+
+def test_confirm_is_encoding_safe_for_cp1252_english(monkeypatch):
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "yes"))
+
+    stream = StrictEncodingTextIO("cp1252")
+    result = confirm(
+        "Use detected scan roots?",
+        default=True,
+        language="en",
+        interactive=True,
+        console=Console(file=stream, force_terminal=False, width=120),
+    )
+
+    assert result is True
+    assert "Use detected scan roots?" in stream.getvalue()
+
+
+def test_confirm_is_encoding_safe_for_cp1252_chinese(monkeypatch):
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "是"))
+
+    stream = StrictEncodingTextIO("cp1252")
+    result = confirm(
+        "使用这些扫描范围吗？",
+        default=True,
+        language="zh",
+        interactive=True,
+        console=Console(file=stream, force_terminal=False, width=120),
+    )
+
+    assert result is True
+    assert stream.getvalue()
+
+
+def test_select_one_is_encoding_safe_for_cp1252(monkeypatch):
+    monkeypatch.setattr("harbor.core.init_prompt._try_arrow_select", lambda **kwargs: None)
+    monkeypatch.setattr(Prompt, "ask", staticmethod(lambda *args, **kwargs: "2"))
+
+    stream = StrictEncodingTextIO("cp1252")
+    selected = select_one(
+        "选择 Provider",
+        options=[
+            Choice(value="openai", label_zh="开放AI", label_en="OpenAI", aliases=["openai"]),
+            Choice(value="deepseek", label_zh="深度求索", label_en="DeepSeek", aliases=["deepseek"]),
+        ],
+        default="openai",
+        language="zh",
+        interactive=True,
+        console=Console(file=stream, force_terminal=False, width=120),
+    )
+
+    assert selected == "deepseek"
+    assert stream.getvalue()
 
 
 def test_init_wizard_prompts_are_single_language_after_selection(tmp_path: Path, monkeypatch):

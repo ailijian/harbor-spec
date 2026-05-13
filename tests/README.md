@@ -13,6 +13,7 @@
 |---|---|---|---|
 | tests.test_change_window_snapshot._FakeSyncEngine.__init__ | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.__init__ | — | standard | ⚪ Missing |
+| tests.test_init_wizard.StrictEncodingTextIO.__init__ | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | — | standard | ⚪ Missing |
 | tests.test_baseline_artifact._baseline_item | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline._build_strict_target | — | standard | ⚪ Missing |
@@ -167,6 +168,7 @@
 | tests.test_log_draft._write_snapshot | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli._write_snapshot | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact._write_typescript_repo | — | standard | ⚪ Missing |
+| tests.test_stale._write_typescript_sample_repo | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_batch._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths._write_workspace_config | — | standard | ⚪ Missing |
@@ -179,9 +181,12 @@
 | tests.test_workspace_paths._write_yaml | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._FakeSyncEngine.check_status | — | standard | ⚪ Missing |
 | tests.test_drafting._EngStub.check_status | — | standard | ⚪ Missing |
+| tests.test_init_wizard.StrictEncodingTextIO.flush | — | standard | ⚪ Missing |
+| tests.test_init_wizard.StrictEncodingTextIO.getvalue | — | standard | ⚪ Missing |
 | tests.test_drafting._OKProvider.infer | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.isatty | — | standard | ⚪ Missing |
+| tests.test_init_wizard.StrictEncodingTextIO.isatty | — | standard | ⚪ Missing |
 | tests.test_index_builder.read_index | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.reconfigure | — | standard | ⚪ Missing |
 | tests.test_accept_cli.run_cmd | — | standard | ⚪ Missing |
@@ -257,6 +262,7 @@
 | tests.test_stale.test_check_module_derived_views_stale_is_up_to_date_without_runtime_index_cache | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | — | standard | ⚪ Missing |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | — | standard | ⚪ Missing |
+| tests.test_stale.test_check_module_derived_views_stale_uses_ts_aware_transient_index_without_runtime_cache | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_contract_parse_error_blocks | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_ddt_baseline_missing_stays_advisory_not_failure | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_dedupe_prefers_contract_and_body_changed_over_confirmed_contract_impact | — | standard | ⚪ Missing |
@@ -336,6 +342,8 @@
 | tests.test_diary_workspace_paths.test_configured_diary_root_within_repo_is_used | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_chinese_yes_no | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_english_yes_no | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_chinese | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_english | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_shows_yes_no_labels_by_language | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_content_without_generated_at_for_compare_ignores_only_timestamp | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_contract_gap_guidance_defaults | — | standard | ⚪ Missing |
@@ -472,7 +480,6 @@
 | tests.test_index_builder.test_index_build_incremental_and_docstring_stability | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled | — | standard | ⚪ Missing |
-| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | — | standard | ⚪ Missing |
 | tests.test_index_builder_bad_syntax.test_index_builder_skips_bad_syntax | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening.test_index_builder_uses_isolated_cache_dir_without_touching_repo_cache | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_infer_module_from_path_supports_windows_and_posix | — | standard | ⚪ Missing |
@@ -692,6 +699,8 @@
 | tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_contains_release_key_commands | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_readonly_transient_index_discovers_typescript_when_ts_enabled | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior | — | standard | ⚪ Missing |
@@ -704,6 +713,7 @@
 | tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_does_not_duplicate_tag | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence.test_script_file_targets_are_not_required | — | standard | ⚪ Missing |
+| tests.test_init_wizard.test_select_one_is_encoding_safe_for_cp1252 | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_selector_fallback_does_not_repeat_selector_block | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_selector_source_does_not_use_full_screen_dialog | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_contract_gap_without_docstring | — | standard | ⚪ Missing |
@@ -801,7 +811,6 @@
 | tests.test_typescript_checkpoint_ci.test_typescript_default_excluded_extensions_do_not_enter_checkpoint | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_typescript_enabled_persists_ts_subjects_without_breaking_python_index | — | standard | ⚪ Missing |
-| tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index | — | standard | ⚪ Missing |
 | tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_semantic_audit_is_skipped_without_contract_presence_or_ast | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_unsupported_syntax_advisory_remains_non_blocking | — | standard | ⚪ Missing |
@@ -849,6 +858,7 @@
 | tests.test_project_structure.test_write_project_structure_returns_canonical_first | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_write_snapshot_creates_json_with_required_schema | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._FakeDDTValidator.validate | — | standard | ⚪ Missing |
+| tests.test_init_wizard.StrictEncodingTextIO.write | — | standard | ⚪ Missing |
 | tests.test_index_builder.write_module | — | standard | ⚪ Missing |
 | tests.test_sync_engine.write_module | — | standard | ⚪ Missing |
 | tests.test_ddt_validate.write_test_file | — | standard | ⚪ Missing |

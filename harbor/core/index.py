@@ -21,7 +21,13 @@ from harbor.adapters.typescript.adapter import TypeScriptAdapter
 from harbor.adapters.typescript.hashing import normalized_sha256
 from harbor.adapters.typescript.parser import TypeScriptLightweightParser
 from harbor.adapters.typescript.symbols import TypeScriptSymbol
-from harbor.core.utils import compute_body_hash, find_function_node, iter_project_files
+from harbor.core.utils import (
+    compute_body_hash,
+    discover_indexable_files,
+    find_function_node,
+    iter_project_files,
+    resolve_code_roots,
+)
 from harbor.core.git_utils import GitIgnoreMatcher
 from harbor.core.index_entry import (
     contract_subject_to_index_entry,
@@ -356,38 +362,15 @@ class IndexBuilder:
         return iter_project_files(self.code_roots, self.exclude_paths)
 
     def _iter_files_by_enabled_adapters(self) -> List[Path]:
-        files: List[Path] = []
-        if self.registry.is_enabled("python"):
-            files.extend(self._iter_py_files())
-        if self.registry.is_enabled("typescript"):
-            adapter = self.registry.get_adapter("typescript")
-            if adapter is not None:
-                try:
-                    files.extend(adapter.discover_files(self._iter_code_roots()))
-                except Exception:
-                    pass
-
-        dedup: Dict[str, Path] = {}
-        for path in files:
-            dedup[path.resolve().as_posix()] = path.resolve()
-        return [dedup[key] for key in sorted(dedup.keys())]
+        return discover_indexable_files(
+            self.code_roots,
+            self.exclude_paths,
+            registry=self.registry,
+            repo_root=Path.cwd(),
+        )
 
     def _iter_code_roots(self) -> List[Path]:
-        roots: Dict[str, Path] = {}
-        cwd = Path.cwd()
-        for raw in self.code_roots:
-            token = str(raw or "").strip()
-            if not token:
-                continue
-            if any(ch in token for ch in ("*", "?", "[")):
-                for matched in cwd.glob(token):
-                    roots[matched.resolve().as_posix()] = matched.resolve()
-                continue
-            path = Path(token)
-            if not path.is_absolute():
-                path = cwd / path
-            roots[path.resolve().as_posix()] = path.resolve()
-        return [roots[key] for key in sorted(roots.keys())]
+        return resolve_code_roots(self.code_roots, repo_root=Path.cwd())
 
     def _load_config(self, path: Path) -> Dict[str, Any]:
         if not path.exists():

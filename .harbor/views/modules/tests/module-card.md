@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T14:25:02Z"
+generated_at: "2026-05-13T15:53:16Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -104,11 +104,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:a47cb6a6ebc907bad0300025b6d388bf309566b4462b31cddfad203fdc8070a5"
-contract_fingerprint: "sha256:eaa8a17c065a3d69559cde6f8f70f788dfc60f302cd38dc43867e722df592beb"
+source_fingerprint: "sha256:09ab1dfbb935b82a5f4b3f7f1e1251c902ae6a25a7ff0dd52a19369bb4ca4832"
+contract_fingerprint: "sha256:bb5c2b81520bca1d0ab4cec9f52a52a3b44a2b6bd4a5334c03f39738fe9be91b"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "ecf9a18b0fb9264b3074fe7a30ca5f4a0b8a6b18680ce637e0e71cf2e06d6952"
-fingerprint: "ecf9a18b0fb9264b3074fe7a30ca5f4a0b8a6b18680ce637e0e71cf2e06d6952"
+view_fingerprint: "96ea714504af553970b983367a1cf3b2a7b117e95a1843531956ce3562b8a1f0"
+fingerprint: "96ea714504af553970b983367a1cf3b2a7b117e95a1843531956ce3562b8a1f0"
 ---
 
 # Module Card: tests
@@ -720,9 +720,9 @@ tests/test_workspace_paths.py
 | tests.test_index_builder_registry_integration.test_build_writes_typescript_additive_fields_into_runtime_cache_snapshot | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
-| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_readonly_transient_index_discovers_typescript_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_typescript_enabled_persists_ts_subjects_without_breaking_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
-| tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | tests/test_index_progress.py | unknown | standard |
 | tests.test_init_detector.test_django_detection | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_detector.test_excludes_do_not_override_code_roots | tests/test_init_detector.py | unknown | standard |
@@ -742,8 +742,15 @@ tests/test_workspace_paths.py
 | tests.test_init_llm_env.test_llm_provider_alias_custom_writes_env | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_llm_provider_alias_number_2_writes_deepseek_env | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_llm_provider_alias_openai_writes_env | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_wizard.StrictEncodingTextIO.__init__ | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.StrictEncodingTextIO.flush | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.StrictEncodingTextIO.getvalue | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.StrictEncodingTextIO.isatty | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.StrictEncodingTextIO.write | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_confirm_accepts_chinese_yes_no | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_confirm_accepts_english_yes_no | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_chinese | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_english | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_confirm_shows_yes_no_labels_by_language | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_dry_run_non_tty_uses_safe_defaults | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_existing_project_next_steps_include_checkpoint_and_adopt | tests/test_init_wizard.py | unknown | standard |
@@ -757,6 +764,7 @@ tests/test_workspace_paths.py
 | tests.test_init_wizard.test_provider_fallback_accepts_number_2 | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_provider_invalid_input_shows_available_options | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_pytest_env_does_not_try_arrow_selector | tests/test_init_wizard.py | unknown | standard |
+| tests.test_init_wizard.test_select_one_is_encoding_safe_for_cp1252 | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_selector_fallback_does_not_repeat_selector_block | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_selector_source_does_not_use_full_screen_dialog | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.test_wizard_language_prompt_comes_first | tests/test_init_wizard.py | unknown | standard |
@@ -934,9 +942,11 @@ tests/test_workspace_paths.py
 | tests.test_stale._write_index | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_l2_export_config | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_sample_repo | tests/test_stale.py | unknown | standard |
+| tests.test_stale._write_typescript_sample_repo | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_is_up_to_date_without_runtime_index_cache | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_returns_both_views | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records | tests/test_stale.py | unknown | standard |
+| tests.test_stale.test_check_module_derived_views_stale_uses_ts_aware_transient_index_without_runtime_cache | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_disabled_is_explicit_and_not_warn_counter | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_ok_when_canonical_has_frontmatter_and_export_is_plain_body | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_l2_export_ok_when_canonical_up_to_date_and_export_matches | tests/test_stale.py | unknown | standard |
