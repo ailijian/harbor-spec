@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-13T17:51:39Z"
+generated_at: "2026-05-13T18:55:05Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 38
@@ -48,7 +48,7 @@ source_paths:
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
 source_fingerprint: "sha256:a27ccacf11d29297b6d2e9428911aec291901b633f3a71f5940935292ab7eedc"
-contract_fingerprint: "sha256:f6b04bdc59ced4dcc69eda767ab4eda4156859fe90e56355f3f93993f01a9ca5"
+contract_fingerprint: "sha256:3e54c89ed7fde9c5c6644f34bcdcaf5f56cfa47688b8b771eb6f30fe4b74dedf"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -358,7 +358,6 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | harbor.core.diary.DiaryManager._resolve_author | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_cli_input_path | — | standard | ⚪ Missing |
-| harbor.core.diary.DiaryManager._resolve_diary_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_diary_draft_boundary | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | — | standard | ⚪ Missing |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | — | standard | ⚪ Missing |

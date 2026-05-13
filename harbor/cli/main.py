@@ -1,5 +1,4 @@
 import argparse
-import locale
 import os
 from datetime import datetime, timezone
 import re
@@ -111,7 +110,7 @@ def _is_log_write_interactive() -> bool:
 
 
 def _resolve_windows_redirected_stdio_encoding(stream) -> Optional[str]:
-    """Choose a Windows redirected stdio encoding that matches the caller."""
+    """Choose a Windows redirected stdio encoding with UTF-8 defaulting."""
     explicit = os.environ.get("PYTHONIOENCODING", "").strip()
     if explicit:
         return explicit.split(":", 1)[0].strip() or None
@@ -119,28 +118,11 @@ def _resolve_windows_redirected_stdio_encoding(stream) -> Optional[str]:
     if os.environ.get("PYTHONUTF8") == "1" or getattr(sys.flags, "utf8_mode", 0):
         return "utf-8"
 
-    preferred = locale.getpreferredencoding(False)
-    if preferred:
-        return preferred
-
-    current = getattr(stream, "encoding", None)
-    if current and current.lower() not in {"ascii", "us-ascii"}:
-        return current
-
-    fileno = getattr(stream, "fileno", None)
-    if callable(fileno):
-        try:
-            device_encoding = os.device_encoding(fileno())
-        except Exception:
-            device_encoding = None
-        if device_encoding:
-            return device_encoding
-
     return "utf-8"
 
 
 def _configure_redirected_windows_stdio() -> None:
-    """Use a caller-compatible encoding for redirected Windows localized output."""
+    """Default redirected Windows localized output to UTF-8 unless overridden."""
     if os.name != "nt":
         return
     for name in ("stdout", "stderr"):
@@ -177,9 +159,10 @@ def main():
         friendly CLI errors for caller-visible handling.
       - Invalid legacy `harbor log` args exit with code 1 and must not print a
         Python traceback in normal CLI output.
-      - On Windows, redirected `stdout` / `stderr` are normalized to a
-        caller-compatible text encoding before command dispatch so localized
-        CLI text remains readable in non-interactive subprocess execution.
+      - On Windows, redirected `stdout` / `stderr` default to UTF-8 before
+        command dispatch unless the caller explicitly overrides stdio encoding,
+        so localized CLI text remains readable in non-interactive subprocess
+        execution.
       - `harbor log draft` / `harbor log write` dispatch order remains explicit:
         draft/write subcommands are handled before legacy direct `harbor log`
         message or LLM-assisted draft flows.

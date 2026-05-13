@@ -135,7 +135,7 @@
 | harbor.core.sync.SyncEngine._compare_snapshots | — | standard | ⚪ Missing |
 | harbor.core.log_draft._compose_written_details | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._confidence_for_level | — | standard | ⚪ Missing |
-| harbor.cli.main._configure_redirected_windows_stdio | Use a caller-compatible encoding for redirected Windows l... | standard | ⚪ Missing |
+| harbor.cli.main._configure_redirected_windows_stdio | Default redirected Windows localized output to UTF-8 unle... | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._contract_hash_for_sources | — | standard | ⚪ Missing |
@@ -347,7 +347,6 @@
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_cli_input_path | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._resolve_contract_presence | — | standard | ⚪ Missing |
-| harbor.core.diary.DiaryManager._resolve_diary_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_diary_draft_boundary | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | — | standard | ⚪ Missing |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | — | standard | ⚪ Missing |
@@ -359,7 +358,7 @@
 | harbor.core.module_capsule._resolve_module_target_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_output_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_repo_root | — | standard | ⚪ Missing |
-| harbor.cli.main._resolve_windows_redirected_stdio_encoding | Choose a Windows redirected stdio encoding that matches t... | standard | ⚪ Missing |
+| harbor.cli.main._resolve_windows_redirected_stdio_encoding | Choose a Windows redirected stdio encoding with UTF-8 def... | standard | ⚪ Missing |
 | harbor.core.change_window._run_git | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._safe_console_print | — | standard | ⚪ Missing |
 | harbor.core.log_draft._safe_excerpt | — | standard | ⚪ Missing |

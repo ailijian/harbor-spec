@@ -340,6 +340,7 @@
 | tests.test_adapter_registry.test_config_can_disable_python | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_config_list_zh | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_locale_encoding | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_prefers_utf8_mode | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_configure_redirected_windows_stdio_respects_pythonioencoding | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_configured_diary_root_within_repo_is_used | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_confirm_accepts_chinese_yes_no | — | standard | ⚪ Missing |
@@ -483,7 +484,6 @@
 | tests.test_index_builder.test_index_build_incremental_and_docstring_stability | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled | — | standard | ⚪ Missing |
-| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | — | standard | ⚪ Missing |
 | tests.test_index_builder_bad_syntax.test_index_builder_skips_bad_syntax | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening.test_index_builder_uses_isolated_cache_dir_without_touching_repo_cache | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_infer_module_from_path_supports_windows_and_posix | — | standard | ⚪ Missing |
@@ -821,7 +821,6 @@
 | tests.test_typescript_checkpoint_ci.test_typescript_default_excluded_extensions_do_not_enter_checkpoint | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_typescript_enabled_persists_ts_subjects_without_breaking_python_index | — | standard | ⚪ Missing |
-| tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index | — | standard | ⚪ Missing |
 | tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_semantic_audit_is_skipped_without_contract_presence_or_ast | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_unsupported_syntax_advisory_remains_non_blocking | — | standard | ⚪ Missing |

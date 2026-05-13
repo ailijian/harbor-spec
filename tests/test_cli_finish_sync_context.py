@@ -66,12 +66,11 @@ def test_configure_redirected_windows_stdio_prefers_locale_encoding(monkeypatch)
     monkeypatch.setattr(cli_main, "sys", fake_sys)
     monkeypatch.delenv("PYTHONIOENCODING", raising=False)
     monkeypatch.delenv("PYTHONUTF8", raising=False)
-    monkeypatch.setattr(cli_main.locale, "getpreferredencoding", lambda do_setlocale=False: "cp936")
 
     cli_main._configure_redirected_windows_stdio()
 
-    assert stdout.reconfigured_to == ("cp936", "strict")
-    assert stderr.reconfigured_to == ("cp936", "strict")
+    assert stdout.reconfigured_to == ("utf-8", "strict")
+    assert stderr.reconfigured_to == ("utf-8", "strict")
 
 
 def test_configure_redirected_windows_stdio_respects_pythonioencoding(monkeypatch):
@@ -82,7 +81,22 @@ def test_configure_redirected_windows_stdio_respects_pythonioencoding(monkeypatc
     monkeypatch.setattr(cli_main.os, "name", "nt")
     monkeypatch.setattr(cli_main, "sys", fake_sys)
     monkeypatch.setenv("PYTHONIOENCODING", "utf-8:strict")
-    monkeypatch.setattr(cli_main.locale, "getpreferredencoding", lambda do_setlocale=False: "cp936")
+
+    cli_main._configure_redirected_windows_stdio()
+
+    assert stdout.reconfigured_to == ("utf-8", "strict")
+    assert stderr.reconfigured_to == ("utf-8", "strict")
+
+
+def test_configure_redirected_windows_stdio_prefers_utf8_mode(monkeypatch):
+    stdout = _FakeRedirectedStream(encoding="cp936")
+    stderr = _FakeRedirectedStream(encoding="cp936")
+    fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=1))
+
+    monkeypatch.setattr(cli_main.os, "name", "nt")
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+    monkeypatch.delenv("PYTHONIOENCODING", raising=False)
+    monkeypatch.delenv("PYTHONUTF8", raising=False)
 
     cli_main._configure_redirected_windows_stdio()
 
