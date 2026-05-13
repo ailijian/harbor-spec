@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T15:53:16Z"
+generated_at: "2026-05-13T16:21:36Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -105,10 +105,10 @@ source_paths:
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
 source_fingerprint: "sha256:09ab1dfbb935b82a5f4b3f7f1e1251c902ae6a25a7ff0dd52a19369bb4ca4832"
-contract_fingerprint: "sha256:bb5c2b81520bca1d0ab4cec9f52a52a3b44a2b6bd4a5334c03f39738fe9be91b"
+contract_fingerprint: "sha256:d58bde39f76818ee13b7f1e730beb0651b88d35b174ab6376835e0db05c9dd06"
 generator_fingerprint: "sha256:011060e99d076f5e749ecc1c7cf296667676a2e2b55b061616f5289975a5eb08"
-view_fingerprint: "96ea714504af553970b983367a1cf3b2a7b117e95a1843531956ce3562b8a1f0"
-fingerprint: "96ea714504af553970b983367a1cf3b2a7b117e95a1843531956ce3562b8a1f0"
+view_fingerprint: "21bb135d2ee00d61106803dfbe59563b8d11b1a9f77543553848fef5bc7cfd4c"
+fingerprint: "21bb135d2ee00d61106803dfbe59563b8d11b1a9f77543553848fef5bc7cfd4c"
 ---
 
 # Module Card: tests
@@ -720,9 +720,11 @@ tests/test_workspace_paths.py
 | tests.test_index_builder_registry_integration.test_build_writes_typescript_additive_fields_into_runtime_cache_snapshot | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_readonly_transient_index_discovers_typescript_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_typescript_enabled_persists_ts_subjects_without_breaking_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | tests/test_index_progress.py | unknown | standard |
 | tests.test_init_detector.test_django_detection | tests/test_init_detector.py | unknown | standard |
 | tests.test_init_detector.test_excludes_do_not_override_code_roots | tests/test_init_detector.py | unknown | standard |

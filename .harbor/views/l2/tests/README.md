@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.1"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-13T15:53:06Z"
+generated_at: "2026-05-13T16:21:14Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 95
@@ -105,7 +105,7 @@ source_paths:
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
 source_fingerprint: "sha256:09ab1dfbb935b82a5f4b3f7f1e1251c902ae6a25a7ff0dd52a19369bb4ca4832"
-contract_fingerprint: "sha256:be8ea6324d7523582fd5aaa31331910e01689cf6d39e3039b6aa257380fa7069"
+contract_fingerprint: "sha256:ef063825880cb69243fda1262f6e8a7f52ccf03adfb076db276bf29c3f53a56d"
 generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
 ---
 
@@ -591,6 +591,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_index_builder.test_index_build_incremental_and_docstring_stability | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_index_builder_file_discovery_matches_python_only_when_ts_enabled | — | standard | ⚪ Missing |
 | tests.test_index_builder_bad_syntax.test_index_builder_skips_bad_syntax | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening.test_index_builder_uses_isolated_cache_dir_without_touching_repo_cache | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_infer_module_from_path_supports_windows_and_posix | — | standard | ⚪ Missing |
@@ -922,6 +923,7 @@ generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad84
 | tests.test_typescript_checkpoint_ci.test_typescript_default_excluded_extensions_do_not_enter_checkpoint | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_typescript_enabled_persists_ts_subjects_without_breaking_python_index | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_index | — | standard | ⚪ Missing |
 | tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_semantic_audit_is_skipped_without_contract_presence_or_ast | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_unsupported_syntax_advisory_remains_non_blocking | — | standard | ⚪ Missing |

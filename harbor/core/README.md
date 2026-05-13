@@ -299,6 +299,7 @@
 | harbor.core.diary.DiaryManager._resolve_author | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_cli_input_path | — | standard | ⚪ Missing |
+| harbor.core.diary.DiaryManager._resolve_diary_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_diary_draft_boundary | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | — | standard | ⚪ Missing |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | — | standard | ⚪ Missing |

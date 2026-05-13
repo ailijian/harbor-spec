@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-13T14:24:20Z",
+  "accepted_at": "2026-05-13T16:20:19Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -3076,7 +3076,7 @@
         "target_id": "python:harbor/core/index.py:method:harbor.core.index.IndexBuilder._index_entry"
       },
       {
-        "body_hash": "85461e654837ad28895755a5a82c60556dc3bbf221d3f4f15ba2125a9394683c",
+        "body_hash": "b6fd2126fa84adea06bfa56e14931d29223ef28d8d82067ca4c14ce592bd4777",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -3088,7 +3088,7 @@
         "target_id": "python:harbor/core/index.py:method:harbor.core.index.IndexBuilder._iter_code_roots"
       },
       {
-        "body_hash": "ba583ebbdba7ca3b4a4d1788bdc6682ecb34b5cf847ee4cc21987f17a92b6419",
+        "body_hash": "084ae0e897763cda14d41ccc1fbfc61d1f2bb0dc3cd80c3b3f0b2ed3683c8724",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -3496,6 +3496,18 @@
         "target_id": "python:harbor/core/init_prompt.py:function:harbor.core.init_prompt._choice_label"
       },
       {
+        "body_hash": "ef9b6c994e86639683fa389d1a0d1c32f690cbb42ee6c419c00fc996155ae4f7",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/init_prompt.py",
+        "func_id": "harbor.core.init_prompt._detect_console_encoding",
+        "id": "harbor.core.init_prompt._detect_console_encoding",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/init_prompt.py:function:harbor.core.init_prompt._detect_console_encoding"
+      },
+      {
         "body_hash": "00ec18f87588a7315ea252361700817ab9dd5206e2b865ac2b61493550f33582",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -3508,7 +3520,7 @@
         "target_id": "python:harbor/core/init_prompt.py:function:harbor.core.init_prompt._is_interactive"
       },
       {
-        "body_hash": "e492429607008d5c49b0d8346e02fa6d17ba62c9a83e7f0a90c1c9e500e86c90",
+        "body_hash": "e217c0515cba1f69d480e420048a645147e64685398e683e3e288a2855bc7675",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -3518,6 +3530,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/core/init_prompt.py:function:harbor.core.init_prompt._render_inline_options"
+      },
+      {
+        "body_hash": "610fd1e52648f1051837059d45863bf332900ca818ee30501b12dc2015278c92",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/init_prompt.py",
+        "func_id": "harbor.core.init_prompt._safe_console_print",
+        "id": "harbor.core.init_prompt._safe_console_print",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/init_prompt.py:function:harbor.core.init_prompt._safe_console_print"
       },
       {
         "body_hash": "e84405bd9dcd4e770d776903915b3da083560dca131b7ae8f924a7031eaa5a23",
@@ -3556,7 +3580,7 @@
         "target_id": "python:harbor/core/init_prompt.py:function:harbor.core.init_prompt.confirm"
       },
       {
-        "body_hash": "b6163e7080028bc182748d31b4a97c5d9e67af31fe8c29a3e8b4d7d709742c10",
+        "body_hash": "ab728b9b000b890771102487dc4d580c01bc6f480d9f663d001a0150a139f0c4",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -5752,7 +5776,7 @@
         "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure.write_project_structure"
       },
       {
-        "body_hash": "363f0b6edff815adcbb72fb08524ae462aa38878d22b21af0a2b91f2fb8bfbfa",
+        "body_hash": "5d30d6374cd6ffba68c14fb1df6c251e4e5cd555c8d3cdbcdf471afbedcfba4a",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -6256,7 +6280,7 @@
         "target_id": "python:harbor/core/sync.py:method:harbor.core.sync.SyncEngine._is_typescript_path"
       },
       {
-        "body_hash": "a168c6ae19718f3745a777b96039c252735507090fc1cf96eb9279b882926dd6",
+        "body_hash": "b6fd2126fa84adea06bfa56e14931d29223ef28d8d82067ca4c14ce592bd4777",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -6268,7 +6292,7 @@
         "target_id": "python:harbor/core/sync.py:method:harbor.core.sync.SyncEngine._iter_code_roots"
       },
       {
-        "body_hash": "ba583ebbdba7ca3b4a4d1788bdc6682ecb34b5cf847ee4cc21987f17a92b6419",
+        "body_hash": "084ae0e897763cda14d41ccc1fbfc61d1f2bb0dc3cd80c3b3f0b2ed3683c8724",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -6400,6 +6424,18 @@
         "target_id": "python:harbor/core/utils.py:function:harbor.core.utils.derive_adopted_roots"
       },
       {
+        "body_hash": "e1f431883b6f4eea9a9254d3a34476d5e8f04103ba2f5b93759a236c68bc8ecd",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/utils.py",
+        "func_id": "harbor.core.utils.discover_indexable_files",
+        "id": "harbor.core.utils.discover_indexable_files",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/utils.py:function:harbor.core.utils.discover_indexable_files"
+      },
+      {
         "body_hash": "cb82ba9b26ddbb41008d7f26befb41dab772731efe30367a1867f30459989844",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -6412,8 +6448,8 @@
         "target_id": "python:harbor/core/utils.py:function:harbor.core.utils.find_function_node"
       },
       {
-        "body_hash": "dc6947e0a8671762bf117872199eb3effa5cc2ff553e86470da6bd4061e09859",
-        "contract_hash": "e57761c3a35ba3648f4eb1d7dd3f0c1c4885d5791c895d0610064c59da1acf02",
+        "body_hash": "80bb4a4c93fcefb3f672e6ced31c6f439839073ba8b4a29986c7f9cfc191757d",
+        "contract_hash": "6ef0e5556be352ac6c1900ea8d308ee863d264cefdf93b59443454e9f400939c",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/utils.py",
@@ -6422,6 +6458,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/core/utils.py:function:harbor.core.utils.iter_project_files"
+      },
+      {
+        "body_hash": "7dce43f895ece6e6b84ea703f3cb5b550f1459966c6a8c9b1004e7bd6a1a8411",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/utils.py",
+        "func_id": "harbor.core.utils.resolve_code_roots",
+        "id": "harbor.core.utils.resolve_code_roots",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/utils.py:function:harbor.core.utils.resolve_code_roots"
       },
       {
         "body_hash": "8b3ddfbb4de58c4874edb53f771ce9f1ee15da6cc21f4d358017c80e9a7ad3b7",
@@ -12748,6 +12796,30 @@
         "target_id": "python:tests/test_index_builder_registry_integration.py:function:tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled"
       },
       {
+        "body_hash": "f9e4a3ed660135101570d27556db950472abee56d29f015bec48354693c9866c",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_index_builder_registry_integration.py",
+        "func_id": "tests.test_index_builder_registry_integration.test_readonly_transient_index_discovers_typescript_when_ts_enabled",
+        "id": "tests.test_index_builder_registry_integration.test_readonly_transient_index_discovers_typescript_when_ts_enabled",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_index_builder_registry_integration.py:function:tests.test_index_builder_registry_integration.test_readonly_transient_index_discovers_typescript_when_ts_enabled"
+      },
+      {
+        "body_hash": "f93e1f0666468145e84273ab6425499c778f8bbb4c6ecb2658ca47e0ec6865ce",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_index_builder_registry_integration.py",
+        "func_id": "tests.test_index_builder_registry_integration.test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled",
+        "id": "tests.test_index_builder_registry_integration.test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_index_builder_registry_integration.py:function:tests.test_index_builder_registry_integration.test_readonly_transient_index_matches_index_builder_discovery_when_ts_enabled"
+      },
+      {
         "body_hash": "acfbc76843d28833903dce50793c5e693688da3fc733547a7a1b9f1a536eeded",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -13012,6 +13084,30 @@
         "target_id": "python:tests/test_init_wizard.py:function:tests.test_init_wizard.test_confirm_accepts_english_yes_no"
       },
       {
+        "body_hash": "10aa38007dbab202f3a1206f5c2eebcc3c1dfcd24d78425d35bd100d383c7f9e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_init_wizard.py",
+        "func_id": "tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_chinese",
+        "id": "tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_chinese",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_init_wizard.py:function:tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_chinese"
+      },
+      {
+        "body_hash": "5839f043f735ca53931b139e341605d1d503b063553faa29651d1ecd062d88a5",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_init_wizard.py",
+        "func_id": "tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_english",
+        "id": "tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_english",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_init_wizard.py:function:tests.test_init_wizard.test_confirm_is_encoding_safe_for_cp1252_english"
+      },
+      {
         "body_hash": "1340eb13678526a791787f496b52251d0497fb25e81dd46b02ca8981a92cddff",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -13168,6 +13264,18 @@
         "target_id": "python:tests/test_init_wizard.py:function:tests.test_init_wizard.test_pytest_env_does_not_try_arrow_selector"
       },
       {
+        "body_hash": "ae0c82968404cc9eb8ec5c34c1f87c1625b586385b0ab9855bb1880d661e61d5",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_init_wizard.py",
+        "func_id": "tests.test_init_wizard.test_select_one_is_encoding_safe_for_cp1252",
+        "id": "tests.test_init_wizard.test_select_one_is_encoding_safe_for_cp1252",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_init_wizard.py:function:tests.test_init_wizard.test_select_one_is_encoding_safe_for_cp1252"
+      },
+      {
         "body_hash": "0b1303028e9a237db957bfc58c76b194325e82aeb912ff53b622f338f53d3482",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -13202,6 +13310,66 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_init_wizard.py:function:tests.test_init_wizard.test_wizard_language_prompt_comes_first"
+      },
+      {
+        "body_hash": "f28108170ad23b6620c83c7ae90abbd8b98454d2270495f091b4e376c1b3c11b",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_init_wizard.py",
+        "func_id": "tests.test_init_wizard.StrictEncodingTextIO.__init__",
+        "id": "tests.test_init_wizard.StrictEncodingTextIO.__init__",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_init_wizard.py:method:tests.test_init_wizard.StrictEncodingTextIO.__init__"
+      },
+      {
+        "body_hash": "9f730a1a70a6144b0dc8da4942d9093cd268d625eafac5188775d0d6b8b25f08",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_init_wizard.py",
+        "func_id": "tests.test_init_wizard.StrictEncodingTextIO.flush",
+        "id": "tests.test_init_wizard.StrictEncodingTextIO.flush",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_init_wizard.py:method:tests.test_init_wizard.StrictEncodingTextIO.flush"
+      },
+      {
+        "body_hash": "2d9914df5259e933b776bc3014db62e83fe8a836ad49b9d6ce906ccf9d64c00f",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_init_wizard.py",
+        "func_id": "tests.test_init_wizard.StrictEncodingTextIO.getvalue",
+        "id": "tests.test_init_wizard.StrictEncodingTextIO.getvalue",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_init_wizard.py:method:tests.test_init_wizard.StrictEncodingTextIO.getvalue"
+      },
+      {
+        "body_hash": "e706fa9325ded821b93ed8bde1093c7c1394b3342739239f6f5f848b8ea76eb4",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_init_wizard.py",
+        "func_id": "tests.test_init_wizard.StrictEncodingTextIO.isatty",
+        "id": "tests.test_init_wizard.StrictEncodingTextIO.isatty",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_init_wizard.py:method:tests.test_init_wizard.StrictEncodingTextIO.isatty"
+      },
+      {
+        "body_hash": "0c5160a8bcfc351b4a20e413db37ef479ac7b3c4d3b136ceb636760153db3a00",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_init_wizard.py",
+        "func_id": "tests.test_init_wizard.StrictEncodingTextIO.write",
+        "id": "tests.test_init_wizard.StrictEncodingTextIO.write",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_init_wizard.py:method:tests.test_init_wizard.StrictEncodingTextIO.write"
       },
       {
         "body_hash": "b79026b8f0dfdbc9c7fd1aa71cc9ccde06a2e664d726d1109614d561151bfe83",
@@ -15292,6 +15460,18 @@
         "target_id": "python:tests/test_stale.py:function:tests.test_stale._write_sample_repo"
       },
       {
+        "body_hash": "1ea9b36d5e45b737c85afddcb90dd3d2be56575fe5f707bd579da05f60dfb7a6",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_stale.py",
+        "func_id": "tests.test_stale._write_typescript_sample_repo",
+        "id": "tests.test_stale._write_typescript_sample_repo",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_stale.py:function:tests.test_stale._write_typescript_sample_repo"
+      },
+      {
         "body_hash": "f17427968c9d2517bb59cbd1915e810d2d54807a80c1a95c7b42435863e40be2",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -15326,6 +15506,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_stale.py:function:tests.test_stale.test_check_module_derived_views_stale_unknown_consistency_when_no_indexed_records"
+      },
+      {
+        "body_hash": "21712d2a67a75450ab361fbab7a5c60f73b8e3e51b46a29fa737728dad7da702",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_stale.py",
+        "func_id": "tests.test_stale.test_check_module_derived_views_stale_uses_ts_aware_transient_index_without_runtime_cache",
+        "id": "tests.test_stale.test_check_module_derived_views_stale_uses_ts_aware_transient_index_without_runtime_cache",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_stale.py:function:tests.test_stale.test_check_module_derived_views_stale_uses_ts_aware_transient_index_without_runtime_cache"
       },
       {
         "body_hash": "eb5a5cd0a1e260fca353e0f6155c0be751b040ddc91b16cad51964467281b58a",
