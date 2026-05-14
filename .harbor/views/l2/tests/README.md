@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-13T20:54:36Z"
+generated_at: "2026-05-14T07:04:10Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
-source_path_count: 95
+source_path_count: 96
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -99,13 +99,14 @@ source_paths:
   - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
+  - "tests/test_windows_json_stdio_regression.py"
   - "tests/test_workspace_gitignore_policy.py"
   - "tests/test_workspace_i18n.py"
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:8551e5e78a853a392516c52e0ead5bdf92b4075ceb6e88c0825d3001a752e5ca"
-contract_fingerprint: "sha256:1db6eac7aaaf12017ab78dccb7bbd18f0fa42c35b1016bfde1bc07c1cd4dbbe8"
+source_fingerprint: "sha256:edfaba87ac54523a8215421fe4ed70abced2832a31a3aaa1262e940955564165"
+contract_fingerprint: "sha256:336cfaefa3a4a1ca1ca173430eb121fc1a42c5cf7eb27f91b64f8ccb23f2b363"
 generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476c5ad96e7689aade"
 ---
 
@@ -129,10 +130,13 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | — | standard | ⚪ Missing |
 | tests.test_baseline_artifact._baseline_item | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline._build_strict_target | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._cached_canonical_json_payload | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._canonical_json_payload | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._checkpoint_payload | — | standard | ⚪ Missing |
 | tests.test_cli_v2._clean_status_report | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._configure_accept_cli | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._configure_finish_cli | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._contains_cjk | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._contract_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._contract_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat._contract_report | — | standard | ⚪ Missing |
@@ -204,18 +208,21 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_cli_finish_sync_context._patch_finish_basics | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._patch_inputs | — | standard | ⚪ Missing |
 | tests.test_lock_flags._prepare_proj | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._ps_quote | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._read_last_marker | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._read_runtime_diagnostics | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._read_single_diary_entry | — | standard | ⚪ Missing |
 | tests.test_drafting._rep_with | — | standard | ⚪ Missing |
 | tests.test_release_packaging._repo_root | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy._repo_root | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._require_windows_powershell_51 | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._run_cli | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening._run_cmd | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths._run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_stale._run_cmd_with_exit_code | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._run_git | — | standard | ⚪ Missing |
 | tests.test_release_packaging._run_help | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._run_powershell_json_capture_cases | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env._run_real_cli | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat._sample_contract | — | standard | ⚪ Missing |
 | tests.test_cli_json_output._sample_doctor_report | — | standard | ⚪ Missing |
@@ -247,6 +254,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_workspace_inspect._touch | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._touch | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._view_summary | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._with_repo_pythonpath | — | standard | ⚪ Missing |
 | tests.test_python_ddt_regression._write | — | standard | ⚪ Missing |
 | tests.test_sync_engine_registry_integration._write | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._write | — | standard | ⚪ Missing |
@@ -461,6 +469,8 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_defaults_non_tty_to_utf8 | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_normalizes_non_utf8_tty | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_prefers_utf8_mode | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_keeps_stdout_native | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_respects_pythonioencoding | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_reconfigure_failure_does_not_interrupt | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_respects_pythonioencoding | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_skips_utf8_tty | — | standard | ⚪ Missing |
@@ -626,6 +636,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_typescript_contract_presence.test_internal_helper_is_not_required | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_invalid_marker_falls_back_to_accept_with_explicit_note | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_is_pure_json_output_argv_detects_supported_routes | — | standard | ⚪ Missing |
 | tests.test_index_progress.test_iter_build_emits_progress_and_counts | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_json_output_does_not_include_absolute_paths | — | standard | ⚪ Missing |
 | tests.test_drafting_json_parse.test_kv_fallback_lines_parse | — | standard | ⚪ Missing |
@@ -955,6 +966,8 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_windows_absolute_write_path_cannot_escape_repo_root | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_windows_posix_path_normalization | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression.test_windows_powershell_51_checkpoint_json_round_trip | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression.test_windows_powershell_51_ci_json_gate_commands_round_trip | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_wizard_language_prompt_comes_first | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_workflow_help_exposes_start_checkpoint_finish_accept | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect.test_workspace_inspect_generated_views_count | — | standard | ⚪ Missing |

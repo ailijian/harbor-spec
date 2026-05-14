@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-13T20:54:33Z"
+generated_at: "2026-05-14T07:04:08Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
 source_path_count: 59
@@ -68,8 +68,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:35eeccf3ea54bdbf59de1bddf5b2d5f9da28ae698e4f9b3f5790836bfb14ea09"
-contract_fingerprint: "sha256:58b79998cde8663021927b70725d7d8f26d6f7a75eb9e3d24dbcad75c6b526c6"
+source_fingerprint: "sha256:cf1e0c8d9b918bde7503fcb6bc08c62a9cfa2f646fc0aa546f4f9ab30a8753a6"
+contract_fingerprint: "sha256:ffc48d7302b2457aed6104c2db8e34c28e9ed6ae149a6797c8e55506d3f6a75e"
 generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476c5ad96e7689aade"
 ---
 
@@ -301,6 +301,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.init_prompt._is_interactive | — | standard | ⚪ Missing |
 | harbor.cli.main._is_log_write_interactive | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_public_cli_path | — | standard | ⚪ Missing |
+| harbor.cli.main._is_pure_json_output_argv | Detect pure JSON stdout routes from raw argv without chan... | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._is_script_file | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._is_test_file | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_test_path | — | standard | ⚪ Missing |

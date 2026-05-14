@@ -131,11 +131,48 @@ def _resolve_windows_explicit_stdio_config() -> Optional[Tuple[Optional[str], Op
     return resolved_encoding, resolved_errors or None
 
 
-def _resolve_windows_stdio_target(stream) -> Optional[Tuple[Optional[str], Optional[str]]]:
+def _is_pure_json_output_argv(argv) -> bool:
+    """Detect pure JSON stdout routes from raw argv without changing parsing."""
+    if not argv:
+        return False
+
+    tokens = [str(token) for token in argv]
+    wants_json = False
+    for index, token in enumerate(tokens):
+        if token == "--format" and index + 1 < len(tokens):
+            wants_json = tokens[index + 1] == "json"
+            continue
+        if token.startswith("--format="):
+            wants_json = token.partition("=")[2] == "json"
+    if not wants_json:
+        return False
+
+    non_option_tokens = [token for token in tokens if token != "--" and not token.startswith("-")]
+    if not non_option_tokens:
+        return False
+
+    command = non_option_tokens[0]
+    subcommand = non_option_tokens[1] if len(non_option_tokens) > 1 else None
+    pure_json_commands = {"accept", "checkpoint", "doctor", "next", "stale"}
+    if command in pure_json_commands:
+        return True
+    if command == "log" and subcommand == "draft":
+        return True
+    if command == "workspace" and subcommand in {"inspect", "migrate"}:
+        return True
+    return False
+
+
+def _resolve_windows_stdio_target(
+    stream, *, preserve_native_encoding: bool = False
+) -> Optional[Tuple[Optional[str], Optional[str]]]:
     """Resolve the preferred Windows stdio strategy for one CLI output stream."""
     explicit = _resolve_windows_explicit_stdio_config()
     if explicit is not None:
         return explicit
+
+    if preserve_native_encoding:
+        return None
 
     if os.environ.get("PYTHONUTF8") == "1" or getattr(sys.flags, "utf8_mode", 0):
         return "utf-8", "strict"
@@ -161,16 +198,20 @@ def _resolve_windows_redirected_stdio_encoding(stream) -> Optional[str]:
     return target[0]
 
 
-def _configure_windows_stdio() -> None:
+def _configure_windows_stdio(argv=None) -> None:
     """Apply a Windows CLI-wide UTF-8-first stdio strategy when possible."""
     if os.name != "nt":
         return
+    pure_json_stdout = _is_pure_json_output_argv(argv)
     for name in ("stdout", "stderr"):
         stream = getattr(sys, name, None)
         if stream is None or not hasattr(stream, "reconfigure"):
             continue
         try:
-            target_encoding, target_errors = _resolve_windows_stdio_target(stream) or (None, None)
+            target_encoding, target_errors = _resolve_windows_stdio_target(
+                stream,
+                preserve_native_encoding=(pure_json_stdout and name == "stdout"),
+            ) or (None, None)
             if target_encoding is None and target_errors is None:
                 continue
 
@@ -198,9 +239,9 @@ def _configure_windows_stdio() -> None:
             continue
 
 
-def _configure_redirected_windows_stdio() -> None:
+def _configure_redirected_windows_stdio(argv=None) -> None:
     """Backward-compatible wrapper for the Windows CLI-wide stdio policy."""
-    _configure_windows_stdio()
+    _configure_windows_stdio(argv=argv)
 
 
 def main():
@@ -219,9 +260,19 @@ def main():
         friendly CLI errors for caller-visible handling.
       - Invalid legacy `harbor log` args exit with code 1 and must not print a
         Python traceback in normal CLI output.
-      - On Windows, CLI output streams apply a consistent UTF-8-first strategy
-        for localized text across redirected outputs and eligible interactive
-        TTY streams unless the caller explicitly overrides stdio encoding.
+      - On Windows, human-readable text routes retain the CLI-wide UTF-8-first
+        stdio strategy for localized output across redirected outputs and
+        eligible interactive TTY streams unless the caller explicitly overrides
+        stdio encoding with `PYTHONIOENCODING`.
+      - Pure JSON stdout routes detected from raw argv (for example
+        `checkpoint --ci --format json`) preserve native/host-compatible
+        `stdout` behavior on Windows unless the caller explicitly overrides
+        stdio encoding with `PYTHONIOENCODING`; `stderr` keeps the existing
+        UTF-8-first policy for localized diagnostics.
+      - This Windows pure-JSON stdout carve-out avoids PowerShell 5.1 native
+        command display / redirection corruption while keeping machine-readable
+        JSON payload keys, value shape, command routing, and exit-code
+        semantics unchanged.
       - `harbor log draft` / `harbor log write` dispatch order remains explicit:
         draft/write subcommands are handled before legacy direct `harbor log`
         message or LLM-assisted draft flows.
@@ -286,7 +337,10 @@ def main():
         actions for formal Diary write/save flows only when the current evidence
         is sufficient to generate a writable Diary Draft.
       - Redirected stdio encoding normalization must not change CLI arguments,
-        exit-code semantics, JSON payload structure, or file-write targets.
+        exit-code semantics, JSON payload structure, file-write targets, or
+        `stderr` semantics; the Windows pure-JSON stdout compatibility
+        carve-out changes only stdio configuration policy, not JSON business
+        fields or parser behavior.
       - `harbor log draft` refreshes latest draft runtime cache under
         `.harbor/state/log/latest-draft.md` and
         `.harbor/state/log/latest-draft.json` only when it produced a writable
@@ -362,7 +416,13 @@ def main():
         runtime state under `.harbor/state/change-windows/`.
 
     Returns:
-      None: Dispatches the selected CLI command. Change-window snapshot writes
+      None: Dispatches the selected CLI command. On Windows, successful
+      human-readable text routes retain UTF-8-first localized output behavior,
+      while successful pure JSON stdout routes preserve host-compatible
+      `stdout` behavior unless the caller explicitly overrides stdio encoding
+      via `PYTHONIOENCODING`; these stdio-policy differences do not change JSON
+      keys, value shape, command routing, exit semantics, or `stderr`
+      semantics. Change-window snapshot writes
       are additive runtime state only and do not change the original command
       exit semantics. Snapshot write failures may append runtime-only
       diagnostics under `.harbor/state/change-window-diagnostics.jsonl`.
@@ -420,8 +480,11 @@ def main():
       roll back a completed Diary write. Non-interactive `harbor log write`
       still requires explicit `--yes` authorization unless the user confirms in
       an interactive session; cancel/deny paths must not write
-      `.harbor/diary/**`. These UX-polish paths do not call LLM, do not print
-      file bodies / diff bodies / secrets. `finish --sync-context` stale
+      `.harbor/diary/**`. Windows stdio normalization and the pure-JSON stdout
+      compatibility carve-out do not introduce a new blocking exception path
+      and do not change command routing, JSON payload semantics, or `stderr`
+      semantics. These UX-polish paths do not call LLM, do not print file
+      bodies / diff bodies / secrets. `finish --sync-context` stale
       self-check and generator/integrity advisory remain guidance/output
       behavior only: they do not introduce a new blocking exception path, do
       not change `checkpoint` / `stale` / `doctor` gate semantics, and do not
@@ -431,9 +494,9 @@ def main():
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: once
-    @harbor.behavior: checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; `finish --sync-context`, `docs --changed`, `module seal --changed`, `stale --changed`, `stale --ci`, and `doctor --changed` share one changed-scope resolver for changed-module detection, repo-relative normalization, and indexed parent aggregate expansion; generated-context write paths plus `stale` / `doctor` enumeration paths use fresh/source-compatible readonly index helpers to reduce local-cache versus clean-CI drift without changing user-visible CLI routing semantics; `finish --sync-context` writes changed-scope L2 README / Module Capsule outputs, then runs a same-scope stale self-check that prints an explicit pass message or residual stale rows with deterministic repair guidance; generator / integrity file hits print broader-refresh advisory text recommending explicit `harbor docs --all --write` and `harbor module seal --all --write` only, without auto-running full refresh or project-structure refresh; docs/module batch flows reject outside-repo absolute module paths and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
+    @harbor.behavior: Windows human-readable text routes retain CLI-wide UTF-8-first localized output behavior unless the caller explicitly overrides stdio encoding with `PYTHONIOENCODING`; Windows pure JSON `--format json` stdout routes preserve host-compatible `stdout` behavior unless explicitly overridden, avoiding PowerShell 5.1 native-command display/redirection corruption without changing JSON keys, value shape, exit codes, command routing, or `stderr` semantics; checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; `finish --sync-context`, `docs --changed`, `module seal --changed`, `stale --changed`, `stale --ci`, and `doctor --changed` share one changed-scope resolver for changed-module detection, repo-relative normalization, and indexed parent aggregate expansion; generated-context write paths plus `stale` / `doctor` enumeration paths use fresh/source-compatible readonly index helpers to reduce local-cache versus clean-CI drift without changing user-visible CLI routing semantics; `finish --sync-context` writes changed-scope L2 README / Module Capsule outputs, then runs a same-scope stale self-check that prints an explicit pass message or residual stale rows with deterministic repair guidance; generator / integrity file hits print broader-refresh advisory text recommending explicit `harbor docs --all --write` and `harbor module seal --all --write` only, without auto-running full refresh or project-structure refresh; docs/module batch flows reject outside-repo absolute module paths and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
     """
-    _configure_windows_stdio()
+    _configure_windows_stdio(sys.argv[1:])
 
     try:
         from dotenv import load_dotenv

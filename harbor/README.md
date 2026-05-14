@@ -226,6 +226,7 @@
 | harbor.core.init_prompt._is_interactive | — | standard | ⚪ Missing |
 | harbor.cli.main._is_log_write_interactive | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_public_cli_path | — | standard | ⚪ Missing |
+| harbor.cli.main._is_pure_json_output_argv | Detect pure JSON stdout routes from raw argv without chan... | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._is_script_file | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._is_test_file | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_test_path | — | standard | ⚪ Missing |

@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-13T20:54:36Z"
+generated_at: "2026-05-14T07:04:11Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 95
+source_path_count: 96
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -99,16 +99,17 @@ source_paths:
   - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
+  - "tests/test_windows_json_stdio_regression.py"
   - "tests/test_workspace_gitignore_policy.py"
   - "tests/test_workspace_i18n.py"
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:8551e5e78a853a392516c52e0ead5bdf92b4075ceb6e88c0825d3001a752e5ca"
-contract_fingerprint: "sha256:8292a69ae796a0fa65e1f97cbdf8ff47cc339815879f1cfb34b819f096d4ca97"
+source_fingerprint: "sha256:edfaba87ac54523a8215421fe4ed70abced2832a31a3aaa1262e940955564165"
+contract_fingerprint: "sha256:19d20676a4893b7630637377f85f5fd4380e888e717ddf5e10aeb5704135c49d"
 generator_fingerprint: "sha256:397ed303b344c4694fd3842fbc3ccf02c9a40345ba4f92f0de83e5ac2e3a2149"
-view_fingerprint: "9b449d698f8f357a5eb70135fed82e1f68bc3657bbc9b28b67138dacebb066c6"
-fingerprint: "9b449d698f8f357a5eb70135fed82e1f68bc3657bbc9b28b67138dacebb066c6"
+view_fingerprint: "e0b3ad9d8391d0178d18878a5d223f8865986528c2808a35e73b2a11d8fb5fa9"
+fingerprint: "e0b3ad9d8391d0178d18878a5d223f8865986528c2808a35e73b2a11d8fb5fa9"
 ---
 
 # Module Card: tests
@@ -219,6 +220,7 @@ tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
+tests/test_windows_json_stdio_regression.py
 tests/test_workspace_gitignore_policy.py
 tests/test_workspace_i18n.py
 tests/test_workspace_inspect.py
@@ -443,6 +445,8 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_defaults_non_tty_to_utf8 | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_normalizes_non_utf8_tty | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_prefers_utf8_mode | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_keeps_stdout_native | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_respects_pythonioencoding | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_reconfigure_failure_does_not_interrupt | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_respects_pythonioencoding | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_skips_utf8_tty | tests/test_cli_finish_sync_context.py | unknown | standard |
@@ -455,6 +459,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context.test_finish_sync_context_then_stale_ci_pass_for_changed_scope | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_warns_on_generator_integrity_changes | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_write_boundary_only_allows_docs_and_capsules | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_is_pure_json_output_argv_detects_supported_routes | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_help_and_ux._force_en_locale | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.run_cmd | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.run_help | tests/test_cli_help_and_ux.py | unknown | standard |
@@ -1060,6 +1065,15 @@ tests/test_workspace_paths.py
 | tests.test_utils_format.test_format_size_mb | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_negative_raises | tests/test_utils_format.py | unknown | standard |
 | tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix | tests/test_windows_abs_path_prefix.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._cached_canonical_json_payload | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._canonical_json_payload | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._contains_cjk | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._ps_quote | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._require_windows_powershell_51 | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._run_powershell_json_capture_cases | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._with_repo_pythonpath | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression.test_windows_powershell_51_checkpoint_json_round_trip | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression.test_windows_powershell_51_ci_json_gate_commands_round_trip | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_workspace_gitignore_policy._gitignore_entries | tests/test_workspace_gitignore_policy.py | unknown | standard |
 | tests.test_workspace_gitignore_policy._is_ignored | tests/test_workspace_gitignore_policy.py | unknown | standard |
 | tests.test_workspace_gitignore_policy._repo_root | tests/test_workspace_gitignore_policy.py | unknown | standard |
@@ -1196,6 +1210,7 @@ tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
+tests/test_windows_json_stdio_regression.py
 tests/test_workspace_gitignore_policy.py
 tests/test_workspace_i18n.py
 tests/test_workspace_inspect.py

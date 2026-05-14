@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2"
 view_type: "review_checklist"
 module: "tests"
-generated_at: "2026-05-13T20:54:36Z"
+generated_at: "2026-05-14T07:04:11Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 95
+source_path_count: 96
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -99,13 +99,14 @@ source_paths:
   - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
+  - "tests/test_windows_json_stdio_regression.py"
   - "tests/test_workspace_gitignore_policy.py"
   - "tests/test_workspace_i18n.py"
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:8551e5e78a853a392516c52e0ead5bdf92b4075ceb6e88c0825d3001a752e5ca"
-contract_fingerprint: "sha256:8292a69ae796a0fa65e1f97cbdf8ff47cc339815879f1cfb34b819f096d4ca97"
+source_fingerprint: "sha256:edfaba87ac54523a8215421fe4ed70abced2832a31a3aaa1262e940955564165"
+contract_fingerprint: "sha256:19d20676a4893b7630637377f85f5fd4380e888e717ddf5e10aeb5704135c49d"
 generator_fingerprint: "sha256:5dc6c8e56267ea488caf99f4cf54906e2bcfd61f467266ecfed6229d0c5d9199"
 ---
 

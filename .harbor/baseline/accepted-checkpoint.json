@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-13T21:05:56Z",
+  "accepted_at": "2026-05-14T07:13:58Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -712,7 +712,7 @@
         "target_id": "python:harbor/adapters/typescript/parser.py:method:harbor.adapters.typescript.parser.TypeScriptLightweightParser.parse"
       },
       {
-        "body_hash": "f5dd3d7af7660ca0300042a990edaefe6051c55958d006ebd5925d1d0ed33f85",
+        "body_hash": "0fa9f97713f42bceb95c6fb543e0cf0106890119ba1fae799894f170d1c6bb08",
         "contract_hash": "24139aaf7370d246314996bcc84ccc1b2e7c557f65e3e0e687cf060e027fb9e1",
         "contract_presence": "non_contract_doc",
         "contract_required": false,
@@ -724,7 +724,7 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._configure_redirected_windows_stdio"
       },
       {
-        "body_hash": "9ee7184b1d9e14b2e061f6dc7e59c6f82bcec4c9b7aa8653a1f35d74f7a890d9",
+        "body_hash": "dfc06d7c38b80f4036aae2ab4efbf4c3631acb5182fe4fa9e035376b08fe5723",
         "contract_hash": "66d50c8d2633d57aba34e9c6a73c59c057db34634388a1d8d21686ede132ef4e",
         "contract_presence": "non_contract_doc",
         "contract_required": false,
@@ -746,6 +746,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._is_log_write_interactive"
+      },
+      {
+        "body_hash": "6744587eb91b831c015e41e7ecad6d250e873c48c93f7275409532b4df9aaf1a",
+        "contract_hash": "9cb0b5de3962a77d1ed34988dac5b79d27d36431a6de169549003dc6990f59a0",
+        "contract_presence": "non_contract_doc",
+        "contract_required": false,
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main._is_pure_json_output_argv",
+        "id": "harbor.cli.main._is_pure_json_output_argv",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._is_pure_json_output_argv"
       },
       {
         "body_hash": "0e44b52f07b598d93b3ca3ce235d40003666cdb0dba996faf7c5e3891ec596ea",
@@ -796,7 +808,7 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._resolve_windows_redirected_stdio_encoding"
       },
       {
-        "body_hash": "4e1c2a1dd3ecd91df8d723878e4c6910e311fcab9ffa88041f73b7abaa503faf",
+        "body_hash": "c53f9d61b3244a84f18770d2f84faf95fdb6dec4524284b4c693751a3d998487",
         "contract_hash": "c582411196ab7cdf4a90723cef3d0e4ef1fdc47eafbf8744546c0f232842847c",
         "contract_presence": "non_contract_doc",
         "contract_required": false,
@@ -808,8 +820,8 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._resolve_windows_stdio_target"
       },
       {
-        "body_hash": "442af069a6a7d946414c924e80e6874ba355eba2b414d788c17cb982a2ce0836",
-        "contract_hash": "b7e20b383bd355b0238b6b8e52193625a74e9b2e3718b40fc78d8faf3a03f526",
+        "body_hash": "a193f1b66c275e3254563e404e60b7b3569237df28ea6887c94ebf3a8d071657",
+        "contract_hash": "a8969a7d3ed1da3869054fb4e64fc6d8a48aeadfcf31d7d861f09ba483f31702",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/cli/main.py",
@@ -9484,6 +9496,30 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_prefers_utf8_mode"
       },
       {
+        "body_hash": "a4651a3cd9bc57d43a43e9c2bba6230ee593b7183158576dfdf7cbeb4731052e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_keeps_stdout_native",
+        "id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_keeps_stdout_native",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_keeps_stdout_native"
+      },
+      {
+        "body_hash": "05e42704dc65965d380983e6806c4897e95fcae641df44c97a5caa400a94b7f1",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_respects_pythonioencoding",
+        "id": "tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_respects_pythonioencoding",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_pure_json_respects_pythonioencoding"
+      },
+      {
         "body_hash": "e34e4e26fb6fd92ee7adf44d22224641d12debeeff80dbca75653327f264be3c",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -9626,6 +9662,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_write_boundary_only_allows_docs_and_capsules"
+      },
+      {
+        "body_hash": "141dabef4235add7c0da12f1982ecfd2b93dbb8066d13b61ca25c46ece3bb8c4",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_is_pure_json_output_argv_detects_supported_routes",
+        "id": "tests.test_cli_finish_sync_context.test_is_pure_json_output_argv_detects_supported_routes",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_is_pure_json_output_argv_detects_supported_routes"
       },
       {
         "body_hash": "fca1f61c30294724743b5aecdf321c9f3f1615bd39e0c5859e82adf1e2c254ca",
@@ -16970,6 +17018,114 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_windows_abs_path_prefix.py:function:tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix"
+      },
+      {
+        "body_hash": "b21bfe8cb1324d1c61345d7dd435a9cb977c26af3db3befe89855dcee41e1fe0",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._cached_canonical_json_payload",
+        "id": "tests.test_windows_json_stdio_regression._cached_canonical_json_payload",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._cached_canonical_json_payload"
+      },
+      {
+        "body_hash": "250965c1707ffb67957e02612c175cebdff74b1260b53877d6b38114b654989a",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._canonical_json_payload",
+        "id": "tests.test_windows_json_stdio_regression._canonical_json_payload",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._canonical_json_payload"
+      },
+      {
+        "body_hash": "424c0a84975e773bbfcce32982789d5addae0827ced3fa0d53fda63bcb4a5531",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._contains_cjk",
+        "id": "tests.test_windows_json_stdio_regression._contains_cjk",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._contains_cjk"
+      },
+      {
+        "body_hash": "29968f711e493647ad53062965d3945893e5c98fd98521cee68349f8142dbd34",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._ps_quote",
+        "id": "tests.test_windows_json_stdio_regression._ps_quote",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._ps_quote"
+      },
+      {
+        "body_hash": "b71597949b9bf8955e41c0af6e981782e48d4b8a403dcfaa89eacb78ddf1af3c",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._require_windows_powershell_51",
+        "id": "tests.test_windows_json_stdio_regression._require_windows_powershell_51",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._require_windows_powershell_51"
+      },
+      {
+        "body_hash": "9bd877d187feca745dffc627d1f71c4f6220577a54956726d2a9fa2db99beace",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._run_powershell_json_capture_cases",
+        "id": "tests.test_windows_json_stdio_regression._run_powershell_json_capture_cases",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._run_powershell_json_capture_cases"
+      },
+      {
+        "body_hash": "66d62fa2dbb3882e9e3cad850009dab791e9f611d11057a0cd9a86ffb58a3375",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._with_repo_pythonpath",
+        "id": "tests.test_windows_json_stdio_regression._with_repo_pythonpath",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._with_repo_pythonpath"
+      },
+      {
+        "body_hash": "4da017a4dbc06ef070734abe3f39ee9a2be797da7f3852faac19b6af3ad646c4",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression.test_windows_powershell_51_checkpoint_json_round_trip",
+        "id": "tests.test_windows_json_stdio_regression.test_windows_powershell_51_checkpoint_json_round_trip",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression.test_windows_powershell_51_checkpoint_json_round_trip"
+      },
+      {
+        "body_hash": "3a219bc0907386787de05f709402418368c963ec47085cb508c19d9a9244bdb1",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression.test_windows_powershell_51_ci_json_gate_commands_round_trip",
+        "id": "tests.test_windows_json_stdio_regression.test_windows_powershell_51_ci_json_gate_commands_round_trip",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression.test_windows_powershell_51_ci_json_gate_commands_round_trip"
       },
       {
         "body_hash": "0f4aacc4d688b5b177b5ba09185f832aa4d56d12a9f1e387fba109259425a931",

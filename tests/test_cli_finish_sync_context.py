@@ -181,6 +181,47 @@ def test_configure_windows_stdio_reconfigure_failure_does_not_interrupt(monkeypa
     assert stderr.reconfigured_to == ("utf-8", "strict")
 
 
+def test_is_pure_json_output_argv_detects_supported_routes():
+    assert cli_main._is_pure_json_output_argv(["checkpoint", "--ci", "--format", "json"]) is True
+    assert cli_main._is_pure_json_output_argv(["doctor", "--format=json"]) is True
+    assert cli_main._is_pure_json_output_argv(["workspace", "inspect", "--format", "json"]) is True
+    assert cli_main._is_pure_json_output_argv(["log", "draft", "--format", "json"]) is True
+    assert cli_main._is_pure_json_output_argv(["check", "--format", "jsonl"]) is False
+    assert cli_main._is_pure_json_output_argv(["checkpoint", "--format", "text"]) is False
+
+
+def test_configure_windows_stdio_pure_json_keeps_stdout_native(monkeypatch):
+    stdout = _FakeWindowsStream(encoding="cp936")
+    stderr = _FakeWindowsStream(encoding="cp936")
+    fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=0))
+
+    monkeypatch.setattr(cli_main.os, "name", "nt")
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+    monkeypatch.delenv("PYTHONIOENCODING", raising=False)
+    monkeypatch.delenv("PYTHONUTF8", raising=False)
+
+    cli_main._configure_windows_stdio(["checkpoint", "--ci", "--format", "json"])
+
+    assert stdout.reconfigured_to is None
+    assert stderr.reconfigured_to == ("utf-8", "strict")
+
+
+def test_configure_windows_stdio_pure_json_respects_pythonioencoding(monkeypatch):
+    stdout = _FakeWindowsStream(encoding="cp936")
+    stderr = _FakeWindowsStream(encoding="cp936")
+    fake_sys = SimpleNamespace(stdout=stdout, stderr=stderr, flags=SimpleNamespace(utf8_mode=0))
+
+    monkeypatch.setattr(cli_main.os, "name", "nt")
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+    monkeypatch.setenv("PYTHONIOENCODING", "cp1252:replace")
+    monkeypatch.delenv("PYTHONUTF8", raising=False)
+
+    cli_main._configure_windows_stdio(["checkpoint", "--ci", "--format", "json"])
+
+    assert stdout.reconfigured_to == ("cp1252", "replace")
+    assert stderr.reconfigured_to == ("cp1252", "replace")
+
+
 def test_configure_redirected_windows_stdio_prefers_locale_encoding(monkeypatch):
     test_configure_windows_stdio_defaults_non_tty_to_utf8(monkeypatch)
 
