@@ -41,6 +41,34 @@ HarborSpec 的目标是：
 
 ---
 
+## 🚀 v1.4.2.2：Windows JSON Stdout Compatibility Closure
+
+Harbor-spec v1.4.2.2 是围绕 Windows 主机编码兼容性的维护补丁版本，用于完成 cp1252 runner closure，并收口纯 JSON stdout 的统一输出策略。
+
+### v1.4.2.2 本轮修复
+
+* 纯 JSON CLI 输出点统一迁移到 `_emit_json_stdout()`：
+  * localized JSON when stdout encoding can strictly encode payload
+  * ASCII-safe fallback when it cannot
+* Windows 非 UTF-8 主机编码下保持纯 JSON stdout 稳定：
+  * cp936 主机继续优先输出 localized JSON
+  * cp1252 等无法严格编码本地化文本的主机自动回退到 ASCII-safe JSON
+* `main()` contract/docstring、accepted baseline 与 generated context 一并对齐
+
+### v1.4.2.2 已验证
+
+* `python -m harbor.cli.main accept`
+* `python -m harbor.cli.main checkpoint --ci --format json`
+* `python -m harbor.cli.main stale --ci --format json`
+* `python -m harbor.cli.main doctor --ci --format json`
+* GitHub Actions `CI`：
+  * Ubuntu `3.9`
+  * Ubuntu `3.10`
+  * Ubuntu `3.11`
+  * `windows-full-governance`
+
+---
+
 ## 🚀 v1.4.2：TypeScript Contract Source Strengthening
 
 Harbor-spec v1.4.2 在 `v1.4.1` 的 Log Draft / Controlled Write workflow 之上，恢复 TypeScript 主线，并先补齐 richer contract source 之前必须稳定的治理基础。

@@ -1,3 +1,41 @@
+# Harbor-spec v1.4.2.2 — Windows JSON Stdout Compatibility Closure
+
+状态：正式版
+发布类型：Maintenance Patch / Windows JSON Stdout Compatibility Fix
+
+## Summary
+
+- 完成 Windows 主机编码兼容性修复收口，覆盖 cp936 与 cp1252 等非 UTF-8 stdout 主机场景。
+- 纯 JSON CLI 输出点统一收口到 `_emit_json_stdout()`，避免各命令各自分叉处理编码与回退策略。
+- 当 stdout 编码可以严格表示 payload 时，保持 localized JSON 输出。
+- 当 stdout 编码无法严格表示本地化 payload 时，自动回退到 ASCII-safe JSON，同时保持 JSON 语义与稳定键不变。
+- `main()` 的 contract/docstring、accepted baseline 与 generated context 已同步对齐。
+
+## Fixed
+
+- 修复 Windows 非 UTF-8 主机编码下纯 JSON stdout 可能因本地化文本不可编码而退化为异常、乱码或不稳定输出的问题。
+- 修复不同 JSON CLI 输出点在编码处理策略上不一致的问题，改为统一入口处理。
+- 修复 cp1252 runner closure 的最后一处发布阻断项，并完成 baseline acceptance 闭环。
+
+## Compatibility
+
+- 保持 JSON payload 语义不变；变化仅限于无法安全编码本地化文本时的 ASCII-safe 表达方式。
+- 保持 cp936 主机场景可继续输出 localized JSON。
+- 保持 `checkpoint --ci --format json`、`stale --ci --format json`、`doctor --ci --format json` 的单对象 JSON 合同不变。
+- 不扩大 JSON 输出能力边界，不新增 `--output`，不引入新的写文件行为。
+
+## Validation
+
+- `python -m harbor.cli.main accept`: `pass`
+- `python -m harbor.cli.main checkpoint --ci --format json`: `pass`
+- `python -m harbor.cli.main stale --ci --format json`: `pass`
+- `python -m harbor.cli.main doctor --ci --format json`: `pass`
+- GitHub Actions CI run `#96`: `pass`
+- Ubuntu Python matrix: `3.9 / 3.10 / 3.11 = pass`
+- Windows full-governance: `pass`
+
+---
+
 # Harbor-spec v1.4.2 — TypeScript Contract Source Strengthening
 
 状态：发布就绪

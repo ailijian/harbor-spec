@@ -40,6 +40,34 @@ It is a repo-local **context governance layer**.
 
 ---
 
+## 🚀 v1.4.2.2: Windows JSON Stdout Compatibility Closure
+
+Harbor-spec v1.4.2.2 is a maintenance patch focused on Windows host-encoding compatibility, closing the cp1252 runner gap and unifying the pure JSON stdout emission path.
+
+### What v1.4.2.2 fixes
+
+* all pure JSON CLI output paths now route through `_emit_json_stdout()`:
+  * localized JSON when stdout encoding can strictly encode the payload
+  * ASCII-safe fallback when it cannot
+* pure JSON stdout remains stable on non-UTF-8 Windows host encodings:
+  * cp936 hosts continue to prefer localized JSON
+  * cp1252-style hosts fall back to ASCII-safe JSON when localized content is not strictly encodable
+* `main()` contract/docstring, accepted baseline, and generated context stay synchronized
+
+### What v1.4.2.2 validates
+
+* `python -m harbor.cli.main accept`
+* `python -m harbor.cli.main checkpoint --ci --format json`
+* `python -m harbor.cli.main stale --ci --format json`
+* `python -m harbor.cli.main doctor --ci --format json`
+* GitHub Actions `CI`:
+  * Ubuntu `3.9`
+  * Ubuntu `3.10`
+  * Ubuntu `3.11`
+  * `windows-full-governance`
+
+---
+
 ## 🚀 v1.4.2: TypeScript Contract Source Strengthening
 
 Harbor-spec v1.4.2 resumes the TypeScript roadmap after `v1.4.1` and tightens the governance foundation required before broader contract-source expansion.
