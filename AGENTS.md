@@ -951,7 +951,7 @@ Release acceptance notes:
 ```text
 - checkpoint --ci must keep .harbor/baseline/accepted-checkpoint.json as CI baseline truth.
 - runtime cache is local acceleration only and must not replace accepted baseline artifact in CI.
-- - Windows full-governance is a formal acceptance dimension alongside Ubuntu matrix.
+- Windows full-governance is a formal acceptance dimension alongside Ubuntu matrix.
 - Generated context closure should include:
   finish --sync-context
   verify-generated --changed/--all --ci
