@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "tests/core"
-generated_at: "2026-05-14T11:46:18Z"
+generated_at: "2026-05-14T16:14:50Z"
 generation_command: "harbor module seal tests/core --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -11,7 +11,7 @@ source_paths_truncated: false
 source_paths:
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"
-source_fingerprint: "sha256:f845601656af7614649162258488b2b66d707e80a0783aaee2d241b0430797fc"
+source_fingerprint: "sha256:dbbb648ac96b7e6a02fc18c7a5b052a0ad8f6b86fea27151421a6977281b8fb1"
 contract_fingerprint: "sha256:0cce59270907e86271947c46342e0dc21bca9f22b1968883b3d54781530e24d2"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
 view_fingerprint: "9a5a0cbcdf26a8fa5382a2116ea2f5856a33977f518788c754983efa5c087e34"
