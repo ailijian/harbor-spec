@@ -767,10 +767,16 @@ harbor doctor
 For machine-readable checks:
 
 ```powershell
-harbor checkpoint --ci --format json
+harbor checkpoint --ci --format json --detail summary
 harbor stale --ci --format json
 harbor doctor --ci --format json
 ```
+
+Use `harbor checkpoint --ci --format json --detail summary` as the default machine-readable checkpoint entry for coding agents and quick structured diagnostics.
+
+Use `harbor checkpoint --ci --format json --detail full` for deep investigation, baseline review, or saved evidence.
+
+`harbor checkpoint --ci --format json` remains the compatibility form for full JSON output.
 
 checkpoint --ci is the baseline / contract / DDT gate.
 stale --ci is generated context freshness gate.
@@ -836,7 +842,7 @@ harbor log draft --save
 harbor log draft --output .harbor/reports/<name>.md
 ```
 
-AI may run read-only checks (for example: `pytest`, `harbor checkpoint --ci --format json`, `harbor stale --ci --format json`, `harbor doctor --ci --format json`) when the task explicitly asks for validation.
+AI may run read-only checks (for example: `pytest`, `harbor checkpoint --ci --format json --detail summary`, `harbor stale --ci --format json`, `harbor doctor --ci --format json`) when the task explicitly asks for validation.
 
 ---
 

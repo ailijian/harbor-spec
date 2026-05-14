@@ -313,7 +313,7 @@ harbor doctor
 Machine-readable CI checks:
 
 ```powershell
-harbor checkpoint --ci --format json
+harbor checkpoint --ci --format json --detail summary
 harbor stale --ci --format json
 harbor doctor --ci --format json
 ```
@@ -321,7 +321,9 @@ harbor doctor --ci --format json
 Meaning:
 
 ```text
-checkpoint --ci = baseline / contract / DDT gate
+checkpoint --ci --format json --detail summary = default machine-readable entry for coding agents and quick structured diagnostics
+checkpoint --ci --format json --detail full = deep investigation / baseline review / saved evidence report
+checkpoint --ci --format json = compatibility form equivalent to full JSON output
 stale --ci      = generated context freshness gate
 doctor --ci     = aggregated workspace health gate
 ```
@@ -938,7 +940,7 @@ Common local checks:
 ```powershell
 pytest
 harbor check --format jsonl
-harbor checkpoint --ci --format json
+harbor checkpoint --ci --format json --detail summary
 harbor stale --ci --format json
 harbor doctor --ci --format json
 ```

@@ -102,10 +102,16 @@ harbor doctor
 Machine-readable checks:
 
 ```powershell
-harbor checkpoint --ci --format json
+harbor checkpoint --ci --format json --detail summary
 harbor stale --ci --format json
 harbor doctor --ci --format json
 ```
+
+Use `harbor checkpoint --ci --format json --detail summary` as the default machine-readable checkpoint entry for coding agents and quick structured diagnostics.
+
+Use `harbor checkpoint --ci --format json --detail full` for deep investigation, baseline review, or saved evidence.
+
+`harbor checkpoint --ci --format json` remains the compatibility form for full JSON output.
 
 Workspace diagnostics only:
 
