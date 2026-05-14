@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-14T07:04:08Z"
+generated_at: "2026-05-14T09:36:06Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
 source_path_count: 59
@@ -68,8 +68,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:cf1e0c8d9b918bde7503fcb6bc08c62a9cfa2f646fc0aa546f4f9ab30a8753a6"
-contract_fingerprint: "sha256:ffc48d7302b2457aed6104c2db8e34c28e9ed6ae149a6797c8e55506d3f6a75e"
+source_fingerprint: "sha256:0236e433c9303e46894b9a31488213e53d1554b0dca337e357aa33c7bb400ab7"
+contract_fingerprint: "sha256:98477a2317594f361b7c3e8fd287cb406245133bf5a72e213f0e2802bc0c2c1f"
 generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476c5ad96e7689aade"
 ---
 
@@ -240,6 +240,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.decorator.DecoratorEngine._docstring_node | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_detected_summary | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_ide_guidance | — | standard | ⚪ Missing |
+| harbor.cli.main._emit_json_stdout | Write one JSON object to stdout with an ASCII-safe fallba... | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._ensure_schema | — | standard | ⚪ Missing |

@@ -85,6 +85,24 @@ class _FakeRedirectedStream(_FakeWindowsStream):
         super().reconfigure(encoding=encoding, errors=errors)
 
 
+class _StrictEncodingCapture:
+    def __init__(self, encoding="utf-8"):
+        self.encoding = encoding
+        self.errors = "strict"
+        self._chunks = []
+
+    def write(self, text):
+        text.encode(self.encoding, errors="strict")
+        self._chunks.append(text)
+        return len(text)
+
+    def flush(self):
+        return None
+
+    def getvalue(self):
+        return "".join(self._chunks)
+
+
 def test_configure_windows_stdio_defaults_non_tty_to_utf8(monkeypatch):
     stdout = _FakeWindowsStream(encoding="cp936")
     stderr = _FakeWindowsStream(encoding="cp936")
@@ -220,6 +238,35 @@ def test_configure_windows_stdio_pure_json_respects_pythonioencoding(monkeypatch
 
     assert stdout.reconfigured_to == ("cp1252", "replace")
     assert stderr.reconfigured_to == ("cp1252", "replace")
+
+
+def test_emit_json_stdout_keeps_localized_json_when_encoding_supports_payload(monkeypatch):
+    stream = _StrictEncodingCapture("cp936")
+    fake_sys = SimpleNamespace(stdout=stream)
+    payload = {"command": "doctor", "message": "中文输出", "status": "pass"}
+
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+
+    cli_main._emit_json_stdout(payload)
+
+    rendered = stream.getvalue()
+    assert "中文输出" in rendered
+    assert json.loads(rendered) == payload
+
+
+def test_emit_json_stdout_falls_back_to_ascii_safe_json_for_cp1252(monkeypatch):
+    stream = _StrictEncodingCapture("cp1252")
+    fake_sys = SimpleNamespace(stdout=stream)
+    payload = {"command": "doctor", "message": "中文输出", "status": "pass"}
+
+    monkeypatch.setattr(cli_main, "sys", fake_sys)
+
+    cli_main._emit_json_stdout(payload)
+
+    rendered = stream.getvalue()
+    assert "\\u4e2d\\u6587\\u8f93\\u51fa" in rendered
+    assert "中文输出" not in rendered
+    assert json.loads(rendered) == payload
 
 
 def test_configure_redirected_windows_stdio_prefers_locale_encoding(monkeypatch):

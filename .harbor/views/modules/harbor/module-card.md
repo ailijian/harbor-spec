@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-14T07:04:11Z"
+generated_at: "2026-05-14T09:36:09Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 59
@@ -68,11 +68,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:cf1e0c8d9b918bde7503fcb6bc08c62a9cfa2f646fc0aa546f4f9ab30a8753a6"
-contract_fingerprint: "sha256:13641f90d365499cfb0eec534f4f9883a0f1d5f25217e4af3b8b53f6f7f28128"
+source_fingerprint: "sha256:0236e433c9303e46894b9a31488213e53d1554b0dca337e357aa33c7bb400ab7"
+contract_fingerprint: "sha256:da162ad8773fb6b72871d2fc8c910a7b797b3aabbf404f58a7590d5c94e32bd4"
 generator_fingerprint: "sha256:397ed303b344c4694fd3842fbc3ccf02c9a40345ba4f92f0de83e5ac2e3a2149"
-view_fingerprint: "56f8d91cb6213216a9dc0e5504774ae22df2faee16bc80dd3994548059144c66"
-fingerprint: "56f8d91cb6213216a9dc0e5504774ae22df2faee16bc80dd3994548059144c66"
+view_fingerprint: "1f8801418e71a8315ef9c98eb71542455f6571151403d23c2aa053f14727bab7"
+fingerprint: "1f8801418e71a8315ef9c98eb71542455f6571151403d23c2aa053f14727bab7"
 ---
 
 # Module Card: harbor
@@ -219,6 +219,7 @@ harbor/utils/i18n.py
 | harbor.adapters.typescript.parser._to_lineno | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.cli.main._configure_redirected_windows_stdio | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._configure_windows_stdio | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._emit_json_stdout | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._is_log_write_interactive | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._is_pure_json_output_argv | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._is_utf8_compatible_stdio_encoding | harbor/cli/main.py | unknown | standard |

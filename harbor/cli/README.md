@@ -13,6 +13,7 @@
 |---|---|---|---|
 | harbor.cli.main._configure_redirected_windows_stdio | Backward-compatible wrapper for the Windows CLI-wide stdi... | standard | ⚪ Missing |
 | harbor.cli.main._configure_windows_stdio | Apply a Windows CLI-wide UTF-8-first stdio strategy when ... | standard | ⚪ Missing |
+| harbor.cli.main._emit_json_stdout | Write one JSON object to stdout with an ASCII-safe fallba... | standard | ⚪ Missing |
 | harbor.cli.main._is_log_write_interactive | — | standard | ⚪ Missing |
 | harbor.cli.main._is_pure_json_output_argv | Detect pure JSON stdout routes from raw argv without chan... | standard | ⚪ Missing |
 | harbor.cli.main._is_utf8_compatible_stdio_encoding | — | standard | ⚪ Missing |

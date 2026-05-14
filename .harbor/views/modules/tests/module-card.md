@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-14T08:30:59Z"
+generated_at: "2026-05-14T09:36:09Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 96
@@ -105,11 +105,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:555bdcdff4d113fa5d38018471da9463a4f90c137a13a09352923f6f44c5fe09"
-contract_fingerprint: "sha256:62c19b573b61f09c7738f28470da75d2433a19f2c2232c433ff94f323e50caa5"
+source_fingerprint: "sha256:e22e02caf24fc5fb8dd983a00acd99f8d37680074bc17d13a28a6416b34698db"
+contract_fingerprint: "sha256:90ca38065e115abf56d788e04626e395a59b2db339f1a4f3c4ca472eba7b1e18"
 generator_fingerprint: "sha256:397ed303b344c4694fd3842fbc3ccf02c9a40345ba4f92f0de83e5ac2e3a2149"
-view_fingerprint: "e879dba10b7a6ba77157d21c5884e42d52c90597195d1f93a7a307c46a547d58"
-fingerprint: "e879dba10b7a6ba77157d21c5884e42d52c90597195d1f93a7a307c46a547d58"
+view_fingerprint: "9b8fd04a5d092dd003a6fcae3fa8579c29c1d4cf8cba76a9cfe1ddbc67ef3bd4"
+fingerprint: "9b8fd04a5d092dd003a6fcae3fa8579c29c1d4cf8cba76a9cfe1ddbc67ef3bd4"
 ---
 
 # Module Card: tests
@@ -428,6 +428,10 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context._FakeWindowsStream.isatty | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigure | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigured_to | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._StrictEncodingCapture.__init__ | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._StrictEncodingCapture.flush | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._StrictEncodingCapture.getvalue | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context._StrictEncodingCapture.write | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._disable_change_window_writes | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_status_report | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context._empty_validation_report | tests/test_cli_finish_sync_context.py | unknown | standard |
@@ -450,6 +454,8 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_reconfigure_failure_does_not_interrupt | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_respects_pythonioencoding | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_configure_windows_stdio_skips_utf8_tty | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_emit_json_stdout_falls_back_to_ascii_safe_json_for_cp1252 | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_emit_json_stdout_keeps_localized_json_when_encoding_supports_payload | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | tests/test_cli_finish_sync_context.py | unknown | standard |
@@ -1070,6 +1076,7 @@ tests/test_workspace_paths.py
 | tests.test_windows_json_stdio_regression._canonical_json_payload | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._contains_cjk | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._format_case_diagnostic | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._full_stderr_from_paths | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._ps_quote | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._read_case_diagnostic | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._require_windows_powershell_51 | tests/test_windows_json_stdio_regression.py | unknown | standard |

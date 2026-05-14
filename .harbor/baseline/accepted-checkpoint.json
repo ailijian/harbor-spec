@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-14T07:13:58Z",
+  "accepted_at": "2026-05-14T09:48:28Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -736,6 +736,18 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._configure_windows_stdio"
       },
       {
+        "body_hash": "e7192f4fc7a4bbd7fa4c3623ca6a866fa66b4b2ed9385188807c99cac6cb858a",
+        "contract_hash": "beaa77a52c25f582e1f3f430bf67738afe843b3400057f1781bad29af9e1fabe",
+        "contract_presence": "non_contract_doc",
+        "contract_required": false,
+        "file_path": "harbor/cli/main.py",
+        "func_id": "harbor.cli.main._emit_json_stdout",
+        "id": "harbor.cli.main._emit_json_stdout",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._emit_json_stdout"
+      },
+      {
         "body_hash": "2322d9ca66f9edf093e66a829672e2360d996199c94d55cd3bd8304f35683f4f",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -820,8 +832,8 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._resolve_windows_stdio_target"
       },
       {
-        "body_hash": "a193f1b66c275e3254563e404e60b7b3569237df28ea6887c94ebf3a8d071657",
-        "contract_hash": "a8969a7d3ed1da3869054fb4e64fc6d8a48aeadfcf31d7d861f09ba483f31702",
+        "body_hash": "98a77cb91cba551e4fdcaae3b2eb88b3f07b5c2bde23e66c7d5b2d10b70e2fb8",
+        "contract_hash": "8cdf9ee551f2be3f7a5630fb947b1ab42bbf7089e7ad9e4a8906129403a3020a",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/cli/main.py",
@@ -9556,6 +9568,30 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_configure_windows_stdio_skips_utf8_tty"
       },
       {
+        "body_hash": "d6cf37dca386996fb1f1bdcd8740eeaeeb90d178ae52515b7c06fde93cfe8974",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_emit_json_stdout_falls_back_to_ascii_safe_json_for_cp1252",
+        "id": "tests.test_cli_finish_sync_context.test_emit_json_stdout_falls_back_to_ascii_safe_json_for_cp1252",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_emit_json_stdout_falls_back_to_ascii_safe_json_for_cp1252"
+      },
+      {
+        "body_hash": "72f47798365f82c16d7efc863f3703e074f7f123c65e8b4ac570f621577cce0b",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context.test_emit_json_stdout_keeps_localized_json_when_encoding_supports_payload",
+        "id": "tests.test_cli_finish_sync_context.test_emit_json_stdout_keeps_localized_json_when_encoding_supports_payload",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_emit_json_stdout_keeps_localized_json_when_encoding_supports_payload"
+      },
+      {
         "body_hash": "def61c7c368aa9bec89a3c87119c9700870e676cb8055c5af866a42047cce43b",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -9758,6 +9794,54 @@
         "language": "python",
         "symbol_kind": "method",
         "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._FakeWindowsStream.reconfigured_to"
+      },
+      {
+        "body_hash": "8ff6293c1a1ff800eb507a7fc9775b70d0ccccd2a1a869124e05cef209cb2cae",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._StrictEncodingCapture.__init__",
+        "id": "tests.test_cli_finish_sync_context._StrictEncodingCapture.__init__",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._StrictEncodingCapture.__init__"
+      },
+      {
+        "body_hash": "9f730a1a70a6144b0dc8da4942d9093cd268d625eafac5188775d0d6b8b25f08",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._StrictEncodingCapture.flush",
+        "id": "tests.test_cli_finish_sync_context._StrictEncodingCapture.flush",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._StrictEncodingCapture.flush"
+      },
+      {
+        "body_hash": "2d9914df5259e933b776bc3014db62e83fe8a836ad49b9d6ce906ccf9d64c00f",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._StrictEncodingCapture.getvalue",
+        "id": "tests.test_cli_finish_sync_context._StrictEncodingCapture.getvalue",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._StrictEncodingCapture.getvalue"
+      },
+      {
+        "body_hash": "0c5160a8bcfc351b4a20e413db37ef479ac7b3c4d3b136ceb636760153db3a00",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_finish_sync_context.py",
+        "func_id": "tests.test_cli_finish_sync_context._StrictEncodingCapture.write",
+        "id": "tests.test_cli_finish_sync_context._StrictEncodingCapture.write",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:tests/test_cli_finish_sync_context.py:method:tests.test_cli_finish_sync_context._StrictEncodingCapture.write"
       },
       {
         "body_hash": "85b4914c6cedc9a0c6855bb8e81f9a73f9ae899bd5fe05cdeafcc8f91d8713d8",
@@ -17020,6 +17104,18 @@
         "target_id": "python:tests/test_windows_abs_path_prefix.py:function:tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix"
       },
       {
+        "body_hash": "b01c20a22d953342bf985dd603284262219adf649522e23bfa771d3e8cb69205",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._all_case_diagnostics",
+        "id": "tests.test_windows_json_stdio_regression._all_case_diagnostics",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._all_case_diagnostics"
+      },
+      {
         "body_hash": "b21bfe8cb1324d1c61345d7dd435a9cb977c26af3db3befe89855dcee41e1fe0",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -17056,6 +17152,30 @@
         "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._contains_cjk"
       },
       {
+        "body_hash": "25103ceb8ef1d7dc606159f3758f63e5d88a28d623429c1a2cfa07d9dc7369b1",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._format_case_diagnostic",
+        "id": "tests.test_windows_json_stdio_regression._format_case_diagnostic",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._format_case_diagnostic"
+      },
+      {
+        "body_hash": "b8571acf6408ab03719adb10e159b825738dfc1db0645a13f0ac97470d8d52b3",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._full_stderr_from_paths",
+        "id": "tests.test_windows_json_stdio_regression._full_stderr_from_paths",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._full_stderr_from_paths"
+      },
+      {
         "body_hash": "29968f711e493647ad53062965d3945893e5c98fd98521cee68349f8142dbd34",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -17066,6 +17186,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._ps_quote"
+      },
+      {
+        "body_hash": "ebe82796c00ae014e548c4931f31e8f69e540d7451717a870e1e3f4bc5acc855",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_windows_json_stdio_regression.py",
+        "func_id": "tests.test_windows_json_stdio_regression._read_case_diagnostic",
+        "id": "tests.test_windows_json_stdio_regression._read_case_diagnostic",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._read_case_diagnostic"
       },
       {
         "body_hash": "b71597949b9bf8955e41c0af6e981782e48d4b8a403dcfaa89eacb78ddf1af3c",
@@ -17080,7 +17212,7 @@
         "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._require_windows_powershell_51"
       },
       {
-        "body_hash": "9bd877d187feca745dffc627d1f71c4f6220577a54956726d2a9fa2db99beace",
+        "body_hash": "22ec301f71524f6087d1874c43dd253832f4b72bbbc03a22a870cfa10d231e27",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -17104,7 +17236,7 @@
         "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression._with_repo_pythonpath"
       },
       {
-        "body_hash": "4da017a4dbc06ef070734abe3f39ee9a2be797da7f3852faac19b6af3ad646c4",
+        "body_hash": "a80c98a4233576f60419387048f82c5f29c877fa5bb5cc0dee07f92f3025ee73",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -17116,7 +17248,7 @@
         "target_id": "python:tests/test_windows_json_stdio_regression.py:function:tests.test_windows_json_stdio_regression.test_windows_powershell_51_checkpoint_json_round_trip"
       },
       {
-        "body_hash": "3a219bc0907386787de05f709402418368c963ec47085cb508c19d9a9244bdb1",
+        "body_hash": "4352c689a47b6a58d1ca1968646bf52bfe2e8bf660a05e34138ab07d5b9361e3",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,

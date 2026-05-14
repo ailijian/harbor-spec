@@ -244,6 +244,25 @@ def _configure_redirected_windows_stdio(argv=None) -> None:
     _configure_windows_stdio(argv=argv)
 
 
+def _emit_json_stdout(payload) -> None:
+    """Write one JSON object to stdout with an ASCII-safe fallback when needed."""
+    localized_json = json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
+    stdout = getattr(sys, "stdout", None)
+    stdout_encoding = getattr(stdout, "encoding", None) or "utf-8"
+    try:
+        localized_json.encode(stdout_encoding, errors="strict")
+        rendered = localized_json
+    except (LookupError, UnicodeEncodeError):
+        rendered = json.dumps(payload, ensure_ascii=True, sort_keys=True, indent=2)
+
+    if stdout is None:
+        print(rendered)
+        return
+
+    stdout.write(rendered)
+    stdout.write("\n")
+
+
 def main():
     """Harbor CLI entrypoint and public command dispatch contract.
 
@@ -273,6 +292,11 @@ def main():
         command display / redirection corruption while keeping machine-readable
         JSON payload keys, value shape, command routing, and exit-code
         semantics unchanged.
+      - Pure JSON stdout first renders localized JSON with
+        `ensure_ascii=False`; when the active `stdout` encoding cannot encode
+        the full localized payload, Harbor automatically falls back to
+        ASCII-escaped JSON for that write only so stdout remains one parseable
+        JSON object without changing payload semantics, routing, or exit codes.
       - `harbor log draft` / `harbor log write` dispatch order remains explicit:
         draft/write subcommands are handled before legacy direct `harbor log`
         message or LLM-assisted draft flows.
@@ -420,9 +444,11 @@ def main():
       human-readable text routes retain UTF-8-first localized output behavior,
       while successful pure JSON stdout routes preserve host-compatible
       `stdout` behavior unless the caller explicitly overrides stdio encoding
-      via `PYTHONIOENCODING`; these stdio-policy differences do not change JSON
-      keys, value shape, command routing, exit semantics, or `stderr`
-      semantics. Change-window snapshot writes
+      via `PYTHONIOENCODING`; localized JSON is emitted when the active stdout
+      encoding can represent the payload and otherwise falls back to
+      ASCII-escaped JSON so the write remains one machine-readable JSON object.
+      These stdio-policy differences do not change JSON keys, value shape,
+      command routing, exit semantics, or `stderr` semantics. Change-window snapshot writes
       are additive runtime state only and do not change the original command
       exit semantics. Snapshot write failures may append runtime-only
       diagnostics under `.harbor/state/change-window-diagnostics.jsonl`.
@@ -481,10 +507,12 @@ def main():
       still requires explicit `--yes` authorization unless the user confirms in
       an interactive session; cancel/deny paths must not write
       `.harbor/diary/**`. Windows stdio normalization and the pure-JSON stdout
-      compatibility carve-out do not introduce a new blocking exception path
-      and do not change command routing, JSON payload semantics, or `stderr`
-      semantics. These UX-polish paths do not call LLM, do not print file
-      bodies / diff bodies / secrets. `finish --sync-context` stale
+      compatibility carve-out do not introduce a new blocking exception path;
+      when the active stdout encoding cannot represent localized JSON, Harbor
+      falls back to ASCII-escaped JSON instead of raising `UnicodeEncodeError`.
+      These paths do not change command routing, JSON payload semantics, or
+      `stderr` semantics. These UX-polish paths do not call LLM, do not print
+      file bodies / diff bodies / secrets. `finish --sync-context` stale
       self-check and generator/integrity advisory remain guidance/output
       behavior only: they do not introduce a new blocking exception path, do
       not change `checkpoint` / `stale` / `doctor` gate semantics, and do not
@@ -494,7 +522,7 @@ def main():
     @harbor.scope: public
     @harbor.l3_strictness: strict
     @harbor.idempotency: once
-    @harbor.behavior: Windows human-readable text routes retain CLI-wide UTF-8-first localized output behavior unless the caller explicitly overrides stdio encoding with `PYTHONIOENCODING`; Windows pure JSON `--format json` stdout routes preserve host-compatible `stdout` behavior unless explicitly overridden, avoiding PowerShell 5.1 native-command display/redirection corruption without changing JSON keys, value shape, exit codes, command routing, or `stderr` semantics; checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; `finish --sync-context`, `docs --changed`, `module seal --changed`, `stale --changed`, `stale --ci`, and `doctor --changed` share one changed-scope resolver for changed-module detection, repo-relative normalization, and indexed parent aggregate expansion; generated-context write paths plus `stale` / `doctor` enumeration paths use fresh/source-compatible readonly index helpers to reduce local-cache versus clean-CI drift without changing user-visible CLI routing semantics; `finish --sync-context` writes changed-scope L2 README / Module Capsule outputs, then runs a same-scope stale self-check that prints an explicit pass message or residual stale rows with deterministic repair guidance; generator / integrity file hits print broader-refresh advisory text recommending explicit `harbor docs --all --write` and `harbor module seal --all --write` only, without auto-running full refresh or project-structure refresh; docs/module batch flows reject outside-repo absolute module paths and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
+    @harbor.behavior: Windows human-readable text routes retain CLI-wide UTF-8-first localized output behavior unless the caller explicitly overrides stdio encoding with `PYTHONIOENCODING`; Windows pure JSON `--format json` stdout routes preserve host-compatible `stdout` behavior unless explicitly overridden, avoiding PowerShell 5.1 native-command display/redirection corruption without changing JSON keys, value shape, exit codes, command routing, or `stderr` semantics; pure JSON writes first render localized JSON and automatically fall back to ASCII-escaped JSON only when the active stdout encoding cannot strictly encode the payload, preventing `UnicodeEncodeError` while keeping stdout as one parseable JSON object with unchanged payload semantics; checkpoint/next support deterministic TypeScript MVP guidance (`contract_gap`/`skipped_no_contract`/`unsupported_syntax_advisory`) without auto-fix and without changing CI gate semantics; `finish --sync-context`, `docs --changed`, `module seal --changed`, `stale --changed`, `stale --ci`, and `doctor --changed` share one changed-scope resolver for changed-module detection, repo-relative normalization, and indexed parent aggregate expansion; generated-context write paths plus `stale` / `doctor` enumeration paths use fresh/source-compatible readonly index helpers to reduce local-cache versus clean-CI drift without changing user-visible CLI routing semantics; `finish --sync-context` writes changed-scope L2 README / Module Capsule outputs, then runs a same-scope stale self-check that prints an explicit pass message or residual stale rows with deterministic repair guidance; generator / integrity file hits print broader-refresh advisory text recommending explicit `harbor docs --all --write` and `harbor module seal --all --write` only, without auto-running full refresh or project-structure refresh; docs/module batch flows reject outside-repo absolute module paths and display skipped unsafe modules with sanitized `<outside-repo>` placeholders; successful non-JSON `harbor log draft` distinguishes writable `draft_status=ready` from no-op `draft_status=insufficient_evidence`; no-op drafts skip latest-draft cache refresh and suppress localized `harbor log write` hints, while `--format json` keeps stdout as one JSON object with no extra human text; existing `harbor log write` authorization and marker-update boundaries remain unchanged; successful `harbor log write` prints a concise localized success summary instead of the full written JSON entry payload.
     """
     _configure_windows_stdio(sys.argv[1:])
 
@@ -2027,7 +2055,7 @@ def main():
             no_cache_refresh=bool(getattr(args, "no_cache_refresh", False)),
         )
         if getattr(args, "format", "text") == "json":
-            print(json.dumps(accept_summary, ensure_ascii=False, sort_keys=True, indent=2))
+            _emit_json_stdout(accept_summary)
         else:
             print(t("cli.accept.done"))
             print(t("cli.accept.artifact_path", path=accept_summary["artifact_path"]))
@@ -2123,7 +2151,7 @@ def main():
                 baseline_error_reason=baseline_error_reason,
             )
             if args.format == "json":
-                print(json.dumps(checkpoint_ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
+                _emit_json_stdout(checkpoint_ci_result_to_dict(ci_result))
             else:
                 print(format_checkpoint_ci_result(ci_result))
             _write_change_window_snapshot_safe(
@@ -2184,7 +2212,7 @@ def main():
                 "writes_files": False,
                 "llm_used": False,
             }
-            print(json.dumps(out, ensure_ascii=False, sort_keys=True, indent=2))
+            _emit_json_stdout(out)
         else:
             print(_render_next_text(source_command, items))
     elif args.command == "finish":
@@ -2420,11 +2448,11 @@ def main():
                     advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
                     ci_result = build_stale_ci_result([], scope=scope_value, advice_settings=advice_settings)
                     if args.format == "json":
-                        print(json.dumps(ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
+                        _emit_json_stdout(ci_result_to_dict(ci_result))
                     else:
                         print(format_ci_result(ci_result))
                 elif args.format == "json":
-                    print(json.dumps(stale_report_to_dict([], scope=scope_value), ensure_ascii=False, sort_keys=True, indent=2))
+                    _emit_json_stdout(stale_report_to_dict([], scope=scope_value))
                 else:
                     print(t("cli.stale.none_all"))
                 return
@@ -2435,11 +2463,11 @@ def main():
                     advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
                     ci_result = build_stale_ci_result([], scope=scope_value, advice_settings=advice_settings)
                     if args.format == "json":
-                        print(json.dumps(ci_result_to_dict(ci_result), ensure_ascii=False, sort_keys=True, indent=2))
+                        _emit_json_stdout(ci_result_to_dict(ci_result))
                     else:
                         print(format_ci_result(ci_result))
                 elif args.format == "json":
-                    print(json.dumps(stale_report_to_dict([], scope=scope_value), ensure_ascii=False, sort_keys=True, indent=2))
+                    _emit_json_stdout(stale_report_to_dict([], scope=scope_value))
                 else:
                     print(t("cli.stale.none_changed"))
                 return
@@ -2450,14 +2478,14 @@ def main():
             ci_result = build_stale_ci_result(results, scope=scope_value, advice_settings=advice_settings)
             payload = ci_result_to_dict(ci_result)
             if args.format == "json":
-                print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+                _emit_json_stdout(payload)
             else:
                 print(format_ci_result(ci_result))
             if ci_result.exit_code != 0:
                 raise SystemExit(ci_result.exit_code)
         elif args.format == "json":
             payload = stale_report_to_dict(results, scope=scope_value)
-            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+            _emit_json_stdout(payload)
         else:
             print(format_stale_summary(results, scope_text=scope_text))
     elif args.command == "doctor":
@@ -2487,7 +2515,7 @@ def main():
             ci_result = build_doctor_ci_result(report, advice_settings=advice_settings)
             payload = ci_result_to_dict(ci_result)
             if args.format == "json":
-                print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+                _emit_json_stdout(payload)
             else:
                 print(format_ci_result(ci_result))
             if ci_result.exit_code != 0:
@@ -2495,14 +2523,14 @@ def main():
         elif args.format == "json":
             payload = report.to_dict(command="doctor")
             payload["scope"] = scope_value
-            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+            _emit_json_stdout(payload)
         else:
             print(format_doctor_report(report))
     elif args.command == "workspace" and args.workspace_cmd == "inspect":
         report = build_workspace_inspect_report(Path.cwd())
         if args.format == "json":
             payload = workspace_inspect_report_to_dict(report)
-            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+            _emit_json_stdout(payload)
         else:
             print(format_workspace_inspect_report(report))
     elif args.command == "workspace" and args.workspace_cmd == "migrate":
@@ -2511,7 +2539,7 @@ def main():
         report = build_workspace_migrate_dry_run_report(Path.cwd())
         if args.format == "json":
             payload = workspace_migrate_report_to_dict(report)
-            print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
+            _emit_json_stdout(payload)
         else:
             print(format_workspace_migrate_report(report))
     elif args.command == "module" and args.module_cmd == "inspect":
@@ -2758,7 +2786,10 @@ def main():
                     output_format=args.format,
                     repo_root=Path.cwd(),
                 )
-            print(rendered, end="")
+            if args.format == "json":
+                _emit_json_stdout(payload)
+            else:
+                print(rendered, end="")
             if draft_ready and args.format != "json":
                 print(_build_log_draft_next_actions_text())
             if draft_ready and cache_result.get("markdown_path") and args.format != "json":

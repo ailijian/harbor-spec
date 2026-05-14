@@ -14,6 +14,7 @@
 | tests.test_change_window_snapshot._FakeSyncEngine.__init__ | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.__init__ | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeWindowsStream.__init__ | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._StrictEncodingCapture.__init__ | — | standard | ⚪ Missing |
 | tests.test_init_wizard.StrictEncodingTextIO.__init__ | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._all_case_diagnostics | — | standard | ⚪ Missing |
@@ -83,6 +84,7 @@
 | tests.test_workspace_inspect._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._format_case_diagnostic | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._full_stderr_from_paths | — | standard | ⚪ Missing |
 | tests.test_cli_stale._generate_views_for_module | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy._gitignore_entries | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._init_git_repo | — | standard | ⚪ Missing |
@@ -195,7 +197,9 @@
 | tests.test_workspace_paths._write_yaml | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._FakeSyncEngine.check_status | — | standard | ⚪ Missing |
 | tests.test_drafting._EngStub.check_status | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._StrictEncodingCapture.flush | — | standard | ⚪ Missing |
 | tests.test_init_wizard.StrictEncodingTextIO.flush | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._StrictEncodingCapture.getvalue | — | standard | ⚪ Missing |
 | tests.test_init_wizard.StrictEncodingTextIO.getvalue | — | standard | ⚪ Missing |
 | tests.test_drafting._OKProvider.infer | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | — | standard | ⚪ Missing |
@@ -450,6 +454,8 @@
 | tests.test_cli_doctor.test_doctor_text_output_uses_unknown_for_no_indexed_records | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_dry_run_non_tty_uses_safe_defaults | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_dual_read_merge_with_stable_normalized_hash_dedupe | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_emit_json_stdout_falls_back_to_ascii_safe_json_for_cp1252 | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_emit_json_stdout_keeps_localized_json_when_encoding_supports_payload | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env.test_env_language_controls_ci_text | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env.test_env_language_overrides_config | — | standard | ⚪ Missing |
 | tests.test_init_detector.test_excludes_do_not_override_code_roots | — | standard | ⚪ Missing |
@@ -896,6 +902,7 @@
 | tests.test_project_structure.test_write_project_structure_returns_canonical_first | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_write_snapshot_creates_json_with_required_schema | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._FakeDDTValidator.validate | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context._StrictEncodingCapture.write | — | standard | ⚪ Missing |
 | tests.test_init_wizard.StrictEncodingTextIO.write | — | standard | ⚪ Missing |
 | tests.test_index_builder.write_module | — | standard | ⚪ Missing |
 | tests.test_sync_engine.write_module | — | standard | ⚪ Missing |

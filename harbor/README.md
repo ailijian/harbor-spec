@@ -165,6 +165,7 @@
 | harbor.core.decorator.DecoratorEngine._docstring_node | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_detected_summary | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_ide_guidance | — | standard | ⚪ Missing |
+| harbor.cli.main._emit_json_stdout | Write one JSON object to stdout with an ASCII-safe fallba... | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._ensure_schema | — | standard | ⚪ Missing |
