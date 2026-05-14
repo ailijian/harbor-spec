@@ -29,6 +29,12 @@ jobs:
         run: |
           python -m pip install -e ".[dev]"
 
+      - name: Harbor verify-generated (CI gate)
+        env:
+          HARBOR_LANGUAGE: zh
+          HARBOR_LANG: zh
+        run: harbor verify-generated --all --ci --format json
+
       - name: Run unit tests
         env:
           HARBOR_LANGUAGE: zh
@@ -47,12 +53,6 @@ jobs:
           HARBOR_LANGUAGE: zh
           HARBOR_LANG: zh
         run: harbor stale --ci --format json
-
-      - name: Harbor verify-generated (CI gate)
-        env:
-          HARBOR_LANGUAGE: zh
-          HARBOR_LANG: zh
-        run: harbor verify-generated --all --ci --format json
 
       - name: Harbor doctor (CI gate)
         env:
@@ -78,6 +78,12 @@ jobs:
         run: |
           python -m pip install -e ".[dev]"
 
+      - name: Harbor verify-generated (CI gate)
+        env:
+          HARBOR_LANGUAGE: zh
+          HARBOR_LANG: zh
+        run: harbor verify-generated --all --ci --format json
+
       - name: Run unit tests
         env:
           HARBOR_LANGUAGE: zh
@@ -96,12 +102,6 @@ jobs:
           HARBOR_LANGUAGE: zh
           HARBOR_LANG: zh
         run: harbor stale --ci --format json
-
-      - name: Harbor verify-generated (CI gate)
-        env:
-          HARBOR_LANGUAGE: zh
-          HARBOR_LANG: zh
-        run: harbor verify-generated --all --ci --format json
 
       - name: Harbor doctor (CI gate)
         env:
