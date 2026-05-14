@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-14T13:53:05Z",
+  "accepted_at": "2026-05-14T18:16:33Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -1852,6 +1852,18 @@
         "target_id": "python:harbor/core/context_integrity.py:function:harbor.core.context_integrity._normalize_rel_path"
       },
       {
+        "body_hash": "cad00d7c8ded22997aa1216380e381e29bbd3369f47bc1d3a8723f4e10f23c1f",
+        "contract_hash": "4d60b23be9df6992edc5e3e02309ff1e5038788689a6a68ab26c033ff3ccbb52",
+        "contract_presence": "non_contract_doc",
+        "contract_required": false,
+        "file_path": "harbor/core/context_integrity.py",
+        "func_id": "harbor.core.context_integrity._normalized_source_content_for_fingerprint",
+        "id": "harbor.core.context_integrity._normalized_source_content_for_fingerprint",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/context_integrity.py:function:harbor.core.context_integrity._normalized_source_content_for_fingerprint"
+      },
+      {
         "body_hash": "7860348fcbf20d5309b1fe59dd1822324b07c8cc645d14b43f67daa4b0b42f04",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -1936,9 +1948,9 @@
         "target_id": "python:harbor/core/context_integrity.py:function:harbor.core.context_integrity.compute_generator_fingerprint"
       },
       {
-        "body_hash": "3815a8e8c00c6c11f4750b2b9271137a41c00d34701cbe23d5bf97cfb1878378",
-        "contract_hash": "",
-        "contract_presence": "missing",
+        "body_hash": "efe193cd2afa8f1f9b119d55a5ee103cff1c08bdbca143cb114421129a021faa",
+        "contract_hash": "8957cfec811f053d509668f425553a180ad2e3b88ee85247130f1840ae4d2776",
+        "contract_presence": "present",
         "contract_required": false,
         "file_path": "harbor/core/context_integrity.py",
         "func_id": "harbor.core.context_integrity.compute_source_fingerprint",
@@ -9208,7 +9220,7 @@
         "target_id": "python:tests/test_ci_mode.py:function:tests.test_ci_mode.test_stale_ci_pass_no_canonical_stale"
       },
       {
-        "body_hash": "51e215a0ce3c34151767f0631bdb85544fc93451725e37a0dacbbe7efa8c128e",
+        "body_hash": "a54df23e8a039402dd75adc257861fd2687e85eddbde05c136370747a5fd9d22",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -12484,6 +12496,30 @@
         "target_id": "python:tests/test_context_integrity.py:function:tests.test_context_integrity.test_missing_file_handling_is_deterministic"
       },
       {
+        "body_hash": "862f63ae15e99dd69f34c167b37678664593e6c50b78dc36ff7bd05854d03c07",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_context_integrity.py",
+        "func_id": "tests.test_context_integrity.test_normalized_source_content_for_fingerprint_converts_cr_to_lf",
+        "id": "tests.test_context_integrity.test_normalized_source_content_for_fingerprint_converts_cr_to_lf",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_context_integrity.py:function:tests.test_context_integrity.test_normalized_source_content_for_fingerprint_converts_cr_to_lf"
+      },
+      {
+        "body_hash": "efa5e090f0ea8f4036afc1311ce37eae964cb5f834e4f7265090061dfabfc0b3",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_context_integrity.py",
+        "func_id": "tests.test_context_integrity.test_normalized_source_content_for_fingerprint_preserves_non_utf8_bytes",
+        "id": "tests.test_context_integrity.test_normalized_source_content_for_fingerprint_preserves_non_utf8_bytes",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_context_integrity.py:function:tests.test_context_integrity.test_normalized_source_content_for_fingerprint_preserves_non_utf8_bytes"
+      },
+      {
         "body_hash": "4a7e392d548350d00dd786337144b494602fac757fc5a68b5b276ee7aac7b730",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -12506,6 +12542,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_context_integrity.py:function:tests.test_context_integrity.test_source_fingerprint_is_deterministic"
+      },
+      {
+        "body_hash": "bae02fb9e8e3d9546bf16b7755fd52ea7711452de651d70c370b42a68b59eec2",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_context_integrity.py",
+        "func_id": "tests.test_context_integrity.test_source_fingerprint_normalizes_lf_and_crlf",
+        "id": "tests.test_context_integrity.test_source_fingerprint_normalizes_lf_and_crlf",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_context_integrity.py:function:tests.test_context_integrity.test_source_fingerprint_normalizes_lf_and_crlf"
       },
       {
         "body_hash": "c6bee28ba87ef39652edebf12ce8c4cfa29c46e36b75215d5c23c3346b5c7683",
@@ -13502,6 +13550,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_detects_module_capsule_fingerprint_mismatch"
+      },
+      {
+        "body_hash": "f5cb5476d7564dd3f0f61b277d4343be27b65832a0cd9f17cbca69890b1fb949",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_generated_verify.py",
+        "func_id": "tests.test_generated_verify.test_generated_verify_ignores_cross_platform_source_line_endings",
+        "id": "tests.test_generated_verify.test_generated_verify_ignores_cross_platform_source_line_endings",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_ignores_cross_platform_source_line_endings"
       },
       {
         "body_hash": "2bb0f84939347e36537f0b18d8213268773b41a136829e9e1dc8633c279bafcb",

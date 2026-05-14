@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-14T17:00:28Z"
+generated_at: "2026-05-14T17:51:34Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 39
@@ -48,11 +48,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:4fed9cd55b715711adb183c83682d04866fe67b39fecf3e5b4c5c8341eb764f7"
-contract_fingerprint: "sha256:ac4f61a18bf77beb8c1bbe73764a767ab7a98f53e39776f1b81bf3e1ee4e6b8d"
+source_fingerprint: "sha256:4b160ccf9516c9b204e69f646b474d3b2964598ce767c405b18aae6a99bce753"
+contract_fingerprint: "sha256:41855211a60d5dc5be6a3d1578d9a902d290a0d2a200d991072bff082ca65d6f"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "c3e120d1b0c37ae1a66cbfc917b8572210af9b53c23dccb691661ab2fe3a4494"
-fingerprint: "c3e120d1b0c37ae1a66cbfc917b8572210af9b53c23dccb691661ab2fe3a4494"
+view_fingerprint: "3955d83fd39326dfcdd5f0edeb49308d83f8e09dde5a46c3d2142bfc4869439a"
+fingerprint: "3955d83fd39326dfcdd5f0edeb49308d83f8e09dde5a46c3d2142bfc4869439a"
 ---
 
 # Module Card: harbor/core
@@ -202,6 +202,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.context_integrity._looks_like_windows_absolute_path | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._normalize_body_for_compare | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._normalize_rel_path | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._normalized_source_content_for_fingerprint | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._now_iso | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._render_scalar | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._yaml_quote | harbor/core/context_integrity.py | unknown | standard |

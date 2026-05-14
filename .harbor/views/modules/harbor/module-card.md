@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-14T16:59:47Z"
+generated_at: "2026-05-14T17:51:34Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 60
@@ -69,11 +69,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:2726d8bd72eb35528140488acd687e37e45cf341a75a408ec372485f1a16ad4a"
-contract_fingerprint: "sha256:f667f31e0c63327242d7e80a96c590611379a8d3d9be4db7d4d792bf7b190b7f"
+source_fingerprint: "sha256:45489b2f5ec5e55f4a2d97d68f6496bcb3071a894664f09fd7636a9ea02ed1b3"
+contract_fingerprint: "sha256:0469cdb2d2daefd2e15b1f8d68523d3eb955851a49f20adbfa9d5e61f9f297a0"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "c29a6af9e6e849fc910564e0b1d13f25177c32f3c58565dc2d43b513453d3e1e"
-fingerprint: "c29a6af9e6e849fc910564e0b1d13f25177c32f3c58565dc2d43b513453d3e1e"
+view_fingerprint: "73c7582d7faf7dfff91cefa6d122506debcaa01bb8746c815145ae13e86443c4"
+fingerprint: "73c7582d7faf7dfff91cefa6d122506debcaa01bb8746c815145ae13e86443c4"
 ---
 
 # Module Card: harbor
@@ -314,6 +314,7 @@ harbor/utils/i18n.py
 | harbor.core.context_integrity._looks_like_windows_absolute_path | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._normalize_body_for_compare | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._normalize_rel_path | harbor/core/context_integrity.py | unknown | standard |
+| harbor.core.context_integrity._normalized_source_content_for_fingerprint | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._now_iso | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._render_scalar | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._yaml_quote | harbor/core/context_integrity.py | unknown | standard |

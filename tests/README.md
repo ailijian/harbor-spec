@@ -501,6 +501,7 @@
 | tests.test_stale.test_generated_context_stays_up_to_date_across_cache_and_clean_fresh_checks | — | standard | ⚪ Missing |
 | tests.test_generated_verify.test_generated_verify_detects_l2_meta_hash_mismatch | — | standard | ⚪ Missing |
 | tests.test_generated_verify.test_generated_verify_detects_module_capsule_fingerprint_mismatch | — | standard | ⚪ Missing |
+| tests.test_generated_verify.test_generated_verify_ignores_cross_platform_source_line_endings | — | standard | ⚪ Missing |
 | tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes | — | standard | ⚪ Missing |
 | tests.test_generated_verify.test_generated_verify_passes_when_views_match | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_generated_view_modules_hit_generated_view_format | — | standard | ⚪ Missing |
@@ -696,6 +697,8 @@
 | tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_normalize_skill_slug_rules_are_stable | — | standard | ⚪ Missing |
+| tests.test_context_integrity.test_normalized_source_content_for_fingerprint_converts_cr_to_lf | — | standard | ⚪ Missing |
+| tests.test_context_integrity.test_normalized_source_content_for_fingerprint_preserves_non_utf8_bytes | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function | — | standard | ⚪ Missing |
@@ -792,6 +795,7 @@
 | tests.test_change_window_snapshot.test_snapshot_does_not_store_file_content_or_diff_body | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_snapshot_only_evidence_still_builds_writable_draft | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_source_fingerprint_is_deterministic | — | standard | ⚪ Missing |
+| tests.test_context_integrity.test_source_fingerprint_normalizes_lf_and_crlf | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_source_of_truth_priority_and_conflict_docs_are_present | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_advisory_does_not_trigger_write_or_workflow_side_effects | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_all_scope_runs | — | standard | ⚪ Missing |

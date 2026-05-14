@@ -2,7 +2,7 @@
 generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "project_structure"
-generated_at: "2026-05-14T16:57:22Z"
+generated_at: "2026-05-14T18:18:17Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
 source_path_count: 158
@@ -128,8 +128,8 @@ source_paths:
   - "tests/test_index_builder_bad_syntax.py"
   - "tests/test_index_builder_registry_integration.py"
   - "tests/test_index_progress.py"
-source_fingerprint: "sha256:dbfca4a12b60c1b8562f8cc8048926274337506a2a655aab44d8d58a49acf9a7"
-contract_fingerprint: "sha256:fe2910e32ab96d9487fd21778d78490d05f72f668c5dec86e843349104288efa"
+source_fingerprint: "sha256:22982665716d9dc74e83ed8e01b46c941afa475a6e9a43a6d23556c3f5aa1976"
+contract_fingerprint: "sha256:b5290e6375d973efc9434939466ad66a636c2ca83579f2af705011fb03373030"
 generator_fingerprint: "sha256:acbf174dd129bc6f84a47fbab94721946d034f7f5a285b22f3243f1074740d69"
 ---
 
@@ -171,9 +171,9 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 | Area | Purpose | Discovered Files | Indexed Contracts |
 |---|---|---:|---:|
 | harbor/cli | CLI command parsing and workflow facade | 2 | 11 |
-| harbor/core | Core Harbor logic | 39 | 541 |
+| harbor/core | Core Harbor logic | 39 | 542 |
 | harbor/utils | Shared utilities | 3 | 3 |
-| tests | Test suite | 98 | 918 |
+| tests | Test suite | 98 | 922 |
 | harbor | Derived from indexed files under harbor. | 16 | 60 |
 
 ## Code Modules

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-14T16:59:07Z"
+generated_at: "2026-05-14T17:51:32Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 39
@@ -48,8 +48,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:4fed9cd55b715711adb183c83682d04866fe67b39fecf3e5b4c5c8341eb764f7"
-contract_fingerprint: "sha256:dede7e851896bde6463a977227f09dcaf9ce0dca5252615cf9a54913576d809a"
+source_fingerprint: "sha256:4b160ccf9516c9b204e69f646b474d3b2964598ce767c405b18aae6a99bce753"
+contract_fingerprint: "sha256:68ef69a5f56c3853fa9221dadc1169ae0f4515538458102f5cac527b42e290c0"
 generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
@@ -345,6 +345,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.log_draft._normalize_report_status | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol_for_classification | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._normalized_source_content_for_fingerprint | Return fingerprint input bytes with cross-platform text n... | standard | ⚪ Missing |
 | harbor.core.context_integrity._now_iso | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_affected_areas_section | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_diary_draft_lines | — | standard | ⚪ Missing |
@@ -500,7 +501,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.context_integrity.compute_contract_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.compute_generator_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.compute_module_fingerprint | — | standard | ⚪ Missing |
-| harbor.core.context_integrity.compute_source_fingerprint | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.compute_source_fingerprint | Compute a deterministic generated-context source fingerpr... | standard | ⚪ Missing |
 | harbor.core.init_prompt.confirm | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.content_without_generated_at_for_compare | — | standard | ⚪ Missing |
 | harbor.core.index_entry.contract_subject_to_index_entry | — | standard | ⚪ Missing |

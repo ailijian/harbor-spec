@@ -129,3 +129,21 @@ def test_generated_verify_detects_module_capsule_fingerprint_mismatch(tmp_path: 
     assert artifact.status == ARTIFACT_STATUS_FAIL
     assert artifact.reason == "module_capsule_fingerprint_mismatch"
     assert report.status == "fail"
+
+
+def test_generated_verify_ignores_cross_platform_source_line_endings(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    _generate_views(tmp_path)
+
+    sample = tmp_path / "harbor" / "core" / "sample.py"
+    raw = sample.read_bytes()
+    if b"\r\n" in raw:
+        sample.write_bytes(raw.replace(b"\r\n", b"\n"))
+    else:
+        sample.write_bytes(raw.replace(b"\n", b"\r\n"))
+
+    report = build_generated_verification_report(scope="all", modules=["harbor/core"])
+
+    assert report.status == "pass"
+    assert report.summary["failures"] == 0

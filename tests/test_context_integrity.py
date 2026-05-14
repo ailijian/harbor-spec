@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from harbor.core.context_integrity import (
+    _normalized_source_content_for_fingerprint,
     build_context_integrity_metadata,
     compute_source_fingerprint,
     content_without_generated_at_for_compare,
@@ -61,6 +62,35 @@ def test_source_fingerprint_is_deterministic(tmp_path: Path):
     p2 = compute_source_fingerprint(["harbor/core/a.py", "harbor/core/b.py"], repo_root=tmp_path)
     assert p1 == p2
     assert p1.startswith("sha256:")
+
+
+def test_source_fingerprint_normalizes_lf_and_crlf(tmp_path: Path):
+    source = tmp_path / "harbor" / "core" / "sample.py"
+    source.parent.mkdir(parents=True, exist_ok=True)
+    source.write_bytes(b"print('x')\nprint('y')\n")
+
+    lf_fp = compute_source_fingerprint(["harbor/core/sample.py"], repo_root=tmp_path)
+    source.write_bytes(b"print('x')\r\nprint('y')\r\n")
+    crlf_fp = compute_source_fingerprint(["harbor/core/sample.py"], repo_root=tmp_path)
+
+    assert lf_fp == crlf_fp
+
+
+def test_normalized_source_content_for_fingerprint_converts_cr_to_lf(tmp_path: Path):
+    source = tmp_path / "harbor" / "core" / "legacy.py"
+    source.parent.mkdir(parents=True, exist_ok=True)
+    source.write_bytes(b"alpha\rbeta\rgamma\r")
+
+    assert _normalized_source_content_for_fingerprint(source) == b"alpha\nbeta\ngamma\n"
+
+
+def test_normalized_source_content_for_fingerprint_preserves_non_utf8_bytes(tmp_path: Path):
+    source = tmp_path / "harbor" / "core" / "binary.bin"
+    source.parent.mkdir(parents=True, exist_ok=True)
+    raw = b"\xff\xfe\x00\r\n\x80"
+    source.write_bytes(raw)
+
+    assert _normalized_source_content_for_fingerprint(source) == raw
 
 
 def test_metadata_has_no_absolute_paths(tmp_path: Path):

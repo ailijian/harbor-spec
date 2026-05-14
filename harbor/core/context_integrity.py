@@ -78,7 +78,49 @@ def _json_stable_hash(payload: Any) -> str:
     return "sha256:" + hashlib.sha256(stable.encode("utf-8")).hexdigest()
 
 
+def _normalized_source_content_for_fingerprint(path: Path) -> bytes:
+    """Return fingerprint input bytes with cross-platform text newline normalization.
+
+    Text source files are decoded as UTF-8 and normalized to LF-only newlines before
+    hashing so generated-context integrity stays deterministic across Windows and
+    Unix-style working trees. Payloads that cannot be decoded as UTF-8 remain
+    byte-preserving for fingerprinting.
+    """
+
+    raw = path.read_bytes()
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    return normalized.encode("utf-8")
+
+
 def compute_source_fingerprint(source_paths: List[str], *, repo_root: Optional[Path] = None) -> str:
+    """Compute a deterministic generated-context source fingerprint.
+
+    Behavior:
+      - Hashes repo-relative source paths in deterministic sorted order.
+      - Normalizes platform line endings for UTF-8 text sources before hashing.
+      - Preserves raw bytes for payloads that cannot be decoded as UTF-8.
+      - Keeps the existing `missing:<rel>` fallback for missing source files.
+      - Keeps the existing deterministic fallback for unreadable source files.
+
+    Args:
+      source_paths (List[str]): Source paths that contribute to generated context.
+      repo_root (Optional[Path]): Repository root used to resolve relative paths.
+
+    Returns:
+      str: Stable `sha256:` fingerprint for generated-context source truth.
+
+    Side Effects:
+      - Reads source files from disk.
+
+    Idempotency:
+      - Deterministic for the same logical source content and path set across platforms.
+      - Does not change the existing fallback semantics for missing or unreadable files.
+    """
+
     root = (repo_root or Path.cwd()).resolve()
     normalized = sorted({_as_repo_relative(path, root) for path in source_paths if _as_repo_relative(path, root)})
     rows: List[Dict[str, str]] = []
@@ -88,7 +130,7 @@ def compute_source_fingerprint(source_paths: List[str], *, repo_root: Optional[P
             rows.append({"path": rel, "content": f"missing:{rel}"})
             continue
         try:
-            content = abs_path.read_bytes()
+            content = _normalized_source_content_for_fingerprint(abs_path)
         except Exception:
             rows.append({"path": rel, "content": f"missing:{rel}"})
             continue

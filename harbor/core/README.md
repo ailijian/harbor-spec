@@ -290,6 +290,7 @@
 | harbor.core.log_draft._normalize_report_status | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol_for_classification | — | standard | ⚪ Missing |
+| harbor.core.context_integrity._normalized_source_content_for_fingerprint | Return fingerprint input bytes with cross-platform text n... | standard | ⚪ Missing |
 | harbor.core.context_integrity._now_iso | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_affected_areas_section | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_diary_draft_lines | — | standard | ⚪ Missing |
@@ -445,7 +446,7 @@
 | harbor.core.context_integrity.compute_contract_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.compute_generator_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.compute_module_fingerprint | — | standard | ⚪ Missing |
-| harbor.core.context_integrity.compute_source_fingerprint | — | standard | ⚪ Missing |
+| harbor.core.context_integrity.compute_source_fingerprint | Compute a deterministic generated-context source fingerpr... | standard | ⚪ Missing |
 | harbor.core.init_prompt.confirm | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.content_without_generated_at_for_compare | — | standard | ⚪ Missing |
 | harbor.core.index_entry.contract_subject_to_index_entry | — | standard | ⚪ Missing |
