@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "review_checklist"
 module: "harbor/adapters/python"
-generated_at: "2026-05-14T16:14:18Z"
+generated_at: "2026-05-14T17:00:04Z"
 generation_command: "harbor module seal harbor/adapters/python --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -12,7 +12,7 @@ source_paths:
   - "harbor/adapters/python/__init__.py"
   - "harbor/adapters/python/compat.py"
   - "harbor/adapters/python/parser.py"
-source_fingerprint: "sha256:9281ee2b9eff7de99cd7796ed096a6c3497f73f51759c2c4d56829bb8a6f5de0"
+source_fingerprint: "sha256:81cdd3c9b7f3cf968e7bc17cebd7bd88d79ba29b3e4020915311a8b3c46b3206"
 contract_fingerprint: "sha256:4776bd421c93a3c9be1aa666ef36a76fa41db4698842de438752c34c21873a33"
 generator_fingerprint: "sha256:f0ef13dd0cbd88bd41c9389910508ed76d2f2e018156de8eeafc9a4efff694cb"
 ---
