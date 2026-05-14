@@ -2,7 +2,7 @@
 generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "project_structure"
-generated_at: "2026-05-14T13:54:17Z"
+generated_at: "2026-05-14T15:02:21Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
 source_path_count: 158
@@ -128,7 +128,7 @@ source_paths:
   - "tests/test_index_builder_bad_syntax.py"
   - "tests/test_index_builder_registry_integration.py"
   - "tests/test_index_progress.py"
-source_fingerprint: "sha256:30aa549f34498685d4760b76a869509e54ef0f875142000ebf70f6118b99fb0c"
+source_fingerprint: "sha256:7fc31bfb3e35edd2a5dd6214f2c27abca15b2eaea1df8a5c1fe315fa74df9087"
 contract_fingerprint: "sha256:fe2910e32ab96d9487fd21778d78490d05f72f668c5dec86e843349104288efa"
 generator_fingerprint: "sha256:acbf174dd129bc6f84a47fbab94721946d034f7f5a285b22f3243f1074740d69"
 ---

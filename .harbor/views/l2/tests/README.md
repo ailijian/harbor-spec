@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-14T12:48:54Z"
+generated_at: "2026-05-14T15:02:34Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 98
@@ -107,7 +107,7 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:a368c05db94db987e07bdd232d9ee84985b0b420ab8c329567679c87e9d24a52"
+source_fingerprint: "sha256:832af8a12123418c0c33740c80b56d0a6bb439aa114b6d12ca1071cc47296edd"
 contract_fingerprint: "sha256:428c93e310e22ded979928306c860913824b8085e2eda1d868b92b0b7dfd1bc9"
 generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
