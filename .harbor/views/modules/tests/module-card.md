@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-14T07:04:11Z"
+generated_at: "2026-05-14T08:30:59Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 96
@@ -105,11 +105,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:edfaba87ac54523a8215421fe4ed70abced2832a31a3aaa1262e940955564165"
-contract_fingerprint: "sha256:19d20676a4893b7630637377f85f5fd4380e888e717ddf5e10aeb5704135c49d"
+source_fingerprint: "sha256:555bdcdff4d113fa5d38018471da9463a4f90c137a13a09352923f6f44c5fe09"
+contract_fingerprint: "sha256:62c19b573b61f09c7738f28470da75d2433a19f2c2232c433ff94f323e50caa5"
 generator_fingerprint: "sha256:397ed303b344c4694fd3842fbc3ccf02c9a40345ba4f92f0de83e5ac2e3a2149"
-view_fingerprint: "e0b3ad9d8391d0178d18878a5d223f8865986528c2808a35e73b2a11d8fb5fa9"
-fingerprint: "e0b3ad9d8391d0178d18878a5d223f8865986528c2808a35e73b2a11d8fb5fa9"
+view_fingerprint: "e879dba10b7a6ba77157d21c5884e42d52c90597195d1f93a7a307c46a547d58"
+fingerprint: "e879dba10b7a6ba77157d21c5884e42d52c90597195d1f93a7a307c46a547d58"
 ---
 
 # Module Card: tests
@@ -1065,10 +1065,13 @@ tests/test_workspace_paths.py
 | tests.test_utils_format.test_format_size_mb | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_negative_raises | tests/test_utils_format.py | unknown | standard |
 | tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix | tests/test_windows_abs_path_prefix.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._all_case_diagnostics | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._cached_canonical_json_payload | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._canonical_json_payload | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._contains_cjk | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._format_case_diagnostic | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._ps_quote | tests/test_windows_json_stdio_regression.py | unknown | standard |
+| tests.test_windows_json_stdio_regression._read_case_diagnostic | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._require_windows_powershell_51 | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._run_powershell_json_capture_cases | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._with_repo_pythonpath | tests/test_windows_json_stdio_regression.py | unknown | standard |

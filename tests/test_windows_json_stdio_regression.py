@@ -81,12 +81,12 @@ def _read_case_diagnostic(path: Path) -> dict:
     if not path.exists():
         return {"diagnostic_missing": True, "diagnostic_path": str(path)}
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        return json.loads(path.read_text(encoding="utf-8-sig"))
     except Exception as exc:  # pragma: no cover - defensive diagnostics path
         return {
             "diagnostic_path": str(path),
             "diagnostic_read_error": str(exc),
-            "diagnostic_raw": path.read_text(encoding="utf-8", errors="replace"),
+            "diagnostic_raw": path.read_text(encoding="utf-8-sig", errors="replace"),
         }
 
 
@@ -141,23 +141,29 @@ $text = $null
 $nativeExitCode = $null
 $nativeSuccess = $false
 $textForWrite = ""
+$previousErrorActionPreference = $ErrorActionPreference
 Remove-Item -LiteralPath {quoted_raw}, {quoted_stderr}, {quoted_normalized}, {quoted_diagnostic}, {quoted_exit_code} -Force -ErrorAction SilentlyContinue
-if ({_ps_quote(mode)} -eq 'direct') {{
-    $text = [string]::Join("`n", @(& $cmd{index}[0] $cmd{index}[1..($cmd{index}.Length - 1)] 2> {quoted_stderr}))
-    $nativeExitCode = $LASTEXITCODE
-    $nativeSuccess = $?
-}} elseif ({_ps_quote(mode)} -eq 'redirect') {{
-    & $cmd{index}[0] $cmd{index}[1..($cmd{index}.Length - 1)] > {quoted_raw} 2> {quoted_stderr}
-    $nativeExitCode = $LASTEXITCODE
-    $nativeSuccess = $?
-    $text = Get-Content -LiteralPath {quoted_raw} -Raw -ErrorAction SilentlyContinue
-}} elseif ({_ps_quote(mode)} -eq 'out-file') {{
-    & $cmd{index}[0] $cmd{index}[1..($cmd{index}.Length - 1)] 2> {quoted_stderr} | Out-File -FilePath {quoted_raw} -Encoding utf8
-    $nativeExitCode = $LASTEXITCODE
-    $nativeSuccess = $?
-    $text = Get-Content -LiteralPath {quoted_raw} -Raw -ErrorAction SilentlyContinue
-}} else {{
-    throw "unsupported mode: {mode}"
+try {{
+    $ErrorActionPreference = 'Continue'
+    if ({_ps_quote(mode)} -eq 'direct') {{
+        $text = [string]::Join("`n", @(& $cmd{index}[0] $cmd{index}[1..($cmd{index}.Length - 1)] 2> {quoted_stderr}))
+        $nativeExitCode = $LASTEXITCODE
+        $nativeSuccess = $?
+    }} elseif ({_ps_quote(mode)} -eq 'redirect') {{
+        & $cmd{index}[0] $cmd{index}[1..($cmd{index}.Length - 1)] > {quoted_raw} 2> {quoted_stderr}
+        $nativeExitCode = $LASTEXITCODE
+        $nativeSuccess = $?
+        $text = Get-Content -LiteralPath {quoted_raw} -Raw -ErrorAction SilentlyContinue
+    }} elseif ({_ps_quote(mode)} -eq 'out-file') {{
+        & $cmd{index}[0] $cmd{index}[1..($cmd{index}.Length - 1)] 2> {quoted_stderr} | Out-File -FilePath {quoted_raw} -Encoding utf8
+        $nativeExitCode = $LASTEXITCODE
+        $nativeSuccess = $?
+        $text = Get-Content -LiteralPath {quoted_raw} -Raw -ErrorAction SilentlyContinue
+    }} else {{
+        throw "unsupported mode: {mode}"
+    }}
+}} finally {{
+    $ErrorActionPreference = $previousErrorActionPreference
 }}
 $textForWrite = if ($null -eq $text) {{ "" }} else {{ [string]$text }}
 if ({_ps_quote(mode)} -eq 'direct') {{
@@ -216,7 +222,11 @@ $diagnostic = [ordered]@{{
     convert_from_json_ok = $convertFromJsonOk
     convert_from_json_error = $convertFromJsonError
 }}
-$diagnostic | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath {quoted_diagnostic} -Encoding utf8
+[System.IO.File]::WriteAllText(
+    {quoted_diagnostic},
+    ($diagnostic | ConvertTo-Json -Depth 4),
+    [System.Text.UTF8Encoding]::new($false)
+)
 [System.IO.File]::WriteAllText({quoted_normalized}, $textForWrite, [System.Text.UTF8Encoding]::new($false))
 Set-Content -LiteralPath {quoted_exit_code} -Value ([string]$nativeExitCode) -Encoding ascii
 """

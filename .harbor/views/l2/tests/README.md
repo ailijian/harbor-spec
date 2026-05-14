@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-14T07:04:10Z"
+generated_at: "2026-05-14T08:30:59Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 96
@@ -105,8 +105,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:edfaba87ac54523a8215421fe4ed70abced2832a31a3aaa1262e940955564165"
-contract_fingerprint: "sha256:336cfaefa3a4a1ca1ca173430eb121fc1a42c5cf7eb27f91b64f8ccb23f2b363"
+source_fingerprint: "sha256:555bdcdff4d113fa5d38018471da9463a4f90c137a13a09352923f6f44c5fe09"
+contract_fingerprint: "sha256:ad12828c694e8207b1ef6891203e98a8975c15bde281092601110e7b9d5284b5"
 generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476c5ad96e7689aade"
 ---
 
@@ -128,6 +128,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_cli_finish_sync_context._FakeWindowsStream.__init__ | — | standard | ⚪ Missing |
 | tests.test_init_wizard.StrictEncodingTextIO.__init__ | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._all_case_diagnostics | — | standard | ⚪ Missing |
 | tests.test_baseline_artifact._baseline_item | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline._build_strict_target | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._cached_canonical_json_payload | — | standard | ⚪ Missing |
@@ -193,6 +194,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_release_packaging._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._force_en_locale | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._format_case_diagnostic | — | standard | ⚪ Missing |
 | tests.test_cli_stale._generate_views_for_module | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy._gitignore_entries | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._init_git_repo | — | standard | ⚪ Missing |
@@ -209,6 +211,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_checkpoint_ci_guidance._patch_inputs | — | standard | ⚪ Missing |
 | tests.test_lock_flags._prepare_proj | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._ps_quote | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._read_case_diagnostic | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._read_last_marker | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._read_runtime_diagnostics | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._read_single_diary_entry | — | standard | ⚪ Missing |

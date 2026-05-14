@@ -16,6 +16,7 @@
 | tests.test_cli_finish_sync_context._FakeWindowsStream.__init__ | — | standard | ⚪ Missing |
 | tests.test_init_wizard.StrictEncodingTextIO.__init__ | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._accepted_checkpoint_baseline | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._all_case_diagnostics | — | standard | ⚪ Missing |
 | tests.test_baseline_artifact._baseline_item | — | standard | ⚪ Missing |
 | tests.test_ddt_version_baseline._build_strict_target | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._cached_canonical_json_payload | — | standard | ⚪ Missing |
@@ -81,6 +82,7 @@
 | tests.test_release_packaging._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._force_en_locale | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._format_case_diagnostic | — | standard | ⚪ Missing |
 | tests.test_cli_stale._generate_views_for_module | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy._gitignore_entries | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._init_git_repo | — | standard | ⚪ Missing |
@@ -97,6 +99,7 @@
 | tests.test_checkpoint_ci_guidance._patch_inputs | — | standard | ⚪ Missing |
 | tests.test_lock_flags._prepare_proj | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._ps_quote | — | standard | ⚪ Missing |
+| tests.test_windows_json_stdio_regression._read_case_diagnostic | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._read_last_marker | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._read_runtime_diagnostics | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._read_single_diary_entry | — | standard | ⚪ Missing |
