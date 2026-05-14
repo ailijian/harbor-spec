@@ -4,11 +4,11 @@ version = "1.4.2.2"
 description = "Harbor-spec: context governance engine for AI coding, with contract drift detection, DDT validation, workflow facades, L2 README generation, module capsules, and advisory health checks."
 readme = "README.md"
 requires-python = ">=3.9"
+license = "Apache-2.0"
 keywords = ["ai-coding", "context-governance", "cli", "docstring", "ddt"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
