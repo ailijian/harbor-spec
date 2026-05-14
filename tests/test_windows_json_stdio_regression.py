@@ -102,6 +102,12 @@ def _all_case_diagnostics(result_paths: dict) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
 
+def _full_stderr_from_paths(paths: dict) -> str:
+    diagnostic = _read_case_diagnostic(paths["diagnostic"])
+    stderr_full_text = diagnostic.get("stderr_full_text", "")
+    return stderr_full_text if isinstance(stderr_full_text, str) else str(stderr_full_text)
+
+
 def _run_powershell_json_capture_cases(cases, tmp_path: Path):
     powershell = _require_windows_powershell_51()
     env = _with_repo_pythonpath(os.environ)
@@ -190,6 +196,16 @@ $stderrPreview = if ($stderrExists) {{
 }} else {{
     ""
 }}
+$stderrFullText = if ($stderrExists) {{
+    $stderrText = Get-Content -LiteralPath {quoted_stderr} -Raw -ErrorAction SilentlyContinue
+    if ($null -eq $stderrText) {{
+        ""
+    }} else {{
+        $stderrText.Substring(0, [Math]::Min(20000, $stderrText.Length))
+    }}
+}} else {{
+    ""
+}}
 $textIsNull = $null -eq $text
 $textLength = if ($textIsNull) {{ 0 }} else {{ $text.Length }}
 $textPreview = if ($textIsNull) {{
@@ -216,6 +232,7 @@ $diagnostic = [ordered]@{{
     stderr_exists = $stderrExists
     stderr_length = $stderrLength
     stderr_preview = $stderrPreview
+    stderr_full_text = $stderrFullText
     text_is_null = $textIsNull
     text_length = $textLength
     text_preview = $textPreview
@@ -270,15 +287,18 @@ chcp 936 > $null
     for name, paths in result_paths.items():
         normalized_text = paths["normalized"].read_text(encoding="utf-8")
         diagnostic_message = _format_case_diagnostic(paths)
+        full_stderr = _full_stderr_from_paths(paths)
         if not normalized_text:
             pytest.fail(
                 f"{name} produced empty normalized text.\n"
-                f"Diagnostic JSON:\n{diagnostic_message}"
+                f"Diagnostic JSON:\n{diagnostic_message}\n"
+                f"Full stderr:\n{full_stderr}"
             )
         if paths["require_cjk"]:
             assert _contains_cjk(normalized_text), (
                 f"{name} normalized text missing CJK characters.\n"
-                f"Diagnostic JSON:\n{diagnostic_message}"
+                f"Diagnostic JSON:\n{diagnostic_message}\n"
+                f"Full stderr:\n{full_stderr}"
             )
         exit_code = int(paths["exit_code"].read_text(encoding="ascii").strip())
         try:
@@ -286,7 +306,8 @@ chcp 936 > $null
         except json.JSONDecodeError as exc:
             pytest.fail(
                 f"{name} normalized text failed json.loads(): {exc}\n"
-                f"Diagnostic JSON:\n{diagnostic_message}"
+                f"Diagnostic JSON:\n{diagnostic_message}\n"
+                f"Full stderr:\n{full_stderr}"
             )
         results[name] = (exit_code, payload)
     return results
