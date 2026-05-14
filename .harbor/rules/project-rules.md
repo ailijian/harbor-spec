@@ -2,7 +2,7 @@
 
 # Project Rules
 
-Version: Harbor-spec v1.3.0  
+Version: Harbor-spec v1.4.x
 Canonical path: `.harbor/rules/project-rules.md`  
 Purpose: Project-specific rules for the harbor-spec reference implementation
 

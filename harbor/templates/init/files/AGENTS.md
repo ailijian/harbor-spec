@@ -314,6 +314,7 @@ Machine-readable CI checks:
 
 ```powershell
 harbor checkpoint --ci --format json --detail summary
+harbor verify-generated --all --ci --format json
 harbor stale --ci --format json
 harbor doctor --ci --format json
 ```
@@ -950,8 +951,12 @@ Release acceptance notes:
 ```text
 - checkpoint --ci must keep .harbor/baseline/accepted-checkpoint.json as CI baseline truth.
 - runtime cache is local acceleration only and must not replace accepted baseline artifact in CI.
-- Windows full-governance is a formal v1.4.2 acceptance dimension alongside Ubuntu Python matrix.
-- Generated context closure for v1.4.2 is finish --sync-context -> stale --ci -> doctor --ci.
+- - Windows full-governance is a formal acceptance dimension alongside Ubuntu matrix.
+- Generated context closure should include:
+  finish --sync-context
+  verify-generated --changed/--all --ci
+  stale --ci
+  doctor --ci
 ```
 
 Notes:
