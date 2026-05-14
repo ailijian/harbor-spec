@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-14T17:51:29Z"
+generated_at: "2026-05-14T18:49:08Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
 source_path_count: 60
@@ -69,8 +69,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:45489b2f5ec5e55f4a2d97d68f6496bcb3071a894664f09fd7636a9ea02ed1b3"
-contract_fingerprint: "sha256:664d2b02f204b7eb6d4f34c7ee509cf2d11aaab279e9691253735060a11d343b"
+source_fingerprint: "sha256:df1fdb881c20285d8eb5135b1dfb5cdabd080981f335547d453611bc3520d370"
+contract_fingerprint: "sha256:1aa5b4ba434a7eda32f27f7df6d6e069d5a0a82a0b3d1209a321c57fff2fd836"
 generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
@@ -97,6 +97,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.l2.collect_all_indexed_modules | Collect normalized module paths from readonly index records. | strict | ❌ Missing |
 | harbor.core.module_capsule.collect_module_context | Collect readonly context records used to render one modul... | strict | ❌ Missing |
 | harbor.core.project_structure.collect_project_structure_context | Collect the canonical project-structure context from inde... | strict | ❌ Missing |
+| harbor.core.project_structure.collect_project_structure_integrity_inputs | Collect deterministic integrity inputs for project-struct... | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.compute_meta_hash | Hash L2 body content using the canonical `_meta.json` nor... | strict | ❌ Missing |
 | harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |

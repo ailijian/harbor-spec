@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-14T17:51:34Z"
+generated_at: "2026-05-14T18:49:05Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 60
@@ -69,11 +69,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:45489b2f5ec5e55f4a2d97d68f6496bcb3071a894664f09fd7636a9ea02ed1b3"
-contract_fingerprint: "sha256:0469cdb2d2daefd2e15b1f8d68523d3eb955851a49f20adbfa9d5e61f9f297a0"
+source_fingerprint: "sha256:df1fdb881c20285d8eb5135b1dfb5cdabd080981f335547d453611bc3520d370"
+contract_fingerprint: "sha256:203b17a2bdb94bd00b6c5aea97f0c22dc6db5dd7a4af63ad1536bcfd67e250dd"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "73c7582d7faf7dfff91cefa6d122506debcaa01bb8746c815145ae13e86443c4"
-fingerprint: "73c7582d7faf7dfff91cefa6d122506debcaa01bb8746c815145ae13e86443c4"
+view_fingerprint: "47c40a2fd82e26f9021b914e59e1ccecf3f6463b8962d73786a92fef19a281cc"
+fingerprint: "47c40a2fd82e26f9021b914e59e1ccecf3f6463b8962d73786a92fef19a281cc"
 ---
 
 # Module Card: harbor
@@ -677,6 +677,7 @@ harbor/utils/i18n.py
 | harbor.core.project_structure._yes_no | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure.classify_project_area | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure.collect_project_structure_context | harbor/core/project_structure.py | public | strict |
+| harbor.core.project_structure.collect_project_structure_integrity_inputs | harbor/core/project_structure.py | public | strict |
 | harbor.core.project_structure.generate_project_structure_markdown | harbor/core/project_structure.py | public | strict |
 | harbor.core.project_structure.rank_key_file | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure.write_project_structure | harbor/core/project_structure.py | public | strict |

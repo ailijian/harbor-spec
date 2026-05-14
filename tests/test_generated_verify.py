@@ -147,3 +147,28 @@ def test_generated_verify_ignores_cross_platform_source_line_endings(tmp_path: P
 
     assert report.status == "pass"
     assert report.summary["failures"] == 0
+
+
+def test_generated_verify_project_structure_passes_without_runtime_cache(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    _generate_views(tmp_path)
+
+    cache_dir = tmp_path / ".harbor" / "cache"
+    backup_dir = tmp_path / ".harbor" / "cache_backup"
+    if backup_dir.exists():
+        raise AssertionError(f"unexpected backup cache path: {backup_dir}")
+    renamed = False
+    if cache_dir.exists():
+        cache_dir.rename(backup_dir)
+        renamed = True
+    try:
+        report = build_generated_verification_report(scope="all", modules=["harbor/core"])
+    finally:
+        if renamed:
+            backup_dir.rename(cache_dir)
+
+    project_structure = next(item for item in report.project.artifacts if item.artifact == "project_structure")
+    assert project_structure.status == ARTIFACT_STATUS_UP_TO_DATE
+    assert project_structure.reason is None
+    assert report.status == "pass"

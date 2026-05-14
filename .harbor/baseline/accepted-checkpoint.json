@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-14T18:16:33Z",
+  "accepted_at": "2026-05-14T19:21:38Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -3160,7 +3160,7 @@
         "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._compose_expected_module_card_markdown"
       },
       {
-        "body_hash": "128cd17897512e1dbc2062c0d9668910bbea1cddd02aa873439d75f22c5c3ea0",
+        "body_hash": "ca36f980b7d31963c62201f6e46cf834b8147a3c48cf318608a25c6ea59514c6",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -6052,7 +6052,7 @@
         "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure._key_files_display"
       },
       {
-        "body_hash": "b7e346ab33054b6935d4deac1b0e372319ba6f4f173932f3890d72e76daf45fc",
+        "body_hash": "d3a47d2a1a92bc41883a9ba773d6c3f0456d48dd0547c403583ad93f9fae5f9b",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -6196,7 +6196,7 @@
         "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure.classify_project_area"
       },
       {
-        "body_hash": "5f29349c85e51f095b2c760dce7fa9e6110b1bc1e6375588c4d9d9c7c79780d6",
+        "body_hash": "4b3d8b2c242baf3fb5a9b45da3a14cd7207fc761f24afd155b39da825bb3c86e",
         "contract_hash": "fe0a805862d8ebdbb5c373ae2cfd8f9d4af90a1db33118fca01a5fa6573d31b5",
         "contract_presence": "present",
         "contract_required": true,
@@ -6206,6 +6206,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure.collect_project_structure_context"
+      },
+      {
+        "body_hash": "92fbc66405db8c361ef6071dc6eead87eefc8696c903c1d5cbff6a32ba40d98d",
+        "contract_hash": "24824592265ff8d2bb8ca0436beec0c42d8c4953546873bf3791f7ce2a3d2bfa",
+        "contract_presence": "present",
+        "contract_required": true,
+        "file_path": "harbor/core/project_structure.py",
+        "func_id": "harbor.core.project_structure.collect_project_structure_integrity_inputs",
+        "id": "harbor.core.project_structure.collect_project_structure_integrity_inputs",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure.collect_project_structure_integrity_inputs"
       },
       {
         "body_hash": "810edcaa3b695f1b12f3edb3301b198b01b5286b55f9c7af3abb38498b314b8d",
@@ -6232,7 +6244,7 @@
         "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure.rank_key_file"
       },
       {
-        "body_hash": "873473ee58f4f1c82421e4b9ca5c84d5ef77ef706519876a390f701ad9684c39",
+        "body_hash": "71087191d92ca44d78e90a0335ba78a873a127b6444a910c7a66e251012f2c8f",
         "contract_hash": "7023d08f243b5c7cbc7bc33d3dfaf8a74bbe23d0079097262b218bf6f704d85c",
         "contract_presence": "present",
         "contract_required": true,
@@ -11488,7 +11500,7 @@
         "target_id": "python:tests/test_cli_project_structure.py:function:tests.test_cli_project_structure.test_project_structure_does_not_trigger_other_side_effect_paths"
       },
       {
-        "body_hash": "35717dcfcd320a4438a0b85b1c7c3cecb7c15b66d532c1bb69254619fca90a9a",
+        "body_hash": "76bd434411e67d93127e5c2dc92df791b942462ec28dd03cad4cf19aab6956ba",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -13586,6 +13598,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_passes_when_views_match"
+      },
+      {
+        "body_hash": "c6dd678efef298e3664f7e56749ce617dfa9d6ca16a56aaf900f2c48038f5cdd",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_generated_verify.py",
+        "func_id": "tests.test_generated_verify.test_generated_verify_project_structure_passes_without_runtime_cache",
+        "id": "tests.test_generated_verify.test_generated_verify_project_structure_passes_without_runtime_cache",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_project_structure_passes_without_runtime_cache"
       },
       {
         "body_hash": "4cba5e1ca746c13bed8f47f18eaa373596ef17e0b27d398835678545f938d977",
@@ -16000,6 +16024,18 @@
         "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure._write_index"
       },
       {
+        "body_hash": "e043ba22692b877db7202b1eed66b5cafd525038fa7c459ec45cfb0204029887",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_project_structure.py",
+        "func_id": "tests.test_project_structure._write_source_repo",
+        "id": "tests.test_project_structure._write_source_repo",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure._write_source_repo"
+      },
+      {
         "body_hash": "11a1cc30f51c083695c5a8ac868dc934d490935443210bf89e836b737ad27c36",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -16036,7 +16072,19 @@
         "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure.test_collect_project_structure_context_filters_windows_absolute_paths_on_posix"
       },
       {
-        "body_hash": "e6b048ace3a8de17986a1283ee5ae3d6b4e841c5356b9ee65b1e9ccd1ca67c68",
+        "body_hash": "9b6649f697681217b93b4dc833806ce441efb9ae01d34f40ca8c2e859ebc4fac",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_project_structure.py",
+        "func_id": "tests.test_project_structure.test_collect_project_structure_context_prefers_fresh_source_over_cache",
+        "id": "tests.test_project_structure.test_collect_project_structure_context_prefers_fresh_source_over_cache",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure.test_collect_project_structure_context_prefers_fresh_source_over_cache"
+      },
+      {
+        "body_hash": "80028ec4baa7b865c6a6cc1601f31267248749a44b843027faa3ca989c52d2a4",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -16082,6 +16130,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files"
+      },
+      {
+        "body_hash": "4e88a8c956b36dd9b2c2730db0a3ab02008d4685b671c2d95599edd14c5fe950",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_project_structure.py",
+        "func_id": "tests.test_project_structure.test_write_project_structure_is_stable_with_or_without_cache",
+        "id": "tests.test_project_structure.test_write_project_structure_is_stable_with_or_without_cache",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure.test_write_project_structure_is_stable_with_or_without_cache"
       },
       {
         "body_hash": "9b40021ebe83e6c25293d8efd96f7f28cb736275e71870f6c2e1b9be11728ff4",

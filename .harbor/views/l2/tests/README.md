@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-14T17:39:30Z"
+generated_at: "2026-05-14T18:49:14Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 98
@@ -107,8 +107,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:f22ca43cf7e88af24e20593fb90c3fa55dad33d97bc02fe849e0bcec2585b60b"
-contract_fingerprint: "sha256:5dca1de8084c3f4ab604ec19c7eef7dc2d01a1fc965f661a0f5e2e28fcd8a533"
+source_fingerprint: "sha256:9ba59f1f6813efb581596a279188817c5fb3743d71a2a2a34204e15289831df1"
+contract_fingerprint: "sha256:906d6edd5f4e46b2d348e9d25ae9dfbbef744617ce69a99453edfbdcf02a2cd6"
 generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
@@ -300,6 +300,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | tests.test_stale._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_log_draft._write_snapshot | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli._write_snapshot | — | standard | ⚪ Missing |
+| tests.test_project_structure._write_source_repo | — | standard | ⚪ Missing |
 | tests.test_stale._write_stale_cache_index | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env._write_subprocess_workspace | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact._write_typescript_repo | — | standard | ⚪ Missing |
@@ -472,6 +473,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | tests.test_doctor.test_collect_next_steps_filters_high_impact_commands | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_builds_expected_flags_and_counts | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_filters_windows_absolute_paths_on_posix | — | standard | ⚪ Missing |
+| tests.test_project_structure.test_collect_project_structure_context_prefers_fresh_source_over_cache | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_reads_metadata_from_pyproject | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_commit_alias_unchanged_maps_to_lock | — | standard | ⚪ Missing |
@@ -618,6 +620,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | tests.test_generated_verify.test_generated_verify_ignores_cross_platform_source_line_endings | — | standard | ⚪ Missing |
 | tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes | — | standard | ⚪ Missing |
 | tests.test_generated_verify.test_generated_verify_passes_when_views_match | — | standard | ⚪ Missing |
+| tests.test_generated_verify.test_generated_verify_project_structure_passes_without_runtime_cache | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_generated_view_modules_hit_generated_view_format | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_generators_include_required_sections | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance | — | standard | ⚪ Missing |
@@ -1036,6 +1039,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | tests.test_module_capsule_stale.test_write_module_card_contains_frontmatter_fingerprint | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_write_module_skill_only_writes_skill_file | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_write_path_cannot_escape_repo_root | — | standard | ⚪ Missing |
+| tests.test_project_structure.test_write_project_structure_is_stable_with_or_without_cache | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_write_project_structure_returns_canonical_first | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_write_snapshot_creates_json_with_required_schema | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._FakeDDTValidator.validate | — | standard | ⚪ Missing |

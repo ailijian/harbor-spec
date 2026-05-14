@@ -154,7 +154,7 @@ def test_project_structure_filesystem_fallback_generates_non_empty_key_areas_and
     assert "| harbor/core |" in out
     assert "| harbor/utils |" in out
     assert "| tests |" in out
-    assert "| Mode | filesystem fallback |" in out
+    assert "| Mode | Harbor index |" in out
     assert "contract counts may be 0 because no Harbor index records were available" in out
     assert "| - | No indexed files found. | 0 | 0 |" not in out
     assert "No indexed modules found. Generated a metadata-only project structure view." not in out

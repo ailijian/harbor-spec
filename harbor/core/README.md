@@ -21,6 +21,7 @@
 | harbor.core.l2.collect_all_indexed_modules | Collect normalized module paths from readonly index records. | strict | ❌ Missing |
 | harbor.core.module_capsule.collect_module_context | Collect readonly context records used to render one modul... | strict | ❌ Missing |
 | harbor.core.project_structure.collect_project_structure_context | Collect the canonical project-structure context from inde... | strict | ❌ Missing |
+| harbor.core.project_structure.collect_project_structure_integrity_inputs | Collect deterministic integrity inputs for project-struct... | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.compute_meta_hash | Hash L2 body content using the canonical `_meta.json` nor... | strict | ❌ Missing |
 | harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |

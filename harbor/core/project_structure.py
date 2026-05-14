@@ -4,13 +4,13 @@ import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-from harbor.core.l2 import collect_all_indexed_modules, infer_module_from_path
+from harbor.core.l2 import infer_module_from_path
 from harbor.core.context_integrity import build_context_integrity_metadata, compose_markdown_with_frontmatter
 from harbor.core.module_capsule import normalize_module_path
 from harbor.core.module_skill import normalize_skill_slug
-from harbor.core.storage import HarborDB
+from harbor.core.readonly_index import load_readonly_index
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
 
 
@@ -120,30 +120,17 @@ def _belongs_to_module(file_path: str, module: str) -> bool:
     return rel == mod or rel.startswith(f"{mod}/")
 
 
-def _load_index(index_path: Path) -> Dict[str, Any]:
-    if index_path.exists():
-        try:
-            return json.loads(index_path.read_text(encoding="utf-8"))
-        except Exception:
-            return {"files": {}}
-
-    db = HarborDB(project_root=index_path.parents[2])
-    files: Dict[str, Any] = {}
-    for fp, mtime in db.get_all_files():
-        items = []
-        for it in db.get_file_entries(fp):
-            meta = it.get("meta", {}) or {}
-            items.append(
-                {
-                    "id": it.get("id"),
-                    "qualified_name": meta.get("qualified_name"),
-                    "name": meta.get("name"),
-                    "scope": meta.get("scope"),
-                    "strictness": meta.get("strictness"),
-                }
-            )
-        files[str(fp)] = {"mtime": mtime, "items": items}
-    return {"files": files}
+def _load_index(
+    root: Path,
+    *,
+    index_path: Optional[Path] = None,
+    prefer_fresh_source: bool = True,
+) -> Dict[str, Any]:
+    return load_readonly_index(
+        index_path=index_path,
+        repo_root=root,
+        prefer_fresh_source=prefer_fresh_source,
+    )
 
 
 def _collect_fallback_files(root: Path) -> List[str]:
@@ -353,16 +340,73 @@ def _yes_no(value: bool) -> str:
     return "yes" if value else "no"
 
 
+def collect_project_structure_integrity_inputs(
+    root: Path,
+    index_path: Optional[Path] = None,
+) -> Tuple[List[str], List[Dict[str, Any]]]:
+    """Collect deterministic integrity inputs for project-structure generation.
+
+    Behavior:
+      - Uses fresh/source-derived readonly index semantics so clean CI and local
+        generation derive canonical integrity inputs from the same repo state.
+      - Falls back to repo-scoped filesystem discovery when no readonly index
+        records are available.
+      - Excludes absolute paths outside `root` from generated metadata.
+      - Must not depend on local runtime cache presence for canonical output.
+
+    Args:
+      root (Path): Repository root used for repo-relative filtering.
+      index_path (Optional[Path]): Optional readonly index override.
+
+    Returns:
+      Tuple[List[str], List[Dict[str, Any]]]: Stable `source_paths` and
+      `contract_records` for context-integrity metadata.
+
+    Side Effects:
+      - Reads source files, workspace config, and readonly index inputs only.
+      - Writes no files.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: deterministic
+    """
+    root = Path(root).resolve()
+    idx = _load_index(root, index_path=index_path, prefer_fresh_source=True)
+    source_paths: List[str] = []
+    contract_records: List[Dict[str, Any]] = []
+    for fp, meta in (idx.get("files") or {}).items():
+        rel = _to_project_relative_path(str(fp), root)
+        if not rel:
+            continue
+        source_paths.append(rel)
+        for item in meta.get("items", []) or []:
+            contract_records.append(
+                {
+                    "symbol": str(item.get("qualified_name") or item.get("id") or item.get("name") or ""),
+                    "file": rel,
+                    "scope": str(item.get("scope") or ""),
+                    "strictness": str(item.get("strictness") or ""),
+                }
+            )
+    normalized_source_paths = sorted({_normalize_rel_path(path) for path in source_paths if _normalize_rel_path(path)})
+    if not normalized_source_paths:
+        normalized_source_paths = _collect_fallback_files(root)
+    return normalized_source_paths, contract_records
+
+
 def collect_project_structure_context(root: Path, index_path: Optional[Path] = None) -> ProjectStructureContext:
     """Collect the canonical project-structure context from index or filesystem.
 
     Behavior:
-      - Loads Harbor index records when available, otherwise falls back to
-        filesystem discovery within `root`.
+      - Uses fresh/source-derived readonly index semantics so local generation
+        and clean CI observe the same canonical project structure inputs.
+      - Falls back to filesystem discovery within `root` only when no readonly
+        index records are available.
       - Normalizes path separators to POSIX-style display paths.
       - Includes only repo-relative files and modules; absolute paths outside
         `root`, including Windows-style absolute paths on POSIX runners, are
         ignored instead of being surfaced as project modules.
+      - Must not depend on local runtime cache presence for canonical output.
 
     Args:
       root (Path): Repository root used for repo-relative filtering.
@@ -381,7 +425,7 @@ def collect_project_structure_context(root: Path, index_path: Optional[Path] = N
     """
     root = root.resolve()
     idx_path = index_path or (root / ".harbor" / "cache" / "l3_index.json")
-    index_data = _load_index(idx_path)
+    index_data = _load_index(root, index_path=idx_path, prefer_fresh_source=True)
 
     valid_files: List[str] = []
     for fp in (index_data.get("files") or {}).keys():
@@ -408,8 +452,14 @@ def collect_project_structure_context(root: Path, index_path: Optional[Path] = N
         discovery_mode = "filesystem fallback"
         contract_aware = "no"
 
-    raw_modules = collect_all_indexed_modules(index_path=idx_path)
-    module_set = {m for m in (_sanitize_module(v, root) for v in raw_modules) if m}
+    module_set = set()
+    for fp, meta in (index_data.get("files") or {}).items():
+        rel = _to_project_relative_path(str(fp), root)
+        if not rel or not (meta.get("items") or []):
+            continue
+        module = _sanitize_module(infer_module_from_path(rel), root)
+        if module:
+            module_set.add(module)
     if not module_set:
         for fp in valid_files:
             rel = _to_project_relative_path(str(fp), root)
@@ -733,9 +783,12 @@ def write_project_structure(context: ProjectStructureContext, root: Path) -> Pro
       - Writes the canonical generated view under `.harbor/views/**`.
       - Optionally writes a configured export copy when the export target stays
         inside `root`.
-      - Builds source-path integrity metadata from repo-relative files only;
-        absolute paths outside `root`, including Windows-style absolute paths on
-        POSIX runners, are excluded from generated metadata and output.
+      - Builds source-path integrity metadata from
+        `collect_project_structure_integrity_inputs()` so writers and verifiers
+        share the same fresh/source-derived readonly index semantics.
+      - Excludes absolute paths outside `root`, including Windows-style
+        absolute paths on POSIX runners, from generated metadata and output.
+      - Must not depend on local runtime cache presence for canonical output.
 
     Args:
       context (ProjectStructureContext): Prepared project structure context.
@@ -753,26 +806,7 @@ def write_project_structure(context: ProjectStructureContext, root: Path) -> Pro
     """
     root = Path(root).resolve()
     body = generate_project_structure_markdown(context)
-
-    idx = _load_index(root / ".harbor" / "cache" / "l3_index.json")
-    source_paths: List[str] = []
-    for fp in (idx.get("files") or {}).keys():
-        rel = _to_project_relative_path(str(fp), root)
-        if rel:
-            source_paths.append(rel)
-    if not source_paths:
-        source_paths = _collect_fallback_files(root)
-
-    contract_records: List[Dict[str, Any]] = []
-    for area in context.key_areas:
-        contract_records.append(
-            {
-                "symbol": f"area:{area.area}",
-                "file": area.area,
-                "scope": "project",
-                "strictness": str(area.indexed_contracts_count),
-            }
-        )
+    source_paths, contract_records = collect_project_structure_integrity_inputs(root)
     metadata = build_context_integrity_metadata(
         view_type="project_structure",
         module=None,

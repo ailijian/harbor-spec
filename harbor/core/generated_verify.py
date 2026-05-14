@@ -22,9 +22,7 @@ from harbor.core.module_capsule import (
     preview_module_capsule,
 )
 from harbor.core.project_structure import (
-    _collect_fallback_files,
-    _load_index,
-    _to_project_relative_path,
+    collect_project_structure_integrity_inputs,
     collect_project_structure_context,
     generate_project_structure_markdown,
 )
@@ -816,24 +814,7 @@ def _collect_repair_commands(
 
 
 def _compose_expected_project_structure_markdown(context, body: str, *, root: Path) -> str:
-    idx = _load_index(root / ".harbor" / "cache" / "l3_index.json")
-    source_paths: List[str] = []
-    for fp in (idx.get("files") or {}).keys():
-        rel = _to_project_relative_path(str(fp), root)
-        if rel:
-            source_paths.append(rel)
-    if not source_paths:
-        source_paths = _collect_fallback_files(root)
-    contract_records: List[Dict[str, Any]] = []
-    for area in context.key_areas:
-        contract_records.append(
-            {
-                "symbol": f"area:{area.area}",
-                "file": area.area,
-                "scope": "project",
-                "strictness": str(area.indexed_contracts_count),
-            }
-        )
+    source_paths, contract_records = collect_project_structure_integrity_inputs(root)
     metadata = build_context_integrity_metadata(
         view_type="project_structure",
         module=None,

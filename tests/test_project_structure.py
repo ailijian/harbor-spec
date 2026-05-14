@@ -5,6 +5,7 @@ from pathlib import Path
 import harbor
 from harbor.core.project_structure import (
     classify_project_area,
+    collect_project_structure_integrity_inputs,
     collect_project_structure_context,
     generate_project_structure_markdown,
     rank_key_file,
@@ -51,6 +52,52 @@ def _write_index(root: Path) -> Path:
     }
     idx.write_text(json.dumps(payload), encoding="utf-8")
     return idx
+
+
+def _write_source_repo(root: Path) -> None:
+    (root / "pyproject.toml").write_text(
+        "\n".join(
+            [
+                "[project]",
+                'name = "harbor-spec"',
+                'version = "1.4.2.2"',
+                "",
+                "[project.scripts]",
+                'harbor = "harbor.cli.main:main"',
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    cfg = root / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text("code_roots:\n- harbor/**\n- tests/**\nexclude_paths: []\n", encoding="utf-8")
+    pkg = root / "harbor" / "core"
+    pkg.mkdir(parents=True, exist_ok=True)
+    (pkg / "__init__.py").write_text("", encoding="utf-8")
+    (pkg / "sample.py").write_text(
+        '''def run(value: int) -> int:
+    """Return the provided value unchanged.
+
+    Behavior:
+      - Returns the provided integer unchanged.
+
+    Args:
+      value (int): Input integer.
+
+    Returns:
+      int: Same integer value.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    """
+    return value
+''',
+        encoding="utf-8",
+    )
+    tests_dir = root / "tests"
+    tests_dir.mkdir(parents=True, exist_ok=True)
+    (tests_dir / "test_sample.py").write_text("def test_sample():\n    assert True\n", encoding="utf-8")
 
 
 def test_collect_project_structure_context_builds_expected_flags_and_counts(tmp_path: Path):
@@ -185,11 +232,43 @@ def test_collect_project_structure_context_uses_filesystem_fallback_when_index_m
     assert "harbor/core" in module_names
     assert "harbor/utils" in module_names
     assert "tests" in supporting_names
-    assert all(m.indexed_contracts_count == 0 for m in context.modules)
+    assert context.discovery_mode == "Harbor index"
+    assert context.contract_aware == "yes"
     assert any(m.indexed_files_count > 0 for m in context.modules)
     markdown = generate_project_structure_markdown(context)
-    assert "| Mode | filesystem fallback |" in markdown
-    assert "contract counts may be 0 because no Harbor index records were available" in markdown
+    assert "| Mode | Harbor index |" in markdown
+    assert "This view was generated from Harbor indexed records." in markdown
+
+
+def test_collect_project_structure_context_prefers_fresh_source_over_cache(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_source_repo(tmp_path)
+    idx = tmp_path / ".harbor" / "cache" / "l3_index.json"
+    idx.parent.mkdir(parents=True, exist_ok=True)
+    idx.write_text(
+        json.dumps(
+            {
+                "files": {
+                    "harbor/core/stale.py": {
+                        "items": [{"id": "stale", "qualified_name": "harbor.core.stale.old"}]
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    context = collect_project_structure_context(tmp_path)
+    source_paths, contract_records = collect_project_structure_integrity_inputs(tmp_path)
+
+    assert context.discovery_mode == "Harbor index"
+    assert "harbor/core/sample.py" in source_paths
+    assert "harbor/core/stale.py" not in source_paths
+    assert all(record["file"] != "harbor/core/stale.py" for record in contract_records)
+    assert any(module.module == "harbor/core" for module in context.modules)
+    core = next(module for module in context.modules if module.module == "harbor/core")
+    assert "harbor/core/sample.py" in core.key_files
+    assert "harbor/core/stale.py" not in core.key_files
 
 
 def test_classify_project_area_is_stable():
@@ -228,3 +307,34 @@ def test_write_project_structure_returns_canonical_first(tmp_path: Path):
     assert f'harbor_version: "{harbor.__version__}"' in text
     assert 'view_type: "project_structure"' in text
     assert "source_path_count:" in text
+
+
+def test_write_project_structure_is_stable_with_or_without_cache(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _write_source_repo(tmp_path)
+
+    first_result = write_project_structure(collect_project_structure_context(tmp_path), tmp_path)
+    first_text = first_result.canonical_path.read_text(encoding="utf-8")
+
+    idx = tmp_path / ".harbor" / "cache" / "l3_index.json"
+    idx.parent.mkdir(parents=True, exist_ok=True)
+    idx.write_text(
+        json.dumps(
+            {
+                "files": {
+                    "harbor/core/stale.py": {
+                        "items": [{"id": "stale", "qualified_name": "harbor.core.stale.old"}]
+                    },
+                    "docs/legacy.md": {"items": []},
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    second_result = write_project_structure(collect_project_structure_context(tmp_path), tmp_path)
+    second_text = second_result.canonical_path.read_text(encoding="utf-8")
+
+    assert first_text == second_text
+    assert '- "harbor/core/stale.py"' not in second_text
+    assert '- "docs/legacy.md"' not in second_text
