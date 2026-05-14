@@ -153,8 +153,9 @@ def test_checkpoint_command_recognized(monkeypatch):
     monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
     out = run_cmd(["checkpoint"])
     assert "Harbor Checkpoint:" in out
-    assert "Harbor Check Report:" in out
-    assert "Contract Impact 分类：" not in out
+    assert "Status: PASS" in out
+    assert "DDT:" in out
+    assert "Harbor Check Report:" not in out
 
 
 def test_checkpoint_ci_json_recognized(monkeypatch):
@@ -244,7 +245,8 @@ def test_checkpoint_does_not_trigger_semantic_audit(monkeypatch):
     monkeypatch.setattr(cli_main.SemanticGuard, "audit", _should_not_call)
     out = run_cmd(["checkpoint"])
     assert "Harbor Checkpoint:" in out
-    assert "Harbor Check Report:" in out
+    assert "Status: PASS" in out
+    assert "Harbor Check Report:" not in out
 
 
 def test_checkpoint_prints_contract_impact_summary_when_dirty(monkeypatch):
@@ -280,8 +282,11 @@ def test_checkpoint_prints_contract_impact_summary_when_dirty(monkeypatch):
     monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
     monkeypatch.setattr(cli_main.DDTValidator, "validate", lambda self, bindings: _empty_validation_report())
     out = run_cmd(["checkpoint"])
-    assert "Contract Impact 分类：" in out
-    assert "cli_json_output" in out
+    assert "Contract impact:" in out
+    assert "- confirmed:" in out
+    assert "- possible:" in out
+    assert "- unknown:" in out
+    assert "cli_json_output" not in out
 
 
 def test_finish_does_not_auto_run_docs_log_lock(monkeypatch):

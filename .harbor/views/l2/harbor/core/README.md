@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-14T18:49:11Z"
+generated_at: "2026-05-14T20:44:44Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 39
@@ -48,8 +48,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:5fa85699e18699232024617012acad6965054afb70327089234bd4af3dcb2de4"
-contract_fingerprint: "sha256:8c8af78893af2890f8f0027dff6e2da05431831d9310c63233927dd79bb5313b"
+source_fingerprint: "sha256:37ad761b65e2590cb74d64022ea11e4a6511bd9c8e4756708826900c89b0107c"
+contract_fingerprint: "sha256:af06a2aef07220c86ec12e4b49f0a0d215d1b30f0f00da6463f1f6d0c66fddf3"
 generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
@@ -72,6 +72,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.stale.check_module_derived_views_stale | Check one module's derived-view stale status against fres... | strict | ❌ Missing |
 | harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
 | harbor.core.ci.checkpoint_ci_result_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci` 公开 CI JSON pa... | strict | ❌ Missing |
+| harbor.core.ci.checkpoint_ci_summary_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci --format json ... | strict | ❌ Missing |
 | harbor.core.ci.ci_result_to_dict | 将通用 CIResult 序列化为 checkpoint 之外的公开 CI JSON payload。 | strict | ❌ Missing |
 | harbor.core.l2.collect_all_indexed_modules | Collect normalized module paths from readonly index records. | strict | ❌ Missing |
 | harbor.core.module_capsule.collect_module_context | Collect readonly context records used to render one modul... | strict | ❌ Missing |
@@ -81,6 +82,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
 | harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
+| harbor.core.ci.format_checkpoint_workflow_summary | Render the default `harbor checkpoint` text output in a s... | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
 | harbor.core.project_structure.generate_project_structure_markdown | Render a deterministic Markdown view from project-structu... | strict | ❌ Missing |
 | harbor.core.generated_verify.generated_verification_report_to_dict | Serialize the verify-generated domain report to the publi... | strict | ❌ Missing |
@@ -165,7 +167,11 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.log_draft._build_why | — | standard | ⚪ Missing |
 | harbor.core.project_structure._capsule_exists | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._check_git_ignored | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_category_counts | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_category_priority | — | standard | ⚪ Missing |
 | harbor.core.ci._checkpoint_reason_for_entry | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_top_items | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_workflow_next_steps | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._choice_label | — | standard | ⚪ Missing |
 | harbor.core.log_draft._classify_affected_areas | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._classify_git_tracking | — | standard | ⚪ Missing |

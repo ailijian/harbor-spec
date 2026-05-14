@@ -90,6 +90,7 @@ class _StrictEncodingCapture:
         self.encoding = encoding
         self.errors = "strict"
         self._chunks = []
+        self.flush_calls = 0
 
     def write(self, text):
         text.encode(self.encoding, errors="strict")
@@ -97,6 +98,7 @@ class _StrictEncodingCapture:
         return len(text)
 
     def flush(self):
+        self.flush_calls += 1
         return None
 
     def getvalue(self):
@@ -253,6 +255,7 @@ def test_emit_json_stdout_keeps_localized_json_when_encoding_supports_payload(mo
     rendered = stream.getvalue()
     assert "中文输出" in rendered
     assert json.loads(rendered) == payload
+    assert stream.flush_calls == 1
 
 
 def test_emit_json_stdout_falls_back_to_ascii_safe_json_for_cp1252(monkeypatch):
@@ -268,6 +271,7 @@ def test_emit_json_stdout_falls_back_to_ascii_safe_json_for_cp1252(monkeypatch):
     assert "\\u4e2d\\u6587\\u8f93\\u51fa" in rendered
     assert "中文输出" not in rendered
     assert json.loads(rendered) == payload
+    assert stream.flush_calls == 1
 
 
 def test_configure_redirected_windows_stdio_prefers_locale_encoding(monkeypatch):

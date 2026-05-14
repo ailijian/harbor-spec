@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-14T18:49:14Z"
+generated_at: "2026-05-14T20:44:46Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 98
@@ -107,8 +107,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:9ba59f1f6813efb581596a279188817c5fb3743d71a2a2a34204e15289831df1"
-contract_fingerprint: "sha256:906d6edd5f4e46b2d348e9d25ae9dfbbef744617ce69a99453edfbdcf02a2cd6"
+source_fingerprint: "sha256:b66c58f04661cc90623cbe362b2b2264e761ae8a8a52797846d8d9dd6f0b7eea"
+contract_fingerprint: "sha256:13286f98b9c8599e153af4f9467cbb59345c7c9f14ee6d03eb93da62b3d9bbf2"
 generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
@@ -421,6 +421,8 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_when_accepted_baseline_artifact_missing | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_failure_dedupe_keeps_readable_ci_failures | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_ci_json_advisory_unchanged_with_advice_modes | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_json_detail_full_is_compatible_with_default | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_json_detail_summary_is_compact | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_includes_ddt_baseline_missing_advisory_without_blocking | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_ci_json_recognized | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | — | standard | ⚪ Missing |
@@ -434,13 +436,16 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | tests.test_change_window_snapshot.test_checkpoint_ci_writes_snapshot_without_changing_pass_semantics | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_zh_text_labels | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_command_recognized | — | standard | ⚪ Missing |
-| tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_default_fail_summary_hides_detailed_items | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_default_text_is_summary_first | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_detail_requires_ci_json_mode | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_checkpoint_json_additive_shape_is_stable_for_golden_assert | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.test_checkpoint_json_output_is_single_json_object | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_prints_contract_impact_summary_when_dirty | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_verbose_restores_detailed_sections | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_fields_use_ci_failures_and_advisory | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_stdout_is_single_object | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_ci_mode_i18n_labels_follow_language | — | standard | ⚪ Missing |

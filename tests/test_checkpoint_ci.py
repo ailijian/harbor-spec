@@ -444,12 +444,18 @@ def test_checkpoint_ci_no_write_regression(monkeypatch, tmp_path: Path):
         assert before[key][1] == after[key][1]
 
 
-def test_checkpoint_default_behavior_unchanged(monkeypatch):
+def test_checkpoint_default_text_is_summary_first(monkeypatch):
     _patch_checkpoint_inputs(monkeypatch)
     code, out, _ = run_cmd(["checkpoint"])
     assert code == 0
     assert "Harbor Checkpoint:" in out
-    assert "Harbor Check Report:" in out
+    assert "Status: PASS" in out
+    assert "Blocking: 0" in out
+    assert "Advisory: 0" in out
+    assert "Contract impact:" in out
+    assert "DDT:" in out
+    assert "Next:" in out
+    assert "Harbor Check Report:" not in out
     assert "Harbor Checkpoint CI" not in out
 
 
@@ -457,6 +463,15 @@ def test_checkpoint_format_json_requires_ci_mode():
     code, _, err = run_cmd(["checkpoint", "--format", "json"])
     assert code == 2
     assert "applies to CI mode only" in err
+
+
+def test_checkpoint_detail_requires_ci_json_mode():
+    code_1, _, err_1 = run_cmd(["checkpoint", "--detail", "summary"])
+    code_2, _, err_2 = run_cmd(["checkpoint", "--ci", "--detail", "summary"])
+    assert code_1 == 2
+    assert code_2 == 2
+    assert "--detail requires --ci --format json." in err_1
+    assert "--detail requires --ci --format json." in err_2
 
 
 def test_checkpoint_ci_zh_text_labels(monkeypatch):
@@ -467,3 +482,75 @@ def test_checkpoint_ci_zh_text_labels(monkeypatch):
     assert "CI 模式已启用" in out
     assert "CI 门禁：" in out
     assert "下一步：" in out or "建议下一步：" in out
+
+
+def test_checkpoint_verbose_restores_detailed_sections(monkeypatch):
+    status = _status_report(contract_changed=[_status_entry("harbor.core.bar.run", "harbor/core/bar.py", "Contract updated")])
+    _patch_checkpoint_inputs(monkeypatch, status=status)
+    code, out, _ = run_cmd(["checkpoint", "--verbose"])
+    assert code == 0
+    assert "Harbor Check Report:" in out
+    assert "Changes to contract:" in out
+    assert "harbor.core.bar.run" in out
+    assert "Contract impact:" not in out
+
+
+def test_checkpoint_default_fail_summary_hides_detailed_items(monkeypatch):
+    status = _status_report(
+        contract_gap=[_status_entry("harbor.core.bar.write_report", "harbor/core/bar.py", "No contract source found")],
+        untracked=[_status_entry("harbor.core.bar.new_api", "harbor/core/bar.py", "New function")],
+    )
+    _patch_checkpoint_inputs(monkeypatch, status=status)
+    code, out, _ = run_cmd(["checkpoint"])
+    assert code == 0
+    assert "Status: FAIL" in out
+    assert "Blocking: 2" in out
+    assert "Blocking summary:" in out
+    assert "- contract_gap: 1" in out
+    assert "- untracked_function: 1" in out
+    assert "Top blockers:" in out
+    assert "1. contract_gap" in out
+    assert "harbor.core.bar.write_report" in out
+    assert "No contract source found" not in out
+    assert "Harbor Check Report:" not in out
+
+
+def test_checkpoint_ci_json_detail_full_is_compatible_with_default(monkeypatch):
+    status = _status_report(contract_changed=[_status_entry("harbor.core.bar.run", "harbor/core/bar.py", "Contract updated")])
+    _patch_checkpoint_inputs(monkeypatch, status=status)
+    code_default, out_default, _ = run_cmd(["checkpoint", "--ci", "--format", "json"])
+    code_full, out_full, _ = run_cmd(["checkpoint", "--ci", "--format", "json", "--detail", "full"])
+    payload_default = json.loads(out_default)
+    payload_full = json.loads(out_full)
+    assert code_default == 1
+    assert code_full == 1
+    assert payload_default == payload_full
+    for key in ("baseline_source", "baseline_path", "baseline_found", "summary", "ci_failures", "advisory", "contract_impact", "next_steps"):
+        assert key in payload_full
+
+
+def test_checkpoint_ci_json_detail_summary_is_compact(monkeypatch):
+    status = _status_report(
+        contract_gap=[_status_entry("harbor.core.bar.write_report", "harbor/core/bar.py", "No contract source found")],
+        untracked=[_status_entry("harbor.core.bar.new_api", "harbor/core/bar.py", "New function")],
+    )
+    _patch_checkpoint_inputs(monkeypatch, status=status)
+    code, out, _ = run_cmd(["checkpoint", "--ci", "--format", "json", "--detail", "summary"])
+    payload = json.loads(out)
+    assert code == 1
+    assert payload["command"] == "checkpoint"
+    assert payload["ci"] is True
+    assert payload["status"] == "fail"
+    assert payload["baseline_source"] == "accepted_artifact"
+    assert payload["baseline_path"] == ".harbor/baseline/accepted-checkpoint.json"
+    assert payload["baseline_found"] is True
+    assert "summary" in payload
+    assert payload["failure_counts"] == {"contract_gap": 1, "untracked_function": 1}
+    assert payload["advisory_counts"] == {}
+    assert len(payload["top_failures"]) == 2
+    assert payload["top_failures"][0]["category"] == "contract_gap"
+    assert payload["top_failures"][0]["func_id"] == "harbor.core.bar.write_report"
+    assert payload["top_failures"][0]["file_path"] == "harbor/core/bar.py"
+    assert "ci_failures" not in payload
+    assert "advisory" not in payload
+    assert "contract_impact" not in payload

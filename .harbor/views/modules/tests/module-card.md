@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-14T18:49:05Z"
+generated_at: "2026-05-14T20:44:46Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 98
@@ -107,11 +107,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:9ba59f1f6813efb581596a279188817c5fb3743d71a2a2a34204e15289831df1"
-contract_fingerprint: "sha256:4518a8d0ae6d01922cd2d009a46ea1bd2ab4a17b3e04a00278666cec12dce7e6"
+source_fingerprint: "sha256:b66c58f04661cc90623cbe362b2b2264e761ae8a8a52797846d8d9dd6f0b7eea"
+contract_fingerprint: "sha256:d976a55b0d9a4441f784d3909bc88d5b6e612baec2d37632fd62b6b09198f1d2"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "a0e46f9b2706320c490bd66341a6eb2f46099cd17c731f912e6299a2d07abd61"
-fingerprint: "a0e46f9b2706320c490bd66341a6eb2f46099cd17c731f912e6299a2d07abd61"
+view_fingerprint: "47e72880b238f5cac840254ca30e7343bcf69e8e24977ff3b840ce7e5931ed88"
+fingerprint: "47e72880b238f5cac840254ca30e7343bcf69e8e24977ff3b840ce7e5931ed88"
 ---
 
 # Module Card: tests
@@ -329,6 +329,8 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_missing_function | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_fail_on_untracked_function | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_failure_dedupe_keeps_readable_ci_failures | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_json_detail_full_is_compatible_with_default | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_ci_json_detail_summary_is_compact | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_includes_ddt_baseline_missing_advisory_without_blocking | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_keeps_confirmed_contract_impact_when_no_status_failure_covers_target | tests/test_checkpoint_ci.py | unknown | standard |
@@ -336,8 +338,11 @@ tests/test_workspace_paths.py
 | tests.test_checkpoint_ci.test_checkpoint_ci_pass_when_clean | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_skipped_no_contract_is_advisory | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_ci_zh_text_labels | tests/test_checkpoint_ci.py | unknown | standard |
-| tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_default_fail_summary_hides_detailed_items | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_default_text_is_summary_first | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_detail_requires_ci_json_mode | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | tests/test_checkpoint_ci.py | unknown | standard |
+| tests.test_checkpoint_ci.test_checkpoint_verbose_restores_detailed_sections | tests/test_checkpoint_ci.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact._disable_change_window_writes | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact._disable_ddt | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |
 | tests.test_checkpoint_ci_baseline_artifact._force_en_locale | tests/test_checkpoint_ci_baseline_artifact.py | unknown | standard |

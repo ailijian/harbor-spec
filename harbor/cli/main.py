@@ -60,6 +60,8 @@ from harbor.core.ci import (
     build_stale_ci_result,
     ci_result_to_dict,
     checkpoint_ci_result_to_dict,
+    checkpoint_ci_summary_to_dict,
+    format_checkpoint_workflow_summary,
     format_checkpoint_ci_result,
     format_ci_result,
 )
@@ -267,6 +269,10 @@ def _emit_json_stdout(payload) -> None:
 
     stdout.write(rendered)
     stdout.write("\n")
+    try:
+        stdout.flush()
+    except Exception:
+        pass
 
 
 def main():
@@ -411,9 +417,23 @@ def main():
         `.harbor/config/harbor.yaml` through initializer logic.
       - `checkpoint --ci` 以 repo-owned accepted baseline artifact
         `.harbor/baseline/accepted-checkpoint.json` 作为正式 CI baseline truth。
+      - 默认 `checkpoint` 文本输出使用 summary-first 决策摘要，优先展示
+        PASS/FAIL、阻断数、建议数、Contract Impact 计数、DDT 摘要、Top blockers
+        与下一步建议；完整明细移至 `checkpoint --verbose`。
+      - `checkpoint --verbose` 保留详细诊断输出路径，用于展开 drift/modified/
+        untracked/missing/DDT advisory/contract impact 细节。
       - `checkpoint --ci` 会稳定输出 `baseline_source` / `baseline_path` /
         `baseline_found` 三个 baseline 字段，并在 `summary` / `ci_failures`
         中暴露 accepted artifact 缺失或非法的 gate 结果。
+      - `checkpoint --ci --format json` 默认保持 full JSON 契约；
+        `--detail full` 与默认输出兼容等价。
+      - `checkpoint --ci --format json --detail summary` 输出轻量摘要 JSON：
+        保留 gate status / exit code / baseline 语义 / summary / next_steps，
+        并新增 `failure_counts` / `top_failures` / `advisory_counts`；
+        不输出 full mode 的 `ci_failures` / `advisory` / `contract_impact`
+        全量结构。
+      - `checkpoint --detail ...` 仅对 `--ci --format json` 有意义；在其他
+        checkpoint 路径上传入属于 parser error。
       - accepted artifact 缺失时，`checkpoint --ci` 使用
         `accepted_baseline_missing` 阻断分类；artifact 非法时使用
         `accepted_baseline_invalid` 阻断分类。
@@ -478,6 +498,10 @@ def main():
       `harbor module seal --all --write` only; they do not trigger automatic
       full refresh, project-structure refresh, or gate-semantic changes for
       `checkpoint` / `stale` / `doctor`.
+      `checkpoint` 默认文本输出为 summary-first 摘要；`checkpoint --verbose`
+      恢复详细诊断文本；`checkpoint --ci --format json` 默认保持 full JSON
+      契约，`--detail summary` 输出更轻量的机器可读摘要，且不改变 gate status /
+      `exit_code` / baseline 语义。
       `harbor log draft` emits a reviewable markdown/json draft only, may write
       latest draft runtime cache under `.harbor/state/log/latest-draft.*` only
       when evidence is sufficient for a writable draft, may write one non-diary
@@ -635,6 +659,18 @@ def main():
         choices=["text", "json"],
         default="text",
         help="Output format for CI mode only: text (default) or json",
+    )
+    p_checkpoint.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Show detailed checkpoint diagnostics instead of summary-first output",
+    )
+    p_checkpoint.add_argument(
+        "--detail",
+        type=str,
+        choices=["summary", "full"],
+        default=None,
+        help="CI JSON detail profile: summary or full (requires --ci --format json)",
     )
     p_checkpoint.add_argument(
         "--advice",
@@ -1243,8 +1279,7 @@ def main():
     def _run_status(*, verbose=False):
         console = Console()
         with console.status(f"[bold blue]{t('cli.status.scanning')}", spinner="dots"):
-            eng = SyncEngine()
-            rep = eng.check_status()
+            rep = _collect_status_report()
         total = sum(rep.counts.values())
         if total == 0:
             print(t("cli.status.nochanges"))
@@ -1296,6 +1331,10 @@ def main():
             for e in rep.missing:
                 print(f"  ! {e.id}")
         return rep, False
+
+    def _collect_status_report():
+        eng = SyncEngine()
+        return eng.check_status()
 
     def _print_checkpoint_contract_impact(rep):
         records = []
@@ -2136,12 +2175,34 @@ def main():
     elif args.command == "checkpoint":
         if not getattr(args, "ci", False) and getattr(args, "format", "text") != "text":
             parser.error(t("cli.checkpoint.error.format_ci_only"))
+        if getattr(args, "detail", None) is not None and (
+            not getattr(args, "ci", False) or getattr(args, "format", "text") != "json"
+        ):
+            parser.error(t("cli.checkpoint.error.detail_ci_json_only"))
         if not getattr(args, "ci", False):
-            print(t("cli.checkpoint.title"))
-            rep, clean = _run_status(verbose=False)
-            if not clean:
-                _print_checkpoint_contract_impact(rep)
-            check_summary = _run_check(fast=True, verbose=False)
+            if getattr(args, "verbose", False):
+                print(t("cli.checkpoint.title"))
+                rep, clean = _run_status(verbose=True)
+                if not clean:
+                    _print_checkpoint_contract_impact(rep)
+                check_summary = _run_check(fast=True, verbose=True)
+            else:
+                rep = _collect_status_report()
+                ddt_report = _run_fast_ddt_for_ci()
+                contract_impact_report = build_contract_impact_report(_collect_status_records_for_checkpoint_ci(rep))
+                workflow_result = build_checkpoint_ci_result(
+                    status_report=rep,
+                    ddt_report=ddt_report,
+                    contract_impact_report=contract_impact_report,
+                )
+                print(format_checkpoint_workflow_summary(workflow_result))
+                check_summary = {
+                    "ddt_bindings": int((getattr(ddt_report, "counts", {}) or {}).get("valid", 0))
+                    + int((getattr(ddt_report, "counts", {}) or {}).get("violations", 0))
+                    + int((getattr(ddt_report, "counts", {}) or {}).get("advisory", 0)),
+                    "ddt_violations": int((getattr(ddt_report, "counts", {}) or {}).get("violations", 0)),
+                    "ddt_advisory": int((getattr(ddt_report, "counts", {}) or {}).get("advisory", 0)),
+                }
             _write_change_window_snapshot_safe(
                 "checkpoint",
                 summary=_build_checkpoint_snapshot_summary(
@@ -2203,8 +2264,12 @@ def main():
                 baseline_error_category=baseline_error_category,
                 baseline_error_reason=baseline_error_reason,
             )
+            detail = str(getattr(args, "detail", None) or "full")
             if args.format == "json":
-                _emit_json_stdout(checkpoint_ci_result_to_dict(ci_result))
+                if detail == "summary":
+                    _emit_json_stdout(checkpoint_ci_summary_to_dict(ci_result))
+                else:
+                    _emit_json_stdout(checkpoint_ci_result_to_dict(ci_result))
             else:
                 print(format_checkpoint_ci_result(ci_result))
             _write_change_window_snapshot_safe(

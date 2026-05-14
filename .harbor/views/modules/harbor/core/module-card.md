@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-14T18:49:05Z"
+generated_at: "2026-05-14T20:44:46Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 39
@@ -48,11 +48,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:5fa85699e18699232024617012acad6965054afb70327089234bd4af3dcb2de4"
-contract_fingerprint: "sha256:267e3dcde297e6d3ae1fc2486bb871fa714b52df00e20ede7d83ab3df7a5f153"
+source_fingerprint: "sha256:37ad761b65e2590cb74d64022ea11e4a6511bd9c8e4756708826900c89b0107c"
+contract_fingerprint: "sha256:4803c057280ddc14b3f5bea8e46d03660f94458e9862d9712b5c7139aad8891f"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "ce099a57428304edd2a2b7beef1dc3fe10fe5ea0a0c9fec880633852fbb55250"
-fingerprint: "ce099a57428304edd2a2b7beef1dc3fe10fe5ea0a0c9fec880633852fbb55250"
+view_fingerprint: "dfbe78db6fdeec12da919a26d9e1aefcce9589d4241996517cf53345064b4631"
+fingerprint: "dfbe78db6fdeec12da919a26d9e1aefcce9589d4241996517cf53345064b4631"
 ---
 
 # Module Card: harbor/core
@@ -168,7 +168,11 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci.CheckpointCIItem.dedupe_key | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.CheckpointCIItem.to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci._append_checkpoint_guidance_lines | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._checkpoint_category_counts | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._checkpoint_category_priority | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._checkpoint_reason_for_entry | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._checkpoint_top_items | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._checkpoint_workflow_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._collect_checkpoint_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._collect_next_steps | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._ddt_identity_defaults | harbor/core/ci.py | unknown | standard |
@@ -191,8 +195,10 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci.build_doctor_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.build_stale_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.checkpoint_ci_result_to_dict | harbor/core/ci.py | public | strict |
+| harbor.core.ci.checkpoint_ci_summary_to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci.ci_result_to_dict | harbor/core/ci.py | public | strict |
 | harbor.core.ci.format_checkpoint_ci_result | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci.format_checkpoint_workflow_summary | harbor/core/ci.py | public | strict |
 | harbor.core.ci.format_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.console_output.detect_console_encoding | harbor/core/console_output.py | unknown | standard |
 | harbor.core.console_output.safe_console_print | harbor/core/console_output.py | unknown | standard |

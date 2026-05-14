@@ -84,6 +84,15 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.start.dirty": "Existing Harbor changes detected. Resolve drift or finish the current task before starting a new one.",
         "cli.checkpoint.title": "Harbor Checkpoint:",
         "cli.checkpoint.error.format_ci_only": "--format applies to CI mode only.",
+        "cli.checkpoint.error.detail_ci_json_only": "--detail requires --ci --format json.",
+        "cli.checkpoint.summary.status": "Status",
+        "cli.checkpoint.summary.blocking": "Blocking",
+        "cli.checkpoint.summary.advisory": "Advisory",
+        "cli.checkpoint.summary.blocking_summary": "Blocking summary:",
+        "cli.checkpoint.summary.contract_impact": "Contract impact:",
+        "cli.checkpoint.summary.ddt": "DDT:",
+        "cli.checkpoint.summary.top_blockers": "Top blockers:",
+        "cli.checkpoint.summary.next": "Next:",
         "cli.finish.title": "Harbor Finish:",
         "cli.finish.next_steps": (
             "Next steps:\n"
@@ -506,6 +515,15 @@ MESSAGES: Dict[str, Dict[str, str]] = {
         "cli.start.dirty": "检测到现有 Harbor 变更。请先解决漂移或完成当前任务，再开启新任务。",
         "cli.checkpoint.title": "Harbor 检查点：",
         "cli.checkpoint.error.format_ci_only": "--format 仅适用于 CI 模式。",
+        "cli.checkpoint.error.detail_ci_json_only": "--detail 仅适用于 --ci --format json。",
+        "cli.checkpoint.summary.status": "状态",
+        "cli.checkpoint.summary.blocking": "阻断",
+        "cli.checkpoint.summary.advisory": "提示",
+        "cli.checkpoint.summary.blocking_summary": "阻断摘要：",
+        "cli.checkpoint.summary.contract_impact": "契约影响：",
+        "cli.checkpoint.summary.ddt": "DDT：",
+        "cli.checkpoint.summary.top_blockers": "主要阻断项：",
+        "cli.checkpoint.summary.next": "下一步：",
         "cli.finish.title": "Harbor 收尾检查：",
         "cli.finish.next_steps": (
             "建议下一步：\n"

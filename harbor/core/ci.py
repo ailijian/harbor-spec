@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
@@ -444,6 +445,7 @@ def build_checkpoint_ci_result(
 
     confirmed_contract_impact = 0
     possible_contract_impact = 0
+    unknown_contract_impact = 0
     report_payload = contract_impact_report_to_dict(contract_impact_report)
     for finding in list(getattr(contract_impact_report, "findings", []) or []):
         level = getattr(finding, "level", None)
@@ -480,6 +482,7 @@ def build_checkpoint_ci_result(
                 )
             )
         elif level == ContractImpactLevel.UNKNOWN:
+            unknown_contract_impact += 1
             advisory.append(
                 CheckpointCIItem(
                     category="unknown_contract_impact",
@@ -521,10 +524,14 @@ def build_checkpoint_ci_result(
         "contract_parse_error": len(list(getattr(status_report, "contract_parse_error", []) or [])),
         "untracked": len(list(getattr(status_report, "untracked", []) or [])),
         "missing": len(list(getattr(status_report, "missing", []) or [])),
+        "ddt_bindings": len(list(getattr(ddt_report, "valid", []) or []))
+        + len(list(getattr(ddt_report, "violations", []) or []))
+        + len(list(getattr(ddt_report, "advisory", []) or [])),
         "ddt_failures": len(list(getattr(ddt_report, "violations", []) or [])),
         "ddt_advisory": len(list(getattr(ddt_report, "advisory", []) or [])),
         "confirmed_contract_impact": confirmed_contract_impact,
         "possible_contract_impact": possible_contract_impact,
+        "unknown_contract_impact": unknown_contract_impact,
     }
     next_steps = _collect_checkpoint_next_steps(deduped_failures)
     return CheckpointCIResult(
@@ -892,6 +899,144 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
     }
 
 
+def checkpoint_ci_summary_to_dict(result: CheckpointCIResult) -> dict:
+    """将 CheckpointCIResult 序列化为 `checkpoint --ci --format json --detail summary` 紧凑摘要。
+
+    Behavior:
+      - 输出稳定摘要键：`command` / `ci` / `status` / `exit_code` / `writes_files` /
+        `baseline_source` / `baseline_path` / `baseline_found` / `summary` /
+        `failure_counts` / `top_failures` / `advisory_counts` / `next_steps`。
+      - `summary` 保留现有 checkpoint CI 汇总数字，确保门禁状态、baseline 语义与
+        计数口径和 full 模式一致。
+      - `failure_counts` / `advisory_counts` 仅暴露按 category 聚合后的轻量计数，
+        便于人工排查与 CI 日志快速阅读。
+      - `top_failures` 最多输出 5 条阻断项，只保留最小排查字段：
+        `category`、`func_id` 或 `target_id`、`file_path`、`reason`。
+      - 紧凑摘要不会输出 full 模式中的 `ci_failures` / `advisory` /
+        `contract_impact` 全量结构，也不会输出 guidance、source fingerprint、
+        source confidence、TypeScript 扩展 metadata 等重型细节。
+      - 该摘要模式不改变 gate status、`exit_code`、baseline 语义或 next-steps 语义。
+
+    Side Effects:
+      - 只读序列化；不写文件、不接受 baseline、不刷新上下文。
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+
+    Args:
+      result (CheckpointCIResult): 已构建的 checkpoint CI 结果对象。
+
+    Returns:
+      dict: 适合机器消费但更轻量的 checkpoint CI 摘要 JSON payload。
+    """
+    top_failures: List[dict] = []
+    for item in _checkpoint_top_items(result.ci_failures, limit=5):
+        row: Dict[str, object] = {
+            "category": _sanitize_json_text(str(item.category or "")),
+            "reason": _sanitize_json_text(str(item.reason or "")),
+        }
+        func_id = _sanitize_json_text(str(item.func_id or ""))
+        target_id = _sanitize_json_text(str(item.target_id or ""))
+        file_path = _sanitize_single_path(item.file_path)
+        if func_id:
+            row["func_id"] = func_id
+        elif target_id:
+            row["target_id"] = target_id
+        if file_path:
+            row["file_path"] = file_path
+        top_failures.append(row)
+    return {
+        "command": result.command,
+        "ci": True,
+        "status": result.status,
+        "exit_code": result.exit_code,
+        "writes_files": False,
+        "baseline_source": _sanitize_json_text(str(result.baseline_source or "")),
+        "baseline_path": _sanitize_single_path(result.baseline_path),
+        "baseline_found": bool(result.baseline_found),
+        "summary": _sanitize_summary(result.summary),
+        "failure_counts": _checkpoint_category_counts(result.ci_failures),
+        "top_failures": top_failures,
+        "advisory_counts": _checkpoint_category_counts(result.advisory),
+        "next_steps": [_sanitize_json_text(step) for step in result.next_steps],
+    }
+
+
+def format_checkpoint_workflow_summary(result: CheckpointCIResult) -> str:
+    """Render the default `harbor checkpoint` text output in a summary-first layout.
+
+    Behavior:
+      - 该 formatter 服务于非 CI 的 `harbor checkpoint` 默认文本输出。
+      - 先展示决策摘要：总体状态、阻断数、建议数、阻断分类计数。
+      - 保留 Contract Impact 计数、DDT 摘要、Top blockers、下一步建议。
+      - 默认不展开全部 drift/modified/untracked/DDT advisory 明细；完整诊断由
+        `harbor checkpoint --verbose` 路径负责。
+      - Top blockers 最多展示 3 条，使用稳定展示优先级，不改变底层 gate 判定。
+      - 当无阻断项时保持较短输出，但仍保留 DDT 与下一步摘要。
+
+    Side Effects:
+      - 纯文本渲染；不写文件、不刷新上下文、不接受 baseline。
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: read-only
+
+    Args:
+      result (CheckpointCIResult): 基于现有 checkpoint 数据构建出的摘要结果。
+
+    Returns:
+      str: `harbor checkpoint` 默认文本输出。
+    """
+    lines: List[str] = [t("cli.checkpoint.title")]
+    blocking_count = len(list(result.ci_failures or []))
+    advisory_count = len(list(result.advisory or []))
+    lines.append("")
+    lines.append(f"{t('cli.checkpoint.summary.status')}: {str(result.status or 'pass').upper()}")
+    lines.append(f"{t('cli.checkpoint.summary.blocking')}: {blocking_count}")
+    lines.append(f"{t('cli.checkpoint.summary.advisory')}: {advisory_count}")
+
+    blocking_counts = _checkpoint_category_counts(result.ci_failures)
+    if blocking_counts:
+        lines.append("")
+        lines.append(t("cli.checkpoint.summary.blocking_summary"))
+        for category, count in blocking_counts.items():
+            lines.append(f"- {category}: {count}")
+
+    lines.append("")
+    lines.append(t("cli.checkpoint.summary.contract_impact"))
+    lines.append(f"- confirmed: {int(result.summary.get('confirmed_contract_impact', 0) or 0)}")
+    lines.append(f"- possible: {int(result.summary.get('possible_contract_impact', 0) or 0)}")
+    lines.append(f"- unknown: {int(result.summary.get('unknown_contract_impact', 0) or 0)}")
+
+    lines.append("")
+    lines.append(t("cli.checkpoint.summary.ddt"))
+    bindings = (
+        int(result.summary.get("ddt_bindings", 0) or 0)
+        if "ddt_bindings" in result.summary
+        else int(result.summary.get("ddt_total_bindings", 0) or 0)
+    )
+    lines.append(f"- bindings: {bindings}")
+    lines.append(f"- violations: {int(result.summary.get('ddt_failures', 0) or 0)}")
+    lines.append(f"- advisory: {int(result.summary.get('ddt_advisory', 0) or 0)}")
+
+    top_items = _checkpoint_top_items(result.ci_failures, limit=3)
+    if top_items:
+        lines.append("")
+        lines.append(t("cli.checkpoint.summary.top_blockers"))
+        for index, item in enumerate(top_items, start=1):
+            target = _sanitize_json_text(str(item.func_id or "")) or _sanitize_single_path(item.file_path)
+            lines.append(f"{index}. {str(item.category or '')}")
+            if target:
+                lines.append(f"   {target}")
+
+    lines.append("")
+    lines.append(t("cli.checkpoint.summary.next"))
+    for step in _checkpoint_workflow_next_steps(result):
+        lines.append(f"- {step}")
+    return "\n".join(lines)
+
+
 def format_checkpoint_ci_result(result: CheckpointCIResult) -> str:
     lines: List[str] = []
     show_guidance = result.advice_mode == "basic" and result.include_in_text
@@ -934,6 +1079,63 @@ def format_checkpoint_ci_result(result: CheckpointCIResult) -> str:
         for step in result.next_steps:
             lines.append(f"- {step}")
     return "\n".join(lines)
+
+
+def _checkpoint_category_counts(items: Sequence[CheckpointCIItem]) -> Dict[str, int]:
+    counter = Counter(
+        _sanitize_json_text(str(item.category or ""))
+        for item in list(items or [])
+        if str(item.category or "").strip()
+    )
+    return dict(sorted(counter.items(), key=lambda row: (_checkpoint_category_priority(row[0]), row[0])))
+
+
+def _checkpoint_category_priority(category: str) -> int:
+    order = {
+        "accepted_baseline_missing": 0,
+        "accepted_baseline_invalid": 1,
+        "contract_gap": 2,
+        "contract_parse_error": 3,
+        "confirmed_contract_impact": 4,
+        "possible_semantic_drift": 5,
+        "contract_and_body_changed": 6,
+        "contract_changed": 7,
+        "untracked_function": 8,
+        "missing_function": 9,
+        "ddt_binding": 10,
+        "checkpoint_internal_error": 11,
+        "possible_contract_impact": 12,
+        "unknown_contract_impact": 13,
+        "skipped_no_contract": 14,
+        "unsupported_syntax_advisory": 15,
+        "ddt_version_baseline_missing": 16,
+        "ddt_binding_advisory": 17,
+    }
+    return order.get(str(category or ""), 99)
+
+
+def _checkpoint_top_items(items: Sequence[CheckpointCIItem], *, limit: int) -> List[CheckpointCIItem]:
+    ranked = sorted(
+        list(items or []),
+        key=lambda item: (
+            _checkpoint_category_priority(str(item.category or "")),
+            _sanitize_single_path(item.file_path),
+            _sanitize_json_text(str(item.func_id or "")),
+            _sanitize_json_text(str(item.reason or "")),
+        ),
+    )
+    return ranked[: max(int(limit or 0), 0)]
+
+
+def _checkpoint_workflow_next_steps(result: CheckpointCIResult) -> List[str]:
+    if result.ci_failures:
+        return [
+            "Run `harbor checkpoint --ci --format json`",
+            "Run `harbor next --from <checkpoint-report.json>`",
+        ]
+    return [
+        "Continue work or run `harbor finish --sync-context`",
+    ]
 
 
 def _append_checkpoint_guidance_lines(lines: List[str], payload: dict) -> None:

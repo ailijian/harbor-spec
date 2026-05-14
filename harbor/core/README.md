@@ -17,6 +17,7 @@
 | harbor.core.stale.check_module_derived_views_stale | Check one module's derived-view stale status against fres... | strict | ❌ Missing |
 | harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
 | harbor.core.ci.checkpoint_ci_result_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci` 公开 CI JSON pa... | strict | ❌ Missing |
+| harbor.core.ci.checkpoint_ci_summary_to_dict | 将 CheckpointCIResult 序列化为 `checkpoint --ci --format json ... | strict | ❌ Missing |
 | harbor.core.ci.ci_result_to_dict | 将通用 CIResult 序列化为 checkpoint 之外的公开 CI JSON payload。 | strict | ❌ Missing |
 | harbor.core.l2.collect_all_indexed_modules | Collect normalized module paths from readonly index records. | strict | ❌ Missing |
 | harbor.core.module_capsule.collect_module_context | Collect readonly context records used to render one modul... | strict | ❌ Missing |
@@ -26,6 +27,7 @@
 | harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
 | harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
+| harbor.core.ci.format_checkpoint_workflow_summary | Render the default `harbor checkpoint` text output in a s... | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
 | harbor.core.project_structure.generate_project_structure_markdown | Render a deterministic Markdown view from project-structu... | strict | ❌ Missing |
 | harbor.core.generated_verify.generated_verification_report_to_dict | Serialize the verify-generated domain report to the publi... | strict | ❌ Missing |
@@ -110,7 +112,11 @@
 | harbor.core.log_draft._build_why | — | standard | ⚪ Missing |
 | harbor.core.project_structure._capsule_exists | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._check_git_ignored | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_category_counts | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_category_priority | — | standard | ⚪ Missing |
 | harbor.core.ci._checkpoint_reason_for_entry | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_top_items | — | standard | ⚪ Missing |
+| harbor.core.ci._checkpoint_workflow_next_steps | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._choice_label | — | standard | ⚪ Missing |
 | harbor.core.log_draft._classify_affected_areas | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._classify_git_tracking | — | standard | ⚪ Missing |

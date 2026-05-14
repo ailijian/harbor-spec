@@ -307,6 +307,8 @@
 | tests.test_checkpoint_ci_baseline_artifact.test_checkpoint_ci_fails_when_accepted_baseline_artifact_missing | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_failure_dedupe_keeps_readable_ci_failures | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_ci_json_advisory_unchanged_with_advice_modes | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_json_detail_full_is_compatible_with_default | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_ci_json_detail_summary_is_compact | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_includes_ddt_baseline_missing_advisory_without_blocking | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_ci_json_recognized | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_json_single_object_and_required_fields | — | standard | ⚪ Missing |
@@ -320,13 +322,16 @@
 | tests.test_change_window_snapshot.test_checkpoint_ci_writes_snapshot_without_changing_pass_semantics | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_ci_zh_text_labels | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_command_recognized | — | standard | ⚪ Missing |
-| tests.test_checkpoint_ci.test_checkpoint_default_behavior_unchanged | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_default_fail_summary_hides_detailed_items | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_default_text_is_summary_first | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_detail_requires_ci_json_mode | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_checkpoint_json_additive_shape_is_stable_for_golden_assert | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.test_checkpoint_json_output_is_single_json_object | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_prints_contract_impact_summary_when_dirty | — | standard | ⚪ Missing |
+| tests.test_checkpoint_ci.test_checkpoint_verbose_restores_detailed_sections | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_fields_use_ci_failures_and_advisory | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_stdout_is_single_object | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_ci_mode_i18n_labels_follow_language | — | standard | ⚪ Missing |
