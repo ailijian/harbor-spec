@@ -446,6 +446,25 @@ Skills are not source of truth.
 
 ## 10. Contract and Drift Rules
 
+Pre-edit Contract Discipline
+```tetx
+Before modifying any strict / public / user-visible target:
+
+1. Decide Contract Impact:
+   yes / no / uncertain
+
+2. If Contract Impact is yes or uncertain:
+   update the relevant contract source in the same change,
+   preferably before or alongside implementation edits.
+
+3. Do not defer contract synchronization until `harbor checkpoint`
+   unless the current task is explicitly contract discovery / review.
+
+4. If Contract Impact is no:
+   state why behavior, interface, schema, side effects,
+   and user-visible results remain unchanged.
+```
+
 Contract means any source that defines expected behavior, structure, boundary, side effect, or externally visible result.
 
 Contract does not mean docstring only.
@@ -970,6 +989,9 @@ Remaining risks or follow-ups
 If commands were run, report exact commands and observed outcomes.
 
 If commands were not run, say which were not run.
+
+If implementation behavior changed,
+the corresponding contract source was updated in the same change.
 
 If generated context may be stale, recommend:
 

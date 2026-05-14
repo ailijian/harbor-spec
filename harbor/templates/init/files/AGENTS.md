@@ -446,6 +446,25 @@ Skills are not source of truth.
 
 ## 10. Contract and Drift Rules
 
+Pre-edit Contract Discipline
+```tetx
+Before modifying any strict / public / user-visible target:
+
+1. Decide Contract Impact:
+   yes / no / uncertain
+
+2. If Contract Impact is yes or uncertain:
+   update the relevant contract source in the same change,
+   preferably before or alongside implementation edits.
+
+3. Do not defer contract synchronization until `harbor checkpoint`
+   unless the current task is explicitly contract discovery / review.
+
+4. If Contract Impact is no:
+   state why behavior, interface, schema, side effects,
+   and user-visible results remain unchanged.
+```
+
 Contract means any source that defines expected behavior, structure, boundary, side effect, or externally visible result.
 
 Contract does not mean docstring only.
@@ -675,7 +694,11 @@ exported function
 exported async function
 exported const arrow function
 exported class public method
+exported interface/type advisory-first data contract
+z.object/z.enum shallow source recognition
+export default function/class public surface evidence
 JSDoc / TSDoc proximity extraction
+generalized persistence with additive identity/contract metadata
 contract_gap
 skipped_no_contract
 unsupported_syntax_advisory
@@ -687,9 +710,11 @@ Not supported in TypeScript v1.4.x:
 ```text
 JavaScript first-class governance
 .js/.jsx/.tsx/.d.ts default scanning
+re-export graph
+package exports / tsconfig path alias
 TypeScript semantic audit
 TypeScript DDT
-Zod governance
+full Zod semantics / schema-to-type consistency audit
 framework presets
 interface/type blocking gate
 ```
@@ -918,6 +943,15 @@ harbor stale --ci --format json
 harbor doctor --ci --format json
 ```
 
+Release acceptance notes:
+
+```text
+- checkpoint --ci must keep .harbor/baseline/accepted-checkpoint.json as CI baseline truth.
+- runtime cache is local acceleration only and must not replace accepted baseline artifact in CI.
+- Windows full-governance is a formal v1.4.2 acceptance dimension alongside Ubuntu Python matrix.
+- Generated context closure for v1.4.2 is finish --sync-context -> stale --ci -> doctor --ci.
+```
+
 Notes:
 
 ```text
@@ -955,6 +989,9 @@ Remaining risks or follow-ups
 If commands were run, report exact commands and observed outcomes.
 
 If commands were not run, say which were not run.
+
+If implementation behavior changed,
+the corresponding contract source was updated in the same change.
 
 If generated context may be stale, recommend:
 

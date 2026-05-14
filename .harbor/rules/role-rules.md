@@ -4,6 +4,9 @@ Version: Harbor-spec v1.4.x
 
 Follow `AGENTS.md` as the shared Harbor-spec project workflow.
 
+Do not change strict/public behavior first and wait for Harbor to detect drift.
+For Contract Impact = yes/uncertain, update the contract source in the same patch.
+
 Default language: Simplified Chinese.  
 Default shell: Windows 11 PowerShell.
 
