@@ -269,6 +269,51 @@ class L2Generator:
         return md
 
     def write(self, module_path: str, md: str, force: bool = False) -> Optional[List[Path]]:
+        """Write the canonical L2 README and synchronized metadata for one module.
+
+        Behavior:
+          - Resolves the canonical L2 README under `.harbor/views/l2/**` and
+            the optional module README export under `<module>/README.md`.
+          - Rebuilds frontmatter integrity metadata from the current readonly
+            index inputs before deciding whether a rewrite is required.
+          - Treats frontmatter/integrity drift as a required refresh even when
+            the rendered body hash in `_meta.json` is unchanged.
+          - Keeps canonical README rewrites and `_meta.json` updates aligned for
+            the same module write operation.
+          - Preserves the current public behavior: returns `None` only when the
+            canonical view, optional export, and meta hash are already aligned.
+
+        Args:
+          module_path (str): Repo-relative module path such as `harbor/core`.
+          md (str): Rendered L2 README body without canonical frontmatter.
+          force (bool): When `True`, rewrites generated outputs even if the
+            current canonical/exported views already match.
+
+        Returns:
+          Optional[List[Path]]: Written canonical/export paths, or `None` when
+          no refresh is required.
+
+        File Write Targets:
+          - `.harbor/views/l2/<module>/README.md`
+          - `.harbor/views/l2/_meta.json`
+          - Optional `<module>/README.md` export when enabled
+
+        Side Effects:
+          - Creates parent directories for generated L2 views when needed.
+          - Overwrites generated L2 views and canonical meta entries for the
+            target module.
+
+        Idempotency:
+          - Deterministic for the same module body, readonly index inputs, and
+            workspace configuration.
+
+        Security:
+          - Rejects module paths that escape the repository root.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         module_norm = self._safe_module_subpath(module_path)
         if not module_norm:
             raise ValueError("Invalid module path: module path cannot be empty.")
@@ -332,7 +377,26 @@ class L2Generator:
         return written_paths
 
     def compute_meta_hash(self, md: str) -> str:
-        return hashlib.sha256(md.encode("utf-8")).hexdigest()
+        """Hash L2 body content using the canonical `_meta.json` normalization.
+
+        Behavior:
+          - Normalizes line endings to `\n`.
+          - Ignores trailing newline-only differences so the stored meta hash
+            matches both generated bodies and canonical README bodies extracted
+            from frontmatter-wrapped files.
+
+        Args:
+          md (str): L2 README body content before or after canonical wrapping.
+
+        Returns:
+          str: Stable SHA-256 hex digest for `_meta.json`.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
+        normalized = str(md or "").replace("\r\n", "\n").replace("\r", "\n").rstrip("\n")
+        return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
     def canonical_readme_path(self, module_path: str) -> Path:
         return self._resolve_canonical_readme_path(module_path)

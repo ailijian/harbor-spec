@@ -559,6 +559,7 @@
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_missing | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_generator_prefer_fresh_source_ignores_stale_cache_snapshot | — | standard | ⚪ Missing |
+| tests.test_l2_paths.test_l2_meta_hash_matches_canonical_body_after_write | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | — | standard | ⚪ Missing |
@@ -730,7 +731,7 @@
 | tests.test_init_wizard.test_provider_invalid_input_shows_available_options | — | standard | ⚪ Missing |
 | tests.test_contract_presence.test_public_without_docstring_is_contract_gap_required | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_pyproject_declares_cli_runtime_dependencies | — | standard | ⚪ Missing |
-| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows stable and pre-release (a/b/rc) ... | standard | ⚪ Missing |
+| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows multi-segment PEP 440 releases l... | standard | ⚪ Missing |
 | tests.test_init_wizard.test_pytest_env_does_not_try_arrow_selector | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat.test_python_adapter_parse_file_behavior_unchanged | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_python_audit_provider_behavior_unchanged | — | standard | ⚪ Missing |

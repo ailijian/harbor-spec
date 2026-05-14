@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-14T11:44:41Z"
+generated_at: "2026-05-14T13:32:49Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 60
@@ -69,11 +69,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:4e687c1d9259c0502f2924880fb76423692a6d9012b74b15102e697fd0eb08df"
-contract_fingerprint: "sha256:e901c00a5943fa3d4c2b8f7b3ca359ae64da75e535935d4ec8427c9d088de5de"
+source_fingerprint: "sha256:2726d8bd72eb35528140488acd687e37e45cf341a75a408ec372485f1a16ad4a"
+contract_fingerprint: "sha256:f667f31e0c63327242d7e80a96c590611379a8d3d9be4db7d4d792bf7b190b7f"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "b470a46ccf644fec8270f3c809b26ade9f01c19d35d961d2f39497aa50d5ceb2"
-fingerprint: "b470a46ccf644fec8270f3c809b26ade9f01c19d35d961d2f39497aa50d5ceb2"
+view_fingerprint: "c29a6af9e6e849fc910564e0b1d13f25177c32f3c58565dc2d43b513453d3e1e"
+fingerprint: "c29a6af9e6e849fc910564e0b1d13f25177c32f3c58565dc2d43b513453d3e1e"
 ---
 
 # Module Card: harbor
@@ -530,9 +530,9 @@ harbor/utils/i18n.py
 | harbor.core.l2.L2Generator._save_meta | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.canonical_readme_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | harbor/core/l2.py | unknown | standard |
-| harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
-| harbor.core.l2.L2Generator.write | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator.write | harbor/core/l2.py | public | strict |
 | harbor.core.l2._looks_like_windows_absolute_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._repo_relative_index_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._to_repo_relative | harbor/core/l2.py | unknown | standard |

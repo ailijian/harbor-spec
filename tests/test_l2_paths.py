@@ -1,12 +1,11 @@
 import os
-import hashlib
 import json
 from pathlib import Path
 
 import pytest
 import yaml
 
-from harbor.core.context_integrity import build_context_integrity_metadata
+from harbor.core.context_integrity import build_context_integrity_metadata, split_frontmatter
 from harbor.core.l2 import (
     L2Generator,
     _repo_relative_index_path,
@@ -63,7 +62,7 @@ def test_l2_meta_reads_legacy_then_writes_canonical_only(tmp_path: Path, monkeyp
     md = "# Module: harbor/core\n"
     legacy_meta = tmp_path / ".harbor" / "l2_meta.json"
     legacy_meta.parent.mkdir(parents=True, exist_ok=True)
-    legacy_payload = {module: hashlib.sha256(md.encode("utf-8")).hexdigest()}
+    legacy_payload = {module: L2Generator().compute_meta_hash(md)}
     legacy_meta.write_text(json.dumps(legacy_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     gen = L2Generator()
@@ -188,3 +187,18 @@ def test_l2_write_refreshes_canonical_when_body_hash_matches_but_frontmatter_dri
     assert canonical in paths
     assert first != second
     assert 'generator_fingerprint: "sha256:patched"' in second
+
+
+def test_l2_meta_hash_matches_canonical_body_after_write(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    gen = L2Generator()
+    body = "# Module: harbor/core\n"
+    _ = gen.write("harbor/core", body, force=True)
+
+    canonical = tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md"
+    canonical_text = canonical.read_text(encoding="utf-8")
+    _, canonical_body = split_frontmatter(canonical_text)
+    meta_payload = json.loads((tmp_path / ".harbor" / "views" / "l2" / "_meta.json").read_text(encoding="utf-8"))
+
+    assert meta_payload["harbor/core"] == gen.compute_meta_hash(body)
+    assert meta_payload["harbor/core"] == gen.compute_meta_hash(canonical_body)

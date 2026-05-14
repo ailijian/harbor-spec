@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-14T11:51:22Z"
+generated_at: "2026-05-14T13:32:42Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
 source_path_count: 60
@@ -69,8 +69,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:f2dd92da39fec8536b23c3e10134a5e50831ab986ba46b373b0b2ebd8ec5fdcd"
-contract_fingerprint: "sha256:2b90d6433d8d13e111905782b8fe0617b233c00bc035318ea51111f8253cccac"
+source_fingerprint: "sha256:2726d8bd72eb35528140488acd687e37e45cf341a75a408ec372485f1a16ad4a"
+contract_fingerprint: "sha256:50541156b3ae53d8fab8bcc0a706df1bb17f063d950c01848ece0760d7ad880a"
 generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
@@ -97,6 +97,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.l2.collect_all_indexed_modules | Collect normalized module paths from readonly index records. | strict | ❌ Missing |
 | harbor.core.module_capsule.collect_module_context | Collect readonly context records used to render one modul... | strict | ❌ Missing |
 | harbor.core.project_structure.collect_project_structure_context | Collect the canonical project-structure context from inde... | strict | ❌ Missing |
+| harbor.core.l2.L2Generator.compute_meta_hash | Hash L2 body content using the canonical `_meta.json` nor... | strict | ❌ Missing |
 | harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
 | harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
@@ -139,6 +140,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.storage.HarborDB.transaction | 事务上下文管理器（单文件原子写入）。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_entry | 插入或更新函数条目。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_file | 插入或更新文件记录。 | strict | ❌ Missing |
+| harbor.core.l2.L2Generator.write | Write the canonical L2 README and synchronized metadata f... | strict | ❌ Missing |
 | harbor.core.change_window.write_change_window_snapshot | Write one change-window snapshot under `.harbor/state/cha... | strict | ❌ Missing |
 | harbor.core.init.Initializer.write_config | 写入 `.harbor/config/harbor.yaml`。 | strict | ❌ Missing |
 | harbor.core.log_draft.write_diary_draft_output | Write a rendered diary draft to a safe non-diary path ins... | strict | ❌ Missing |
@@ -574,7 +576,6 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.context_integrity.compute_contract_fingerprint | — | standard | ⚪ Missing |
 | harbor.adapters.base.ContractSource.compute_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.compute_generator_fingerprint | — | standard | ⚪ Missing |
-| harbor.core.l2.L2Generator.compute_meta_hash | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.compute_module_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.compute_source_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.init_prompt.confirm | — | standard | ⚪ Missing |
@@ -697,7 +698,6 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.generated_verify.verify_project_structure | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.workspace_inspect_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.workspace_migrate_report_to_dict | — | standard | ⚪ Missing |
-| harbor.core.l2.L2Generator.write | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact.write_checkpoint_baseline_artifact | Validate and write the accepted checkpoint baseline artif... | standard | ⚪ Missing |
 | harbor.core.module_skill.write_module_skill | — | standard | ⚪ Missing |
 

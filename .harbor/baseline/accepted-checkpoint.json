@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-14T09:48:28Z",
+  "accepted_at": "2026-05-14T13:53:05Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -760,7 +760,7 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._is_log_write_interactive"
       },
       {
-        "body_hash": "6744587eb91b831c015e41e7ecad6d250e873c48c93f7275409532b4df9aaf1a",
+        "body_hash": "0a061b3a3c42cf53a03d232e339ec71c1c22ed5cb19d58a2db97141b3cbbda14",
         "contract_hash": "9cb0b5de3962a77d1ed34988dac5b79d27d36431a6de169549003dc6990f59a0",
         "contract_presence": "non_contract_doc",
         "contract_required": false,
@@ -832,8 +832,8 @@
         "target_id": "python:harbor/cli/main.py:function:harbor.cli.main._resolve_windows_stdio_target"
       },
       {
-        "body_hash": "98a77cb91cba551e4fdcaae3b2eb88b3f07b5c2bde23e66c7d5b2d10b70e2fb8",
-        "contract_hash": "8cdf9ee551f2be3f7a5630fb947b1ab42bbf7089e7ad9e4a8906129403a3020a",
+        "body_hash": "ce68515a834823fcf4123c0db4b115e48937f44121d533a14fcbc4c44c418753",
+        "contract_hash": "c15145e775c154881ad3f66e301e6cb8494cddbc4cc24d0783b69d24fe47a690",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/cli/main.py",
@@ -3088,6 +3088,342 @@
         "target_id": "python:harbor/core/drafting.py:method:harbor.core.drafting.DiaryDrafter.generate_draft"
       },
       {
+        "body_hash": "433ecd743066dea137890f7cdf18bbc841a251a484589f6c96c0c119654a95b8",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._build_summary",
+        "id": "harbor.core.generated_verify._build_summary",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._build_summary"
+      },
+      {
+        "body_hash": "e0e5ff35bcc1e40a7495ff0ba7f860026ba4b481a768916bf00243ca664d99be",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._collect_repair_commands",
+        "id": "harbor.core.generated_verify._collect_repair_commands",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._collect_repair_commands"
+      },
+      {
+        "body_hash": "6f5bf26d05dfac1f286255cdf49931ab35b0bb08169579e5734e1b579d48401a",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._compose_expected_canonical_l2_markdown",
+        "id": "harbor.core.generated_verify._compose_expected_canonical_l2_markdown",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._compose_expected_canonical_l2_markdown"
+      },
+      {
+        "body_hash": "8e47be8e07f9eb1a0198dcda7230b1f6b23eb1e3e5438dda0f543aae9c53a6d9",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._compose_expected_capsule_markdown",
+        "id": "harbor.core.generated_verify._compose_expected_capsule_markdown",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._compose_expected_capsule_markdown"
+      },
+      {
+        "body_hash": "befb1fb07b89f4830b845d89cd8b96539ef75d6bca3b4592c82dfca583515a61",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._compose_expected_module_card_markdown",
+        "id": "harbor.core.generated_verify._compose_expected_module_card_markdown",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._compose_expected_module_card_markdown"
+      },
+      {
+        "body_hash": "128cd17897512e1dbc2062c0d9668910bbea1cddd02aa873439d75f22c5c3ea0",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._compose_expected_project_structure_markdown",
+        "id": "harbor.core.generated_verify._compose_expected_project_structure_markdown",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._compose_expected_project_structure_markdown"
+      },
+      {
+        "body_hash": "240a55188852123bab48f661e589a0a79deff5e50b0c4d890a2381f457695876",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._derive_report_status",
+        "id": "harbor.core.generated_verify._derive_report_status",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._derive_report_status"
+      },
+      {
+        "body_hash": "f0210fe754bbb4d2a7d63421cf6fa8d8421cda8cbd8da738147903fc6dd2fab2",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._format_artifact_lines",
+        "id": "harbor.core.generated_verify._format_artifact_lines",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._format_artifact_lines"
+      },
+      {
+        "body_hash": "0096b6e07802fbca92f26fb2a91bdaed426a1494df5d0f0287bfd0a427c95bc1",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._normalize_body",
+        "id": "harbor.core.generated_verify._normalize_body",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._normalize_body"
+      },
+      {
+        "body_hash": "292af5f869605e8bfc119265aa9ebffa1679b391e17a57ce2b6686db0ac18334",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._repo_display_path",
+        "id": "harbor.core.generated_verify._repo_display_path",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._repo_display_path"
+      },
+      {
+        "body_hash": "5be34ceb07b3efa5a54cb8f1b5fd336139d4b41cf60da29c48e181a7fc959e18",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._sanitize_details",
+        "id": "harbor.core.generated_verify._sanitize_details",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._sanitize_details"
+      },
+      {
+        "body_hash": "9670f897854ff65b6bf67153d36216dff86d962e5450630f34361cf5363fed7e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._sanitize_rel_path",
+        "id": "harbor.core.generated_verify._sanitize_rel_path",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._sanitize_rel_path"
+      },
+      {
+        "body_hash": "b5a0b087069bf774e9414e397902864ea1f097e9ac6bf77547b475c8511407e6",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._suggest_docs_refresh",
+        "id": "harbor.core.generated_verify._suggest_docs_refresh",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._suggest_docs_refresh"
+      },
+      {
+        "body_hash": "238ebffbe29e684f5ebecbbcdd022e744acd643569f16c7b3255931671bcbc94",
+        "contract_hash": "b4a1b473392b0b778c762d6b2ae3aba2ba7579643d41f5a63b0f4e093167686b",
+        "contract_presence": "present",
+        "contract_required": true,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.build_generated_verification_ci_result",
+        "id": "harbor.core.generated_verify.build_generated_verification_ci_result",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.build_generated_verification_ci_result"
+      },
+      {
+        "body_hash": "15ca03cbd3d10a84cdfb0b61ce0d599533ce96ece8c6dca8be91c863b48d3fea",
+        "contract_hash": "b7ffcfc5fbbd7bbf30b61c5e72431c07a8780e5e5b5260855819ac249d44135f",
+        "contract_presence": "present",
+        "contract_required": true,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.build_generated_verification_report",
+        "id": "harbor.core.generated_verify.build_generated_verification_report",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.build_generated_verification_report"
+      },
+      {
+        "body_hash": "e42b8e5fb89bf715928be11d61abf4088d0d4b49e1c42065db94324e869b6e14",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.format_generated_verification_report",
+        "id": "harbor.core.generated_verify.format_generated_verification_report",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.format_generated_verification_report"
+      },
+      {
+        "body_hash": "af00a9e9112ab222d38ef702105c2c1ff64ab75cf626be041180e0d831bb607b",
+        "contract_hash": "bd7a2ac8829e83195e6b2bafe4841f5b22c389d3027a480d538cb2345e1a6ac1",
+        "contract_presence": "present",
+        "contract_required": true,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.generated_verification_report_to_dict",
+        "id": "harbor.core.generated_verify.generated_verification_report_to_dict",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.generated_verification_report_to_dict"
+      },
+      {
+        "body_hash": "10d9de68d3e3504050960ed9459018be18ed86e6c0afeb67cc5f9db17eb07839",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.re_match_absolute_path",
+        "id": "harbor.core.generated_verify.re_match_absolute_path",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.re_match_absolute_path"
+      },
+      {
+        "body_hash": "ea9a1816f9666f5addc93890b21cb5cbeed368143b75dd7952a78eff473301d5",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.verify_canonical_l2_readme",
+        "id": "harbor.core.generated_verify.verify_canonical_l2_readme",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.verify_canonical_l2_readme"
+      },
+      {
+        "body_hash": "35952ddf5cd2ad003a1f442fc645b4eb9d9efe56f59e1ff1a2c4114993e53aac",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.verify_export_l2_readme",
+        "id": "harbor.core.generated_verify.verify_export_l2_readme",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.verify_export_l2_readme"
+      },
+      {
+        "body_hash": "6db41c40bdd042232a889d9e8844db66d56ef74d3949fc61e97df03643b01a62",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.verify_l2_meta",
+        "id": "harbor.core.generated_verify.verify_l2_meta",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.verify_l2_meta"
+      },
+      {
+        "body_hash": "1d6003f1bd30e799799dd8de4d66987f89070f2823d07254f640fa02096a125d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.verify_module_capsule",
+        "id": "harbor.core.generated_verify.verify_module_capsule",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.verify_module_capsule"
+      },
+      {
+        "body_hash": "155834805e726c56f651b683ec51517e659e65ab075dc60c5112223c2de2fa5c",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.verify_module_generated",
+        "id": "harbor.core.generated_verify.verify_module_generated",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.verify_module_generated"
+      },
+      {
+        "body_hash": "015cada75ab147acde43b44ad5d14791320626af9b3de7147da76ae9f1157bbf",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.verify_project_structure",
+        "id": "harbor.core.generated_verify.verify_project_structure",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.verify_project_structure"
+      },
+      {
+        "body_hash": "8b25d97b73b07a2346b8cb4d29e83912dd6faef8a265027247ea5832e9ab8be4",
+        "contract_hash": "19e7bd120477fa7e2982da49fa8329a91e790e0d1909ad79116f34ac3c67c95e",
+        "contract_presence": "present",
+        "contract_required": true,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.GeneratedArtifactVerification.to_dict",
+        "id": "harbor.core.generated_verify.GeneratedArtifactVerification.to_dict",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:harbor/core/generated_verify.py:method:harbor.core.generated_verify.GeneratedArtifactVerification.to_dict"
+      },
+      {
+        "body_hash": "87d8719c9fe0b6cf65a8888cdc5675550e173e697fb993ebcd52b01aad9ccf64",
+        "contract_hash": "1f51eb81ea7fa38c664db08ea1296ddeb80258cd3a2fee3dc4aedcaf7d6d71ce",
+        "contract_presence": "present",
+        "contract_required": true,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.GeneratedVerificationReport.to_dict",
+        "id": "harbor.core.generated_verify.GeneratedVerificationReport.to_dict",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:harbor/core/generated_verify.py:method:harbor.core.generated_verify.GeneratedVerificationReport.to_dict"
+      },
+      {
+        "body_hash": "4d0156bbe65a6d8c2e84462342daf0fb80c034512fdfc9460d5444031af05925",
+        "contract_hash": "04b7c41a5ccebfdbff04ae2a826d62027186757c8a8712b5fbc844d29538d58e",
+        "contract_presence": "present",
+        "contract_required": true,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.ModuleGeneratedVerification.to_dict",
+        "id": "harbor.core.generated_verify.ModuleGeneratedVerification.to_dict",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:harbor/core/generated_verify.py:method:harbor.core.generated_verify.ModuleGeneratedVerification.to_dict"
+      },
+      {
+        "body_hash": "d321197969bc5efd4ac473cfb95f2c6a611c213cf050313dfa2e5883baf37825",
+        "contract_hash": "2144cac42a5de2a23b005c81f6635ae9a94086c1b86b03c6611449bb10bf46f3",
+        "contract_presence": "present",
+        "contract_required": true,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify.ProjectGeneratedVerification.to_dict",
+        "id": "harbor.core.generated_verify.ProjectGeneratedVerification.to_dict",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:harbor/core/generated_verify.py:method:harbor.core.generated_verify.ProjectGeneratedVerification.to_dict"
+      },
+      {
         "body_hash": "49758bc00c1421cd6a92335250bc4950486fb43760f7aa258eafdcae92080e3b",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -4192,9 +4528,9 @@
         "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator.collect_all_indexed_modules"
       },
       {
-        "body_hash": "09f2a2d4d5f6a09a18f554e7d6b7dccd9f323af09ec2e52d05a0e8d849581833",
-        "contract_hash": "",
-        "contract_presence": "missing",
+        "body_hash": "746d42912b6c6e281fb1d14a895c6630f315bbf245a250be97facdf7956a17dd",
+        "contract_hash": "d3e1d06d5b695af0913a9ff842ce52322448da0234b7044e2b4be037860982bf",
+        "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/l2.py",
         "func_id": "harbor.core.l2.L2Generator.compute_meta_hash",
@@ -4216,9 +4552,9 @@
         "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator.generate"
       },
       {
-        "body_hash": "9e53703c4c166884844d4c8309c770677b2df6a27dbb6cdc991155d34f3503ef",
-        "contract_hash": "",
-        "contract_presence": "missing",
+        "body_hash": "d5c422df38d6ff65f2994e4299e35b733613ea9a3fde3706113b936b88d05d63",
+        "contract_hash": "348f76298e0a218ff92edd9e00b573fd0b594cc1bbd5e24ccfd649059f39a8c6",
+        "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/l2.py",
         "func_id": "harbor.core.l2.L2Generator.write",
@@ -9700,7 +10036,7 @@
         "target_id": "python:tests/test_cli_finish_sync_context.py:function:tests.test_cli_finish_sync_context.test_finish_sync_context_write_boundary_only_allows_docs_and_capsules"
       },
       {
-        "body_hash": "141dabef4235add7c0da12f1982ecfd2b93dbb8066d13b61ca25c46ece3bb8c4",
+        "body_hash": "4a0f01f68eef0fd9cd024f86003b555ad58311730546b1e8ed9e9e4d7dbe9adc",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -10010,6 +10346,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_cli_help_and_ux.py:function:tests.test_cli_help_and_ux.test_stale_help_lists_changed_all_module_and_format_flags"
+      },
+      {
+        "body_hash": "a2b4aa58a753f6e84715149fb6ebaa6b9f5cebba6ceaf6d8facc9c913d558f02",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_help_and_ux.py",
+        "func_id": "tests.test_cli_help_and_ux.test_verify_generated_help_lists_changed_all_module_and_format_flags",
+        "id": "tests.test_cli_help_and_ux.test_verify_generated_help_lists_changed_all_module_and_format_flags",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_help_and_ux.py:function:tests.test_cli_help_and_ux.test_verify_generated_help_lists_changed_all_module_and_format_flags"
       },
       {
         "body_hash": "be6d0e9c68fb021302f132f1d626af73f0b0581b74555b997b32f659cc0461a8",
@@ -11756,6 +12104,114 @@
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
+        "file_path": "tests/test_cli_verify_generated.py",
+        "func_id": "tests.test_cli_verify_generated._force_en_locale",
+        "id": "tests.test_cli_verify_generated._force_en_locale",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_verify_generated.py:function:tests.test_cli_verify_generated._force_en_locale"
+      },
+      {
+        "body_hash": "e3540f0fe1a1738988b7808793c9d1ed515cb11526856cd23d2f626bd0663a9d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_verify_generated.py",
+        "func_id": "tests.test_cli_verify_generated._run_cmd_with_exit_code",
+        "id": "tests.test_cli_verify_generated._run_cmd_with_exit_code",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_verify_generated.py:function:tests.test_cli_verify_generated._run_cmd_with_exit_code"
+      },
+      {
+        "body_hash": "8fcceac1e5aecec606b7f634b8aa6875bc3c2cb78125abdd0c55e0872561dc89",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_verify_generated.py",
+        "func_id": "tests.test_cli_verify_generated._sample_report",
+        "id": "tests.test_cli_verify_generated._sample_report",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_verify_generated.py:function:tests.test_cli_verify_generated._sample_report"
+      },
+      {
+        "body_hash": "24740205eda1f09a9d63e08341b54991dce434e597d5f1a14a69a94464f1bae2",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_verify_generated.py",
+        "func_id": "tests.test_cli_verify_generated.run_cmd",
+        "id": "tests.test_cli_verify_generated.run_cmd",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_verify_generated.py:function:tests.test_cli_verify_generated.run_cmd"
+      },
+      {
+        "body_hash": "934d1ea454756e99b2e17f0051a33e3482e4f0143c7b9fdba069363d9cca40ad",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_verify_generated.py",
+        "func_id": "tests.test_cli_verify_generated.test_verify_generated_ci_json_uses_ci_failures_and_exit_code",
+        "id": "tests.test_cli_verify_generated.test_verify_generated_ci_json_uses_ci_failures_and_exit_code",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_verify_generated.py:function:tests.test_cli_verify_generated.test_verify_generated_ci_json_uses_ci_failures_and_exit_code"
+      },
+      {
+        "body_hash": "b5eebfd14535d6554815b654a127b04c4700cfc69cd9b6defd78791a6ec47080",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_verify_generated.py",
+        "func_id": "tests.test_cli_verify_generated.test_verify_generated_default_is_changed_scope",
+        "id": "tests.test_cli_verify_generated.test_verify_generated_default_is_changed_scope",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_verify_generated.py:function:tests.test_cli_verify_generated.test_verify_generated_default_is_changed_scope"
+      },
+      {
+        "body_hash": "e5c3e0a58df8d1546af5e5aee343272a80524bc247410f02411694fa3eaf799f",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_verify_generated.py",
+        "func_id": "tests.test_cli_verify_generated.test_verify_generated_json_output_has_required_fields",
+        "id": "tests.test_cli_verify_generated.test_verify_generated_json_output_has_required_fields",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_verify_generated.py:function:tests.test_cli_verify_generated.test_verify_generated_json_output_has_required_fields"
+      },
+      {
+        "body_hash": "b71394e3f87c309e2a212866e1404ec2b564a10340f611ee48dc7319f9e9b2fc",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_verify_generated.py",
+        "func_id": "tests.test_cli_verify_generated.test_verify_generated_modes_are_mutually_exclusive",
+        "id": "tests.test_cli_verify_generated.test_verify_generated_modes_are_mutually_exclusive",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_verify_generated.py:function:tests.test_cli_verify_generated.test_verify_generated_modes_are_mutually_exclusive"
+      },
+      {
+        "body_hash": "b33e021069a0c788b1ee78d4a5ddff78164203eee397fd33845f066338ebdcf3",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_cli_verify_generated.py",
+        "func_id": "tests.test_cli_verify_generated.test_verify_generated_module_mode_runs",
+        "id": "tests.test_cli_verify_generated.test_verify_generated_module_mode_runs",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_cli_verify_generated.py:function:tests.test_cli_verify_generated.test_verify_generated_module_mode_runs"
+      },
+      {
+        "body_hash": "85b4914c6cedc9a0c6855bb8e81f9a73f9ae899bd5fe05cdeafcc8f91d8713d8",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
         "file_path": "tests/test_cli_workspace_inspect.py",
         "func_id": "tests.test_cli_workspace_inspect._force_en_locale",
         "id": "tests.test_cli_workspace_inspect._force_en_locale",
@@ -13000,6 +13456,78 @@
         "target_id": "python:tests/test_drafting_json_parse.py:function:tests.test_drafting_json_parse.test_parse_with_noise_prefix_suffix"
       },
       {
+        "body_hash": "94dd14d5d1b0993986c3749c9bd5d4483b238bb7ebc4aa8b3d0636574bc2aef9",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_generated_verify.py",
+        "func_id": "tests.test_generated_verify._generate_views",
+        "id": "tests.test_generated_verify._generate_views",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify._generate_views"
+      },
+      {
+        "body_hash": "18eb73a23a592a2ff5355256e7ea3bc4910e71fb0b8e75c3b3225022268e72f8",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_generated_verify.py",
+        "func_id": "tests.test_generated_verify._write_sample_repo",
+        "id": "tests.test_generated_verify._write_sample_repo",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify._write_sample_repo"
+      },
+      {
+        "body_hash": "616d10cc56cfb9fcf2a0faa42019dc1df037156953c5ca6116f931dd5da9c430",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_generated_verify.py",
+        "func_id": "tests.test_generated_verify.test_generated_verify_detects_l2_meta_hash_mismatch",
+        "id": "tests.test_generated_verify.test_generated_verify_detects_l2_meta_hash_mismatch",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_detects_l2_meta_hash_mismatch"
+      },
+      {
+        "body_hash": "d4be33941958bfc573502e5ec5300add14764eb8cbb33397b84d4bcc64368cfb",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_generated_verify.py",
+        "func_id": "tests.test_generated_verify.test_generated_verify_detects_module_capsule_fingerprint_mismatch",
+        "id": "tests.test_generated_verify.test_generated_verify_detects_module_capsule_fingerprint_mismatch",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_detects_module_capsule_fingerprint_mismatch"
+      },
+      {
+        "body_hash": "2bb0f84939347e36537f0b18d8213268773b41a136829e9e1dc8633c279bafcb",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_generated_verify.py",
+        "func_id": "tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes",
+        "id": "tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes"
+      },
+      {
+        "body_hash": "29a18e554382206c81785cec72eed627aace64d93cc22ecae1c6672bb032ebb5",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_generated_verify.py",
+        "func_id": "tests.test_generated_verify.test_generated_verify_passes_when_views_match",
+        "id": "tests.test_generated_verify.test_generated_verify_passes_when_views_match",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_passes_when_views_match"
+      },
+      {
         "body_hash": "4cba5e1ca746c13bed8f47f18eaa373596ef17e0b27d398835678545f938d977",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -13022,6 +13550,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_harbor_next.py:function:tests.test_harbor_next.run_cmd"
+      },
+      {
+        "body_hash": "6b5b03ff1ec322e79bfad14f4c98d94ffe796d335215ec51ebe2f9ed9135691a",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_harbor_next.py",
+        "func_id": "tests.test_harbor_next.test_next_can_consume_verify_generated_ci_json",
+        "id": "tests.test_harbor_next.test_next_can_consume_verify_generated_ci_json",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_harbor_next.py:function:tests.test_harbor_next.test_next_can_consume_verify_generated_ci_json"
       },
       {
         "body_hash": "091b07fa9bfa15d6c2d059c984ab15cf14b3784bc734a56bedf6ff38ed0c0eda",
@@ -13936,7 +14476,19 @@
         "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical"
       },
       {
-        "body_hash": "b0ec98cf5681f1078a4c54c7a1236b8a9f5e933fbedc17132694c8a952174c84",
+        "body_hash": "772c18e1e416cd2b1cf5e52e2655911770fa5df9bd2f7551bf403dd19ec70a40",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_l2_paths.py",
+        "func_id": "tests.test_l2_paths.test_l2_meta_hash_matches_canonical_body_after_write",
+        "id": "tests.test_l2_paths.test_l2_meta_hash_matches_canonical_body_after_write",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_meta_hash_matches_canonical_body_after_write"
+      },
+      {
+        "body_hash": "ccac2141853e0c5c657b007fd0ab5a41e49b6dcb9ac935051d486b8f553c79e8",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -14006,6 +14558,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_repo_relative_helpers_normalize_github_actions_windows_path"
+      },
+      {
+        "body_hash": "e6167d7206225d6c32fb12facb1c301bb271661c49e624c20760fb6845b7a21f",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_l2_paths.py",
+        "func_id": "tests.test_l2_paths.test_l2_write_refreshes_canonical_when_body_hash_matches_but_frontmatter_drifted",
+        "id": "tests.test_l2_paths.test_l2_write_refreshes_canonical_when_body_hash_matches_but_frontmatter_drifted",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_write_refreshes_canonical_when_body_hash_matches_but_frontmatter_drifted"
       },
       {
         "body_hash": "78914739c4911b012e380ca4da8b16570863da4629608381f096c7f6f0db2005",
@@ -15688,8 +16252,8 @@
         "target_id": "python:tests/test_release_packaging.py:function:tests.test_release_packaging.test_pyproject_declares_cli_runtime_dependencies"
       },
       {
-        "body_hash": "a21507b9dcd0ead1dec8a4e90b345bb663f54cb47b999f51e433da5a00eaf94d",
-        "contract_hash": "000021a3ebd3b516f276033aaaa16f448cc4195c55e0ceacf7eaa14e64c37352",
+        "body_hash": "b86238b19f9bd0df8bbdd2e845673f92261f81ce63ca19ec051c28610eaa9ef3",
+        "contract_hash": "7fcac865d3e388369118dbdc21ff5f32eeca28cb6702f565fcc03cade99b1940",
         "contract_presence": "non_contract_doc",
         "contract_required": false,
         "file_path": "tests/test_release_packaging.py",
@@ -17801,7 +18365,7 @@
       }
     ]
   },
-  "harbor_version": "1.4.2",
+  "harbor_version": "1.4.2.2",
   "kind": "accepted_checkpoint_baseline",
   "schema_version": "1.0"
 }

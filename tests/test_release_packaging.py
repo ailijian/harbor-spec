@@ -33,13 +33,13 @@ def _run_help(argv):
 
 
 def test_pyproject_version_and_description_are_release_ready():
-    """Release packaging allows stable and pre-release (a/b/rc) versions."""
+    """Release packaging allows multi-segment PEP 440 releases like 1.4.2.2 plus a/b/rc suffixes."""
     pyproject_text = (_repo_root() / "pyproject.toml").read_text(encoding="utf-8")
     version_match = re.search(r'^version\s*=\s*"([^"]+)"', pyproject_text, re.MULTILINE)
     desc_match = re.search(r'^description\s*=\s*"([^"]+)"', pyproject_text, re.MULTILINE)
 
     assert version_match is not None
-    assert re.match(r"^\d+\.\d+\.\d+((a|b|rc)\d+)?$", version_match.group(1))
+    assert re.match(r"^\d+(?:\.\d+)+((a|b|rc)\d+)?$", version_match.group(1))
 
     assert desc_match is not None
     description = desc_match.group(1)

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-14T11:42:55Z"
+generated_at: "2026-05-14T12:49:08Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 98
@@ -107,11 +107,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:3c26a1aa1025d101ea56006aefd7974c4f36d65f17039dbfc6b1e75373683058"
-contract_fingerprint: "sha256:54b718aed005c570d807fac316de7bb226603a1103d050867d17744883499f36"
+source_fingerprint: "sha256:a368c05db94db987e07bdd232d9ee84985b0b420ab8c329567679c87e9d24a52"
+contract_fingerprint: "sha256:eacbb907708ae6ce864d64cd30cc111cbf4f09e987dc13ca8a988c78dcb207ca"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "f360bc32d3d22441c630edd9c43c9f7432148ba50b5604763641400c946f5f33"
-fingerprint: "f360bc32d3d22441c630edd9c43c9f7432148ba50b5604763641400c946f5f33"
+view_fingerprint: "37d7ff964ff2eebfd546c8978f6d77e0130a2a0fc72bf5529a08ca1308a9da19"
+fingerprint: "37d7ff964ff2eebfd546c8978f6d77e0130a2a0fc72bf5529a08ca1308a9da19"
 ---
 
 # Module Card: tests
@@ -828,12 +828,14 @@ tests/test_workspace_paths.py
 | tests.test_l2_paths.test_l2_absolute_module_path_outside_repo_still_rejected | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_meta_hash_matches_canonical_body_after_write | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_repeat_write_keeps_canonical_content_when_body_unchanged | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_repo_relative_helpers_handle_duplicate_repo_name_root | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_repo_relative_helpers_normalize_github_actions_windows_path | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_write_refreshes_canonical_when_body_hash_matches_but_frontmatter_drifted | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | tests/test_l2_paths.py | unknown | standard |
 | tests.test_lock_flags._prepare_proj | tests/test_lock_flags.py | unknown | standard |

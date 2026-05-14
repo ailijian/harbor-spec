@@ -21,6 +21,7 @@
 | harbor.core.l2.collect_all_indexed_modules | Collect normalized module paths from readonly index records. | strict | ❌ Missing |
 | harbor.core.module_capsule.collect_module_context | Collect readonly context records used to render one modul... | strict | ❌ Missing |
 | harbor.core.project_structure.collect_project_structure_context | Collect the canonical project-structure context from inde... | strict | ❌ Missing |
+| harbor.core.l2.L2Generator.compute_meta_hash | Hash L2 body content using the canonical `_meta.json` nor... | strict | ❌ Missing |
 | harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
 | harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
@@ -63,6 +64,7 @@
 | harbor.core.storage.HarborDB.transaction | 事务上下文管理器（单文件原子写入）。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_entry | 插入或更新函数条目。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_file | 插入或更新文件记录。 | strict | ❌ Missing |
+| harbor.core.l2.L2Generator.write | Write the canonical L2 README and synchronized metadata f... | strict | ❌ Missing |
 | harbor.core.change_window.write_change_window_snapshot | Write one change-window snapshot under `.harbor/state/cha... | strict | ❌ Missing |
 | harbor.core.init.Initializer.write_config | 写入 `.harbor/config/harbor.yaml`。 | strict | ❌ Missing |
 | harbor.core.log_draft.write_diary_draft_output | Write a rendered diary draft to a safe non-diary path ins... | strict | ❌ Missing |
@@ -498,7 +500,6 @@
 | harbor.core.context_integrity.compute_contract_fingerprint | — | standard | ⚪ Missing |
 | harbor.adapters.base.ContractSource.compute_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.compute_generator_fingerprint | — | standard | ⚪ Missing |
-| harbor.core.l2.L2Generator.compute_meta_hash | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.compute_module_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.compute_source_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.init_prompt.confirm | — | standard | ⚪ Missing |
@@ -621,7 +622,6 @@
 | harbor.core.generated_verify.verify_project_structure | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.workspace_inspect_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.workspace_migrate_report_to_dict | — | standard | ⚪ Missing |
-| harbor.core.l2.L2Generator.write | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact.write_checkpoint_baseline_artifact | Validate and write the accepted checkpoint baseline artif... | standard | ⚪ Missing |
 | harbor.core.module_skill.write_module_skill | — | standard | ⚪ Missing |
 

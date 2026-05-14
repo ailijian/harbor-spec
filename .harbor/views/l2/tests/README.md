@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-14T11:51:31Z"
+generated_at: "2026-05-14T12:48:54Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 98
@@ -107,8 +107,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:225fa63fc3ad49d1ecfc4fe9cc0873bb6550f83b1cd52e232e828d161f14f431"
-contract_fingerprint: "sha256:3f20a86fea0eb1c4f7c3e36786bbc4062ed2e971e4872b7b248305ff1cf788d7"
+source_fingerprint: "sha256:a368c05db94db987e07bdd232d9ee84985b0b420ab8c329567679c87e9d24a52"
+contract_fingerprint: "sha256:428c93e310e22ded979928306c860913824b8085e2eda1d868b92b0b7dfd1bc9"
 generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
@@ -673,6 +673,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | tests.test_stale.test_l2_export_warn_when_canonical_up_to_date_but_export_missing | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_generate_is_stable_when_duplicate_short_names_arrive_in_different_index_order | — | standard | ⚪ Missing |
 | tests.test_stale.test_l2_generator_prefer_fresh_source_ignores_stale_cache_snapshot | — | standard | ⚪ Missing |
+| tests.test_l2_paths.test_l2_meta_hash_matches_canonical_body_after_write | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | — | standard | ⚪ Missing |
@@ -844,7 +845,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | tests.test_init_wizard.test_provider_invalid_input_shows_available_options | — | standard | ⚪ Missing |
 | tests.test_contract_presence.test_public_without_docstring_is_contract_gap_required | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_pyproject_declares_cli_runtime_dependencies | — | standard | ⚪ Missing |
-| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows stable and pre-release (a/b/rc) ... | standard | ⚪ Missing |
+| tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows multi-segment PEP 440 releases l... | standard | ⚪ Missing |
 | tests.test_init_wizard.test_pytest_env_does_not_try_arrow_selector | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat.test_python_adapter_parse_file_behavior_unchanged | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_python_audit_provider_behavior_unchanged | — | standard | ⚪ Missing |

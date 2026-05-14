@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-14T11:44:41Z"
+generated_at: "2026-05-14T12:41:49Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 39
@@ -48,11 +48,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:b25272abd126c684f19eba73d98233d0d4b173a003bbcd95f6de48f8cd40b6e4"
-contract_fingerprint: "sha256:7a6317ea2a93056eabf8c47ceffec822488ad0ef0ac515209da01b06747f24b4"
+source_fingerprint: "sha256:4fed9cd55b715711adb183c83682d04866fe67b39fecf3e5b4c5c8341eb764f7"
+contract_fingerprint: "sha256:ac4f61a18bf77beb8c1bbe73764a767ab7a98f53e39776f1b81bf3e1ee4e6b8d"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "1719a2c3662dd2c8897caa39e8b37f07ef233b1358af6391b754b9e6b1dc7b5f"
-fingerprint: "1719a2c3662dd2c8897caa39e8b37f07ef233b1358af6391b754b9e6b1dc7b5f"
+view_fingerprint: "c3e120d1b0c37ae1a66cbfc917b8572210af9b53c23dccb691661ab2fe3a4494"
+fingerprint: "c3e120d1b0c37ae1a66cbfc917b8572210af9b53c23dccb691661ab2fe3a4494"
 ---
 
 # Module Card: harbor/core
@@ -418,9 +418,9 @@ harbor/core/workspace_migrate.py
 | harbor.core.l2.L2Generator._save_meta | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.canonical_readme_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | harbor/core/l2.py | unknown | standard |
-| harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
-| harbor.core.l2.L2Generator.write | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator.write | harbor/core/l2.py | public | strict |
 | harbor.core.l2._looks_like_windows_absolute_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._repo_relative_index_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._to_repo_relative | harbor/core/l2.py | unknown | standard |

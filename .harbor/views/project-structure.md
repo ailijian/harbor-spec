@@ -2,10 +2,10 @@
 generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "project_structure"
-generated_at: "2026-05-14T11:46:18Z"
+generated_at: "2026-05-14T13:54:17Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
-source_path_count: 155
+source_path_count: 158
 source_paths_truncated: true
 source_paths:
   - "harbor/__init__.py"
@@ -39,6 +39,7 @@ source_paths:
   - "harbor/core/diary.py"
   - "harbor/core/doctor.py"
   - "harbor/core/drafting.py"
+  - "harbor/core/generated_verify.py"
   - "harbor/core/git_utils.py"
   - "harbor/core/index.py"
   - "harbor/core/index_entry.py"
@@ -104,6 +105,7 @@ source_paths:
   - "tests/test_cli_project_structure.py"
   - "tests/test_cli_stale.py"
   - "tests/test_cli_v2.py"
+  - "tests/test_cli_verify_generated.py"
   - "tests/test_cli_workspace_inspect.py"
   - "tests/test_cli_workspace_migrate.py"
   - "tests/test_config_update.py"
@@ -119,17 +121,15 @@ source_paths:
   - "tests/test_doctor.py"
   - "tests/test_drafting.py"
   - "tests/test_drafting_json_parse.py"
+  - "tests/test_generated_verify.py"
   - "tests/test_gitignore_prune.py"
   - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
   - "tests/test_index_builder_bad_syntax.py"
   - "tests/test_index_builder_registry_integration.py"
   - "tests/test_index_progress.py"
-  - "tests/test_init_detector.py"
-  - "tests/test_init_governance.py"
-  - "tests/test_init_llm_env.py"
-source_fingerprint: "sha256:2fac4a92c8a56562ba7d10fbeedbb6ac6065928b2563875b1ea0ec29a2b564b9"
-contract_fingerprint: "sha256:a17ee63b7d92734a16e6218011ffd9fc44b136a4ffd00ed3cb9ef7048ddb408f"
+source_fingerprint: "sha256:30aa549f34498685d4760b76a869509e54ef0f875142000ebf70f6118b99fb0c"
+contract_fingerprint: "sha256:fe2910e32ab96d9487fd21778d78490d05f72f668c5dec86e843349104288efa"
 generator_fingerprint: "sha256:acbf174dd129bc6f84a47fbab94721946d034f7f5a285b22f3243f1074740d69"
 ---
 
@@ -171,28 +171,28 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 | Area | Purpose | Discovered Files | Indexed Contracts |
 |---|---|---:|---:|
 | harbor/cli | CLI command parsing and workflow facade | 2 | 11 |
-| harbor/core | Core Harbor logic | 38 | 513 |
+| harbor/core | Core Harbor logic | 39 | 541 |
 | harbor/utils | Shared utilities | 3 | 3 |
-| tests | Test suite | 96 | 899 |
+| tests | Test suite | 98 | 918 |
 | harbor | Derived from indexed files under harbor. | 16 | 60 |
 
 ## Code Modules
 
 | Module | Key Files | L2 README | Module Capsule | Skill |
 |---|---|---|---|---|
-| harbor | harbor/cli/main.py, harbor/core/audit.py, harbor/core/ddt.py, ... (+56 more) | yes | no | no |
+| harbor | harbor/cli/main.py, harbor/core/audit.py, harbor/core/ddt.py, ... (+57 more) | yes | no | no |
 | harbor/adapters | harbor/adapters/base.py, harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, ... (+9 more) | yes | no | no |
 | harbor/adapters/python | harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, harbor/adapters/python/__init__.py | yes | no | no |
 | harbor/adapters/typescript | harbor/adapters/typescript/adapter.py, harbor/adapters/typescript/hashing.py, harbor/adapters/typescript/jsdoc.py, ... (+3 more) | yes | no | no |
 | harbor/cli | harbor/cli/main.py, harbor/cli/__init__.py | yes | no | no |
-| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+35 more) | yes | no | yes |
+| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+36 more) | yes | no | yes |
 | harbor/utils | harbor/utils/formatting.py, harbor/utils/i18n.py, harbor/utils/__init__.py | yes | no | no |
 
 ## Supporting Areas
 
 | Area | Purpose | Key Files |
 |---|---|---|
-| tests | Test suite | tests/conftest.py, tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, ... (+93 more) |
+| tests | Test suite | tests/conftest.py, tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, ... (+95 more) |
 | tests/core | Core test suite | tests/core/test_index_sync_sqlite.py, tests/core/test_storage_migration.py |
 | tests/fixtures_sqlite | Test fixtures | tests/fixtures_sqlite/sample.py |
 
