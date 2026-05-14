@@ -44,6 +44,12 @@ from harbor.core.stale import (
     format_stale_summary,
     stale_report_to_dict,
 )
+from harbor.core.generated_verify import (
+    build_generated_verification_ci_result,
+    build_generated_verification_report,
+    format_generated_verification_report,
+    generated_verification_report_to_dict,
+)
 from harbor.core.doctor import (
     build_doctor_report,
     format_doctor_report,
@@ -153,7 +159,7 @@ def _is_pure_json_output_argv(argv) -> bool:
 
     command = non_option_tokens[0]
     subcommand = non_option_tokens[1] if len(non_option_tokens) > 1 else None
-    pure_json_commands = {"accept", "checkpoint", "doctor", "next", "stale"}
+    pure_json_commands = {"accept", "checkpoint", "doctor", "next", "stale", "verify-generated"}
     if command in pure_json_commands:
         return True
     if command == "log" and subcommand == "draft":
@@ -796,6 +802,45 @@ def main():
         help="Enable CI gate mode with deterministic exit code semantics",
     )
     p_doctor.add_argument(
+        "--advice",
+        type=str,
+        choices=["off", "basic"],
+        default=None,
+        help="Repair guidance mode override: off or basic",
+    )
+    p_verify_generated = sub.add_parser(
+        "verify-generated",
+        help="Verify that tracked generated context is reproducible from current source truth",
+    )
+    p_verify_generated.add_argument(
+        "--module",
+        type=str,
+        help="Target module directory (e.g. harbor/core)",
+    )
+    p_verify_generated.add_argument(
+        "--changed",
+        action="store_true",
+        help="Detect changed modules and verify generated artifacts for each",
+    )
+    p_verify_generated.add_argument(
+        "--all",
+        dest="all_modules",
+        action="store_true",
+        help="Verify generated artifacts for all indexed modules",
+    )
+    p_verify_generated.add_argument(
+        "--format",
+        type=str,
+        choices=["text", "json"],
+        default="text",
+        help="Output format: text (default) or json",
+    )
+    p_verify_generated.add_argument(
+        "--ci",
+        action="store_true",
+        help="Enable CI gate mode with deterministic exit code semantics",
+    )
+    p_verify_generated.add_argument(
         "--advice",
         type=str,
         choices=["off", "basic"],
@@ -2526,6 +2571,66 @@ def main():
             _emit_json_stdout(payload)
         else:
             print(format_doctor_report(report))
+    elif args.command == "verify-generated":
+        mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
+        if mode_count > 1:
+            parser.error(t("cli.verify_generated.mode_conflict"))
+
+        scope_text = t("cli.verify_generated.scope.changed")
+        scope_value = "changed"
+        if args.module:
+            modules = [args.module]
+            scope_text = t("cli.verify_generated.scope.module", module=args.module)
+            scope_value = f"module:{args.module}"
+        elif args.all_modules:
+            modules = _collect_all_indexed_modules_for_generated_context()
+            scope_text = t("cli.verify_generated.scope.all")
+            scope_value = "all"
+            if not modules:
+                report = build_generated_verification_report(scope=scope_value, modules=[])
+                if args.ci:
+                    advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
+                    ci_result = build_generated_verification_ci_result(report, advice_settings=advice_settings)
+                    if args.format == "json":
+                        _emit_json_stdout(ci_result_to_dict(ci_result))
+                    else:
+                        print(format_ci_result(ci_result))
+                elif args.format == "json":
+                    _emit_json_stdout(generated_verification_report_to_dict(report))
+                else:
+                    print(t("cli.verify_generated.none_all"))
+                return
+        else:
+            modules = _collect_changed_modules()
+            if not modules:
+                report = build_generated_verification_report(scope=scope_value, modules=[])
+                if args.ci:
+                    advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
+                    ci_result = build_generated_verification_ci_result(report, advice_settings=advice_settings)
+                    if args.format == "json":
+                        _emit_json_stdout(ci_result_to_dict(ci_result))
+                    else:
+                        print(format_ci_result(ci_result))
+                elif args.format == "json":
+                    _emit_json_stdout(generated_verification_report_to_dict(report))
+                else:
+                    print(t("cli.verify_generated.none_changed"))
+                return
+
+        report = build_generated_verification_report(scope=scope_value, modules=modules)
+        if args.ci:
+            advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
+            ci_result = build_generated_verification_ci_result(report, advice_settings=advice_settings)
+            if args.format == "json":
+                _emit_json_stdout(ci_result_to_dict(ci_result))
+            else:
+                print(format_ci_result(ci_result))
+            if ci_result.exit_code != 0:
+                raise SystemExit(ci_result.exit_code)
+        elif args.format == "json":
+            _emit_json_stdout(generated_verification_report_to_dict(report))
+        else:
+            print(format_generated_verification_report(report, scope_text=scope_text))
     elif args.command == "workspace" and args.workspace_cmd == "inspect":
         report = build_workspace_inspect_report(Path.cwd())
         if args.format == "json":

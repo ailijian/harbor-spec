@@ -1,11 +1,11 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.1"
+harbor_version: "1.4.2.2"
 view_type: "project_structure"
-generated_at: "2026-05-13T19:39:53Z"
+generated_at: "2026-05-14T11:46:18Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
-source_path_count: 154
+source_path_count: 155
 source_paths_truncated: true
 source_paths:
   - "harbor/__init__.py"
@@ -128,9 +128,9 @@ source_paths:
   - "tests/test_init_detector.py"
   - "tests/test_init_governance.py"
   - "tests/test_init_llm_env.py"
-source_fingerprint: "sha256:d5f5fce6886f45b3a736314769ffb480d5958b23e9989713d7dcf01f9e62927a"
-contract_fingerprint: "sha256:338d2c06c49f23b101ececc5b01d8c7b126ae51c1d7ad7ad58bde642624b1bf7"
-generator_fingerprint: "sha256:23ede01e946f15789329e98cc70551d240aa807690a0da420bddfae426745494"
+source_fingerprint: "sha256:2fac4a92c8a56562ba7d10fbeedbb6ac6065928b2563875b1ea0ec29a2b564b9"
+contract_fingerprint: "sha256:a17ee63b7d92734a16e6218011ffd9fc44b136a4ffd00ed3cb9ef7048ddb408f"
+generator_fingerprint: "sha256:acbf174dd129bc6f84a47fbab94721946d034f7f5a285b22f3243f1074740d69"
 ---
 
 # Project Structure
@@ -143,7 +143,7 @@ generator_fingerprint: "sha256:23ede01e946f15789329e98cc70551d240aa807690a0da420
 | Field | Value |
 |---|---|
 | Name | harbor-spec |
-| Version | 1.4.2 |
+| Version | 1.4.2.2 |
 | Description | Harbor-spec: context governance engine for AI coding, with contract drift detection, DDT validation, workflow facades, L2 README generation, module capsules, and advisory health checks. |
 | CLI Entrypoint | harbor.cli.main:main |
 
@@ -170,10 +170,10 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 
 | Area | Purpose | Discovered Files | Indexed Contracts |
 |---|---|---:|---:|
-| harbor/cli | CLI command parsing and workflow facade | 2 | 4 |
+| harbor/cli | CLI command parsing and workflow facade | 2 | 11 |
 | harbor/core | Core Harbor logic | 38 | 513 |
 | harbor/utils | Shared utilities | 3 | 3 |
-| tests | Test suite | 95 | 863 |
+| tests | Test suite | 96 | 899 |
 | harbor | Derived from indexed files under harbor. | 16 | 60 |
 
 ## Code Modules
@@ -192,7 +192,7 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 
 | Area | Purpose | Key Files |
 |---|---|---|
-| tests | Test suite | tests/conftest.py, tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, ... (+92 more) |
+| tests | Test suite | tests/conftest.py, tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, ... (+93 more) |
 | tests/core | Core test suite | tests/core/test_index_sync_sqlite.py, tests/core/test_storage_migration.py |
 | tests/fixtures_sqlite | Test fixtures | tests/fixtures_sqlite/sample.py |
 

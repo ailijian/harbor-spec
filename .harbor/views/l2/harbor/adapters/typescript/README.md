@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.1"
+harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "harbor/adapters/typescript"
-generated_at: "2026-05-13T12:26:04Z"
+generated_at: "2026-05-14T11:51:23Z"
 generation_command: "harbor docs --module harbor/adapters/typescript --write"
 stale_policy: "advisory"
 source_path_count: 6
@@ -16,8 +16,8 @@ source_paths:
   - "harbor/adapters/typescript/parser.py"
   - "harbor/adapters/typescript/symbols.py"
 source_fingerprint: "sha256:84d1bc51bc64ac693278a8c468e34efb049cca3acd94f3fde08eb14c1ece068d"
-contract_fingerprint: "sha256:624337cae4082d58bc3ab66575c14af7f1b30b9c5cb94e7e2e83b1dcb4b96dda"
-generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
+contract_fingerprint: "sha256:38af6980872f924ba1db3d67264cb0b37195739b1d6df3a69b90a2254352f71f"
+generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
 # Module: harbor/adapters/typescript

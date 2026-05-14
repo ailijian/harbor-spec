@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from harbor.core.context_integrity import build_context_integrity_metadata
 from harbor.core.l2 import (
     L2Generator,
     _repo_relative_index_path,
@@ -66,8 +67,9 @@ def test_l2_meta_reads_legacy_then_writes_canonical_only(tmp_path: Path, monkeyp
     legacy_meta.write_text(json.dumps(legacy_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     gen = L2Generator()
-    assert gen.write(module, md, force=False) is None
-    assert not (tmp_path / ".harbor" / "views" / "l2" / "_meta.json").exists()
+    first_paths = gen.write(module, md, force=False)
+    assert first_paths is not None
+    assert (tmp_path / ".harbor" / "views" / "l2" / "_meta.json").exists()
 
     paths = gen.write(module, md, force=True)
     assert paths is not None
@@ -160,3 +162,29 @@ def test_l2_repeat_write_keeps_canonical_content_when_body_unchanged(tmp_path: P
     _ = gen.write("harbor/core", "# Module: harbor/core\n", force=True)
     second = canonical.read_text(encoding="utf-8")
     assert first == second
+
+
+def test_l2_write_refreshes_canonical_when_body_hash_matches_but_frontmatter_drifted(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    gen = L2Generator()
+    body = "# Module: harbor/core\n"
+    _ = gen.write("harbor/core", body, force=True)
+    canonical = tmp_path / ".harbor" / "views" / "l2" / "harbor" / "core" / "README.md"
+    first = canonical.read_text(encoding="utf-8")
+
+    original_builder = build_context_integrity_metadata
+
+    def _patched_builder(*args, **kwargs):
+        payload = original_builder(*args, **kwargs)
+        payload["generator_fingerprint"] = "sha256:patched"
+        return payload
+
+    monkeypatch.setattr("harbor.core.l2.build_context_integrity_metadata", _patched_builder)
+
+    paths = gen.write("harbor/core", body, force=False)
+    second = canonical.read_text(encoding="utf-8")
+
+    assert paths is not None
+    assert canonical in paths
+    assert first != second
+    assert 'generator_fingerprint: "sha256:patched"' in second

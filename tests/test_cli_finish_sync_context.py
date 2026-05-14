@@ -202,6 +202,7 @@ def test_configure_windows_stdio_reconfigure_failure_does_not_interrupt(monkeypa
 def test_is_pure_json_output_argv_detects_supported_routes():
     assert cli_main._is_pure_json_output_argv(["checkpoint", "--ci", "--format", "json"]) is True
     assert cli_main._is_pure_json_output_argv(["doctor", "--format=json"]) is True
+    assert cli_main._is_pure_json_output_argv(["verify-generated", "--format", "json"]) is True
     assert cli_main._is_pure_json_output_argv(["workspace", "inspect", "--format", "json"]) is True
     assert cli_main._is_pure_json_output_argv(["log", "draft", "--format", "json"]) is True
     assert cli_main._is_pure_json_output_argv(["check", "--format", "jsonl"]) is False

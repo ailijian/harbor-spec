@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2"
+harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-14T09:36:09Z"
+generated_at: "2026-05-14T11:51:31Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
-source_path_count: 96
+source_path_count: 98
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -46,6 +46,7 @@ source_paths:
   - "tests/test_cli_project_structure.py"
   - "tests/test_cli_stale.py"
   - "tests/test_cli_v2.py"
+  - "tests/test_cli_verify_generated.py"
   - "tests/test_cli_workspace_inspect.py"
   - "tests/test_cli_workspace_migrate.py"
   - "tests/test_config_update.py"
@@ -61,6 +62,7 @@ source_paths:
   - "tests/test_doctor.py"
   - "tests/test_drafting.py"
   - "tests/test_drafting_json_parse.py"
+  - "tests/test_generated_verify.py"
   - "tests/test_gitignore_prune.py"
   - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
@@ -105,9 +107,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:e22e02caf24fc5fb8dd983a00acd99f8d37680074bc17d13a28a6416b34698db"
-contract_fingerprint: "sha256:4ea55a62a4835774062d7d164d925b71683c503e6f0a4202939c72f10b17163f"
-generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476c5ad96e7689aade"
+source_fingerprint: "sha256:225fa63fc3ad49d1ecfc4fe9cc0873bb6550f83b1cd52e232e828d161f14f431"
+contract_fingerprint: "sha256:3f20a86fea0eb1c4f7c3e36786bbc4062ed2e971e4872b7b248305ff1cf788d7"
+generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
 # Module: tests
@@ -186,6 +188,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_cli_project_structure._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_stale._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_v2._force_en_locale | — | standard | ⚪ Missing |
+| tests.test_cli_verify_generated._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_inspect._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_migrate._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_doctor._force_en_locale | — | standard | ⚪ Missing |
@@ -197,6 +200,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_workspace_migrate._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._format_case_diagnostic | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._full_stderr_from_paths | — | standard | ⚪ Missing |
+| tests.test_generated_verify._generate_views | — | standard | ⚪ Missing |
 | tests.test_cli_stale._generate_views_for_module | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy._gitignore_entries | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._init_git_repo | — | standard | ⚪ Missing |
@@ -225,6 +229,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_cache_isolation_hardening._run_cmd | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths._run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_stale._run_cmd_with_exit_code | — | standard | ⚪ Missing |
+| tests.test_cli_verify_generated._run_cmd_with_exit_code | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._run_git | — | standard | ⚪ Missing |
 | tests.test_release_packaging._run_help | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._run_powershell_json_capture_cases | — | standard | ⚪ Missing |
@@ -232,6 +237,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_python_adapter_compat._sample_contract | — | standard | ⚪ Missing |
 | tests.test_cli_json_output._sample_doctor_report | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._sample_draft_payload | — | standard | ⚪ Missing |
+| tests.test_cli_verify_generated._sample_report | — | standard | ⚪ Missing |
 | tests.test_cli_json_output._sample_stale_summary | — | standard | ⚪ Missing |
 | tests.test_cli_stale._sample_summary | — | standard | ⚪ Missing |
 | tests.test_doctor._sample_summary | — | standard | ⚪ Missing |
@@ -289,6 +295,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_checkpoint_ci_baseline_artifact._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_cli_stale._write_sample_repo | — | standard | ⚪ Missing |
+| tests.test_generated_verify._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_module_capsule._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_stale._write_sample_repo | — | standard | ⚪ Missing |
 | tests.test_log_draft._write_snapshot | — | standard | ⚪ Missing |
@@ -342,6 +349,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_cli_project_structure.run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_stale.run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_v2.run_cmd | — | standard | ⚪ Missing |
+| tests.test_cli_verify_generated.run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_inspect.run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_migrate.run_cmd | — | standard | ⚪ Missing |
 | tests.test_harbor_next.run_cmd | — | standard | ⚪ Missing |
@@ -605,6 +613,10 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_project_structure.test_generate_markdown_contains_required_sections_and_is_deterministic | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_generate_module_skill_contains_thin_template | — | standard | ⚪ Missing |
 | tests.test_stale.test_generated_context_stays_up_to_date_across_cache_and_clean_fresh_checks | — | standard | ⚪ Missing |
+| tests.test_generated_verify.test_generated_verify_detects_l2_meta_hash_mismatch | — | standard | ⚪ Missing |
+| tests.test_generated_verify.test_generated_verify_detects_module_capsule_fingerprint_mismatch | — | standard | ⚪ Missing |
+| tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes | — | standard | ⚪ Missing |
+| tests.test_generated_verify.test_generated_verify_passes_when_views_match | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_generated_view_modules_hit_generated_view_format | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_generators_include_required_sections | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance | — | standard | ⚪ Missing |
@@ -672,6 +684,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_l2_paths.test_l2_repeat_write_keeps_canonical_content_when_body_unchanged | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_repo_relative_helpers_handle_duplicate_repo_name_root | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_repo_relative_helpers_normalize_github_actions_windows_path | — | standard | ⚪ Missing |
+| tests.test_l2_paths.test_l2_write_refreshes_canonical_when_body_hash_matches_but_frontmatter_drifted | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_last_log_marker_round_trip_prefers_last_log_at_and_keeps_legacy_aliases | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths.test_legacy_chore_type_remains_supported | — | standard | ⚪ Missing |
@@ -774,6 +787,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_drafting_json_parse.test_nested_brace_with_code_fence | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_new_config_read | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | — | standard | ⚪ Missing |
+| tests.test_harbor_next.test_next_can_consume_verify_generated_ci_json | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_can_read_utf16_report | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_contract_gap | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_skipped_no_contract | — | standard | ⚪ Missing |
@@ -972,6 +986,12 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | tests.test_cli_module_capsule.test_unknown_module_does_not_crash_and_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_up_to_date_when_fingerprint_matches | — | standard | ⚪ Missing |
+| tests.test_cli_verify_generated.test_verify_generated_ci_json_uses_ci_failures_and_exit_code | — | standard | ⚪ Missing |
+| tests.test_cli_verify_generated.test_verify_generated_default_is_changed_scope | — | standard | ⚪ Missing |
+| tests.test_cli_help_and_ux.test_verify_generated_help_lists_changed_all_module_and_format_flags | — | standard | ⚪ Missing |
+| tests.test_cli_verify_generated.test_verify_generated_json_output_has_required_fields | — | standard | ⚪ Missing |
+| tests.test_cli_verify_generated.test_verify_generated_modes_are_mutually_exclusive | — | standard | ⚪ Missing |
+| tests.test_cli_verify_generated.test_verify_generated_module_mode_runs | — | standard | ⚪ Missing |
 | tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_windows_absolute_write_path_cannot_escape_repo_root | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_windows_posix_path_normalization | — | standard | ⚪ Missing |

@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2"
+harbor_version: "1.4.2.2"
 view_type: "debug_playbook"
 module: "harbor"
-generated_at: "2026-05-14T09:36:09Z"
+generated_at: "2026-05-14T11:44:41Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
-source_path_count: 59
+source_path_count: 60
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -40,6 +40,7 @@ source_paths:
   - "harbor/core/diary.py"
   - "harbor/core/doctor.py"
   - "harbor/core/drafting.py"
+  - "harbor/core/generated_verify.py"
   - "harbor/core/git_utils.py"
   - "harbor/core/index.py"
   - "harbor/core/index_entry.py"
@@ -68,9 +69,9 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:0236e433c9303e46894b9a31488213e53d1554b0dca337e357aa33c7bb400ab7"
-contract_fingerprint: "sha256:da162ad8773fb6b72871d2fc8c910a7b797b3aabbf404f58a7590d5c94e32bd4"
-generator_fingerprint: "sha256:40a41cd69fdfdebf0d2a26315b5ad9009d997819aec8a404992a0025f65e1027"
+source_fingerprint: "sha256:4e687c1d9259c0502f2924880fb76423692a6d9012b74b15102e697fd0eb08df"
+contract_fingerprint: "sha256:e901c00a5943fa3d4c2b8f7b3ca359ae64da75e535935d4ec8427c9d088de5de"
+generator_fingerprint: "sha256:189f5040b703e80b4fd0ec42ab129997229ec6d456ade27250892741cf23d7c4"
 ---
 
 # Debug Playbook: harbor

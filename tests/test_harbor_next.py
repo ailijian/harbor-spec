@@ -144,3 +144,37 @@ def test_next_json_preserves_typescript_additive_checkpoint_metadata(tmp_path: P
     assert row["contract_source_kinds"] == ["typescript_interface"]
     assert row["contract_source_fingerprints"] == ["abc123"]
     assert row["source_confidence_summary"] == "high"
+
+
+def test_next_can_consume_verify_generated_ci_json(tmp_path: Path):
+    report = {
+        "command": "verify-generated",
+        "ci": True,
+        "status": "fail",
+        "exit_code": 1,
+        "writes_files": False,
+        "summary": {"scope": "module:harbor/core", "modules_checked": 1, "ci_failures": 1, "advisory_items": 0},
+        "ci_failures": [
+            {
+                "kind": "view",
+                "module": "harbor/core",
+                "view": "canonical_l2_readme",
+                "status": "fail",
+                "reason": "l2_body_mismatch",
+                "suggested_command": "harbor docs --module harbor/core --write",
+            }
+        ],
+        "advisory": [],
+        "next_steps": ["harbor docs --module harbor/core --write"],
+    }
+    report_path = tmp_path / "verify-generated.json"
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+    code, out, _ = run_cmd(["next", "--from", str(report_path), "--format", "json"])
+    payload = json.loads(out)
+
+    assert code == 0
+    assert payload["source_command"] == "verify-generated"
+    assert payload["status"] == "ok"
+    assert payload["items"][0]["blocking"] is True
+    assert payload["items"][0]["category"] == "view"
+    assert payload["items"][0]["reason"] == "l2_body_mismatch"

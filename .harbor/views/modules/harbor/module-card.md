@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2"
+harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-14T09:36:09Z"
+generated_at: "2026-05-14T11:44:41Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
-source_path_count: 59
+source_path_count: 60
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -40,6 +40,7 @@ source_paths:
   - "harbor/core/diary.py"
   - "harbor/core/doctor.py"
   - "harbor/core/drafting.py"
+  - "harbor/core/generated_verify.py"
   - "harbor/core/git_utils.py"
   - "harbor/core/index.py"
   - "harbor/core/index_entry.py"
@@ -68,11 +69,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:0236e433c9303e46894b9a31488213e53d1554b0dca337e357aa33c7bb400ab7"
-contract_fingerprint: "sha256:da162ad8773fb6b72871d2fc8c910a7b797b3aabbf404f58a7590d5c94e32bd4"
-generator_fingerprint: "sha256:397ed303b344c4694fd3842fbc3ccf02c9a40345ba4f92f0de83e5ac2e3a2149"
-view_fingerprint: "1f8801418e71a8315ef9c98eb71542455f6571151403d23c2aa053f14727bab7"
-fingerprint: "1f8801418e71a8315ef9c98eb71542455f6571151403d23c2aa053f14727bab7"
+source_fingerprint: "sha256:4e687c1d9259c0502f2924880fb76423692a6d9012b74b15102e697fd0eb08df"
+contract_fingerprint: "sha256:e901c00a5943fa3d4c2b8f7b3ca359ae64da75e535935d4ec8427c9d088de5de"
+generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
+view_fingerprint: "b470a46ccf644fec8270f3c809b26ade9f01c19d35d961d2f39497aa50d5ceb2"
+fingerprint: "b470a46ccf644fec8270f3c809b26ade9f01c19d35d961d2f39497aa50d5ceb2"
 ---
 
 # Module Card: harbor
@@ -124,6 +125,7 @@ harbor/core/decorator.py
 harbor/core/diary.py
 harbor/core/doctor.py
 harbor/core/drafting.py
+harbor/core/generated_verify.py
 harbor/core/git_utils.py
 harbor/core/index.py
 harbor/core/index_entry.py
@@ -415,6 +417,34 @@ harbor/utils/i18n.py
 | harbor.core.drafting.DiaryDrafter._safe_json_parse | harbor/core/drafting.py | unknown | standard |
 | harbor.core.drafting.DiaryDrafter._trim_segment | harbor/core/drafting.py | unknown | standard |
 | harbor.core.drafting.DiaryDrafter.generate_draft | harbor/core/drafting.py | unknown | standard |
+| harbor.core.generated_verify.GeneratedArtifactVerification.to_dict | harbor/core/generated_verify.py | public | strict |
+| harbor.core.generated_verify.GeneratedVerificationReport.to_dict | harbor/core/generated_verify.py | public | strict |
+| harbor.core.generated_verify.ModuleGeneratedVerification.to_dict | harbor/core/generated_verify.py | public | strict |
+| harbor.core.generated_verify.ProjectGeneratedVerification.to_dict | harbor/core/generated_verify.py | public | strict |
+| harbor.core.generated_verify._build_summary | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._collect_repair_commands | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._compose_expected_canonical_l2_markdown | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._compose_expected_capsule_markdown | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._compose_expected_module_card_markdown | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._compose_expected_project_structure_markdown | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._derive_report_status | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._format_artifact_lines | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._normalize_body | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._repo_display_path | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._sanitize_details | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._sanitize_rel_path | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._suggest_docs_refresh | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify.build_generated_verification_ci_result | harbor/core/generated_verify.py | public | strict |
+| harbor.core.generated_verify.build_generated_verification_report | harbor/core/generated_verify.py | public | strict |
+| harbor.core.generated_verify.format_generated_verification_report | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify.generated_verification_report_to_dict | harbor/core/generated_verify.py | public | strict |
+| harbor.core.generated_verify.re_match_absolute_path | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify.verify_canonical_l2_readme | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify.verify_export_l2_readme | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify.verify_l2_meta | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify.verify_module_capsule | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify.verify_module_generated | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify.verify_project_structure | harbor/core/generated_verify.py | unknown | standard |
 | harbor.core.git_utils.GitIgnoreMatcher.__init__ | harbor/core/git_utils.py | unknown | standard |
 | harbor.core.git_utils.GitIgnoreMatcher.from_root | harbor/core/git_utils.py | unknown | standard |
 | harbor.core.git_utils.GitIgnoreMatcher.match_dir | harbor/core/git_utils.py | public | strict |
@@ -785,6 +815,7 @@ tests/test_diary_workspace_paths.py
 tests/test_doctor.py
 tests/test_drafting.py
 tests/test_drafting_json_parse.py
+tests/test_generated_verify.py
 tests/test_harbor_next.py
 tests/test_index_builder.py
 tests/test_index_builder_bad_syntax.py

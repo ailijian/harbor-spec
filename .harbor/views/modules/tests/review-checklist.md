@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2"
+harbor_version: "1.4.2.2"
 view_type: "review_checklist"
 module: "tests"
-generated_at: "2026-05-14T09:36:09Z"
+generated_at: "2026-05-14T11:42:55Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 96
+source_path_count: 98
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -46,6 +46,7 @@ source_paths:
   - "tests/test_cli_project_structure.py"
   - "tests/test_cli_stale.py"
   - "tests/test_cli_v2.py"
+  - "tests/test_cli_verify_generated.py"
   - "tests/test_cli_workspace_inspect.py"
   - "tests/test_cli_workspace_migrate.py"
   - "tests/test_config_update.py"
@@ -61,6 +62,7 @@ source_paths:
   - "tests/test_doctor.py"
   - "tests/test_drafting.py"
   - "tests/test_drafting_json_parse.py"
+  - "tests/test_generated_verify.py"
   - "tests/test_gitignore_prune.py"
   - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
@@ -105,9 +107,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:e22e02caf24fc5fb8dd983a00acd99f8d37680074bc17d13a28a6416b34698db"
-contract_fingerprint: "sha256:90ca38065e115abf56d788e04626e395a59b2db339f1a4f3c4ca472eba7b1e18"
-generator_fingerprint: "sha256:5dc6c8e56267ea488caf99f4cf54906e2bcfd61f467266ecfed6229d0c5d9199"
+source_fingerprint: "sha256:3c26a1aa1025d101ea56006aefd7974c4f36d65f17039dbfc6b1e75373683058"
+contract_fingerprint: "sha256:54b718aed005c570d807fac316de7bb226603a1103d050867d17744883499f36"
+generator_fingerprint: "sha256:f0ef13dd0cbd88bd41c9389910508ed76d2f2e018156de8eeafc9a4efff694cb"
 ---
 
 # Review Checklist: tests

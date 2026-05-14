@@ -7,7 +7,11 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from harbor.core.context_integrity import build_context_integrity_metadata, compose_markdown_with_frontmatter
+from harbor.core.context_integrity import (
+    build_context_integrity_metadata,
+    compose_markdown_with_frontmatter,
+    content_without_generated_at_for_compare,
+)
 from harbor.core.ddt import DDTScanner, DDTValidator
 from harbor.core.path_normalization import looks_like_absolute_path, repo_relative_path
 from harbor.core.readonly_index import load_readonly_index
@@ -272,12 +276,7 @@ class L2Generator:
         meta = self._load_meta()
         current_hash = self.compute_meta_hash(md)
         prev_hash = meta.get(module_norm)
-        if prev_hash == current_hash and not force:
-            return None
-
-        written_paths: List[Path] = []
         canonical_readme = self._resolve_canonical_readme_path(module_norm)
-        canonical_readme.parent.mkdir(parents=True, exist_ok=True)
         source_paths, contract_records = self._collect_integrity_inputs(module_norm)
         metadata = build_context_integrity_metadata(
             view_type="l2_readme",
@@ -294,11 +293,35 @@ class L2Generator:
             except Exception:
                 previous = ""
         canonical_markdown = compose_markdown_with_frontmatter(previous, metadata, md)
+
+        export_readme: Optional[Path] = None
+        export_current = ""
+        export_matches = True
+        if self.export_module_readme_enabled:
+            export_readme = self._resolve_export_readme_path(module_norm)
+            if export_readme.resolve() != canonical_readme.resolve():
+                if export_readme.exists():
+                    try:
+                        export_current = export_readme.read_text(encoding="utf-8")
+                    except Exception:
+                        export_current = ""
+                export_matches = export_current == md
+
+        canonical_matches = (
+            canonical_readme.exists()
+            and content_without_generated_at_for_compare(previous)
+            == content_without_generated_at_for_compare(canonical_markdown)
+        )
+        if prev_hash == current_hash and not force and canonical_matches and export_matches:
+            return None
+
+        written_paths: List[Path] = []
+        canonical_readme.parent.mkdir(parents=True, exist_ok=True)
         canonical_readme.write_text(canonical_markdown, encoding="utf-8")
         written_paths.append(canonical_readme)
 
         if self.export_module_readme_enabled:
-            export_readme = self._resolve_export_readme_path(module_norm)
+            assert export_readme is not None
             if export_readme.resolve() != canonical_readme.resolve():
                 export_readme.parent.mkdir(parents=True, exist_ok=True)
                 export_readme.write_text(md, encoding="utf-8")

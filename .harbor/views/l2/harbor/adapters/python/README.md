@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.1"
+harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "harbor/adapters/python"
-generated_at: "2026-05-12T15:21:01Z"
+generated_at: "2026-05-14T11:51:23Z"
 generation_command: "harbor docs --module harbor/adapters/python --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -13,8 +13,8 @@ source_paths:
   - "harbor/adapters/python/compat.py"
   - "harbor/adapters/python/parser.py"
 source_fingerprint: "sha256:81cdd3c9b7f3cf968e7bc17cebd7bd88d79ba29b3e4020915311a8b3c46b3206"
-contract_fingerprint: "sha256:16c86881dc538b205d2db0b2bc0a8ed6acc8304e8c109ca4f324f005e8112ec3"
-generator_fingerprint: "sha256:49c406651f0550ace951edd5aae0f6a03ed8d94240c13ad846bb5e6a31da5ae5"
+contract_fingerprint: "sha256:1b6c3d3b0bc1af1e4449b75f903247c8791b5f35f42330028c4176009a0a76c4"
+generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
 # Module: harbor/adapters/python

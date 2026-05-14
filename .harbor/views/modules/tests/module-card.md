@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2"
+harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-14T09:36:09Z"
+generated_at: "2026-05-14T11:42:55Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 96
+source_path_count: 98
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -46,6 +46,7 @@ source_paths:
   - "tests/test_cli_project_structure.py"
   - "tests/test_cli_stale.py"
   - "tests/test_cli_v2.py"
+  - "tests/test_cli_verify_generated.py"
   - "tests/test_cli_workspace_inspect.py"
   - "tests/test_cli_workspace_migrate.py"
   - "tests/test_config_update.py"
@@ -61,6 +62,7 @@ source_paths:
   - "tests/test_doctor.py"
   - "tests/test_drafting.py"
   - "tests/test_drafting_json_parse.py"
+  - "tests/test_generated_verify.py"
   - "tests/test_gitignore_prune.py"
   - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
@@ -105,11 +107,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:e22e02caf24fc5fb8dd983a00acd99f8d37680074bc17d13a28a6416b34698db"
-contract_fingerprint: "sha256:90ca38065e115abf56d788e04626e395a59b2db339f1a4f3c4ca472eba7b1e18"
-generator_fingerprint: "sha256:397ed303b344c4694fd3842fbc3ccf02c9a40345ba4f92f0de83e5ac2e3a2149"
-view_fingerprint: "9b8fd04a5d092dd003a6fcae3fa8579c29c1d4cf8cba76a9cfe1ddbc67ef3bd4"
-fingerprint: "9b8fd04a5d092dd003a6fcae3fa8579c29c1d4cf8cba76a9cfe1ddbc67ef3bd4"
+source_fingerprint: "sha256:3c26a1aa1025d101ea56006aefd7974c4f36d65f17039dbfc6b1e75373683058"
+contract_fingerprint: "sha256:54b718aed005c570d807fac316de7bb226603a1103d050867d17744883499f36"
+generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
+view_fingerprint: "f360bc32d3d22441c630edd9c43c9f7432148ba50b5604763641400c946f5f33"
+fingerprint: "f360bc32d3d22441c630edd9c43c9f7432148ba50b5604763641400c946f5f33"
 ---
 
 # Module Card: tests
@@ -167,6 +169,7 @@ tests/test_cli_module_skill.py
 tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_cli_v2.py
+tests/test_cli_verify_generated.py
 tests/test_cli_workspace_inspect.py
 tests/test_cli_workspace_migrate.py
 tests/test_config_update.py
@@ -182,6 +185,7 @@ tests/test_diary_workspace_paths.py
 tests/test_doctor.py
 tests/test_drafting.py
 tests/test_drafting_json_parse.py
+tests/test_generated_verify.py
 tests/test_gitignore_prune.py
 tests/test_harbor_next.py
 tests/test_index_builder.py
@@ -480,6 +484,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_help_and_ux.test_project_structure_preview_message_uses_resolved_canonical_path | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_stale_help_lists_changed_all_module_and_format_flags | tests/test_cli_help_and_ux.py | unknown | standard |
+| tests.test_cli_help_and_ux.test_verify_generated_help_lists_changed_all_module_and_format_flags | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_help_and_ux.test_workflow_help_exposes_start_checkpoint_finish_accept | tests/test_cli_help_and_ux.py | unknown | standard |
 | tests.test_cli_i18n.run_cmd | tests/test_cli_i18n.py | unknown | standard |
 | tests.test_cli_i18n.run_cmd_with_err | tests/test_cli_i18n.py | unknown | standard |
@@ -625,6 +630,15 @@ tests/test_workspace_paths.py
 | tests.test_cli_v2.test_status_alias_st | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_status_skipped_no_contract_default_summary | tests/test_cli_v2.py | unknown | standard |
 | tests.test_cli_v2.test_status_skipped_no_contract_verbose_lists_targets | tests/test_cli_v2.py | unknown | standard |
+| tests.test_cli_verify_generated._force_en_locale | tests/test_cli_verify_generated.py | unknown | standard |
+| tests.test_cli_verify_generated._run_cmd_with_exit_code | tests/test_cli_verify_generated.py | unknown | standard |
+| tests.test_cli_verify_generated._sample_report | tests/test_cli_verify_generated.py | unknown | standard |
+| tests.test_cli_verify_generated.run_cmd | tests/test_cli_verify_generated.py | unknown | standard |
+| tests.test_cli_verify_generated.test_verify_generated_ci_json_uses_ci_failures_and_exit_code | tests/test_cli_verify_generated.py | unknown | standard |
+| tests.test_cli_verify_generated.test_verify_generated_default_is_changed_scope | tests/test_cli_verify_generated.py | unknown | standard |
+| tests.test_cli_verify_generated.test_verify_generated_json_output_has_required_fields | tests/test_cli_verify_generated.py | unknown | standard |
+| tests.test_cli_verify_generated.test_verify_generated_modes_are_mutually_exclusive | tests/test_cli_verify_generated.py | unknown | standard |
+| tests.test_cli_verify_generated.test_verify_generated_module_mode_runs | tests/test_cli_verify_generated.py | unknown | standard |
 | tests.test_cli_workspace_inspect._force_en_locale | tests/test_cli_workspace_inspect.py | unknown | standard |
 | tests.test_cli_workspace_inspect._write_workspace_fixture | tests/test_cli_workspace_inspect.py | unknown | standard |
 | tests.test_cli_workspace_inspect.run_cmd | tests/test_cli_workspace_inspect.py | unknown | standard |
@@ -729,8 +743,15 @@ tests/test_workspace_paths.py
 | tests.test_drafting_json_parse.test_parse_single_quotes_fallback | tests/test_drafting_json_parse.py | unknown | standard |
 | tests.test_drafting_json_parse.test_parse_with_code_fence | tests/test_drafting_json_parse.py | unknown | standard |
 | tests.test_drafting_json_parse.test_parse_with_noise_prefix_suffix | tests/test_drafting_json_parse.py | unknown | standard |
+| tests.test_generated_verify._generate_views | tests/test_generated_verify.py | unknown | standard |
+| tests.test_generated_verify._write_sample_repo | tests/test_generated_verify.py | unknown | standard |
+| tests.test_generated_verify.test_generated_verify_detects_l2_meta_hash_mismatch | tests/test_generated_verify.py | unknown | standard |
+| tests.test_generated_verify.test_generated_verify_detects_module_capsule_fingerprint_mismatch | tests/test_generated_verify.py | unknown | standard |
+| tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes | tests/test_generated_verify.py | unknown | standard |
+| tests.test_generated_verify.test_generated_verify_passes_when_views_match | tests/test_generated_verify.py | unknown | standard |
 | tests.test_gitignore_prune.test_gitignore_prunes_node_modules | tests/test_gitignore_prune.py | unknown | standard |
 | tests.test_harbor_next.run_cmd | tests/test_harbor_next.py | unknown | standard |
+| tests.test_harbor_next.test_next_can_consume_verify_generated_ci_json | tests/test_harbor_next.py | unknown | standard |
 | tests.test_harbor_next.test_next_can_read_utf16_report | tests/test_harbor_next.py | unknown | standard |
 | tests.test_harbor_next.test_next_json_items_include_blocking_and_status_is_ok_even_for_fail_report | tests/test_harbor_next.py | unknown | standard |
 | tests.test_harbor_next.test_next_json_output_contract | tests/test_harbor_next.py | unknown | standard |
@@ -1167,6 +1188,7 @@ tests/test_cli_module_skill.py
 tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_cli_v2.py
+tests/test_cli_verify_generated.py
 tests/test_cli_workspace_inspect.py
 tests/test_cli_workspace_migrate.py
 tests/test_config_update.py
@@ -1182,6 +1204,7 @@ tests/test_diary_workspace_paths.py
 tests/test_doctor.py
 tests/test_drafting.py
 tests/test_drafting_json_parse.py
+tests/test_generated_verify.py
 tests/test_gitignore_prune.py
 tests/test_harbor_next.py
 tests/test_index_builder.py

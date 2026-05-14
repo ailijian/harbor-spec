@@ -67,6 +67,15 @@ def test_stale_help_lists_changed_all_module_and_format_flags():
     assert "--ci" in out_stale
 
 
+def test_verify_generated_help_lists_changed_all_module_and_format_flags():
+    out_verify, _ = run_help(["verify-generated"])
+    assert "--changed" in out_verify
+    assert "--all" in out_verify
+    assert "--module" in out_verify
+    assert "--format" in out_verify
+    assert "--ci" in out_verify
+
+
 def test_docs_help_lists_changed_all_and_write_flags():
     out_docs, _ = run_help(["docs"])
     assert "--changed" in out_docs

@@ -1,12 +1,12 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2"
+harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-14T09:36:06Z"
+generated_at: "2026-05-14T11:51:22Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
-source_path_count: 59
+source_path_count: 60
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -40,6 +40,7 @@ source_paths:
   - "harbor/core/diary.py"
   - "harbor/core/doctor.py"
   - "harbor/core/drafting.py"
+  - "harbor/core/generated_verify.py"
   - "harbor/core/git_utils.py"
   - "harbor/core/index.py"
   - "harbor/core/index_entry.py"
@@ -68,9 +69,9 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:0236e433c9303e46894b9a31488213e53d1554b0dca337e357aa33c7bb400ab7"
-contract_fingerprint: "sha256:98477a2317594f361b7c3e8fd287cb406245133bf5a72e213f0e2802bc0c2c1f"
-generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476c5ad96e7689aade"
+source_fingerprint: "sha256:f2dd92da39fec8536b23c3e10134a5e50831ab986ba46b373b0b2ebd8ec5fdcd"
+contract_fingerprint: "sha256:2b90d6433d8d13e111905782b8fe0617b233c00bc035318ea51111f8253cccac"
+generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
 # Module: harbor
@@ -85,6 +86,8 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
 | harbor.core.log_draft.build_diary_draft | Build a deterministic diary draft from existing change-wi... | strict | ❌ Missing |
+| harbor.core.generated_verify.build_generated_verification_ci_result | Build the public CI gate result for verify-generated. | strict | ❌ Missing |
+| harbor.core.generated_verify.build_generated_verification_report | Verify tracked generated context by recomputing expected ... | strict | ❌ Missing |
 | harbor.core.log_draft.build_log_write_preview | Build summary-level preview data for interactive `harbor ... | strict | ❌ Missing |
 | harbor.core.log_draft.build_written_diary_entry | Build one structured written diary entry payload from an ... | strict | ❌ Missing |
 | harbor.core.stale.check_module_derived_views_stale | Check one module's derived-view stale status against fres... | strict | ❌ Missing |
@@ -100,6 +103,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.utils.formatting.format_size | 将字节数转换为人类可读的 KB/MB 字符串。 | strict | ✅ Valid |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
 | harbor.core.project_structure.generate_project_structure_markdown | Render a deterministic Markdown view from project-structu... | strict | ❌ Missing |
+| harbor.core.generated_verify.generated_verification_report_to_dict | Serialize the verify-generated domain report to the publi... | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_all_files | 列出所有已索引文件及其 mtime。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_file | 查询单文件记录。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.get_file_entries | 查询指定文件的所有条目。 | strict | ❌ Missing |
@@ -125,6 +129,10 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.ci.CheckpointCIItem.to_dict | 将 checkpoint CI failure/advisory 项序列化为 machine-readable J... | strict | ❌ Missing |
 | harbor.core.doctor.DoctorCheckResult.to_dict | Serialize one doctor check result into stable JSON output. | strict | ❌ Missing |
 | harbor.core.doctor.DoctorReport.to_dict | Serialize the aggregated doctor report into stable JSON o... | strict | ❌ Missing |
+| harbor.core.generated_verify.GeneratedArtifactVerification.to_dict | Serialize one verified artifact row to a stable JSON-comp... | strict | ❌ Missing |
+| harbor.core.generated_verify.GeneratedVerificationReport.to_dict | Serialize the verify-generated domain report via the publ... | strict | ❌ Missing |
+| harbor.core.generated_verify.ModuleGeneratedVerification.to_dict | Serialize one module verification group to a stable JSON-... | strict | ❌ Missing |
+| harbor.core.generated_verify.ProjectGeneratedVerification.to_dict | Serialize project-level verification rows to a stable JSO... | strict | ❌ Missing |
 | harbor.core.repair_guidance.RepairGuidance.to_dict | Serialize deterministic repair guidance into a JSON-compa... | strict | ❌ Missing |
 | harbor.core.stale.ModuleStaleSummary.to_dict | Serialize one module stale summary into stable JSON output. | strict | ❌ Missing |
 | harbor.core.stale.ViewStaleResult.to_dict | Serialize one stale-view result into a stable JSON-safe s... | strict | ❌ Missing |
@@ -178,6 +186,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.drafting.DiaryDrafter._build_prompt | — | standard | ⚪ Missing |
 | harbor.core.log_draft._build_risks | — | standard | ⚪ Missing |
 | harbor.core.log_draft._build_suggested_diary_entry | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._build_summary | — | standard | ⚪ Missing |
 | harbor.core.log_draft._build_summary | — | standard | ⚪ Missing |
 | harbor.core.readonly_index._build_transient_index | — | standard | ⚪ Missing |
 | harbor.core.project_structure._build_transient_index_from_files | — | standard | ⚪ Missing |
@@ -206,8 +215,13 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.ci._collect_next_steps | — | standard | ⚪ Missing |
 | harbor.core.doctor._collect_next_steps | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._collect_python_snapshot_items | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._collect_repair_commands | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._collect_typescript_snapshot_items | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._compare_snapshots | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._compose_expected_canonical_l2_markdown | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._compose_expected_capsule_markdown | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._compose_expected_module_card_markdown | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._compose_expected_project_structure_markdown | — | standard | ⚪ Missing |
 | harbor.core.log_draft._compose_written_details | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._confidence_for_level | — | standard | ⚪ Missing |
 | harbor.cli.main._configure_redirected_windows_stdio | Backward-compatible wrapper for the Windows CLI-wide stdi... | standard | ⚪ Missing |
@@ -226,6 +240,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.init_wizard._default_project | — | standard | ⚪ Missing |
 | harbor.core.ci._derive_checkpoint_identity | — | standard | ⚪ Missing |
 | harbor.core.ci._derive_qualified_name_and_symbol_kind | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._derive_report_status | — | standard | ⚪ Missing |
 | harbor.core.log_draft._derive_validation_statuses | — | standard | ⚪ Missing |
 | harbor.core.doctor._derived_view_detail_status | 将内部 view status 归一化为可展示文本。 | standard | ⚪ Missing |
 | harbor.core.init_prompt._detect_console_encoding | — | standard | ⚪ Missing |
@@ -268,6 +283,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.adapters.typescript.parser._find_matching | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._finding_to_dict | — | standard | ⚪ Missing |
 | harbor.core.log_draft._format_area_list | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._format_artifact_lines | — | standard | ⚪ Missing |
 | harbor.core.log_draft._format_changed_files | — | standard | ⚪ Missing |
 | harbor.core.change_window._format_iso8601_utc | — | standard | ⚪ Missing |
 | harbor.core.log_draft._format_noop_changed_files | — | standard | ⚪ Missing |
@@ -356,6 +372,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.adapters.python.parser.PythonAdapter._module_qual_from_path | 根据文件路径生成模块限定名（点分格式）。 | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._module_qual_from_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._non_diary_changed_files | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._normalize_body | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_changed_file | — | standard | ⚪ Missing |
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
@@ -418,6 +435,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.log_draft._reject_diary_output_path | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._render_inline_options | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._render_scalar | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._repo_display_path | — | standard | ⚪ Missing |
 | harbor.core.l2._repo_relative_index_path | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._require_bool | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._require_text | — | standard | ⚪ Missing |
@@ -450,6 +468,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.log_draft._safe_multiline_excerpt | — | standard | ⚪ Missing |
 | harbor.core.log_draft._sanitize_affected_areas | — | standard | ⚪ Missing |
 | harbor.core.ci._sanitize_checkpoint_contract_impact | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._sanitize_details | — | standard | ⚪ Missing |
 | harbor.core.log_draft._sanitize_evidence | — | standard | ⚪ Missing |
 | harbor.core.ci._sanitize_json_text | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._sanitize_json_text | — | standard | ⚪ Missing |
@@ -458,6 +477,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.log_draft._sanitize_markdown_text | — | standard | ⚪ Missing |
 | harbor.core.project_structure._sanitize_module | — | standard | ⚪ Missing |
 | harbor.core.stale._sanitize_module_for_json | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._sanitize_rel_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._sanitize_risks | — | standard | ⚪ Missing |
 | harbor.core.ci._sanitize_single_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._sanitize_single_path | — | standard | ⚪ Missing |
@@ -489,6 +509,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.sync._subject_source_confidence_summary | — | standard | ⚪ Missing |
 | harbor.core.sync._subject_source_fingerprints | — | standard | ⚪ Missing |
 | harbor.core.sync._subject_source_kinds | — | standard | ⚪ Missing |
+| harbor.core.generated_verify._suggest_docs_refresh | — | standard | ⚪ Missing |
 | harbor.core.log_draft._summarize_affected_areas_for_details | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._summarize_strictness | — | standard | ⚪ Missing |
 | harbor.core.log_draft._summarize_validation_for_details | — | standard | ⚪ Missing |
@@ -579,6 +600,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.ci.format_ci_result | — | standard | ⚪ Missing |
 | harbor.core.contract_impact.format_contract_impact_report | — | standard | ⚪ Missing |
 | harbor.core.doctor.format_doctor_report | — | standard | ⚪ Missing |
+| harbor.core.generated_verify.format_generated_verification_report | — | standard | ⚪ Missing |
 | harbor.core.stale.format_stale_summary | 将 stale 检查结果渲染为 CLI 文本摘要。 | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.format_workspace_inspect_report | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.format_workspace_migrate_report | — | standard | ⚪ Missing |
@@ -633,6 +655,7 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.module_capsule.preview_module_capsule | — | standard | ⚪ Missing |
 | harbor.core.change_window.prune_change_windows | Delete change-window snapshots older than the newest `lim... | standard | ⚪ Missing |
 | harbor.core.project_structure.rank_key_file | — | standard | ⚪ Missing |
+| harbor.core.generated_verify.re_match_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.read_capsule_fingerprint | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.render_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.path_normalization.repo_relative_path | — | standard | ⚪ Missing |
@@ -666,6 +689,12 @@ generator_fingerprint: "sha256:b6c572993038593e3b61fabc3b343aa3271df93e52b677476
 | harbor.core.workspace_migrate.WorkspaceMigrationPlanItem.to_dict | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryEntry.to_json | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTValidator.validate | — | standard | ⚪ Missing |
+| harbor.core.generated_verify.verify_canonical_l2_readme | — | standard | ⚪ Missing |
+| harbor.core.generated_verify.verify_export_l2_readme | — | standard | ⚪ Missing |
+| harbor.core.generated_verify.verify_l2_meta | — | standard | ⚪ Missing |
+| harbor.core.generated_verify.verify_module_capsule | — | standard | ⚪ Missing |
+| harbor.core.generated_verify.verify_module_generated | — | standard | ⚪ Missing |
+| harbor.core.generated_verify.verify_project_structure | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.workspace_inspect_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.workspace_migrate_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator.write | — | standard | ⚪ Missing |
