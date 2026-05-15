@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, Iterable, List, Sequence, Tuple, Union
+from typing import Any, Dict, Iterable, List, Mapping, Sequence, Tuple, Union
 
 from harbor.adapters.base import ContractSource, ContractSourceKind, ContractSubject
 from harbor.adapters.typescript.jsdoc import extract_adjacent_tsdoc
 from harbor.adapters.typescript.hashing import normalized_sha256
 from harbor.adapters.typescript.parser import TypeScriptLightweightParser
+from harbor.adapters.typescript.public_boundary import (
+    build_public_boundary_metadata,
+    initial_public_boundary_evidence_for_symbol,
+    normalize_typescript_governance_config,
+)
 from harbor.adapters.typescript.symbols import TypeScriptSymbol
 
 
@@ -32,6 +37,12 @@ def _to_posix_path(path: Union[str, Path]) -> str:
 
 class TypeScriptAdapter:
     language = "typescript"
+
+    def __init__(self, config: Mapping[str, Any] | None = None) -> None:
+        governance = normalize_typescript_governance_config(config)
+        self._typescript_config = dict(config or {})
+        self._public_boundary_config = dict(governance["public_boundary"])
+        self._contract_required_strategy = str(governance["contract_required_strategy"])
 
     def discover_files(self, roots: Sequence[Path]) -> List[Path]:
         discovered: Dict[str, Path] = {}
@@ -78,6 +89,13 @@ class TypeScriptAdapter:
                 symbol_kind=symbol.symbol_kind,
                 qualified_name=symbol.qualified_name,
             )
+            boundary_evidence = initial_public_boundary_evidence_for_symbol(
+                is_exported=bool(symbol.is_exported),
+                export_mode=str(symbol.export_mode or ""),
+                source_file=normalized_path,
+                source_ref=str(symbol.qualified_name or symbol.name or ""),
+                resolved_target=target_id,
+            )
             metadata = {
                 "export_kind": symbol.export_kind,
                 "export_mode": symbol.export_mode,
@@ -85,7 +103,15 @@ class TypeScriptAdapter:
                 "public_surface_evidence": symbol.public_surface_evidence,
                 "data_contract_kind": symbol.data_contract_kind,
                 "schema_source_kind": symbol.schema_source_kind,
+                "contract_required_strategy": self._contract_required_strategy,
             }
+            metadata.update(
+                build_public_boundary_metadata(
+                    evidence_items=boundary_evidence,
+                    preset_mode=self._public_boundary_config.get("mode", "legacy_exported"),
+                    is_exported=bool(symbol.is_exported),
+                )
+            )
             if symbol.class_name:
                 metadata["class_name"] = symbol.class_name
             if parser.diagnostics:

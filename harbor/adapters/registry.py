@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from harbor.adapters.python.parser import PythonAdapter
 from harbor.adapters.typescript.adapter import TypeScriptAdapter
+from harbor.adapters.typescript.public_boundary import normalize_typescript_governance_config
 
 
 class AdapterRegistry:
@@ -23,6 +24,7 @@ class AdapterRegistry:
     @classmethod
     def from_config(cls, config: Optional[Dict[str, Any]] = None) -> "AdapterRegistry":
         languages_cfg = cls._read_languages_config(config)
+        typescript_cfg = cls._read_language_config(languages_cfg, "typescript")
 
         python_enabled_cfg = cls._read_enabled_flag(languages_cfg, "python", default=True)
         typescript_enabled_cfg = cls._read_enabled_flag(languages_cfg, "typescript", default=False)
@@ -41,7 +43,9 @@ class AdapterRegistry:
         if enabled["python"]:
             adapters["python"] = PythonAdapter()
         if enabled["typescript"]:
-            adapters["typescript"] = TypeScriptAdapter()
+            adapters["typescript"] = TypeScriptAdapter(
+                config=normalize_typescript_governance_config(typescript_cfg)
+            )
         return cls(enabled=enabled, adapters=adapters)
 
     @staticmethod
@@ -52,6 +56,13 @@ class AdapterRegistry:
         if not isinstance(languages, dict):
             return {}
         return languages
+
+    @staticmethod
+    def _read_language_config(languages: Dict[str, Any], language: str) -> Dict[str, Any]:
+        item = languages.get(language)
+        if not isinstance(item, dict):
+            return {}
+        return item
 
     @staticmethod
     def _read_enabled_flag(languages: Dict[str, Any], language: str, default: bool) -> bool:

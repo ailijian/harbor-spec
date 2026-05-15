@@ -72,6 +72,10 @@ def test_ts_enabled_exported_function_without_jsdoc_becomes_contract_gap(tmp_pat
     assert len(rows) == 1
     assert rows[0]["category"] == "contract_gap"
     assert rows[0]["reason"] == "Required TypeScript contract source is missing or not contract-like."
+    assert rows[0]["public_boundary_state"] == "direct_export_only"
+    assert rows[0]["public_boundary_confidence"] == "low"
+    assert rows[0]["public_boundary_evidence_kinds"] == ["direct_export"]
+    assert rows[0]["boundary_preset_mode"] == "legacy_exported"
 
 
 def test_ts_enabled_high_confidence_jsdoc_avoids_contract_gap(tmp_path: Path, monkeypatch):
@@ -103,6 +107,8 @@ def test_ts_enabled_internal_helper_without_jsdoc_becomes_skipped_advisory(tmp_p
     assert len(advisory) == 1
     assert advisory[0]["category"] == "skipped_no_contract"
     assert advisory[0]["reason"] == "No contract required for this TypeScript target; semantic comparison skipped."
+    assert advisory[0]["public_boundary_state"] == "internal_or_unconfirmed"
+    assert advisory[0]["public_boundary_reason"] == "Target is internal or has no confirmed public boundary evidence."
 
 
 def test_ts_enabled_medium_block_comment_is_contract_gap(tmp_path: Path, monkeypatch):

@@ -115,6 +115,12 @@ def index_entry_to_cache_item(entry_obj: Dict[str, Any]) -> Dict[str, Any]:
         "contract_source_kinds",
         "contract_source_fingerprints",
         "source_confidence_summary",
+        "public_boundary_state",
+        "public_boundary_confidence",
+        "public_boundary_evidence_kinds",
+        "public_boundary_evidence_items",
+        "public_boundary_reason",
+        "boundary_preset_mode",
     )
     for key in additive_fields:
         value = meta.get(key)

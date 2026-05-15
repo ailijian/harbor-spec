@@ -190,6 +190,12 @@ class HarborDB:
                         "contract_source_kinds",
                         "contract_source_fingerprints",
                         "source_confidence_summary",
+                        "public_boundary_state",
+                        "public_boundary_confidence",
+                        "public_boundary_evidence_kinds",
+                        "public_boundary_evidence_items",
+                        "public_boundary_reason",
+                        "boundary_preset_mode",
                     ):
                         if key in it and key not in item_meta:
                             item_meta[key] = it.get(key)

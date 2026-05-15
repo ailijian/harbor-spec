@@ -124,6 +124,21 @@ def test_next_json_preserves_typescript_additive_checkpoint_metadata(tmp_path: P
                 "contract_source_kinds": ["typescript_interface"],
                 "contract_source_fingerprints": ["abc123"],
                 "source_confidence_summary": "high",
+                "public_boundary_state": "direct_export_only",
+                "public_boundary_confidence": "low",
+                "public_boundary_evidence_kinds": ["direct_export"],
+                "public_boundary_evidence_items": [
+                    {
+                        "kind": "direct_export",
+                        "confidence": "low",
+                        "source_file": "src/models.ts",
+                        "source_ref": "User",
+                        "resolved_target": "typescript:src/models.ts:interface:User",
+                        "reason": "Target is exported directly from its declaring source file.",
+                    }
+                ],
+                "public_boundary_reason": "Target is exported directly from its declaring source file.",
+                "boundary_preset_mode": "legacy_exported",
             }
         ],
     }
@@ -144,6 +159,12 @@ def test_next_json_preserves_typescript_additive_checkpoint_metadata(tmp_path: P
     assert row["contract_source_kinds"] == ["typescript_interface"]
     assert row["contract_source_fingerprints"] == ["abc123"]
     assert row["source_confidence_summary"] == "high"
+    assert row["public_boundary_state"] == "direct_export_only"
+    assert row["public_boundary_confidence"] == "low"
+    assert row["public_boundary_evidence_kinds"] == ["direct_export"]
+    assert row["public_boundary_evidence_items"][0]["kind"] == "direct_export"
+    assert row["public_boundary_reason"] == "Target is exported directly from its declaring source file."
+    assert row["boundary_preset_mode"] == "legacy_exported"
 
 
 def test_next_can_consume_verify_generated_ci_json(tmp_path: Path):

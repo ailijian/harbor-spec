@@ -115,6 +115,12 @@ class CheckpointCIItem:
     source_confidence_summary: Optional[str] = None
     contract_source_kinds: Optional[List[str]] = None
     contract_source_fingerprints: Optional[List[str]] = None
+    public_boundary_state: Optional[str] = None
+    public_boundary_confidence: Optional[str] = None
+    public_boundary_evidence_kinds: Optional[List[str]] = None
+    public_boundary_evidence_items: Optional[List[Dict[str, Any]]] = None
+    public_boundary_reason: Optional[str] = None
+    boundary_preset_mode: Optional[str] = None
     suggested_action: Optional[str] = None
     guidance: Optional[RepairGuidance] = None
 
@@ -207,6 +213,20 @@ class CheckpointCIItem:
             payload["contract_source_kinds"] = _sanitize_string_list(self.contract_source_kinds)
         if self.contract_source_fingerprints:
             payload["contract_source_fingerprints"] = _sanitize_string_list(self.contract_source_fingerprints)
+        if self.public_boundary_state:
+            payload["public_boundary_state"] = _sanitize_json_text(self.public_boundary_state)
+        if self.public_boundary_confidence:
+            payload["public_boundary_confidence"] = _sanitize_json_text(self.public_boundary_confidence)
+        if self.public_boundary_evidence_kinds:
+            payload["public_boundary_evidence_kinds"] = _sanitize_string_list(self.public_boundary_evidence_kinds)
+        if self.public_boundary_evidence_items:
+            payload["public_boundary_evidence_items"] = _sanitize_boundary_evidence_items(
+                self.public_boundary_evidence_items
+            )
+        if self.public_boundary_reason:
+            payload["public_boundary_reason"] = _sanitize_json_text(self.public_boundary_reason)
+        if self.boundary_preset_mode:
+            payload["boundary_preset_mode"] = _sanitize_json_text(self.boundary_preset_mode)
         if self.suggested_action:
             payload["suggested_action"] = _sanitize_json_text(self.suggested_action)
         if include_guidance and self.guidance is not None:
@@ -392,6 +412,12 @@ def build_checkpoint_ci_result(
                 source_confidence_summary=_get_optional_text(entry, "source_confidence_summary"),
                 contract_source_kinds=_get_optional_list(entry, "contract_source_kinds"),
                 contract_source_fingerprints=_get_optional_list(entry, "contract_source_fingerprints"),
+                public_boundary_state=_get_optional_text(entry, "public_boundary_state"),
+                public_boundary_confidence=_get_optional_text(entry, "public_boundary_confidence"),
+                public_boundary_evidence_kinds=_get_optional_list(entry, "public_boundary_evidence_kinds"),
+                public_boundary_evidence_items=_get_optional_dict_list(entry, "public_boundary_evidence_items"),
+                public_boundary_reason=_get_optional_text(entry, "public_boundary_reason"),
+                boundary_preset_mode=_get_optional_text(entry, "boundary_preset_mode"),
                 reason=_checkpoint_reason_for_entry(
                     category="skipped_no_contract",
                     default_reason=t("cli.ci.checkpoint.failure.skipped_no_contract"),
@@ -429,6 +455,12 @@ def build_checkpoint_ci_result(
                 source_confidence_summary=_get_optional_text(entry, "source_confidence_summary"),
                 contract_source_kinds=_get_optional_list(entry, "contract_source_kinds"),
                 contract_source_fingerprints=_get_optional_list(entry, "contract_source_fingerprints"),
+                public_boundary_state=_get_optional_text(entry, "public_boundary_state"),
+                public_boundary_confidence=_get_optional_text(entry, "public_boundary_confidence"),
+                public_boundary_evidence_kinds=_get_optional_list(entry, "public_boundary_evidence_kinds"),
+                public_boundary_evidence_items=_get_optional_dict_list(entry, "public_boundary_evidence_items"),
+                public_boundary_reason=_get_optional_text(entry, "public_boundary_reason"),
+                boundary_preset_mode=_get_optional_text(entry, "boundary_preset_mode"),
                 reason=_checkpoint_reason_for_entry(
                     category="unsupported_syntax_advisory",
                     default_reason="TypeScript MVP parser could not safely classify this target.",
@@ -1194,6 +1226,12 @@ def _push_status_failures(
                 source_confidence_summary=_get_optional_text(entry, "source_confidence_summary"),
                 contract_source_kinds=_get_optional_list(entry, "contract_source_kinds"),
                 contract_source_fingerprints=_get_optional_list(entry, "contract_source_fingerprints"),
+                public_boundary_state=_get_optional_text(entry, "public_boundary_state"),
+                public_boundary_confidence=_get_optional_text(entry, "public_boundary_confidence"),
+                public_boundary_evidence_kinds=_get_optional_list(entry, "public_boundary_evidence_kinds"),
+                public_boundary_evidence_items=_get_optional_dict_list(entry, "public_boundary_evidence_items"),
+                public_boundary_reason=_get_optional_text(entry, "public_boundary_reason"),
+                boundary_preset_mode=_get_optional_text(entry, "boundary_preset_mode"),
                 reason=_checkpoint_reason_for_entry(category=category, default_reason=reason, entry=entry),
                 suggested_action=t("cli.ci.checkpoint.action.review_and_rerun"),
                 guidance=(
@@ -1248,12 +1286,43 @@ def _get_optional_list(source: object, field_name: str) -> Optional[List[str]]:
     return values or None
 
 
+def _get_optional_dict_list(source: object, field_name: str) -> Optional[List[Dict[str, Any]]]:
+    raw = getattr(source, field_name, None)
+    if not raw:
+        return None
+    values = [dict(value) for value in list(raw) if isinstance(value, dict)]
+    return values or None
+
+
 def _sanitize_string_list(values: Sequence[str]) -> List[str]:
     out: List[str] = []
     for value in values:
         text = _sanitize_json_text(str(value or "").strip())
         if text:
             out.append(text)
+    return out
+
+
+def _sanitize_boundary_evidence_items(values: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    out: List[Dict[str, Any]] = []
+    for value in list(values or []):
+        if not isinstance(value, dict):
+            continue
+        row: Dict[str, Any] = {}
+        for key in (
+            "kind",
+            "confidence",
+            "source_file",
+            "source_ref",
+            "resolved_target",
+            "reason",
+        ):
+            item_value = value.get(key)
+            if item_value is None:
+                row[key] = None
+            else:
+                row[key] = _sanitize_json_text(str(item_value))
+        out.append(row)
     return out
 
 

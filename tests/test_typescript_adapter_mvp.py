@@ -69,6 +69,10 @@ def test_parse_file_detects_export_function():
     assert hit.language == "typescript"
     assert hit.visibility == "public"
     assert hit.metadata["export_kind"] == "export_function"
+    assert hit.metadata["public_boundary_state"] == "direct_export_only"
+    assert hit.metadata["public_boundary_confidence"] == "low"
+    assert hit.metadata["public_boundary_evidence_kinds"] == ["direct_export"]
+    assert hit.metadata["boundary_preset_mode"] == "legacy_exported"
 
 
 def test_parse_file_detects_export_async_function():
@@ -271,11 +275,15 @@ def test_parse_file_detects_export_default_targets_without_confusing_contract_so
     assert fn.symbol_kind == "function"
     assert fn.metadata["export_mode"] == "default"
     assert fn.metadata["public_surface_evidence"] == "default_export"
+    assert fn.metadata["public_boundary_state"] == "direct_export_only"
+    assert fn.metadata["public_boundary_evidence_kinds"] == ["default_export"]
     assert fn.contract_hash is None
 
     assert cls.symbol_kind == "class"
     assert cls.metadata["export_mode"] == "default"
     assert cls.metadata["public_surface_evidence"] == "default_export"
+    assert cls.metadata["public_boundary_state"] == "direct_export_only"
+    assert cls.metadata["public_boundary_evidence_kinds"] == ["default_export"]
     assert cls.contract_required is False
 
 

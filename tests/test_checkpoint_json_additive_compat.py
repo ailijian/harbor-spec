@@ -172,6 +172,10 @@ def test_typescript_contract_subject_json_has_task6a_ready_fields():
     assert data["language"] == "typescript"
     assert data["symbol_kind"] == "function"
     assert data["file_path"] == fixture.as_posix()
+    assert data["metadata"]["public_boundary_state"] == "direct_export_only"
+    assert data["metadata"]["public_boundary_confidence"] == "low"
+    assert data["metadata"]["public_boundary_evidence_kinds"] == ["direct_export"]
+    assert data["metadata"]["boundary_preset_mode"] == "legacy_exported"
 
 
 def test_non_function_symbol_kind_does_not_enter_blocking_checkpoint_failures():
@@ -247,6 +251,21 @@ def test_typescript_checkpoint_json_adds_task6_metadata_without_changing_categor
                 contract_source_kinds=["typescript_interface"],
                 contract_source_fingerprints=["abc123"],
                 source_confidence_summary="high",
+                public_boundary_state="direct_export_only",
+                public_boundary_confidence="low",
+                public_boundary_evidence_kinds=["direct_export"],
+                public_boundary_evidence_items=[
+                    {
+                        "kind": "direct_export",
+                        "confidence": "low",
+                        "source_file": "src/models.ts",
+                        "source_ref": "User",
+                        "resolved_target": "typescript:src/models.ts:interface:User",
+                        "reason": "Target is exported directly from its declaring source file.",
+                    }
+                ],
+                public_boundary_reason="Target is exported directly from its declaring source file.",
+                boundary_preset_mode="legacy_exported",
             )
         ]
     )
@@ -266,6 +285,12 @@ def test_typescript_checkpoint_json_adds_task6_metadata_without_changing_categor
     assert row["contract_source_kinds"] == ["typescript_interface"]
     assert row["contract_source_fingerprints"] == ["abc123"]
     assert row["source_confidence_summary"] == "high"
+    assert row["public_boundary_state"] == "direct_export_only"
+    assert row["public_boundary_confidence"] == "low"
+    assert row["public_boundary_evidence_kinds"] == ["direct_export"]
+    assert row["public_boundary_evidence_items"][0]["kind"] == "direct_export"
+    assert row["public_boundary_reason"] == "Target is exported directly from its declaring source file."
+    assert row["boundary_preset_mode"] == "legacy_exported"
     assert (
         row["reason"]
         == "TypeScript exported data contract target is tracked in advisory-first mode; blocking semantic comparison is skipped."

@@ -40,6 +40,12 @@ class StatusEntry:
     contract_source_kinds: Optional[List[str]] = None
     contract_source_fingerprints: Optional[List[str]] = None
     source_confidence_summary: Optional[str] = None
+    public_boundary_state: Optional[str] = None
+    public_boundary_confidence: Optional[str] = None
+    public_boundary_evidence_kinds: Optional[List[str]] = None
+    public_boundary_evidence_items: Optional[List[Dict[str, Any]]] = None
+    public_boundary_reason: Optional[str] = None
+    boundary_preset_mode: Optional[str] = None
 
 
 def _subject_source_kinds(subject: object) -> List[str]:
@@ -217,6 +223,22 @@ class SyncEngine:
                         "contract_source_kinds": _subject_source_kinds(subject) or None,
                         "contract_source_fingerprints": _subject_source_fingerprints(subject) or None,
                         "source_confidence_summary": _subject_source_confidence_summary(subject),
+                        "public_boundary_state": str(subject.metadata.get("public_boundary_state") or "").strip() or None,
+                        "public_boundary_confidence": str(subject.metadata.get("public_boundary_confidence") or "").strip() or None,
+                        "public_boundary_evidence_kinds": [
+                            str(value)
+                            for value in list(subject.metadata.get("public_boundary_evidence_kinds") or [])
+                            if str(value or "").strip()
+                        ]
+                        or None,
+                        "public_boundary_evidence_items": [
+                            dict(value)
+                            for value in list(subject.metadata.get("public_boundary_evidence_items") or [])
+                            if isinstance(value, dict)
+                        ]
+                        or None,
+                        "public_boundary_reason": str(subject.metadata.get("public_boundary_reason") or "").strip() or None,
+                        "boundary_preset_mode": str(subject.metadata.get("boundary_preset_mode") or "").strip() or None,
                     }
                     presence = str(subject.contract_presence or "missing")
                     if presence == "unsupported_syntax":
@@ -643,6 +665,20 @@ class SyncEngine:
                 "contract_source_kinds": _subject_source_kinds(subject),
                 "contract_source_fingerprints": _subject_source_fingerprints(subject),
                 "source_confidence_summary": str(_subject_source_confidence_summary(subject) or ""),
+                "public_boundary_state": str(subject.metadata.get("public_boundary_state") or ""),
+                "public_boundary_confidence": str(subject.metadata.get("public_boundary_confidence") or ""),
+                "public_boundary_evidence_kinds": [
+                    str(value)
+                    for value in list(subject.metadata.get("public_boundary_evidence_kinds") or [])
+                    if str(value or "").strip()
+                ],
+                "public_boundary_evidence_items": [
+                    dict(value)
+                    for value in list(subject.metadata.get("public_boundary_evidence_items") or [])
+                    if isinstance(value, dict)
+                ],
+                "public_boundary_reason": str(subject.metadata.get("public_boundary_reason") or ""),
+                "boundary_preset_mode": str(subject.metadata.get("boundary_preset_mode") or ""),
             }
         return items
 
@@ -674,6 +710,22 @@ class SyncEngine:
             ]
             or None,
             source_confidence_summary=str(item.get("source_confidence_summary") or "") or None,
+            public_boundary_state=str(item.get("public_boundary_state") or "") or None,
+            public_boundary_confidence=str(item.get("public_boundary_confidence") or "") or None,
+            public_boundary_evidence_kinds=[
+                str(value)
+                for value in list(item.get("public_boundary_evidence_kinds") or [])
+                if str(value or "").strip()
+            ]
+            or None,
+            public_boundary_evidence_items=[
+                dict(value)
+                for value in list(item.get("public_boundary_evidence_items") or [])
+                if isinstance(value, dict)
+            ]
+            or None,
+            public_boundary_reason=str(item.get("public_boundary_reason") or "") or None,
+            boundary_preset_mode=str(item.get("boundary_preset_mode") or "") or None,
         )
 
     def _normalize_repo_file_path(self, path: Path) -> str:

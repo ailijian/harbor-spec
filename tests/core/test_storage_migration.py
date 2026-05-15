@@ -75,6 +75,21 @@ def test_storage_migration_preserves_additive_typescript_meta(tmp_path, monkeypa
                         "contract_source_kinds": ["tsdoc"],
                         "contract_source_fingerprints": ["f1"],
                         "source_confidence_summary": "high",
+                        "public_boundary_state": "direct_export_only",
+                        "public_boundary_confidence": "low",
+                        "public_boundary_evidence_kinds": ["direct_export"],
+                        "public_boundary_evidence_items": [
+                            {
+                                "kind": "direct_export",
+                                "confidence": "low",
+                                "source_file": "src/service.ts",
+                                "source_ref": "api",
+                                "resolved_target": "typescript:src/service.ts:function:api",
+                                "reason": "Target is exported directly from its declaring source file.",
+                            }
+                        ],
+                        "public_boundary_reason": "Target is exported directly from its declaring source file.",
+                        "boundary_preset_mode": "legacy_exported",
                     }
                 ],
             }
@@ -93,3 +108,8 @@ def test_storage_migration_preserves_additive_typescript_meta(tmp_path, monkeypa
     assert meta["symbol_kind"] == "function"
     assert meta["contract_presence"] == "present"
     assert meta["contract_source_kinds"] == ["tsdoc"]
+    assert meta["public_boundary_state"] == "direct_export_only"
+    assert meta["public_boundary_confidence"] == "low"
+    assert meta["public_boundary_evidence_kinds"] == ["direct_export"]
+    assert meta["public_boundary_evidence_items"][0]["kind"] == "direct_export"
+    assert meta["boundary_preset_mode"] == "legacy_exported"

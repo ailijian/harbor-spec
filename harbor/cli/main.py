@@ -2040,6 +2040,12 @@ def main():
             "source_confidence_summary": item.get("source_confidence_summary"),
             "contract_source_kinds": item.get("contract_source_kinds"),
             "contract_source_fingerprints": item.get("contract_source_fingerprints"),
+            "public_boundary_state": item.get("public_boundary_state"),
+            "public_boundary_confidence": item.get("public_boundary_confidence"),
+            "public_boundary_evidence_kinds": item.get("public_boundary_evidence_kinds"),
+            "public_boundary_evidence_items": item.get("public_boundary_evidence_items"),
+            "public_boundary_reason": item.get("public_boundary_reason"),
+            "boundary_preset_mode": item.get("boundary_preset_mode"),
             "blocking": bool(blocking),
         }
         if include_guidance:

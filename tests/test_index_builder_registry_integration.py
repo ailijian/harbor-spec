@@ -301,3 +301,18 @@ def test_build_writes_typescript_additive_fields_into_runtime_cache_snapshot(tmp
     assert item["contract_source_kinds"] == ["tsdoc"]
     assert len(item["contract_source_fingerprints"]) == 1
     assert item["source_confidence_summary"] == "high"
+    assert item["public_boundary_state"] == "direct_export_only"
+    assert item["public_boundary_confidence"] == "low"
+    assert item["public_boundary_evidence_kinds"] == ["direct_export"]
+    assert item["public_boundary_evidence_items"] == [
+        {
+            "kind": "direct_export",
+            "confidence": "low",
+            "source_file": file_key,
+            "source_ref": "api",
+            "resolved_target": item["target_id"],
+            "reason": "Target is exported directly from its declaring source file.",
+        }
+    ]
+    assert item["public_boundary_reason"] == "Target is exported directly from its declaring source file."
+    assert item["boundary_preset_mode"] == "legacy_exported"
