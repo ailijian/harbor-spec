@@ -170,6 +170,8 @@ not that TypeScript semantic audit is supported.
 Checkpoint maps unsupported_syntax to unsupported_syntax_advisory.
 Do not map unsupported TypeScript syntax to contract_parse_error.
 export default is public surface evidence, not a contract source.
+re-export / package exports / configured entrypoints are public-boundary evidence, not contract sources.
+public-boundary evidence must not be mixed into contract_source_kinds.
 ```
 
 ---
@@ -1100,6 +1102,9 @@ These templates help satisfy contract_presence / contract_required / checkpoint 
 They do not imply TypeScript semantic audit support.
 They do not imply TypeScript DDT support.
 Vitest / Jest comments alone are not Harbor DDT binding sources.
+Public Boundary Evidence is separate from Contract Source.
+Nearby JSDoc / TSDoc remains the expected contract source for required exported targets.
+re-export / package exports / configured entrypoints explain public boundary, but do not change contract_hash / body_hash semantics.
 ```
 
 ### 15.4 Contract Authoring Checklist

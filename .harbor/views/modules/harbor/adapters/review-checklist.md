@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "review_checklist"
 module: "harbor/adapters"
-generated_at: "2026-05-14T16:59:56Z"
+generated_at: "2026-05-15T06:12:14Z"
 generation_command: "harbor module seal harbor/adapters --write"
 stale_policy: "advisory"
-source_path_count: 12
+source_path_count: 14
 source_paths_truncated: false
 source_paths:
   - "harbor/adapters/__init__.py"
@@ -20,9 +20,11 @@ source_paths:
   - "harbor/adapters/typescript/hashing.py"
   - "harbor/adapters/typescript/jsdoc.py"
   - "harbor/adapters/typescript/parser.py"
+  - "harbor/adapters/typescript/public_boundary.py"
+  - "harbor/adapters/typescript/resolution.py"
   - "harbor/adapters/typescript/symbols.py"
-source_fingerprint: "sha256:90efe02fe02b2bede811f6433faf182f52ff82a16a51ab20cdae9447b2d1263c"
-contract_fingerprint: "sha256:83de912fade1b48676d34269938ccc8d8853da13fe8e4da78e028cd43b4169ce"
+source_fingerprint: "sha256:6a433baa93a5c80949db63d102714fe56d974b01f6fb266fa5ae72915697786d"
+contract_fingerprint: "sha256:be95ae47fba14443799ae49a038c64f2817468f34b4ee441026aca92817a3f58"
 generator_fingerprint: "sha256:f0ef13dd0cbd88bd41c9389910508ed76d2f2e018156de8eeafc9a4efff694cb"
 ---
 

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-14T20:44:46Z"
+generated_at: "2026-05-15T06:59:14Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 39
@@ -48,11 +48,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:37ad761b65e2590cb74d64022ea11e4a6511bd9c8e4756708826900c89b0107c"
-contract_fingerprint: "sha256:4803c057280ddc14b3f5bea8e46d03660f94458e9862d9712b5c7139aad8891f"
+source_fingerprint: "sha256:1317df6b25e77405879c355bfe3b1e8e9c2d3eb9f2e1f1f8466c038e589d1708"
+contract_fingerprint: "sha256:84d40bb1f7641e814d0f32a53a07858dffb496b7e441fb26479e2a364469c227"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "dfbe78db6fdeec12da919a26d9e1aefcce9589d4241996517cf53345064b4631"
-fingerprint: "dfbe78db6fdeec12da919a26d9e1aefcce9589d4241996517cf53345064b4631"
+view_fingerprint: "45a41ce7d433a7feeb76bde3a579a9fa91fe36b32c6a2961314ee3b5ccf756f3"
+fingerprint: "45a41ce7d433a7feeb76bde3a579a9fa91fe36b32c6a2961314ee3b5ccf756f3"
 ---
 
 # Module Card: harbor/core
@@ -179,6 +179,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci._dedupe_checkpoint_items | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._derive_checkpoint_identity | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._derive_qualified_name_and_symbol_kind | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._get_optional_dict_list | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._get_optional_list | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._get_optional_text | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._is_blocking_checkpoint_target | harbor/core/ci.py | unknown | standard |
@@ -186,6 +187,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci._normalize_checkpoint_key_path | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._parse_target_id | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._push_status_failures | harbor/core/ci.py | unknown | standard |
+| harbor.core.ci._sanitize_boundary_evidence_items | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_checkpoint_contract_impact | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_json_text | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci._sanitize_single_path | harbor/core/ci.py | unknown | standard |
@@ -356,6 +358,8 @@ harbor/core/workspace_migrate.py
 | harbor.core.index.IndexBuilder.adapter | harbor/core/index.py | unknown | standard |
 | harbor.core.index.IndexBuilder.build | harbor/core/index.py | public | strict |
 | harbor.core.index.IndexBuilder.iter_build | harbor/core/index.py | public | strict |
+| harbor.core.index._detect_workspace_root | harbor/core/index.py | unknown | standard |
+| harbor.core.index._load_worker_typescript_config | harbor/core/index.py | unknown | standard |
 | harbor.core.index.process_file_worker | harbor/core/index.py | public | strict |
 | harbor.core.index_entry._default_name | harbor/core/index_entry.py | unknown | standard |
 | harbor.core.index_entry._source_confidence_summary | harbor/core/index_entry.py | unknown | standard |
@@ -367,21 +371,32 @@ harbor/core/workspace_migrate.py
 | harbor.core.init.Initializer.__init__ | harbor/core/init.py | unknown | standard |
 | harbor.core.init.Initializer.autodetect | harbor/core/init.py | public | strict |
 | harbor.core.init.Initializer.detect_code_roots | harbor/core/init.py | public | strict |
+| harbor.core.init.Initializer.detect_typescript_hints | harbor/core/init.py | unknown | standard |
 | harbor.core.init.Initializer.write_config | harbor/core/init.py | public | strict |
 | harbor.core.init.ProjectDetector.__init__ | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._collect_typescript_entrypoints | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._dedup | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._detect_django | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._detect_go | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._detect_java | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._detect_node | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._detect_python_misc | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._detect_typescript | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._detect_workspace_markers | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._exclude_covers_root | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._filter_excludes | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._get_default_excludes | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._has_typescript_sources | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._is_dangerous_python_exclude | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._is_typescript_source_file | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._iter_package_export_targets | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._load_package_json | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._normalize_glob | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._package_has_exports | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector._parse_gitignore | harbor/core/init.py | unknown | standard |
+| harbor.core.init.ProjectDetector._resolve_typescript_source_candidate | harbor/core/init.py | unknown | standard |
 | harbor.core.init.ProjectDetector.detect | harbor/core/init.py | public | strict |
+| harbor.core.init.ProjectDetector.detect_typescript_hints | harbor/core/init.py | unknown | standard |
 | harbor.core.init_prompt._choice_label | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt._detect_console_encoding | harbor/core/init_prompt.py | unknown | standard |
 | harbor.core.init_prompt._is_interactive | harbor/core/init_prompt.py | unknown | standard |
@@ -400,7 +415,14 @@ harbor/core/workspace_migrate.py
 | harbor.core.init_wizard.InitWizard._emit_ide_guidance | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._emit_typescript_guidance | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._label_typescript_preset | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._normalize_typescript_contract_strategy | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._normalize_typescript_preset | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard._print | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._resolve_typescript_entrypoints | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._resolve_typescript_language_config | harbor/core/init_wizard.py | unknown | standard |
+| harbor.core.init_wizard.InitWizard._select_typescript_preset | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard.InitWizard.run | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard._append_missing_env_keys | harbor/core/init_wizard.py | unknown | standard |
 | harbor.core.init_wizard._default_language | harbor/core/init_wizard.py | unknown | standard |
@@ -710,6 +732,7 @@ tests/test_index_progress.py
 tests/test_init_detector.py
 tests/test_init_governance.py
 tests/test_init_llm_env.py
+tests/test_init_typescript_guidance.py
 tests/test_init_wizard.py
 tests/test_initializer.py
 tests/test_l2_paths.py

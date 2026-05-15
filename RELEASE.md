@@ -1,3 +1,98 @@
+# Harbor-spec v1.4.3 — TypeScript Public Boundary Resolution & Project Presets
+
+状态：正式版
+发布类型：TypeScript Public Boundary Resolution / Project Presets / Explainability Upgrade
+
+## Summary
+
+- `v1.4.3` 建立在 `v1.4.2` 已完成的 TypeScript persistence、`contract_hash` 与 accepted baseline comparison-compatible 基础之上。
+- 新增 project-level `Public Boundary Evidence` 模型，支持 direct export、re-export、package export 与 configured entrypoint 等证据。
+- 新增最小 public boundary resolver，支持 re-export chain、package exports、常见 source mapping 与最小 `tsconfig paths`。
+- 新增 `legacy_exported`、`package_public`、`custom_entrypoints` 三类 project preset，并保持默认兼容策略不变。
+- `harbor init` 新增 TypeScript governance guidance 与显式 opt-in 配置写入能力。
+- `harbor next` 新增 preset-aware boundary explanation，解释 boundary state / confidence / evidence / preset 的关系。
+
+## Added
+
+- Additive public-boundary metadata:
+  - `public_boundary_state`
+  - `public_boundary_confidence`
+  - `public_boundary_evidence_kinds`
+  - `public_boundary_evidence_items`
+  - `public_boundary_reason`
+  - `boundary_preset_mode`
+- Public Boundary Evidence kinds:
+  - `direct_export`
+  - `default_export`
+  - `named_re_export`
+  - `star_re_export`
+  - `package_export`
+  - `configured_entrypoint`
+  - `declaration_surface_preview` (future preview placeholder only)
+- Minimal boundary resolution:
+  - package root detection
+  - relative path resolution
+  - `.ts` priority with `index.ts` fallback
+  - minimal `tsconfig baseUrl/paths`
+  - normalized package exports and common source mapping
+- `harbor init` TypeScript onboarding:
+  - detect `package.json`, `tsconfig.json`, `src/index.ts`, `package.json exports`
+  - detect workspace / monorepo markers
+  - explicit init flags for TypeScript governance config write
+- `harbor next` boundary explanation:
+  - additive `boundary_explanation` in JSON output
+  - text explanation for preset / state / confidence / evidence
+
+## Changed
+
+- Public Boundary Evidence is modeled separately from Contract Source:
+  - re-export / package exports / configured entrypoints do not enter `contract_source_kinds`
+  - boundary evidence does not enter `contract_hash` or `body_hash`
+  - boundary metadata changes do not alter baseline diff / comparison semantics
+- Default compatibility remains unchanged:
+  - default preset stays `legacy_exported`
+  - default `contract_required_strategy` stays `legacy_exported`
+  - non-interactive `harbor init` does not silently enable TypeScript governance
+- `harbor next` remains read-only while exposing richer boundary explainability.
+- Generated context closure continues to use `harbor finish --sync-context -> harbor stale --ci --format json -> harbor doctor --ci --format json`.
+
+## Not Supported Yet
+
+- JavaScript first-class governance
+- `.js/.jsx/.tsx/.d.ts` default scanning
+- TypeScript semantic audit
+- TypeScript DDT
+- full TypeScript compiler / full module graph
+- full npm package resolution / bundler alias resolution
+- framework-specific governance / validation
+- full Zod schema semantics / schema-to-type consistency audit
+- automatic blocking-gate expansion from `interface/type`, Zod, or boundary evidence
+
+## Compatibility
+
+- Python behavior remains zero-regression-compatible.
+- `v1.4.2` comparison-compatible baseline semantics remain unchanged.
+- Existing JSON output remains additive-compatible.
+- Existing category semantics remain unchanged by boundary metadata.
+- Windows full-governance remains a formal release acceptance dimension.
+
+## Validation
+
+- `pytest`: `pass`
+- `harbor accept`: `pass`
+- `harbor checkpoint --ci --format json --advice basic`: `pass`
+- `harbor verify-generated --changed --ci --format json`: `pass`
+- `harbor verify-generated --all --ci --format json`: `pass`
+- `harbor stale --ci --format json`: `pass`
+- `harbor doctor --ci --format json`: `pass`
+- accepted baseline updated at `.harbor/baseline/accepted-checkpoint.json`
+- generated context closure completed via `harbor finish --sync-context -> harbor project structure --write -> harbor docs --all --write -> harbor module seal --all --write`
+- non-blocking follow-up remains:
+  - `ddt_advisory: 5`
+  - classification: existing post-release governance backlog, not a release blocker for `v1.4.3`
+
+---
+
 # Harbor-spec v1.4.2.2 — Windows JSON Stdout Compatibility Closure
 
 状态：正式版

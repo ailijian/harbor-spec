@@ -144,6 +144,11 @@ class CheckpointCIItem:
             `public_surface_evidence` / `data_contract_kind` / `schema_source_kind` /
             `source_confidence_summary` / `contract_source_kinds` /
             `contract_source_fingerprints`；仅在条目具备对应信息时输出。
+          - additive public-boundary explainability metadata 包括
+            `public_boundary_state` / `public_boundary_confidence` /
+            `public_boundary_evidence_kinds` / `public_boundary_evidence_items` /
+            `public_boundary_reason` / `boundary_preset_mode`；
+            仅在条目具备对应信息时输出。
           - `guidance` 为既有公开 optional field：仅在 `include_guidance=True`
             且 guidance 存在时输出，其值来自 `RepairGuidance.to_dict()`。
           - 所有文本与路径字段在输出前都会 sanitize；None/空字段按规则省略。
@@ -157,6 +162,12 @@ class CheckpointCIItem:
             `schema_source_kind` / `source_confidence_summary` /
             `contract_source_kinds` / `contract_source_fingerprints` 为 additive metadata 字段：
             仅在条目具备对应 TypeScript/source 信息时输出，不改变现有 category/reason 判定。
+          - `public_boundary_state` / `public_boundary_confidence` /
+            `public_boundary_evidence_kinds` / `public_boundary_evidence_items` /
+            `public_boundary_reason` / `boundary_preset_mode`
+            为 v1.4.3 additive explainability metadata：
+            仅在条目具备对应 public-boundary 信息时输出，不改变旧
+            `category` / `reason` / `exit_code` / blocking semantics。
           - `file_path` 会进行路径脱敏与规范化，文本字段会执行 sanitize。
           - `guidance` 为 optional additive field：
             仅在 `include_guidance=True` 且 guidance 存在时输出；
@@ -179,7 +190,8 @@ class CheckpointCIItem:
         Returns:
           dict: JSON-compatible checkpoint item dict；None/空字段按规则省略；
             稳定保留核心字段 `category` / `reason` 与兼容字段 `func_id` / `file_path`；
-            additive identity 与 TypeScript/source metadata 仅在可用时输出；
+            additive identity、TypeScript/source metadata 与 v1.4.3
+            public-boundary explainability metadata 仅在可用时输出；
             guidance 为既有 optional public field，且不改变
             exit_code/blocking/advisory 语义。
         """

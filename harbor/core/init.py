@@ -38,9 +38,16 @@ class ProjectDetector:
         """启发式探测技术栈并生成配置建议。
 
         功能:
-          - 扫描根目录特征文件，识别 Django/Node/Go/Java/Git。
-          - 聚合建议的 code_roots 与 exclude_paths（含 .gitignore 规则映射）。
-          - 支持混合栈，去重合并。
+          - 扫描根目录特征文件，识别 Django / Node / TypeScript / Go / Java /
+            Python 等项目线索。
+          - 当检测到 TypeScript 线索时，将最小 TypeScript project roots
+            与常见构建/依赖目录 excludes 聚合进结果，用于 `harbor init`
+            的 onboarding guidance 与默认扫描范围建议。
+          - TypeScript 探测基础包括 package root、`tsconfig.json`、
+            `package.json exports`、`src/index.ts` 等 public entrypoint 候选、
+            workspace / monorepo 标记与 `.ts` 源文件存在性。
+          - 聚合建议的 `code_roots` 与 `exclude_paths`（含 `.gitignore` 规则映射）。
+          - 支持混合栈，去重合并；若未识别到更具体的 roots，则保留兼容回退。
 
         使用场景:
           - `harbor init` 的高级探测逻辑。
@@ -53,7 +60,9 @@ class ProjectDetector:
         @harbor.idempotency: read-only
 
         Returns:
-          Tuple[List[str], List[str], List[str]]: (detected_stacks, code_roots, exclude_paths)
+          Tuple[List[str], List[str], List[str]]: `(detected_stacks, code_roots, exclude_paths)`；
+            结果既服务于旧有语言栈探测，也为 TypeScript governance onboarding
+            提供 public-boundary preset 推荐所需的基础探测信号。
         """
         stacks: List[str] = []
         code_roots: List[str] = []

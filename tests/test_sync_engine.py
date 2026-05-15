@@ -71,6 +71,65 @@ def test_sync_engine_drift_detection(tmp_path: Path, monkeypatch):
     assert any(id_.endswith(".foo") for id_ in ids)
 
 
+def test_compare_snapshots_ignores_public_boundary_metadata_only_changes():
+    eng = SyncEngine()
+    item_id = "typescript:src/service.ts:function:api"
+    old_snapshot = {
+        "src/service.ts": {
+            item_id: {
+                "id": item_id,
+                "file_path": "src/service.ts",
+                "body_hash": "body-1",
+                "contract_hash": "contract-1",
+                "contract_presence": "present",
+                "contract_required": True,
+                "public_boundary_state": "direct_export_only",
+                "public_boundary_confidence": "low",
+                "public_boundary_evidence_kinds": ["direct_export"],
+                "public_boundary_evidence_items": [
+                    {"kind": "direct_export", "confidence": "low"}
+                ],
+                "public_boundary_reason": "Target is exported directly.",
+                "boundary_preset_mode": "legacy_exported",
+            }
+        }
+    }
+    new_snapshot = {
+        "src/service.ts": {
+            item_id: {
+                "id": item_id,
+                "file_path": "src/service.ts",
+                "body_hash": "body-1",
+                "contract_hash": "contract-1",
+                "contract_presence": "present",
+                "contract_required": True,
+                "public_boundary_state": "package_export_surface",
+                "public_boundary_confidence": "high",
+                "public_boundary_evidence_kinds": ["direct_export", "package_export"],
+                "public_boundary_evidence_items": [
+                    {"kind": "direct_export", "confidence": "low"},
+                    {"kind": "package_export", "confidence": "high"},
+                ],
+                "public_boundary_reason": "Target is confirmed by package export evidence.",
+                "boundary_preset_mode": "package_public",
+            }
+        }
+    }
+
+    rep = eng._compare_snapshots(
+        old_snapshot=old_snapshot,
+        new_snapshot=new_snapshot,
+        baseline_source="accepted_artifact",
+    )
+
+    assert rep.counts["drift"] == 0
+    assert rep.counts["modified"] == 0
+    assert rep.counts["contract_changed"] == 0
+    assert rep.counts["contract_gap"] == 0
+    assert rep.counts["untracked"] == 0
+    assert rep.counts["missing"] == 0
+
+
 def test_sync_engine_contract_gap_for_required_target_without_docstring(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     cache_dir = tmp_path / ".harbor" / "cache"

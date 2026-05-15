@@ -140,7 +140,8 @@ class SyncEngine:
           - 通过 AdapterRegistry 的启用语言门控获取待扫描文件，按语言收集 Python / TypeScript 快照项。
           - Python 路径实时解析 `code_roots` 下源码并计算 `body_hash` 与 `contract_hash`。
           - TypeScript 路径收集 additive snapshot metadata（如 `target_id`、`language`、`symbol_kind`、
-            `contract_source_*`），并纳入统一 comparison。
+            `contract_source_*` 以及 v1.4.3 的 `public_boundary_*` /
+            `boundary_preset_mode`），并纳入统一 snapshot / explainability 保留路径。
           - 当旧快照与当前文件的 `body_hash/contract_hash` 完全一致时，即使文件 mtime
             因 fresh clone / worktree 变化而不同，也保留 accepted baseline 语义，不重复报告
             历史 `contract_gap` / `skipped_no_contract` / `contract_parse_error`。
@@ -150,6 +151,10 @@ class SyncEngine:
             - Untracked/Missing
           - TypeScript comparison 采用 additive compatibility 方式扩展，不改变既有 Python gate 语义、
             `evaluate_contract_presence` 结果解释或 StatusReport/StatusEntry 字段契约。
+          - public-boundary metadata 是 comparison-neutral explainability：
+            可随 snapshot 与下游 explanation 保留，但不得因为
+            `public_boundary_*` / `boundary_preset_mode` 的变化而单独触发
+            `drift` / `modified` / `contract_changed`。
 
         使用场景:
           - CLI `harbor status`。
@@ -169,7 +174,8 @@ class SyncEngine:
           StatusReport: 包含各类状态分组与计数；比较结果会统一生成
             drift/modified/contract_changed/contract_gap/skipped_no_contract/
             unsupported_syntax_advisory/contract_parse_error/untracked/missing 分类，
-            其中 TypeScript metadata 为 additive，既有 Python 分类语义保持不变。
+            其中 TypeScript metadata 与 public-boundary metadata 均为 additive，
+            既有 Python 分类语义与 comparison semantics 保持不变。
 
         Raises:
           Exception: 可能透传文件系统读取、源码解析或存储层异常；该方法不会统一包装异常类型。

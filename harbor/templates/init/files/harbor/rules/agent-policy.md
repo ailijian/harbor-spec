@@ -381,6 +381,8 @@ harbor next is read-only
 it does not write files
 it does not run tests or repair commands
 it does not run harbor accept / harbor log / harbor lock
+it may surface additive public-boundary explanation metadata
+public-boundary explanation must not change existing CI gate semantics
 ```
 
 ---

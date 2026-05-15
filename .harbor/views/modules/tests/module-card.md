@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-14T20:44:46Z"
+generated_at: "2026-05-15T06:59:14Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 98
+source_path_count: 105
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -72,6 +72,7 @@ source_paths:
   - "tests/test_init_detector.py"
   - "tests/test_init_governance.py"
   - "tests/test_init_llm_env.py"
+  - "tests/test_init_typescript_guidance.py"
   - "tests/test_init_wizard.py"
   - "tests/test_initializer.py"
   - "tests/test_l2_paths.py"
@@ -95,10 +96,16 @@ source_paths:
   - "tests/test_sync_engine.py"
   - "tests/test_sync_engine_registry_integration.py"
   - "tests/test_typescript_adapter_mvp.py"
+  - "tests/test_typescript_boundary_resolution_paths.py"
   - "tests/test_typescript_checkpoint_ci.py"
   - "tests/test_typescript_contract_presence.py"
   - "tests/test_typescript_next_guidance.py"
   - "tests/test_typescript_not_supported_boundaries.py"
+  - "tests/test_typescript_package_exports.py"
+  - "tests/test_typescript_public_boundary_evidence.py"
+  - "tests/test_typescript_public_boundary_next.py"
+  - "tests/test_typescript_public_boundary_presets.py"
+  - "tests/test_typescript_re_export_resolver.py"
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_windows_json_stdio_regression.py"
@@ -107,11 +114,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:b66c58f04661cc90623cbe362b2b2264e761ae8a8a52797846d8d9dd6f0b7eea"
-contract_fingerprint: "sha256:d976a55b0d9a4441f784d3909bc88d5b6e612baec2d37632fd62b6b09198f1d2"
+source_fingerprint: "sha256:8a0e5b72fe6e887c68b1d189813f2d92e80a31e5ac17432145a0ee32b8b6e955"
+contract_fingerprint: "sha256:55c1e488f80cccb49c0811c5ddd3a3faf812b46ec2d7d71563c39dff2b1f1eee"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "47e72880b238f5cac840254ca30e7343bcf69e8e24977ff3b840ce7e5931ed88"
-fingerprint: "47e72880b238f5cac840254ca30e7343bcf69e8e24977ff3b840ce7e5931ed88"
+view_fingerprint: "fca2c89cf13778ac3ec0b141e567657c519ac3f63af60ee5c7b90096ecb477ca"
+fingerprint: "fca2c89cf13778ac3ec0b141e567657c519ac3f63af60ee5c7b90096ecb477ca"
 ---
 
 # Module Card: tests
@@ -195,6 +202,7 @@ tests/test_index_progress.py
 tests/test_init_detector.py
 tests/test_init_governance.py
 tests/test_init_llm_env.py
+tests/test_init_typescript_guidance.py
 tests/test_init_wizard.py
 tests/test_initializer.py
 tests/test_l2_paths.py
@@ -218,10 +226,16 @@ tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_sync_engine_registry_integration.py
 tests/test_typescript_adapter_mvp.py
+tests/test_typescript_boundary_resolution_paths.py
 tests/test_typescript_checkpoint_ci.py
 tests/test_typescript_contract_presence.py
 tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
+tests/test_typescript_package_exports.py
+tests/test_typescript_public_boundary_evidence.py
+tests/test_typescript_public_boundary_next.py
+tests/test_typescript_public_boundary_presets.py
+tests/test_typescript_re_export_resolver.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_windows_json_stdio_regression.py
@@ -775,6 +789,7 @@ tests/test_workspace_paths.py
 | tests.test_index_builder_registry_integration._write_config | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration._write_file | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable | tests/test_index_builder_registry_integration.py | unknown | standard |
+| tests.test_index_builder_registry_integration.test_build_uses_typescript_boundary_config_from_workspace | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_build_writes_typescript_additive_fields_into_runtime_cache_snapshot | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_default_registry_python_only | tests/test_index_builder_registry_integration.py | unknown | standard |
 | tests.test_index_builder_registry_integration.test_index_builder_file_discovery_includes_typescript_when_ts_enabled | tests/test_index_builder_registry_integration.py | unknown | standard |
@@ -802,6 +817,10 @@ tests/test_workspace_paths.py
 | tests.test_init_llm_env.test_llm_provider_alias_custom_writes_env | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_llm_provider_alias_number_2_writes_deepseek_env | tests/test_init_llm_env.py | unknown | standard |
 | tests.test_init_llm_env.test_llm_provider_alias_openai_writes_env | tests/test_init_llm_env.py | unknown | standard |
+| tests.test_init_typescript_guidance._write | tests/test_init_typescript_guidance.py | unknown | standard |
+| tests.test_init_typescript_guidance.test_init_wizard_explicit_typescript_config_write_is_opt_in | tests/test_init_typescript_guidance.py | unknown | standard |
+| tests.test_init_typescript_guidance.test_init_wizard_noninteractive_keeps_typescript_guidance_advisory | tests/test_init_typescript_guidance.py | unknown | standard |
+| tests.test_init_typescript_guidance.test_initializer_detects_typescript_hints_and_roots | tests/test_init_typescript_guidance.py | unknown | standard |
 | tests.test_init_wizard.StrictEncodingTextIO.__init__ | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.StrictEncodingTextIO.flush | tests/test_init_wizard.py | unknown | standard |
 | tests.test_init_wizard.StrictEncodingTextIO.getvalue | tests/test_init_wizard.py | unknown | standard |
@@ -1032,6 +1051,7 @@ tests/test_workspace_paths.py
 | tests.test_stale.test_stale_json_contains_l2_readme_export_view_name | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_stale_sanitize_single_path_normalizes_github_actions_windows_module_path | tests/test_stale.py | unknown | standard |
 | tests.test_stale.test_stale_sanitize_single_path_uses_full_repo_root_for_duplicate_repo_name | tests/test_stale.py | unknown | standard |
+| tests.test_sync_engine.test_compare_snapshots_ignores_public_boundary_metadata_only_changes | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_contract_gap_for_required_target_without_docstring | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_contract_parse_error_when_contract_presence_is_malformed | tests/test_sync_engine.py | unknown | standard |
 | tests.test_sync_engine.test_sync_engine_drift_detection | tests/test_sync_engine.py | unknown | standard |
@@ -1063,6 +1083,8 @@ tests/test_workspace_paths.py
 | tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_target_id_rule_for_typescript_subject | tests/test_typescript_adapter_mvp.py | unknown | standard |
 | tests.test_typescript_adapter_mvp.test_typescript_adapter_does_not_change_python_adapter_parse_file_behavior | tests/test_typescript_adapter_mvp.py | unknown | standard |
+| tests.test_typescript_boundary_resolution_paths._write | tests/test_typescript_boundary_resolution_paths.py | unknown | standard |
+| tests.test_typescript_boundary_resolution_paths.test_boundary_resolution_supports_index_fallback_and_tsconfig_paths | tests/test_typescript_boundary_resolution_paths.py | unknown | standard |
 | tests.test_typescript_checkpoint_ci._checkpoint_payload | tests/test_typescript_checkpoint_ci.py | unknown | standard |
 | tests.test_typescript_checkpoint_ci._empty_contract_report | tests/test_typescript_checkpoint_ci.py | unknown | standard |
 | tests.test_typescript_checkpoint_ci._empty_ddt_report | tests/test_typescript_checkpoint_ci.py | unknown | standard |
@@ -1102,6 +1124,24 @@ tests/test_workspace_paths.py
 | tests.test_typescript_not_supported_boundaries.test_typescript_ddt_binding_is_advisory_not_supported | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
 | tests.test_typescript_not_supported_boundaries.test_typescript_semantic_audit_is_skipped_without_contract_presence_or_ast | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
 | tests.test_typescript_not_supported_boundaries.test_typescript_unsupported_syntax_advisory_remains_non_blocking | tests/test_typescript_not_supported_boundaries.py | unknown | standard |
+| tests.test_typescript_package_exports._write | tests/test_typescript_package_exports.py | unknown | standard |
+| tests.test_typescript_package_exports.test_package_exports_default_dist_mapping_adds_high_confidence_evidence | tests/test_typescript_package_exports.py | unknown | standard |
+| tests.test_typescript_package_exports.test_package_exports_source_mapping_and_malformed_package_json_degrade_safely | tests/test_typescript_package_exports.py | unknown | standard |
+| tests.test_typescript_public_boundary_evidence.test_public_boundary_config_defaults_are_backward_compatible | tests/test_typescript_public_boundary_evidence.py | unknown | standard |
+| tests.test_typescript_public_boundary_evidence.test_public_boundary_config_normalizes_invalid_values_safely | tests/test_typescript_public_boundary_evidence.py | unknown | standard |
+| tests.test_typescript_public_boundary_evidence.test_public_boundary_evidence_items_are_sorted_and_deduped_deterministically | tests/test_typescript_public_boundary_evidence.py | unknown | standard |
+| tests.test_typescript_public_boundary_evidence.test_public_boundary_metadata_keeps_boundary_fields_additive | tests/test_typescript_public_boundary_evidence.py | unknown | standard |
+| tests.test_typescript_public_boundary_evidence.test_registry_accepts_legacy_typescript_config_without_new_boundary_fields | tests/test_typescript_public_boundary_evidence.py | unknown | standard |
+| tests.test_typescript_public_boundary_evidence.test_typescript_adapter_emits_public_boundary_metadata_without_changing_contract_hash | tests/test_typescript_public_boundary_evidence.py | unknown | standard |
+| tests.test_typescript_public_boundary_next.run_cmd | tests/test_typescript_public_boundary_next.py | unknown | standard |
+| tests.test_typescript_public_boundary_next.test_next_json_adds_boundary_explanation_and_guidance_notes | tests/test_typescript_public_boundary_next.py | unknown | standard |
+| tests.test_typescript_public_boundary_next.test_next_text_explains_package_public_boundary_relationship | tests/test_typescript_public_boundary_next.py | unknown | standard |
+| tests.test_typescript_public_boundary_presets._write | tests/test_typescript_public_boundary_presets.py | unknown | standard |
+| tests.test_typescript_public_boundary_presets.test_custom_entrypoints_preset_adds_configured_entrypoint_evidence | tests/test_typescript_public_boundary_presets.py | unknown | standard |
+| tests.test_typescript_re_export_resolver._subject | tests/test_typescript_re_export_resolver.py | unknown | standard |
+| tests.test_typescript_re_export_resolver._write | tests/test_typescript_re_export_resolver.py | unknown | standard |
+| tests.test_typescript_re_export_resolver.test_re_export_resolver_adds_named_star_and_default_as_evidence | tests/test_typescript_re_export_resolver.py | unknown | standard |
+| tests.test_typescript_re_export_resolver.test_unresolved_re_export_is_ignored_without_crashing | tests/test_typescript_re_export_resolver.py | unknown | standard |
 | tests.test_utils_format.test_format_size_bytes | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_kb | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_mb | tests/test_utils_format.py | unknown | standard |
@@ -1229,6 +1269,7 @@ tests/test_index_progress.py
 tests/test_init_detector.py
 tests/test_init_governance.py
 tests/test_init_llm_env.py
+tests/test_init_typescript_guidance.py
 tests/test_init_wizard.py
 tests/test_initializer.py
 tests/test_l2_paths.py
@@ -1252,10 +1293,16 @@ tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_sync_engine_registry_integration.py
 tests/test_typescript_adapter_mvp.py
+tests/test_typescript_boundary_resolution_paths.py
 tests/test_typescript_checkpoint_ci.py
 tests/test_typescript_contract_presence.py
 tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
+tests/test_typescript_package_exports.py
+tests/test_typescript_public_boundary_evidence.py
+tests/test_typescript_public_boundary_next.py
+tests/test_typescript_public_boundary_presets.py
+tests/test_typescript_re_export_resolver.py
 tests/test_utils_format.py
 tests/test_windows_abs_path_prefix.py
 tests/test_windows_json_stdio_regression.py

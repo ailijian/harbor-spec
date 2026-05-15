@@ -69,6 +69,27 @@ class PublicBoundaryEvidence:
         )
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize one public-boundary evidence item into stable JSON metadata.
+
+        Behavior:
+          - Returns a JSON-compatible mapping for additive explainability output.
+          - Preserves stable keys:
+            `kind`, `confidence`, `source_file`, `source_ref`, `resolved_target`, `reason`.
+          - Keeps public-boundary evidence separate from contract-source semantics.
+
+        Returns:
+          Dict[str, Any]: Deterministic JSON-ready evidence payload.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same evidence item.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         return {
             "kind": self.kind.value,
             "confidence": self.confidence,

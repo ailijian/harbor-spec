@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-14T20:44:40Z"
+generated_at: "2026-05-15T07:23:35Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
-source_path_count: 60
+source_path_count: 62
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -21,6 +21,8 @@ source_paths:
   - "harbor/adapters/typescript/hashing.py"
   - "harbor/adapters/typescript/jsdoc.py"
   - "harbor/adapters/typescript/parser.py"
+  - "harbor/adapters/typescript/public_boundary.py"
+  - "harbor/adapters/typescript/resolution.py"
   - "harbor/adapters/typescript/symbols.py"
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
@@ -69,8 +71,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:993484bd143dd09c0a23c03170ed860cf548c0623122fa3c240f351e3369cf63"
-contract_fingerprint: "sha256:578922a062f67d940b49f9cd5f2cb4467f31e574191322b73a80a622c34d9df0"
+source_fingerprint: "sha256:5536878e3efacebe932b1c8f0c2bd29ff3c595fd0e8709f77eab312959da73f4"
+contract_fingerprint: "sha256:2045f4ab0c9933dfa1689690ed68dba3d679eeeeae53b6ca7dd41e8aefb656c0"
 generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
 ---
 
@@ -128,6 +130,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.utils.i18n.t | 根据当前语言返回文案。 | standard | ⚪ Missing |
 | harbor.adapters.base.ContractSource.to_dict | Serialize contract source into a JSON-friendly dictionary. | strict | ❌ Missing |
 | harbor.adapters.base.ContractSubject.to_dict | Serialize contract subject into a JSON-friendly dictionary. | strict | ❌ Missing |
+| harbor.adapters.typescript.public_boundary.PublicBoundaryEvidence.to_dict | Serialize one public-boundary evidence item into stable J... | strict | ❌ Missing |
 | harbor.core.change_window.ChangeWindowSnapshot.to_dict | Serialize the current snapshot into a JSON-friendly chang... | strict | ❌ Missing |
 | harbor.core.ci.CIFailure.to_dict | 将通用 CI failure/advisory 项序列化为 machine-readable JSON-compa... | strict | ❌ Missing |
 | harbor.core.ci.CheckpointCIItem.to_dict | 将 checkpoint CI failure/advisory 项序列化为 machine-readable J... | strict | ❌ Missing |
@@ -161,7 +164,9 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
 | harbor.adapters.registry.AdapterRegistry.__init__ | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.adapter.TypeScriptAdapter.__init__ | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser.__init__ | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver.__init__ | — | standard | ⚪ Missing |
 | harbor.core.audit.OpenAIProvider.__init__ | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTScanner.__init__ | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTValidator.__init__ | — | standard | ⚪ Missing |
@@ -186,9 +191,12 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.init_wizard.InitWizard._ask_yes_no | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._belongs_to_module | — | standard | ⚪ Missing |
 | harbor.core.project_structure._belongs_to_module | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._boundary_evidence_kinds | — | standard | ⚪ Missing |
 | harbor.core.log_draft._bucket_for_path | — | standard | ⚪ Missing |
 | harbor.core.workspace._build_path | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._build_prompt | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._build_re_export_reason | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._build_re_export_rules | — | standard | ⚪ Missing |
 | harbor.core.log_draft._build_risks | — | standard | ⚪ Missing |
 | harbor.core.log_draft._build_suggested_diary_entry | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._build_summary | — | standard | ⚪ Missing |
@@ -209,7 +217,9 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.workspace_inspect._classify_git_tracking | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._classify_tests_path | — | standard | ⚪ Missing |
 | harbor.core.change_window._coerce_changed_files | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._coerce_export_target | — | standard | ⚪ Missing |
 | harbor.core.change_window._coerce_mapping | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._coerce_public_boundary_evidence | — | standard | ⚪ Missing |
 | harbor.core.log_draft._coerce_validation_status | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._collect_advisory | — | standard | ⚪ Missing |
 | harbor.core.ci._collect_checkpoint_next_steps | — | standard | ⚪ Missing |
@@ -225,6 +235,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.doctor._collect_next_steps | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._collect_python_snapshot_items | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._collect_repair_commands | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._collect_typescript_entrypoints | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._collect_typescript_snapshot_items | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._compare_snapshots | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._compose_expected_canonical_l2_markdown | — | standard | ⚪ Missing |
@@ -233,8 +244,12 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.generated_verify._compose_expected_project_structure_markdown | — | standard | ⚪ Missing |
 | harbor.core.log_draft._compose_written_details | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._confidence_for_level | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._confidence_score | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._confidence_sort_key | — | standard | ⚪ Missing |
 | harbor.cli.main._configure_redirected_windows_stdio | Backward-compatible wrapper for the Windows CLI-wide stdi... | standard | ⚪ Missing |
 | harbor.cli.main._configure_windows_stdio | Apply a Windows CLI-wide UTF-8-first stdio strategy when ... | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._configured_entrypoint_evidence | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._context_for | — | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._contract_hash_for_sources | — | standard | ⚪ Missing |
@@ -244,9 +259,11 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.init.ProjectDetector._dedup | — | standard | ⚪ Missing |
 | harbor.core.log_draft._dedupe_changed_files | — | standard | ⚪ Missing |
 | harbor.core.ci._dedupe_checkpoint_items | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._dedupe_paths | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_language | — | standard | ⚪ Missing |
 | harbor.core.index_entry._default_name | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_project | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._default_source_mapping | — | standard | ⚪ Missing |
 | harbor.core.ci._derive_checkpoint_identity | — | standard | ⚪ Missing |
 | harbor.core.ci._derive_qualified_name_and_symbol_kind | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._derive_report_status | — | standard | ⚪ Missing |
@@ -258,6 +275,9 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.init.ProjectDetector._detect_java | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_node | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_python_misc | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._detect_typescript | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._detect_workspace_markers | — | standard | ⚪ Missing |
+| harbor.core.index._detect_workspace_root | — | standard | ⚪ Missing |
 | harbor.core.log_draft._determine_draft_status | — | standard | ⚪ Missing |
 | harbor.core.log_draft._discover_report_summaries | — | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._docstring_hashes | 计算 Docstring 的 raw/contract 双哈希。 | standard | ⚪ Missing |
@@ -267,6 +287,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.cli.main._emit_json_stdout | Write one JSON object to stdout with an ASCII-safe fallba... | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._emit_typescript_guidance | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._ensure_schema | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._ensure_within_repo | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._ensure_within_root | — | standard | ⚪ Missing |
@@ -285,11 +306,14 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.log_draft._extract_markdown_summary_sections | — | standard | ⚪ Missing |
 | harbor.core.log_draft._extract_structured_fields_from_json_draft | — | standard | ⚪ Missing |
 | harbor.core.project_structure._extract_toml_string_block | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._extract_wildcard | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._file_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._filter_excludes | — | standard | ⚪ Missing |
 | harbor.core.doctor._filter_safe_next_steps | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.jsdoc._find_block_comment_start | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._find_first_parent_file | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser._find_matching | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._find_package_root | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._finding_to_dict | — | standard | ⚪ Missing |
 | harbor.core.log_draft._format_area_list | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._format_artifact_lines | — | standard | ⚪ Missing |
@@ -305,15 +329,18 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.stale._format_view_lines | 格式化单个视图状态的文本行。 | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._from_dict | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._get_default_excludes | — | standard | ⚪ Missing |
+| harbor.core.ci._get_optional_dict_list | — | standard | ⚪ Missing |
 | harbor.core.ci._get_optional_list | — | standard | ⚪ Missing |
 | harbor.core.ci._get_optional_text | — | standard | ⚪ Missing |
 | harbor.core.change_window._git_status_lines | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._has_env_ignore | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._has_scope_tag | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._has_typescript_sources | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._index_entry | — | standard | ⚪ Missing |
 | harbor.core.project_structure._infer_area | — | standard | ⚪ Missing |
 | harbor.core.log_draft._infer_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.audit._infer_file_path_from_contract | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._initial_export_names | — | standard | ⚪ Missing |
 | harbor.core.ci._is_blocking_checkpoint_target | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_contract_asserting_test | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._is_contract_required | — | standard | ⚪ Missing |
@@ -334,6 +361,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.contract_impact._is_to_dict_like | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._is_tty | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._is_typescript_path | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._is_typescript_source_file | — | standard | ⚪ Missing |
 | harbor.core.audit._is_typescript_target | — | standard | ⚪ Missing |
 | harbor.cli.main._is_utf8_compatible_stdio_encoding | — | standard | ⚪ Missing |
 | harbor.core.log_draft._is_within | — | standard | ⚪ Missing |
@@ -343,12 +371,15 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.index.IndexBuilder._iter_files_by_enabled_adapters | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._iter_files_by_enabled_adapters | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._iter_function_nodes | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._iter_package_export_targets | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._iter_project_typescript_files | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTScanner._iter_py_files | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._iter_py_files | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._iter_read_dirs | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._json_stable_hash | — | standard | ⚪ Missing |
 | harbor.core.project_structure._key_files_display | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._kv_fallback_parse | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._label_typescript_preset | — | standard | ⚪ Missing |
 | harbor.core.log_draft._latest_accept_snapshot | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._leading_whitespace | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._load_cache | — | standard | ⚪ Missing |
@@ -363,19 +394,26 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.project_structure._load_index | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTValidator._load_map | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._load_meta | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._load_package_exports | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._load_package_json | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._load_previous_snapshot_from_artifact | — | standard | ⚪ Missing |
 | harbor.core.log_draft._load_report_summary | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._load_template_text | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._load_tsconfig_paths | — | standard | ⚪ Missing |
+| harbor.core.index._load_worker_typescript_config | — | standard | ⚪ Missing |
 | harbor.core.contract_presence._looks_like_contract_doc | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.l2._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.project_structure._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.workspace._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._map_package_export_to_source | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._mask_key | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._match_source_mapping | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._max_level | — | standard | ⚪ Missing |
 | harbor.core.log_draft._merge_affected_area_mappings | — | standard | ⚪ Missing |
 | harbor.core.log_draft._merge_changed_files | — | standard | ⚪ Missing |
 | harbor.core.doctor._merge_status | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._module_candidates | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate._module_dir_has_python_files | — | standard | ⚪ Missing |
 | harbor.core.ci._module_qual_from_file_path | — | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._module_qual_from_path | 根据文件路径生成模块限定名（点分格式）。 | standard | ⚪ Missing |
@@ -383,11 +421,13 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.log_draft._non_diary_changed_files | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._normalize_body | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._normalize_body_for_compare | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._normalize_boundary_confidence | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_changed_file | — | standard | ⚪ Missing |
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_cli_input_path | Normalize repo-relative CLI paths so Windows separators s... | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._normalize_contract_presence | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._normalize_exports_block | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._normalize_hash | — | standard | ⚪ Missing |
@@ -406,9 +446,14 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.log_draft._normalize_report_status | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol_for_classification | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._normalize_typescript_contract_strategy | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._normalize_typescript_preset | — | standard | ⚪ Missing |
 | harbor.cli.main._normalize_windows_stdio_encoding_name | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._normalized_source_content_for_fingerprint | Return fingerprint input bytes with cross-platform text n... | standard | ⚪ Missing |
 | harbor.core.context_integrity._now_iso | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._optional_text | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._package_export_evidence | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._package_has_exports | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_affected_areas_section | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_diary_draft_lines | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_export_arrow_functions | — | standard | ⚪ Missing |
@@ -425,17 +470,20 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_internal_arrow_functions | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser._parse_internal_functions | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_markdown_draft_fields | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._parse_named_specifier | — | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._parse_tags | 从 Docstring 提取 @harbor.* 标签。 | standard | ⚪ Missing |
 | harbor.core.ci._parse_target_id | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._parse_ts | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_validation_lines | — | standard | ⚪ Missing |
 | harbor.core.log_draft._pick_first_nonempty | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._posix_rel | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._preferred_reason_kinds | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._print | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_draft_source_file | — | standard | ⚪ Missing |
 | harbor.adapters.registry.AdapterRegistry._read_enabled_flag | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._read_env_keys | — | standard | ⚪ Missing |
+| harbor.adapters.registry.AdapterRegistry._read_language_config | — | standard | ⚪ Missing |
 | harbor.adapters.registry.AdapterRegistry._read_languages_config | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_last_log_marker | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_last_log_marker_timestamp | — | standard | ⚪ Missing |
@@ -452,20 +500,28 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.log_draft._resolve_allowed_from_draft_path | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._resolve_artifact_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_author | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._resolve_boundary_confidence | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._resolve_boundary_reason | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._resolve_boundary_state | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_cli_input_path | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._resolve_contract_presence | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_diary_draft_boundary | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | — | standard | ⚪ Missing |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._resolve_entrypoint_path | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_export_readme_path | — | standard | ⚪ Missing |
 | harbor.core.readonly_index._resolve_index_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_latest_draft_source | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_legacy_diary_dirs | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._resolve_meta_path | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._resolve_module_specifier | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._resolve_module_target_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_output_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_repo_root | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._resolve_typescript_entrypoints | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._resolve_typescript_language_config | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._resolve_typescript_source_candidate | — | standard | ⚪ Missing |
 | harbor.cli.main._resolve_windows_explicit_stdio_config | — | standard | ⚪ Missing |
 | harbor.cli.main._resolve_windows_redirected_stdio_encoding | Backward-compatible access to the resolved Windows stdio ... | standard | ⚪ Missing |
 | harbor.cli.main._resolve_windows_stdio_target | Resolve the preferred Windows stdio strategy for one CLI ... | standard | ⚪ Missing |
@@ -477,6 +533,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.module_capsule._safe_module_subpath | — | standard | ⚪ Missing |
 | harbor.core.log_draft._safe_multiline_excerpt | — | standard | ⚪ Missing |
 | harbor.core.log_draft._sanitize_affected_areas | — | standard | ⚪ Missing |
+| harbor.core.ci._sanitize_boundary_evidence_items | — | standard | ⚪ Missing |
 | harbor.core.ci._sanitize_checkpoint_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._sanitize_details | — | standard | ⚪ Missing |
 | harbor.core.log_draft._sanitize_evidence | — | standard | ⚪ Missing |
@@ -498,7 +555,9 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.log_draft._sanitize_validation | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._save_cache | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._save_meta | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._select_preferred_reason_item | — | standard | ⚪ Missing |
 | harbor.core.log_draft._select_snapshots | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._select_typescript_preset | — | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._signature_hash | 计算函数签名的稳定哈希。 | standard | ⚪ Missing |
 | harbor.core.project_structure._skill_exists | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser._skip_ws | — | standard | ⚪ Missing |
@@ -510,6 +569,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.index_entry._source_fingerprints | — | standard | ⚪ Missing |
 | harbor.core.index_entry._source_kinds | — | standard | ⚪ Missing |
 | harbor.core.log_draft._split_list_values | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._split_named_specifiers | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._stable_contract_rows | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._status_entry_from_snapshot_item | — | standard | ⚪ Missing |
 | harbor.core.doctor._status_text | — | standard | ⚪ Missing |
@@ -526,17 +586,21 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.project_structure._supporting_area_purpose | — | standard | ⚪ Missing |
 | harbor.core.project_structure._table_cell | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._title_with_marker | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary._to_bool | — | standard | ⚪ Missing |
 | harbor.core.advice_config._to_bool | — | standard | ⚪ Missing |
 | harbor.core.workspace._to_bool | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._to_display_path | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate._to_display_path | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser._to_lineno | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._to_lineno | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._to_posix_path | — | standard | ⚪ Missing |
 | harbor.core.project_structure._to_project_relative_path | — | standard | ⚪ Missing |
 | harbor.core.l2._to_repo_relative | — | standard | ⚪ Missing |
 | harbor.core.log_draft._to_repo_relative_display | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._trace_re_export_chain | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._trim_segment | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._try_arrow_select | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution._tsconfig_path_candidates | — | standard | ⚪ Missing |
 | harbor.core.doctor._unique | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._update_managed_block | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._utc_now_iso | — | standard | ⚪ Missing |
@@ -557,6 +621,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.doctor.build_doctor_report | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.build_module_card_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.build_prompt | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary.build_public_boundary_metadata | — | standard | ⚪ Missing |
 | harbor.core.log_draft.build_saved_diary_draft_output_path | Build a timestamped safe reports path for `harbor log dra... | standard | ⚪ Missing |
 | harbor.core.ci.build_stale_ci_result | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.build_workspace_inspect_report | — | standard | ⚪ Missing |
@@ -577,6 +642,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.changed_scope.collect_changed_modules_from_status | — | standard | ⚪ Missing |
 | harbor.core.changed_scope.collect_changed_paths_from_status | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine.collect_current_snapshot | Collect the current comparable checkpoint snapshot from s... | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver.collect_evidence | — | standard | ⚪ Missing |
 | harbor.core.change_window.collect_git_workspace_state | Collect lightweight git metadata for change-window snapsh... | standard | ⚪ Missing |
 | harbor.core.l2.collect_modules_from_paths | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.compose_markdown_with_frontmatter | — | standard | ⚪ Missing |
@@ -589,12 +655,15 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.init_prompt.confirm | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.content_without_generated_at_for_compare | — | standard | ⚪ Missing |
 | harbor.core.index_entry.contract_subject_to_index_entry | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary.PublicBoundaryEvidence.dedupe_key | — | standard | ⚪ Missing |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
 | harbor.adapters.registry.AdapterRegistry.default | — | standard | ⚪ Missing |
 | harbor.core.utils.derive_adopted_roots | — | standard | ⚪ Missing |
 | harbor.core.console_output.detect_console_encoding | — | standard | ⚪ Missing |
 | harbor.core.changed_scope.detect_generator_integrity_changes | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
+| harbor.core.init.Initializer.detect_typescript_hints | Detect TypeScript onboarding hints for `harbor init`. | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector.detect_typescript_hints | — | standard | ⚪ Missing |
 | harbor.adapters.base.LanguageAdapter.discover_files | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files | — | standard | ⚪ Missing |
 | harbor.core.utils.discover_indexable_files | — | standard | ⚪ Missing |
@@ -636,6 +705,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.audit.MockProvider.infer | — | standard | ⚪ Missing |
 | harbor.core.audit.OpenAIProvider.infer | — | standard | ⚪ Missing |
 | harbor.core.l2.infer_module_from_path | 从文件路径推断模块目录（统一为 POSIX 风格）。 | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary.initial_public_boundary_evidence_for_symbol | — | standard | ⚪ Missing |
 | harbor.core.contract_presence.is_contract_required | — | standard | ⚪ Missing |
 | harbor.adapters.registry.AdapterRegistry.is_enabled | — | standard | ⚪ Missing |
 | harbor.core.change_window.list_change_windows | List readable change-window snapshots from newest to oldest. | standard | ⚪ Missing |
@@ -649,11 +719,15 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.module_capsule.module_capsule_dir | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact.normalize_baseline_item_path | Normalize one baseline item path into repo-relative POSIX... | standard | ⚪ Missing |
 | harbor.core.changed_scope.normalize_changed_path | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary.normalize_contract_required_strategy | — | standard | ⚪ Missing |
 | harbor.core.l2.normalize_indexed_module_candidate | 将索引记录路径归一化为模块候选，优先映射 repo 内绝对路径。 | standard | ⚪ Missing |
 | harbor.core.module_capsule.normalize_module_path | — | standard | ⚪ Missing |
 | harbor.core.path_normalization.normalize_path_separators | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary.normalize_public_boundary_evidence_items | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary.normalize_public_boundary_preset_mode | — | standard | ⚪ Missing |
 | harbor.core.module_skill.normalize_skill_slug | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.hashing.normalize_text | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary.normalize_typescript_governance_config | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.hashing.normalized_sha256 | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.parser.TypeScriptLightweightParser.parse | — | standard | ⚪ Missing |
 | harbor.adapters.base.LanguageAdapter.parse_file | — | standard | ⚪ Missing |
@@ -662,6 +736,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.workspace.parse_workspace_export_options | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine.preview | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.preview_module_capsule | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.resolution.ReExportRule.propagate | — | standard | ⚪ Missing |
 | harbor.core.change_window.prune_change_windows | Delete change-window snapshots older than the newest `lim... | standard | ⚪ Missing |
 | harbor.core.project_structure.rank_key_file | — | standard | ⚪ Missing |
 | harbor.core.generated_verify.re_match_absolute_path | — | standard | ⚪ Missing |
@@ -689,6 +764,7 @@ generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c597
 | harbor.core.init_prompt.select_one | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.hashing.sha256_text | — | standard | ⚪ Missing |
 | harbor.core.module_skill.skill_dir_for_module | — | standard | ⚪ Missing |
+| harbor.adapters.typescript.public_boundary.PublicBoundaryEvidence.sort_key | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.split_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.stale.stale_report_to_dict | 将 stale 检查结果序列化为 machine-readable JSON 对象。 | standard | ⚪ Missing |
 | harbor.core.context_integrity.strip_frontmatter | — | standard | ⚪ Missing |

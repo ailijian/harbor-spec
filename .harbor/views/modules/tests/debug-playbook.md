@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "debug_playbook"
 module: "tests"
-generated_at: "2026-05-14T20:44:46Z"
+generated_at: "2026-05-15T06:59:14Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 98
+source_path_count: 105
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -72,6 +72,7 @@ source_paths:
   - "tests/test_init_detector.py"
   - "tests/test_init_governance.py"
   - "tests/test_init_llm_env.py"
+  - "tests/test_init_typescript_guidance.py"
   - "tests/test_init_wizard.py"
   - "tests/test_initializer.py"
   - "tests/test_l2_paths.py"
@@ -95,10 +96,16 @@ source_paths:
   - "tests/test_sync_engine.py"
   - "tests/test_sync_engine_registry_integration.py"
   - "tests/test_typescript_adapter_mvp.py"
+  - "tests/test_typescript_boundary_resolution_paths.py"
   - "tests/test_typescript_checkpoint_ci.py"
   - "tests/test_typescript_contract_presence.py"
   - "tests/test_typescript_next_guidance.py"
   - "tests/test_typescript_not_supported_boundaries.py"
+  - "tests/test_typescript_package_exports.py"
+  - "tests/test_typescript_public_boundary_evidence.py"
+  - "tests/test_typescript_public_boundary_next.py"
+  - "tests/test_typescript_public_boundary_presets.py"
+  - "tests/test_typescript_re_export_resolver.py"
   - "tests/test_utils_format.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_windows_json_stdio_regression.py"
@@ -107,8 +114,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:b66c58f04661cc90623cbe362b2b2264e761ae8a8a52797846d8d9dd6f0b7eea"
-contract_fingerprint: "sha256:d976a55b0d9a4441f784d3909bc88d5b6e612baec2d37632fd62b6b09198f1d2"
+source_fingerprint: "sha256:8a0e5b72fe6e887c68b1d189813f2d92e80a31e5ac17432145a0ee32b8b6e955"
+contract_fingerprint: "sha256:55c1e488f80cccb49c0811c5ddd3a3faf812b46ec2d7d71563c39dff2b1f1eee"
 generator_fingerprint: "sha256:189f5040b703e80b4fd0ec42ab129997229ec6d456ade27250892741cf23d7c4"
 ---
 

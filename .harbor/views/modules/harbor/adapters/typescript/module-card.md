@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "module_card"
 module: "harbor/adapters/typescript"
-generated_at: "2026-05-14T17:00:12Z"
+generated_at: "2026-05-15T06:13:05Z"
 generation_command: "harbor module seal harbor/adapters/typescript --write"
 stale_policy: "advisory"
-source_path_count: 6
+source_path_count: 8
 source_paths_truncated: false
 source_paths:
   - "harbor/adapters/typescript/__init__.py"
@@ -14,12 +14,14 @@ source_paths:
   - "harbor/adapters/typescript/hashing.py"
   - "harbor/adapters/typescript/jsdoc.py"
   - "harbor/adapters/typescript/parser.py"
+  - "harbor/adapters/typescript/public_boundary.py"
+  - "harbor/adapters/typescript/resolution.py"
   - "harbor/adapters/typescript/symbols.py"
-source_fingerprint: "sha256:84d1bc51bc64ac693278a8c468e34efb049cca3acd94f3fde08eb14c1ece068d"
-contract_fingerprint: "sha256:7067dbe33e8028f2edff2c2021757d6ec7059d570749864cb36599b64277a838"
+source_fingerprint: "sha256:91cfd04c76c47b37c15481c1675c814d85cf52cd999d2c18cfec01c146b02e64"
+contract_fingerprint: "sha256:936f7c64785da71e89c4de5acbd3e0fa0e2012fd50a2874e8d7a97a1535cb420"
 generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
-view_fingerprint: "12c224dc1937ca164da883c502fd0d4f08c00bbd5f2f4e2b29de9c36e8947810"
-fingerprint: "12c224dc1937ca164da883c502fd0d4f08c00bbd5f2f4e2b29de9c36e8947810"
+view_fingerprint: "e64a748def4bd9f767022a5545ca81c7a8c16cb4dd16e74099c8d454a851d64a"
+fingerprint: "e64a748def4bd9f767022a5545ca81c7a8c16cb4dd16e74099c8d454a851d64a"
 ---
 
 # Module Card: harbor/adapters/typescript
@@ -45,6 +47,8 @@ harbor/adapters/typescript/adapter.py
 harbor/adapters/typescript/hashing.py
 harbor/adapters/typescript/jsdoc.py
 harbor/adapters/typescript/parser.py
+harbor/adapters/typescript/public_boundary.py
+harbor/adapters/typescript/resolution.py
 harbor/adapters/typescript/symbols.py
 ```
 
@@ -52,6 +56,7 @@ harbor/adapters/typescript/symbols.py
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
+| harbor.adapters.typescript.adapter.TypeScriptAdapter.__init__ | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter._collect_file | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.discover_files | harbor/adapters/typescript/adapter.py | unknown | standard |
 | harbor.adapters.typescript.adapter.TypeScriptAdapter.parse_file | harbor/adapters/typescript/adapter.py | unknown | standard |
@@ -85,18 +90,75 @@ harbor/adapters/typescript/symbols.py
 | harbor.adapters.typescript.parser._find_matching | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser._skip_ws | harbor/adapters/typescript/parser.py | unknown | standard |
 | harbor.adapters.typescript.parser._to_lineno | harbor/adapters/typescript/parser.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary.PublicBoundaryEvidence.dedupe_key | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary.PublicBoundaryEvidence.sort_key | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary.PublicBoundaryEvidence.to_dict | harbor/adapters/typescript/public_boundary.py | public | strict |
+| harbor.adapters.typescript.public_boundary._boundary_evidence_kinds | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._coerce_public_boundary_evidence | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._confidence_score | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._confidence_sort_key | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._normalize_boundary_confidence | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._optional_text | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._preferred_reason_kinds | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._resolve_boundary_confidence | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._resolve_boundary_reason | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._resolve_boundary_state | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._select_preferred_reason_item | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary._to_bool | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary.build_public_boundary_metadata | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary.initial_public_boundary_evidence_for_symbol | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary.normalize_contract_required_strategy | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary.normalize_public_boundary_evidence_items | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary.normalize_public_boundary_preset_mode | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.public_boundary.normalize_typescript_governance_config | harbor/adapters/typescript/public_boundary.py | unknown | standard |
+| harbor.adapters.typescript.resolution.ReExportRule.propagate | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver.__init__ | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._build_re_export_rules | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._configured_entrypoint_evidence | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._context_for | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._package_export_evidence | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._trace_re_export_chain | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver.collect_evidence | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._build_re_export_reason | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._coerce_export_target | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._dedupe_paths | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._default_source_mapping | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._extract_wildcard | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._find_first_parent_file | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._find_package_root | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._initial_export_names | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._iter_project_typescript_files | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._load_package_exports | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._load_tsconfig_paths | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._map_package_export_to_source | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._match_source_mapping | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._module_candidates | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._normalize_exports_block | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._parse_named_specifier | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._resolve_entrypoint_path | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._resolve_module_specifier | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._split_named_specifiers | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._to_lineno | harbor/adapters/typescript/resolution.py | unknown | standard |
+| harbor.adapters.typescript.resolution._tsconfig_path_candidates | harbor/adapters/typescript/resolution.py | unknown | standard |
 
 ## Tests
 
 ```text
 tests/test_adapter_basic.py
 tests/test_adapter_registry.py
+tests/test_init_typescript_guidance.py
 tests/test_python_adapter_compat.py
 tests/test_typescript_adapter_mvp.py
+tests/test_typescript_boundary_resolution_paths.py
 tests/test_typescript_checkpoint_ci.py
 tests/test_typescript_contract_presence.py
 tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
+tests/test_typescript_package_exports.py
+tests/test_typescript_public_boundary_evidence.py
+tests/test_typescript_public_boundary_next.py
+tests/test_typescript_public_boundary_presets.py
+tests/test_typescript_re_export_resolver.py
 ```
 
 ## Review Focus

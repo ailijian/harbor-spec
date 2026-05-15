@@ -40,6 +40,92 @@ It is a repo-local **context governance layer**.
 
 ---
 
+## 🚀 v1.4.3: TypeScript Public Boundary Resolution & Project Presets
+
+Harbor-spec v1.4.3 builds on the TypeScript persistence, `contract_hash`, and accepted-baseline comparison-compatible foundation completed in `v1.4.2`, and formally moves into **project-level public boundary governance**.
+
+### What v1.4.3 includes
+
+* A Public Boundary Evidence model with:
+  * `direct_export`
+  * `default_export`
+  * `named_re_export`
+  * `star_re_export`
+  * `package_export`
+  * `configured_entrypoint`
+  * `declaration_surface_preview` as a future-preview placeholder only
+* Additive public-boundary explainability metadata / JSON fields:
+  * `public_boundary_state`
+  * `public_boundary_confidence`
+  * `public_boundary_evidence_kinds`
+  * `public_boundary_evidence_items`
+  * `public_boundary_reason`
+  * `boundary_preset_mode`
+* Minimal boundary resolution support for:
+  * package-root detection
+  * relative path resolution
+  * `.ts` priority and `index.ts` fallback
+  * minimal `tsconfig baseUrl/paths`
+  * normalized package exports plus common `dist/*.js -> src/*.ts` source mapping
+* Project-level public boundary presets:
+  * `legacy_exported`
+  * `package_public`
+  * `custom_entrypoints`
+* TypeScript governance guidance in `harbor init`:
+  * detect `package.json`
+  * detect `tsconfig.json`
+  * detect `src/index.ts` / public entrypoint candidates
+  * detect `package.json exports`
+  * detect workspace / monorepo markers
+* Preset-aware explanation in `harbor next`:
+  * explain the relationship among direct export, re-export, package export, configured entrypoint, confidence, and preset
+  * remain read-only: no file writes, no auto-repair, no `accept/log/lock`
+
+### v1.4.3 boundaries
+
+* `Contract Source` stays separate from `Public Boundary Evidence`:
+  * re-exports, package exports, and configured entrypoints do not enter `contract_source_kinds`
+  * boundary evidence does not enter `contract_hash` or `body_hash`
+  * boundary metadata changes do not trigger `contract_changed`, `modified`, or `drift`
+* Default compatibility remains unchanged:
+  * default preset stays `legacy_exported`
+  * default `contract_required_strategy` stays `legacy_exported`
+  * non-interactive `harbor init` does not silently enable TypeScript governance
+* Windows full-governance remains a formal acceptance dimension
+
+### v1.4.3 configuration example
+
+```yaml
+languages:
+  python:
+    enabled: true
+  typescript:
+    enabled: true
+    public_boundary:
+      mode: package_public
+      follow_re_exports: true
+      read_package_exports: true
+      use_tsconfig_paths: true
+      declaration_surface_preview: false
+      entrypoints: []
+      source_mappings: {}
+    contract_required_strategy: legacy_exported
+```
+
+### Not supported in v1.4.3
+
+* JavaScript as first-class governance
+* default scanning of `.js/.jsx/.tsx/.d.ts`
+* TypeScript semantic audit
+* TypeScript DDT
+* full TypeScript compiler / full module graph
+* full npm package resolution / bundler alias resolution
+* framework-specific governance / validation
+* full Zod schema semantics / schema-to-type consistency audit
+* automatic blocking-gate expansion from `interface/type`, Zod, or boundary evidence
+
+---
+
 ## 🚀 v1.4.2.2: Windows JSON Stdout Compatibility Closure
 
 Harbor-spec v1.4.2.2 is a maintenance patch focused on Windows host-encoding compatibility, closing the cp1252 runner gap and unifying the pure JSON stdout emission path.

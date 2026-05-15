@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.2.2"
 view_type: "debug_playbook"
 module: "harbor"
-generated_at: "2026-05-14T20:44:46Z"
+generated_at: "2026-05-15T07:24:02Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
-source_path_count: 60
+source_path_count: 62
 source_paths_truncated: false
 source_paths:
   - "harbor/__init__.py"
@@ -21,6 +21,8 @@ source_paths:
   - "harbor/adapters/typescript/hashing.py"
   - "harbor/adapters/typescript/jsdoc.py"
   - "harbor/adapters/typescript/parser.py"
+  - "harbor/adapters/typescript/public_boundary.py"
+  - "harbor/adapters/typescript/resolution.py"
   - "harbor/adapters/typescript/symbols.py"
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
@@ -69,8 +71,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:993484bd143dd09c0a23c03170ed860cf548c0623122fa3c240f351e3369cf63"
-contract_fingerprint: "sha256:882fe5a531efe928a73477358724ccd6939e189ae53d1ce382a1c392c5a1c4f3"
+source_fingerprint: "sha256:5536878e3efacebe932b1c8f0c2bd29ff3c595fd0e8709f77eab312959da73f4"
+contract_fingerprint: "sha256:a4a0a220f03ca9e0c666c7360c1af8a691c9a28cf4a5ce5027b2c89b7463c6d9"
 generator_fingerprint: "sha256:189f5040b703e80b4fd0ec42ab129997229ec6d456ade27250892741cf23d7c4"
 ---
 

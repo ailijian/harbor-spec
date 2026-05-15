@@ -136,6 +136,7 @@
 | harbor.core.doctor._collect_next_steps | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._collect_python_snapshot_items | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._collect_repair_commands | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._collect_typescript_entrypoints | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._collect_typescript_snapshot_items | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._compare_snapshots | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._compose_expected_canonical_l2_markdown | — | standard | ⚪ Missing |
@@ -164,6 +165,9 @@
 | harbor.core.init.ProjectDetector._detect_java | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_node | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._detect_python_misc | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._detect_typescript | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._detect_workspace_markers | — | standard | ⚪ Missing |
+| harbor.core.index._detect_workspace_root | — | standard | ⚪ Missing |
 | harbor.core.log_draft._determine_draft_status | — | standard | ⚪ Missing |
 | harbor.core.log_draft._discover_report_summaries | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._docstring_node | — | standard | ⚪ Missing |
@@ -171,6 +175,7 @@
 | harbor.core.init_wizard.InitWizard._emit_ide_guidance | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._emit_typescript_guidance | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._ensure_schema | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._ensure_within_repo | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._ensure_within_root | — | standard | ⚪ Missing |
@@ -205,11 +210,13 @@
 | harbor.core.stale._format_view_lines | 格式化单个视图状态的文本行。 | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._from_dict | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._get_default_excludes | — | standard | ⚪ Missing |
+| harbor.core.ci._get_optional_dict_list | — | standard | ⚪ Missing |
 | harbor.core.ci._get_optional_list | — | standard | ⚪ Missing |
 | harbor.core.ci._get_optional_text | — | standard | ⚪ Missing |
 | harbor.core.change_window._git_status_lines | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._has_env_ignore | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._has_scope_tag | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._has_typescript_sources | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._index_entry | — | standard | ⚪ Missing |
 | harbor.core.project_structure._infer_area | — | standard | ⚪ Missing |
 | harbor.core.log_draft._infer_contract_impact | — | standard | ⚪ Missing |
@@ -228,6 +235,7 @@
 | harbor.core.contract_impact._is_to_dict_like | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._is_tty | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._is_typescript_path | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._is_typescript_source_file | — | standard | ⚪ Missing |
 | harbor.core.audit._is_typescript_target | — | standard | ⚪ Missing |
 | harbor.core.log_draft._is_within | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._is_write_like | — | standard | ⚪ Missing |
@@ -236,12 +244,14 @@
 | harbor.core.index.IndexBuilder._iter_files_by_enabled_adapters | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._iter_files_by_enabled_adapters | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._iter_function_nodes | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._iter_package_export_targets | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTScanner._iter_py_files | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._iter_py_files | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._iter_read_dirs | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._json_stable_hash | — | standard | ⚪ Missing |
 | harbor.core.project_structure._key_files_display | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._kv_fallback_parse | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._label_typescript_preset | — | standard | ⚪ Missing |
 | harbor.core.log_draft._latest_accept_snapshot | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._leading_whitespace | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._load_cache | — | standard | ⚪ Missing |
@@ -256,9 +266,11 @@
 | harbor.core.project_structure._load_index | — | standard | ⚪ Missing |
 | harbor.core.ddt.DDTValidator._load_map | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._load_meta | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._load_package_json | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._load_previous_snapshot_from_artifact | — | standard | ⚪ Missing |
 | harbor.core.log_draft._load_report_summary | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._load_template_text | — | standard | ⚪ Missing |
+| harbor.core.index._load_worker_typescript_config | — | standard | ⚪ Missing |
 | harbor.core.contract_presence._looks_like_contract_doc | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.l2._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
@@ -297,8 +309,11 @@
 | harbor.core.log_draft._normalize_report_status | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol_for_classification | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._normalize_typescript_contract_strategy | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._normalize_typescript_preset | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._normalized_source_content_for_fingerprint | Return fingerprint input bytes with cross-platform text n... | standard | ⚪ Missing |
 | harbor.core.context_integrity._now_iso | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._package_has_exports | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_affected_areas_section | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_diary_draft_lines | — | standard | ⚪ Missing |
 | harbor.core.doctor._parse_generated_frontmatter_safely | — | standard | ⚪ Missing |
@@ -342,6 +357,9 @@
 | harbor.core.module_capsule._resolve_module_target_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_output_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_repo_root | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._resolve_typescript_entrypoints | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._resolve_typescript_language_config | — | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector._resolve_typescript_source_candidate | — | standard | ⚪ Missing |
 | harbor.core.change_window._run_git | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._safe_console_print | — | standard | ⚪ Missing |
 | harbor.core.log_draft._safe_excerpt | — | standard | ⚪ Missing |
@@ -350,6 +368,7 @@
 | harbor.core.module_capsule._safe_module_subpath | — | standard | ⚪ Missing |
 | harbor.core.log_draft._safe_multiline_excerpt | — | standard | ⚪ Missing |
 | harbor.core.log_draft._sanitize_affected_areas | — | standard | ⚪ Missing |
+| harbor.core.ci._sanitize_boundary_evidence_items | — | standard | ⚪ Missing |
 | harbor.core.ci._sanitize_checkpoint_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._sanitize_details | — | standard | ⚪ Missing |
 | harbor.core.log_draft._sanitize_evidence | — | standard | ⚪ Missing |
@@ -372,6 +391,7 @@
 | harbor.core.index.IndexBuilder._save_cache | — | standard | ⚪ Missing |
 | harbor.core.l2.L2Generator._save_meta | — | standard | ⚪ Missing |
 | harbor.core.log_draft._select_snapshots | — | standard | ⚪ Missing |
+| harbor.core.init_wizard.InitWizard._select_typescript_preset | — | standard | ⚪ Missing |
 | harbor.core.project_structure._skill_exists | — | standard | ⚪ Missing |
 | harbor.core.change_window._snapshot_from_payload | — | standard | ⚪ Missing |
 | harbor.core.log_draft._snapshot_summary | — | standard | ⚪ Missing |
@@ -462,6 +482,8 @@
 | harbor.core.console_output.detect_console_encoding | — | standard | ⚪ Missing |
 | harbor.core.changed_scope.detect_generator_integrity_changes | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.detect_tests_for_module | — | standard | ⚪ Missing |
+| harbor.core.init.Initializer.detect_typescript_hints | Detect TypeScript onboarding hints for `harbor init`. | standard | ⚪ Missing |
+| harbor.core.init.ProjectDetector.detect_typescript_hints | — | standard | ⚪ Missing |
 | harbor.core.utils.discover_indexable_files | — | standard | ⚪ Missing |
 | harbor.core.advice_config.AdviceSettings.enabled | — | standard | ⚪ Missing |
 | harbor.core.contract_presence.evaluate_contract_presence | — | standard | ⚪ Missing |

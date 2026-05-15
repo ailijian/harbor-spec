@@ -702,10 +702,23 @@ z.object/z.enum shallow source recognition
 export default function/class public surface evidence
 JSDoc / TSDoc proximity extraction
 generalized persistence with additive identity/contract metadata
+public boundary evidence metadata
+minimal re-export / package exports / tsconfig paths resolution for explainability
+project presets: legacy_exported / package_public / custom_entrypoints
 contract_gap
 skipped_no_contract
 unsupported_syntax_advisory
 harbor next deterministic guidance
+harbor next preset-aware boundary explanation
+```
+
+Public Boundary boundary in v1.4.x:
+
+```text
+Contract Source and Public Boundary Evidence are different layers.
+re-export / package exports / configured entrypoints are public-boundary evidence, not contract_source_kinds.
+public boundary metadata is additive explainability only.
+public boundary metadata does not enter contract_hash / body_hash / baseline comparison semantics.
 ```
 
 Not supported in TypeScript v1.4.x:
@@ -713,10 +726,10 @@ Not supported in TypeScript v1.4.x:
 ```text
 JavaScript first-class governance
 .js/.jsx/.tsx/.d.ts default scanning
-re-export graph
-package exports / tsconfig path alias
 TypeScript semantic audit
 TypeScript DDT
+full TypeScript compiler / full module graph
+full npm package resolution / bundler alias resolution
 full Zod semantics / schema-to-type consistency audit
 framework presets
 interface/type blocking gate

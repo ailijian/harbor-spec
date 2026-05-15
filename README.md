@@ -41,6 +41,92 @@ HarborSpec 的目标是：
 
 ---
 
+## 🚀 v1.4.3：TypeScript Public Boundary Resolution & Project Presets
+
+Harbor-spec v1.4.3 建立在 `v1.4.2` 已完成的 TypeScript persistence、`contract_hash` 与 accepted baseline comparison-compatible 基础之上，正式进入 **project-level public boundary governance**。
+
+### v1.4.3 当前支持
+
+* Public Boundary Evidence 模型：
+  * `direct_export`
+  * `default_export`
+  * `named_re_export`
+  * `star_re_export`
+  * `package_export`
+  * `configured_entrypoint`
+  * `declaration_surface_preview` 仅作为 future preview 占位
+* Public Boundary metadata / JSON additive explainability：
+  * `public_boundary_state`
+  * `public_boundary_confidence`
+  * `public_boundary_evidence_kinds`
+  * `public_boundary_evidence_items`
+  * `public_boundary_reason`
+  * `boundary_preset_mode`
+* Minimal boundary resolution：
+  * package root 识别
+  * 相对路径解析
+  * `.ts` 优先与 `index.ts` fallback
+  * 最小 `tsconfig baseUrl/paths` 支持
+  * package exports 规范化与常见 `dist/*.js -> src/*.ts` source mapping
+* Project-level public boundary presets：
+  * `legacy_exported`
+  * `package_public`
+  * `custom_entrypoints`
+* `harbor init` TypeScript governance guidance：
+  * 探测 `package.json`
+  * 探测 `tsconfig.json`
+  * 探测 `src/index.ts` / public entrypoint candidates
+  * 探测 `package.json exports`
+  * 探测 workspace / monorepo 标记
+* `harbor next` preset-aware explanation：
+  * 解释 direct export、re-export、package export、configured entrypoint、confidence 与 preset 的关系
+  * 继续保持只读解释，不写文件、不自动修复、不调用 `accept/log/lock`
+
+### v1.4.3 关键边界
+
+* `Contract Source` 与 `Public Boundary Evidence` 明确分离：
+  * re-export / package exports / configured entrypoints 不进入 `contract_source_kinds`
+  * boundary evidence 不进入 `contract_hash` / `body_hash`
+  * boundary metadata 变化不触发 `contract_changed` / `modified` / `drift`
+* 默认兼容策略保持不变：
+  * 默认仍是 `legacy_exported`
+  * `contract_required_strategy` 默认仍是 `legacy_exported`
+  * 非交互 `harbor init` 不会静默开启 TypeScript governance
+* Windows full-governance 继续是正式验收维度
+
+### v1.4.3 配置示例
+
+```yaml
+languages:
+  python:
+    enabled: true
+  typescript:
+    enabled: true
+    public_boundary:
+      mode: package_public
+      follow_re_exports: true
+      read_package_exports: true
+      use_tsconfig_paths: true
+      declaration_surface_preview: false
+      entrypoints: []
+      source_mappings: {}
+    contract_required_strategy: legacy_exported
+```
+
+### v1.4.3 明确不支持（Not Supported Yet）
+
+* JavaScript first-class governance
+* `.js/.jsx/.tsx/.d.ts` 默认扫描
+* TypeScript semantic audit
+* TypeScript DDT
+* full TypeScript compiler / full module graph
+* full npm package resolution / bundler alias resolution
+* framework-specific governance / validation
+* full Zod schema semantics / schema-to-type consistency audit
+* `interface/type`、Zod、boundary evidence 默认升级为 blocking gate
+
+---
+
 ## 🚀 v1.4.2.2：Windows JSON Stdout Compatibility Closure
 
 Harbor-spec v1.4.2.2 是围绕 Windows 主机编码兼容性的维护补丁版本，用于完成 cp1252 runner closure，并收口纯 JSON stdout 的统一输出策略。

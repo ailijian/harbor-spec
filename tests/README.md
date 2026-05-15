@@ -146,15 +146,21 @@
 | tests.test_checkpoint_ci._stub_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
 | tests.test_ci_mode._stub_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
 | tests.test_cli_v2._stub_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
+| tests.test_typescript_re_export_resolver._subject | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence._subject_by_name | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp._to_rel | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect._touch | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._touch | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._view_summary | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._with_repo_pythonpath | — | standard | ⚪ Missing |
+| tests.test_init_typescript_guidance._write | — | standard | ⚪ Missing |
 | tests.test_python_ddt_regression._write | — | standard | ⚪ Missing |
 | tests.test_sync_engine_registry_integration._write | — | standard | ⚪ Missing |
+| tests.test_typescript_boundary_resolution_paths._write | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._write | — | standard | ⚪ Missing |
+| tests.test_typescript_package_exports._write | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_presets._write | — | standard | ⚪ Missing |
+| tests.test_typescript_re_export_resolver._write | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact._write_artifact_from_current_snapshot | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration._write_config | — | standard | ⚪ Missing |
 | tests.test_sync_engine_registry_integration._write_config | — | standard | ⚪ Missing |
@@ -244,6 +250,7 @@
 | tests.test_log_draft_cli.run_cmd | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.run_cmd | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance.run_cmd | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_next.run_cmd | — | standard | ⚪ Missing |
 | tests.test_workspace_i18n.run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_i18n_env.run_cmd_with_code | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.run_cmd_with_err | — | standard | ⚪ Missing |
@@ -268,6 +275,7 @@
 | tests.test_change_window_snapshot.test_bad_json_snapshot_is_skipped_with_warning | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_bad_snapshot_json_is_skipped_without_crashing | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_body_only_change_does_not_change_typescript_contract_hash | — | standard | ⚪ Missing |
+| tests.test_typescript_boundary_resolution_paths.test_boundary_resolution_supports_index_fallback_and_tsconfig_paths | — | standard | ⚪ Missing |
 | tests.test_baseline_artifact.test_build_checkpoint_baseline_artifact_rejects_duplicate_target_ids | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_build_diary_draft_classifies_diary_paths_separately | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_build_diary_draft_collects_required_fields_and_evidence | — | standard | ⚪ Missing |
@@ -275,6 +283,7 @@
 | tests.test_doctor.test_build_doctor_report_is_read_only | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_build_keeps_python_entry_shape_stable | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_build_saved_diary_draft_output_path_uses_reports_root_and_format | — | standard | ⚪ Missing |
+| tests.test_index_builder_registry_integration.test_build_uses_typescript_boundary_config_from_workspace | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_build_writes_typescript_additive_fields_into_runtime_cache_snapshot | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_canonical_config_language_wins_over_legacy | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_capsule_stale_uses_view_fingerprint_not_source_fingerprint | — | standard | ⚪ Missing |
@@ -368,6 +377,7 @@
 | tests.test_project_structure.test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_reads_metadata_from_pyproject | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_commit_alias_unchanged_maps_to_lock | — | standard | ⚪ Missing |
+| tests.test_sync_engine.test_compare_snapshots_ignores_public_boundary_metadata_only_changes | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_compute_module_fingerprint_is_stable_and_normalized | — | standard | ⚪ Missing |
 | tests.test_cli_config.test_config_add_list_remove | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_config_can_disable_python | — | standard | ⚪ Missing |
@@ -396,6 +406,7 @@
 | tests.test_contract_subject_model.test_contract_source_fingerprint_is_stable_for_same_text | — | standard | ⚪ Missing |
 | tests.test_contract_subject_model.test_contract_subject_min_serialization_is_stable | — | standard | ⚪ Missing |
 | tests.test_contract_subject_model.test_contract_subject_required_fields_are_present | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_presets.test_custom_entrypoints_preset_adds_configured_entrypoint_evidence | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.test_ddt_baseline_missing_is_advisory_with_guidance | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_ddt_validate_maps_to_check_fast | — | standard | ⚪ Missing |
 | tests.test_ddt_validate.test_ddt_validate_matrix | — | standard | ⚪ Missing |
@@ -544,11 +555,14 @@
 | tests.test_cli_i18n.test_init_provider_prompt_i18n_text | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_init_templates_package_resources_are_loadable | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_dry_run_i18n_purity | — | standard | ⚪ Missing |
+| tests.test_init_typescript_guidance.test_init_wizard_explicit_typescript_config_write_is_opt_in | — | standard | ⚪ Missing |
+| tests.test_init_typescript_guidance.test_init_wizard_noninteractive_keeps_typescript_guidance_advisory | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_prompts_are_single_language_after_selection | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_repair_guidance_mode_prompt_is_localized | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_run_is_encoding_safe_for_cp1252_noninteractive_zh | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_init_wizard_source_removes_legacy_yes_no_brackets | — | standard | ⚪ Missing |
+| tests.test_init_typescript_guidance.test_initializer_detects_typescript_hints_and_roots | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence.test_internal_helper_is_not_required | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_invalid_marker_falls_back_to_accept_with_explicit_note | — | standard | ⚪ Missing |
@@ -688,10 +702,12 @@
 | tests.test_typescript_next_guidance.test_next_explains_typescript_contract_gap | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_skipped_no_contract | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_unsupported_syntax_advisory | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_next.test_next_json_adds_boundary_explanation_and_guidance_notes | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_json_items_include_blocking_and_status_is_ok_even_for_fail_report | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_json_output_contract | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_json_preserves_typescript_additive_checkpoint_metadata | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_reads_checkpoint_report_and_groups_output | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_next.test_next_text_explains_package_public_boundary_relationship | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_unknown_category_graceful_degrade | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_no_changed_modules_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat.test_no_docstring_maps_to_empty_contract_sources | — | standard | ⚪ Missing |
@@ -707,6 +723,8 @@
 | tests.test_module_skill.test_normalize_skill_slug_rules_are_stable | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_normalized_source_content_for_fingerprint_converts_cr_to_lf | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_normalized_source_content_for_fingerprint_preserves_non_utf8_bytes | — | standard | ⚪ Missing |
+| tests.test_typescript_package_exports.test_package_exports_default_dist_mapping_adds_high_confidence_evidence | — | standard | ⚪ Missing |
+| tests.test_typescript_package_exports.test_package_exports_source_mapping_and_malformed_package_json_degrade_safely | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function | — | standard | ⚪ Missing |
@@ -740,6 +758,10 @@
 | tests.test_init_wizard.test_provider_fallback_accepts_name_deepseek | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_provider_fallback_accepts_number_2 | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_provider_invalid_input_shows_available_options | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_evidence.test_public_boundary_config_defaults_are_backward_compatible | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_evidence.test_public_boundary_config_normalizes_invalid_values_safely | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_evidence.test_public_boundary_evidence_items_are_sorted_and_deduped_deterministically | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_evidence.test_public_boundary_metadata_keeps_boundary_fields_additive | — | standard | ⚪ Missing |
 | tests.test_contract_presence.test_public_without_docstring_is_contract_gap_required | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_pyproject_declares_cli_runtime_dependencies | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | Release packaging allows multi-segment PEP 440 releases l... | standard | ⚪ Missing |
@@ -756,6 +778,7 @@
 | tests.test_python_audit_regression.test_python_semantic_audit_still_calls_provider_and_returns_ok | — | standard | ⚪ Missing |
 | tests.test_drafting.test_raise_when_llm_not_configured | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | — | standard | ⚪ Missing |
+| tests.test_typescript_re_export_resolver.test_re_export_resolver_adds_named_star_and_default_as_evidence | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_readme_and_readme_en_include_key_new_command_phrases | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_contains_release_key_commands | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | — | standard | ⚪ Missing |
@@ -768,6 +791,7 @@
 | tests.test_cli_init_output.test_real_harbor_init_dry_run_is_encoding_safe_under_cp1252 | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_real_harbor_init_is_encoding_safe_under_cp1252 | — | standard | ⚪ Missing |
 | tests.test_cli_init_output.test_real_harbor_init_writes_config_without_dangerous_py_excludes | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_evidence.test_registry_accepts_legacy_typescript_config_without_new_boundary_fields | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_registry_default_python_only_and_typescript_unconfigured_disabled | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | Backward-compatible alias test name kept to avoid baselin... | standard | ⚪ Missing |
@@ -869,6 +893,7 @@
 | tests.test_typescript_contract_presence.test_tsdoc_with_code_gap_is_not_attached_to_symbol | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_adapter_discover_only_ts_and_excludes_js_family | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_typescript_adapter_does_not_change_python_adapter_parse_file_behavior | — | standard | ⚪ Missing |
+| tests.test_typescript_public_boundary_evidence.test_typescript_adapter_emits_public_boundary_metadata_without_changing_contract_hash | — | standard | ⚪ Missing |
 | tests.test_python_ddt_regression.test_typescript_binding_is_advisory_and_does_not_change_python_rules | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci.test_typescript_checkpoint_categories_and_identity_fields_are_constrained | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_typescript_checkpoint_json_adds_task6_metadata_without_changing_category | — | standard | ⚪ Missing |
@@ -884,6 +909,7 @@
 | tests.test_repair_guidance.test_unknown_checkpoint_category_graceful_degrade | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule.test_unknown_module_does_not_crash_and_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale | — | standard | ⚪ Missing |
+| tests.test_typescript_re_export_resolver.test_unresolved_re_export_is_ignored_without_crashing | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_up_to_date_when_fingerprint_matches | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated.test_verify_generated_ci_json_uses_ci_failures_and_exit_code | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated.test_verify_generated_default_is_changed_scope | — | standard | ⚪ Missing |
