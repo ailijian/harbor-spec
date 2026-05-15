@@ -292,8 +292,12 @@ def _resolve_boundary_reason(
     is_exported: bool,
 ) -> str:
     if normalized_items:
-        first = normalized_items[0]
-        if first.reason:
+        preferred_kinds = _preferred_reason_kinds(state)
+        preferred = _select_preferred_reason_item(normalized_items, preferred_kinds)
+        if preferred and preferred.reason:
+            return preferred.reason
+        first = _select_preferred_reason_item(normalized_items, None)
+        if first and first.reason:
             return first.reason
         if state == PublicBoundaryState.DIRECT_EXPORT_ONLY.value:
             return "Target has direct export evidence only; broader public boundary is not yet confirmed."
@@ -308,6 +312,48 @@ def _resolve_boundary_reason(
     if not is_exported:
         return "Target is internal or has no confirmed public boundary evidence."
     return "No confirmed public boundary evidence is available beyond legacy exported semantics."
+
+
+def _preferred_reason_kinds(state: str) -> Optional[Tuple[PublicBoundaryEvidenceKind, ...]]:
+    if state == PublicBoundaryState.CONFIGURED_ENTRYPOINT_SURFACE.value:
+        return (PublicBoundaryEvidenceKind.CONFIGURED_ENTRYPOINT,)
+    if state == PublicBoundaryState.PACKAGE_EXPORT_SURFACE.value:
+        return (PublicBoundaryEvidenceKind.PACKAGE_EXPORT,)
+    if state == PublicBoundaryState.RE_EXPORTED_SURFACE.value:
+        return (
+            PublicBoundaryEvidenceKind.NAMED_RE_EXPORT,
+            PublicBoundaryEvidenceKind.STAR_RE_EXPORT,
+        )
+    if state == PublicBoundaryState.DECLARATION_SURFACE_PREVIEW.value:
+        return (PublicBoundaryEvidenceKind.DECLARATION_SURFACE_PREVIEW,)
+    if state == PublicBoundaryState.DIRECT_EXPORT_ONLY.value:
+        return (
+            PublicBoundaryEvidenceKind.DEFAULT_EXPORT,
+            PublicBoundaryEvidenceKind.DIRECT_EXPORT,
+        )
+    return None
+
+
+def _select_preferred_reason_item(
+    items: Sequence[PublicBoundaryEvidence],
+    preferred_kinds: Optional[Tuple[PublicBoundaryEvidenceKind, ...]],
+) -> Optional[PublicBoundaryEvidence]:
+    candidates = list(items)
+    if preferred_kinds is not None:
+        candidates = [item for item in candidates if item.kind in preferred_kinds]
+    if not candidates:
+        return None
+    ordered = sorted(
+        candidates,
+        key=lambda item: (
+            -_confidence_score(item.confidence),
+            item.kind.value,
+            str(item.source_file or ""),
+            str(item.source_ref or ""),
+            str(item.resolved_target or ""),
+        ),
+    )
+    return ordered[0]
 
 
 def _normalize_boundary_confidence(value: Any) -> PublicBoundaryConfidence:

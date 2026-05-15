@@ -36,6 +36,7 @@ from harbor.core.index_entry import (
 )
 from harbor.core.storage import HarborDB
 from harbor.core.workspace import resolve_workspace_config_path
+from harbor.core.workspace import load_workspace_config
 
 
 @dataclass
@@ -101,7 +102,7 @@ def process_file_worker(fp: str) -> Tuple[str, float, List[Dict[str, Any]], Opti
         mtime = p.stat().st_mtime
         items: List[Dict[str, Any]] = []
         if p.suffix.lower() == ".ts" and not str(p.name).lower().endswith(".d.ts"):
-            adapter = TypeScriptAdapter()
+            adapter = TypeScriptAdapter(config=_load_worker_typescript_config(p))
             for subject in adapter.parse_file(fp):
                 items.append(contract_subject_to_index_entry(subject))
             return fp, mtime, items, None
@@ -125,6 +126,31 @@ def process_file_worker(fp: str) -> Tuple[str, float, List[Dict[str, Any]], Opti
         except Exception:
             mtime = 0.0
         return fp, mtime, [], str(ex)
+
+
+def _load_worker_typescript_config(path: Path) -> Dict[str, Any]:
+    repo_root = _detect_workspace_root(path)
+    loaded = load_workspace_config(repo_root)
+    config = loaded.get("config") or {}
+    if not isinstance(config, dict):
+        return {}
+    languages = config.get("languages") or {}
+    if not isinstance(languages, dict):
+        return {}
+    typescript = languages.get("typescript") or {}
+    if not isinstance(typescript, dict):
+        return {}
+    return dict(typescript)
+
+
+def _detect_workspace_root(path: Path) -> Path:
+    candidate = Path(path).resolve()
+    for parent in (candidate.parent, *candidate.parents):
+        if (parent / ".harbor" / "config" / "harbor.yaml").exists():
+            return parent
+        if (parent / ".harbor" / "config.yaml").exists():
+            return parent
+    return Path.cwd().resolve()
 
 
 class IndexBuilder:

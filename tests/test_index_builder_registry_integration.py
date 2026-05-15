@@ -316,3 +316,54 @@ def test_build_writes_typescript_additive_fields_into_runtime_cache_snapshot(tmp
     ]
     assert item["public_boundary_reason"] == "Target is exported directly from its declaring source file."
     assert item["boundary_preset_mode"] == "legacy_exported"
+
+
+def test_build_uses_typescript_boundary_config_from_workspace(tmp_path: Path):
+    cfg_path = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    _write_config(
+        cfg_path,
+        {
+            "code_roots": [str(tmp_path / "src")],
+            "languages": {
+                "python": {"enabled": True},
+                "typescript": {
+                    "enabled": True,
+                    "public_boundary": {
+                        "mode": "custom_entrypoints",
+                        "entrypoints": ["src/public.ts"],
+                    },
+                },
+            },
+        },
+    )
+    _write_file(
+        tmp_path / "src" / "service.ts",
+        textwrap.dedent(
+            """
+            /**
+             * @param value input
+             * @returns output
+             */
+            export function api(value: string): string {
+              return value.trim();
+            }
+            """
+        ).strip(),
+    )
+    _write_file(tmp_path / "src" / "public.ts", 'export { api } from "./service";\n')
+    cache_dir = tmp_path / ".harbor" / "cache"
+    builder = IndexBuilder(
+        code_roots=[str(tmp_path / "src")],
+        cache_dir=cache_dir,
+        config_path=cfg_path,
+    )
+
+    report = builder.build(incremental=False)
+    payload = json.loads((cache_dir / "l3_index.json").read_text(encoding="utf-8"))
+    file_key = next(key for key in payload["files"] if key.endswith("service.ts"))
+    item = payload["files"][file_key]["items"][0]
+
+    assert report.scanned_files == 2
+    assert item["boundary_preset_mode"] == "custom_entrypoints"
+    assert item["public_boundary_state"] == "configured_entrypoint_surface"
+    assert "configured_entrypoint" in item["public_boundary_evidence_kinds"]

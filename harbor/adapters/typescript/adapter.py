@@ -10,8 +10,10 @@ from harbor.adapters.typescript.parser import TypeScriptLightweightParser
 from harbor.adapters.typescript.public_boundary import (
     build_public_boundary_metadata,
     initial_public_boundary_evidence_for_symbol,
+    normalize_public_boundary_evidence_items,
     normalize_typescript_governance_config,
 )
+from harbor.adapters.typescript.resolution import TypeScriptBoundaryResolver
 from harbor.adapters.typescript.symbols import TypeScriptSymbol
 
 
@@ -43,6 +45,7 @@ class TypeScriptAdapter:
         self._typescript_config = dict(config or {})
         self._public_boundary_config = dict(governance["public_boundary"])
         self._contract_required_strategy = str(governance["contract_required_strategy"])
+        self._boundary_resolver = TypeScriptBoundaryResolver(config=self._public_boundary_config)
 
     def discover_files(self, roots: Sequence[Path]) -> List[Path]:
         discovered: Dict[str, Path] = {}
@@ -95,6 +98,16 @@ class TypeScriptAdapter:
                 source_file=normalized_path,
                 source_ref=str(symbol.qualified_name or symbol.name or ""),
                 resolved_target=target_id,
+            )
+            boundary_evidence = normalize_public_boundary_evidence_items(
+                list(boundary_evidence)
+                + list(
+                    self._boundary_resolver.collect_evidence(
+                        file_path=normalized_path,
+                        symbol=symbol,
+                        target_id=target_id,
+                    )
+                )
             )
             metadata = {
                 "export_kind": symbol.export_kind,
