@@ -1,3 +1,48 @@
+# Harbor-spec v1.4.5 — Workflow UX & Preview Productization
+
+状态：规划中  
+发布类型：Workflow UX / Advisory Reconciliation / Performance Baseline / Preview Productization
+
+## Summary
+
+- `v1.4.5` 建立在 `v1.4.4` 已完成的 TypeScript Verification Preview 基础之上。
+- 本版本不继续横向扩张治理能力边界，而是转向产品成熟度收口。
+- 当前版本定位聚焦四项：治理遗留项收口、日常工作流即时反馈增强、运行性能基线建立、Preview 能力产品化交付。
+
+## Positioning
+
+- 治理遗留项收口
+- 日常工作流即时反馈增强
+- 运行性能基线建立
+- Preview 能力产品化交付
+
+## Non-Goals
+
+- 不做 JavaScript first-class governance
+- 不做 TSX / JSX / `.d.ts` 扩张
+- 不把 TS DDT Preview 升级为正式 gate
+- 不把 TS Semantic Audit Preview 升级为正式 gate
+- 不做 Jest / Vitest AST inference
+- 不做 coverage proof
+- 不做自动 test-to-target binding
+- 不做大规模性能架构重构
+- 不在本版本完成真实外部项目 pilot
+
+## Implementation Order
+
+- `Task Group B` | DDT Advisory 存量收口
+- `Task Group C` | Progress Feedback Framework
+- `Task Group D` | Performance Baseline Report
+- `Task Group A` | Preview 使用体验产品化
+
+## References
+
+- `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
+- `README.md`
+- `README.en.md`
+
+---
+
 # Harbor-spec v1.4.4 — TypeScript Verification Preview
 
 状态：正式版  

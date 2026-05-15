@@ -111,6 +111,23 @@ def test_release_notes_reference_python_ddt_reconciliation_report():
     assert "`ddt_advisory=5`" not in release_text
 
 
+def test_release_notes_include_v145_plan_summary():
+    release_text = (_repo_root() / "RELEASE.md").read_text(encoding="utf-8")
+    assert "# Harbor-spec v1.4.5 — Workflow UX & Preview Productization" in release_text
+    assert "状态：规划中" in release_text
+    assert "治理遗留项收口" in release_text
+    assert "日常工作流即时反馈增强" in release_text
+    assert "运行性能基线建立" in release_text
+    assert "Preview 能力产品化交付" in release_text
+    assert "不做 JavaScript first-class governance" in release_text
+    assert "不做大规模性能架构重构" in release_text
+    assert "`Task Group B` | DDT Advisory 存量收口" in release_text
+    assert "`Task Group C` | Progress Feedback Framework" in release_text
+    assert "`Task Group D` | Performance Baseline Report" in release_text
+    assert "`Task Group A` | Preview 使用体验产品化" in release_text
+    assert "docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md" in release_text
+
+
 def test_python_ddt_reconciliation_report_is_present_and_explicit():
     report_text = (_repo_root() / ".harbor" / "reports" / "python-ddt-advisory-reconciliation.md").read_text(
         encoding="utf-8"
