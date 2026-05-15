@@ -78,9 +78,12 @@
   - `ci_failures=0`
 - generated context closure completed via `harbor finish --sync-context -> harbor project structure --write -> harbor docs --all --write -> harbor module seal --all --write`
 - release acceptance for preview semantic audit remains mock / deterministic-provider based and does not depend on a real LLM
-- non-blocking follow-up remains:
-  - `ddt_advisory=5`
-  - classification: existing governance backlog, not a v1.4.4 release blocker
+- Python DDT advisory reconciliation completed:
+  - `5` strict Python test bindings / `2` unique `func_id`
+  - category: `ddt_version_baseline_missing`
+  - adjudication: `ACCEPTED_BACKLOG`, not a `v1.4.4` release blocker
+  - reason: accepted checkpoint baseline exists, but Harbor does not yet persist a repo-owned `l3_version` baseline source for reviewed Python DDT bindings
+  - report: `.harbor/reports/python-ddt-advisory-reconciliation.md`
 
 ---
 

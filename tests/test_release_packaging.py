@@ -104,6 +104,27 @@ def test_release_notes_include_unreleased_v130_track():
     test_release_notes_include_v130_release_track()
 
 
+def test_release_notes_reference_python_ddt_reconciliation_report():
+    release_text = (_repo_root() / "RELEASE.md").read_text(encoding="utf-8")
+    assert "Python DDT advisory reconciliation completed" in release_text
+    assert ".harbor/reports/python-ddt-advisory-reconciliation.md" in release_text
+    assert "`ddt_advisory=5`" not in release_text
+
+
+def test_python_ddt_reconciliation_report_is_present_and_explicit():
+    report_text = (_repo_root() / ".harbor" / "reports" / "python-ddt-advisory-reconciliation.md").read_text(
+        encoding="utf-8"
+    )
+    assert "# Python DDT Advisory Reconciliation Report" in report_text
+    assert "Observed advisory bindings: `5`" in report_text
+    assert "Unique `func_id`: `2`" in report_text
+    assert "harbor.core.sync.SyncEngine.check_status" in report_text
+    assert "harbor.utils.formatting.format_size" in report_text
+    assert "`RESOLVE_NOW`" in report_text
+    assert "`ACCEPTED_BACKLOG`" in report_text
+    assert "`NEEDS_FOLLOW_UP`" in report_text
+
+
 def test_source_of_truth_priority_and_conflict_docs_are_present():
     repo = _repo_root()
 

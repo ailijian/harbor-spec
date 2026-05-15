@@ -40,7 +40,41 @@ It is a repo-local **context governance layer**.
 
 ---
 
-## 🚀 v1.4.4: TypeScript Verification Preview (Current Closure Theme)
+## 🚀 v1.4.5: Workflow UX & Preview Productization (Current Delivery Focus)
+
+Harbor-spec `v1.4.5` builds on the TypeScript Verification Preview completed in `v1.4.4`. The current focus is no longer expanding governance scope horizontally, but closing the gap between capability and day-to-day product usability.
+
+### Positioning in v1.4.5
+
+* close existing governance leftovers
+* improve real-time feedback in daily workflows
+* establish a runtime performance baseline
+* productize the preview experience for external adoption
+
+### Explicit non-goals in v1.4.5
+
+* no new JavaScript first-class governance
+* no expansion to TSX / JSX / `.d.ts`
+* no upgrade of TS DDT Preview or Semantic Audit Preview into a formal gate
+* no Jest / Vitest AST inference, coverage proof, or automatic test-to-target binding
+* no large-scale performance architecture refactor
+
+### Implementation order
+
+```text
+Task Group B | DDT Advisory reconciliation
+Task Group C | Progress Feedback Framework
+Task Group D | Performance Baseline Report
+Task Group A | Preview productization
+```
+
+For details, see:
+
+* `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
+
+---
+
+## 🚀 v1.4.4: TypeScript Verification Preview (Previous Closure Theme)
 
 Harbor-spec v1.4.4 builds on the TypeScript contract-source and public-boundary governance completed in `v1.4.3`, and brings TypeScript into **verification preview** for the first time. Its formal theme is:
 

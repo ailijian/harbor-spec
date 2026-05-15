@@ -41,7 +41,41 @@ HarborSpec 的目标是：
 
 ---
 
-## 🚀 v1.4.4：TypeScript Verification Preview（当前收口主题）
+## 🚀 v1.4.5：Workflow UX & Preview Productization（当前实施主题）
+
+Harbor-spec `v1.4.5` 建立在 `v1.4.4` 已完成的 TypeScript Verification Preview 基础之上，当前重点不是继续横向扩张治理能力，而是做产品成熟度收口。
+
+### v1.4.5 版本定位
+
+* 治理遗留项收口
+* 日常工作流即时反馈增强
+* 运行性能基线建立
+* Preview 能力产品化交付
+
+### v1.4.5 明确非目标
+
+* 不新增 JavaScript first-class governance
+* 不扩大到 TSX / JSX / `.d.ts`
+* 不把 TS DDT Preview / Semantic Audit Preview 升级为正式 gate
+* 不做 Jest / Vitest AST inference、coverage proof、自动 test-to-target binding
+* 不做大规模性能架构重构
+
+### v1.4.5 实施顺序
+
+```text
+Task Group B｜DDT Advisory 存量收口
+Task Group C｜Progress Feedback Framework
+Task Group D｜Performance Baseline Report
+Task Group A｜Preview 使用体验产品化
+```
+
+更多细节见：
+
+* `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
+
+---
+
+## 🚀 v1.4.4：TypeScript Verification Preview（上一阶段收口主题）
 
 Harbor-spec v1.4.4 建立在 `v1.4.3` 已完成的 TypeScript contract source 与 public boundary governance 基础之上，首次把 TypeScript 纳入 **verification preview**，正式主题为：
 
