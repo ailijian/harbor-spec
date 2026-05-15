@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.4"
+harbor_version: "1.4.5"
 view_type: "review_checklist"
 module: "harbor/utils"
-generated_at: "2026-05-15T17:05:54Z"
+generated_at: "2026-05-15T17:41:00Z"
 generation_command: "harbor module seal harbor/utils --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -14,7 +14,7 @@ source_paths:
   - "harbor/utils/i18n.py"
 source_fingerprint: "sha256:c9f9e2225a3519d07a8b60e11edd6d6f663db4eb0835f6f97487b1ff64d37729"
 contract_fingerprint: "sha256:885d2ce9187f1f00625f908557d61bb1becce82dd1922e18e33a7a9b2420383c"
-generator_fingerprint: "sha256:8d59d06917be3aebb8d3133804540b9421d7c0780a261b232fef4a2c53b057ea"
+generator_fingerprint: "sha256:eadcf0a1aa08dab7adb1a4c205d99d38bfe01803de18aac5ece490c3f07ecb13"
 ---
 
 # Review Checklist: harbor/utils

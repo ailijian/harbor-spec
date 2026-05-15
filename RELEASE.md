@@ -1,47 +1,64 @@
 # Harbor-spec v1.4.5 — Workflow UX & Preview Productization
 
-状态：发布前治理收口中  
+状态：正式版  
 发布类型：Workflow UX / Advisory Reconciliation / Performance Baseline / Preview Productization
+
+## 版本主题
+
+Workflow UX & Preview Productization
 
 ## Summary
 
 - `v1.4.5` 建立在 `v1.4.4` 已完成的 TypeScript Verification Preview 基础之上。
-- 本版本不继续横向扩张治理能力边界，而是转向产品成熟度收口。
-- 当前版本定位聚焦四项：治理遗留项收口、日常工作流即时反馈增强、运行性能基线建立、Preview 能力产品化交付。
+- 本版本不继续横向扩张治理能力边界，而是转向产品成熟度与工作流体验收口。
+- 当前版本定位聚焦四项：DDT advisory reconciliation、Progress Feedback Framework、Runtime Performance Baseline、Preview Productization。
 
-## Closure Snapshot
+## 四条完成面
 
-- DDT advisory reconciliation completed:
-  - `5` 条 Python strict DDT advisory 已正式归类为 `ACCEPTED_BACKLOG`。
-  - advisory category 保持 `ddt_version_baseline_missing`，当前不阻塞发布前治理，因为仓库尚无 repo-owned `l3_version` baseline source。
-  - 正式裁决报告：`.harbor/reports/python-ddt-advisory-reconciliation.md`
-- Progress Feedback Framework closure completed:
-  - `checkpoint` / `finish` / `check` / `verify-generated` / `docs` / `module seal` / `stale` / `doctor` 已具备统一文本进度反馈。
-  - `stale` / `doctor` 文本路径的进度分阶段反馈已补齐。
-  - progress phase label 已改为本地化渲染文本，不再泄漏原始 `cli.progress.label.*` i18n key。
-  - `--format json` / `--format jsonl` / `--ci` 机器输出继续保持单对象纯净，不混入 progress 文本。
-- Runtime Performance Baseline established:
-  - 基线报告：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.md`
-  - 机器可读版本：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.json`
-  - `v1.4.5` 仅收口低风险 quick win：`finish` 复用首次状态报告；不扩大为结构性性能重构。
-- Preview productization entrypoints aligned:
-  - guide：`docs/guides/typescript-verification-preview.md`
-  - examples：`examples/typescript-verification-preview/README.md`
-  - demo：`examples/typescript-verification-preview/package-public/README.md`
-  - troubleshooting：`docs/guides/typescript-verification-preview-troubleshooting.md`
+1. DDT advisory reconciliation
+   - `5` 条 Python strict DDT advisory 已正式裁决为 `ACCEPTED_BACKLOG`
+   - advisory category 保持 `ddt_version_baseline_missing`
+   - 当前不阻塞 `v1.4.5` 正式发布，因为仓库尚无 repo-owned `l3_version` baseline source
+   - 正式裁决报告：`.harbor/reports/python-ddt-advisory-reconciliation.md`
+2. Progress Feedback Framework
+   - `checkpoint` / `finish` / `verify-generated` / `docs` / `module seal` / `stale` / `doctor` / `accept` / `project structure` / `adopt` 已具备统一文本进度反馈
+   - `stale` / `doctor` progress coverage 已补齐
+   - progress i18n label 渲染问题已修复，不再泄漏原始 `cli.progress.label.*` key
+   - `--format json` / `--format jsonl` / `--ci` 机器输出纯度保持不回归
+3. Runtime Performance Baseline
+   - 基线报告：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.md`
+   - 机器可读版本：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.json`
+   - `finish` 重复状态扫描 quick win 已落地
+   - 结构性性能优化明确延后到后续版本再判断
+4. Preview Productization
+   - sidecar example：`examples/typescript-verification-preview/README.md`
+   - package-public demo：`examples/typescript-verification-preview/package-public/README.md`
+   - semantic audit preview demo：`examples/typescript-verification-preview/semantic-audit-preview/README.md`
+   - guide：`docs/guides/typescript-verification-preview.md`
+   - troubleshooting：`docs/guides/typescript-verification-preview-troubleshooting.md`
+   - README 入口：`README.md` / `README.en.md`
 
-## Governance Note
+## DDT Advisory 状态
 
-- 本轮为发布前治理收口阶段，不在此处声称 baseline 已接受。
-- `harbor accept` 仍需人工显式授权后单独执行。
-- `harbor log write` 仍需人工显式授权后单独执行。
+- `ddt_version_baseline_missing=5`
+- 已正式裁决为 `ACCEPTED_BACKLOG`
+- `non-blocking`
+
+## 发布验证事实
+
+- `pytest`：最终全量通过
+- `checkpoint --ci --format json --advice basic`：post-accept `PASS`
+- `stale --ci --format json`：`PASS`
+- `doctor --ci --format json`：`PASS`
+- `verify-generated --changed --ci --format json`：`PASS`
+- `verify-generated --all --ci --format json`：`PASS`
+- accepted baseline：已更新
+- Diary：正式写入
 
 ## Positioning
 
-- 治理遗留项收口
-- 日常工作流即时反馈增强
-- 运行性能基线建立
-- Preview 能力产品化交付
+- 本版本不扩治理边界，而是产品成熟度与工作流体验版本
+- 正式完成基线接受、发布说明封板、全量上下文刷新与全量发版验证
 
 ## Non-Goals
 
@@ -54,13 +71,6 @@
 - 不做自动 test-to-target binding
 - 不做大规模性能架构重构
 - 不在本版本完成真实外部项目 pilot
-
-## Implementation Order
-
-- `Task Group B` | DDT Advisory 存量收口
-- `Task Group C` | Progress Feedback Framework
-- `Task Group D` | Performance Baseline Report
-- `Task Group A` | Preview 使用体验产品化
 
 ## References
 

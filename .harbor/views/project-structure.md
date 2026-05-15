@@ -1,8 +1,8 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.4"
+harbor_version: "1.4.5"
 view_type: "project_structure"
-generated_at: "2026-05-15T17:05:09Z"
+generated_at: "2026-05-15T17:51:59Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
 source_path_count: 175
@@ -128,9 +128,9 @@ source_paths:
   - "tests/test_drafting_json_parse.py"
   - "tests/test_generated_verify.py"
   - "tests/test_gitignore_prune.py"
-source_fingerprint: "sha256:349aebed56c5fbc205c23302c49d70a86d3d93be4962d1119eeeddba304847cf"
+source_fingerprint: "sha256:afb747babad225ecdff5a39e2ee3db61708fc963fde2dc26054db9d86b2b68d5"
 contract_fingerprint: "sha256:a33771d5bf0859efceb6eed457d695f1eab4546caa3f52d75a82c1ac9817d1b3"
-generator_fingerprint: "sha256:b78ec196e18751875fff14d05295b41b8917332aa8ffe1d45bc1ab1ed10b1463"
+generator_fingerprint: "sha256:7cb91b5679a749a52609ee0fa3a3dd00d7c00ee2ec863c6a6bf002de3cde8266"
 ---
 
 # Project Structure
@@ -143,7 +143,7 @@ generator_fingerprint: "sha256:b78ec196e18751875fff14d05295b41b8917332aa8ffe1d45
 | Field | Value |
 |---|---|
 | Name | harbor-spec |
-| Version | 1.4.4 |
+| Version | 1.4.5 |
 | Description | Harbor-spec: context governance engine for AI coding, with contract drift detection, DDT validation, workflow facades, L2 README generation, module capsules, and advisory health checks. |
 | CLI Entrypoint | harbor.cli.main:main |
 

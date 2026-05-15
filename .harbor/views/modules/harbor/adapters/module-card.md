@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.4"
+harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/adapters"
-generated_at: "2026-05-15T17:05:37Z"
+generated_at: "2026-05-15T17:41:00Z"
 generation_command: "harbor module seal harbor/adapters --write"
 stale_policy: "advisory"
 source_path_count: 14
@@ -25,7 +25,7 @@ source_paths:
   - "harbor/adapters/typescript/symbols.py"
 source_fingerprint: "sha256:6a433baa93a5c80949db63d102714fe56d974b01f6fb266fa5ae72915697786d"
 contract_fingerprint: "sha256:be95ae47fba14443799ae49a038c64f2817468f34b4ee441026aca92817a3f58"
-generator_fingerprint: "sha256:3cd0a23bc07763f83ef8156adeecebe6acdc1a18f0461cd1c6f001d4216ba45e"
+generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
 view_fingerprint: "4871ed67ec6aa7c6704ca1c9483e596f6435415fa6176ad2e9cabbab91b41e1f"
 fingerprint: "4871ed67ec6aa7c6704ca1c9483e596f6435415fa6176ad2e9cabbab91b41e1f"
 ---

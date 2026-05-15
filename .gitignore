@@ -212,6 +212,7 @@ __marimo__/
 # Harbor local runtime state
 .harbor/state/
 .harbor/cache/
+examples/**/.harbor/state/
 
 # Harbor export staging
 .harbor/exports/

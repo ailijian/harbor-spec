@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.4"
+harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "tests"
-generated_at: "2026-05-15T17:06:03Z"
+generated_at: "2026-05-15T17:51:59Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 111
@@ -120,9 +120,9 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:9aaa045e5eb3b0265396119366d44a943d1147b6f34bf981ed7579676e1aab5c"
+source_fingerprint: "sha256:b0889d4985d1a042bbc8d16e7f657edd60bfe345a9b5c58aa16c7590487b8b94"
 contract_fingerprint: "sha256:21ea3a9645429a7f63cc4ed2de802cd2dad64871a8eefca81418d501b5f0342d"
-generator_fingerprint: "sha256:5477e26b374378db6ee243a1618aae255a1c3f1a9e5bd12a156045de96c605c4"
+generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2d5a103de17b5441"
 ---
 
 # Debug Playbook: tests

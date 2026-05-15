@@ -114,23 +114,22 @@ def test_release_notes_reference_python_ddt_reconciliation_report():
 def test_release_notes_include_v145_plan_summary():
     release_text = (_repo_root() / "RELEASE.md").read_text(encoding="utf-8")
     assert "# Harbor-spec v1.4.5 — Workflow UX & Preview Productization" in release_text
-    assert "状态：发布前治理收口中" in release_text
-    assert "治理遗留项收口" in release_text
-    assert "日常工作流即时反馈增强" in release_text
-    assert "运行性能基线建立" in release_text
-    assert "Preview 能力产品化交付" in release_text
-    assert "DDT advisory reconciliation completed" in release_text
-    assert "Progress Feedback Framework closure completed" in release_text
-    assert "Runtime Performance Baseline established" in release_text
-    assert "Preview productization entrypoints aligned" in release_text
-    assert "`harbor accept` 仍需人工显式授权后单独执行。" in release_text
-    assert "`harbor log write` 仍需人工显式授权后单独执行。" in release_text
+    assert "状态：正式版" in release_text
+    assert "## 版本主题" in release_text
+    assert "Workflow UX & Preview Productization" in release_text
+    assert "## 四条完成面" in release_text
+    assert "1. DDT advisory reconciliation" in release_text
+    assert "2. Progress Feedback Framework" in release_text
+    assert "3. Runtime Performance Baseline" in release_text
+    assert "4. Preview Productization" in release_text
+    assert "## DDT Advisory 状态" in release_text
+    assert "`ddt_version_baseline_missing=5`" in release_text
+    assert "`ACCEPTED_BACKLOG`" in release_text
+    assert "## 发布验证事实" in release_text
+    assert "Diary：正式写入" in release_text
+    assert "accepted baseline：已更新" in release_text
     assert "不做 JavaScript first-class governance" in release_text
     assert "不做大规模性能架构重构" in release_text
-    assert "`Task Group B` | DDT Advisory 存量收口" in release_text
-    assert "`Task Group C` | Progress Feedback Framework" in release_text
-    assert "`Task Group D` | Performance Baseline Report" in release_text
-    assert "`Task Group A` | Preview 使用体验产品化" in release_text
     assert "docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md" in release_text
 
 

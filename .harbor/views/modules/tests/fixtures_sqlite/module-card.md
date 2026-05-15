@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.4"
+harbor_version: "1.4.5"
 view_type: "module_card"
 module: "tests/fixtures_sqlite"
-generated_at: "2026-05-15T13:39:41Z"
+generated_at: "2026-05-15T17:41:00Z"
 generation_command: "harbor module seal tests/fixtures_sqlite --write"
 stale_policy: "advisory"
 source_path_count: 1
@@ -12,7 +12,7 @@ source_paths:
   - "tests/fixtures_sqlite/sample.py"
 source_fingerprint: "sha256:4366e71d00d3548af0c9334a2541193888a12981225580bbd4470ac2065d9fc2"
 contract_fingerprint: "sha256:6297e41a589efd86eb34a56f81c76bcaf2266209e98a8a393bf6ce58f01f9f51"
-generator_fingerprint: "sha256:3cd0a23bc07763f83ef8156adeecebe6acdc1a18f0461cd1c6f001d4216ba45e"
+generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
 view_fingerprint: "99b9f111854aeedd60431bda246e8fcd249ddf2e47c1b326d62b13135fe3acbf"
 fingerprint: "99b9f111854aeedd60431bda246e8fcd249ddf2e47c1b326d62b13135fe3acbf"
 ---

@@ -40,7 +40,7 @@ It is a repo-local **context governance layer**.
 
 ---
 
-## 🚀 v1.4.5: Workflow UX & Preview Productization (Current Delivery Focus)
+## 🚀 v1.4.5: Workflow UX & Preview Productization (Current Stable Release)
 
 Harbor-spec `v1.4.5` builds on the TypeScript Verification Preview completed in `v1.4.4`. The current focus is no longer expanding governance scope horizontally, but closing the gap between capability and day-to-day product usability.
 
@@ -97,9 +97,9 @@ For details, see:
 
 Current status:
 
-* `v1.4.5` is still in pre-release governance closure and does not claim baseline acceptance here
-* `harbor accept` still requires separate explicit human authorization
-* `harbor log write` still requires separate explicit human authorization
+* `v1.4.5` has completed baseline acceptance, formal Diary write, full context closure, and full release validation
+* `ddt_version_baseline_missing=5` is formally adjudicated as `ACCEPTED_BACKLOG` and remains non-blocking
+* `v1.4.5` does not expand governance scope; it is a product-maturity and workflow-UX closure release
 
 ### Try TypeScript Verification Preview
 

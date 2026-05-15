@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.4"
+harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "harbor"
-generated_at: "2026-05-15T16:43:42Z"
+generated_at: "2026-05-15T17:41:00Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 64
@@ -73,9 +73,9 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:e4c4a5f2fa54dba3b11848b5344c0508ffdbc5612c501b4088ae8bde80b650cd"
+source_fingerprint: "sha256:f789293797e041957758cb0dbb125e39c9fb9ef05e8c6abef92de3e60af92f91"
 contract_fingerprint: "sha256:f6a08c144dd34d6604f4fdd2f70eee0c1c06ba9858f050d4dab27f3d3e5a29fc"
-generator_fingerprint: "sha256:5477e26b374378db6ee243a1618aae255a1c3f1a9e5bd12a156045de96c605c4"
+generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2d5a103de17b5441"
 ---
 
 # Debug Playbook: harbor

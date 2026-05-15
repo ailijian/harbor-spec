@@ -41,7 +41,7 @@ HarborSpec 的目标是：
 
 ---
 
-## 🚀 v1.4.5：Workflow UX & Preview Productization（当前实施主题）
+## 🚀 v1.4.5：Workflow UX & Preview Productization（当前正式版本）
 
 Harbor-spec `v1.4.5` 建立在 `v1.4.4` 已完成的 TypeScript Verification Preview 基础之上，当前重点不是继续横向扩张治理能力，而是做产品成熟度收口。
 
@@ -98,9 +98,9 @@ Task Group A｜Preview 使用体验产品化
 
 当前说明：
 
-* `v1.4.5` 目前处于发布前治理收口阶段，不在此处声称 baseline 已接受
-* `harbor accept` 仍需人工显式授权后单独执行
-* `harbor log write` 仍需人工显式授权后单独执行
+* `v1.4.5` 已完成 baseline acceptance、正式 Diary 写入、全量 context closure 与全量发布验证
+* `ddt_version_baseline_missing=5` 已正式裁决为 `ACCEPTED_BACKLOG`，继续保持 non-blocking
+* `v1.4.5` 不扩治理边界，而是聚焦产品成熟度与工作流体验收口
 
 ### Try TypeScript Verification Preview
 
