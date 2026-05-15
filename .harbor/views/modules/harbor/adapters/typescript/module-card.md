@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.3"
 view_type: "module_card"
 module: "harbor/adapters/typescript"
-generated_at: "2026-05-15T07:55:35Z"
+generated_at: "2026-05-15T12:01:35Z"
 generation_command: "harbor module seal harbor/adapters/typescript --write"
 stale_policy: "advisory"
 source_path_count: 8
@@ -20,8 +20,8 @@ source_paths:
 source_fingerprint: "sha256:91cfd04c76c47b37c15481c1675c814d85cf52cd999d2c18cfec01c146b02e64"
 contract_fingerprint: "sha256:936f7c64785da71e89c4de5acbd3e0fa0e2012fd50a2874e8d7a97a1535cb420"
 generator_fingerprint: "sha256:1ee8496df063eaeaade1b1c2b744b9180548d3bdd6c342105d62952b748253d0"
-view_fingerprint: "e64a748def4bd9f767022a5545ca81c7a8c16cb4dd16e74099c8d454a851d64a"
-fingerprint: "e64a748def4bd9f767022a5545ca81c7a8c16cb4dd16e74099c8d454a851d64a"
+view_fingerprint: "e865ea423d0ed7b53db60e1489cb929c8ccb6a0bef0f4d22df7610254c9ec193"
+fingerprint: "e865ea423d0ed7b53db60e1489cb929c8ccb6a0bef0f4d22df7610254c9ec193"
 ---
 
 # Module Card: harbor/adapters/typescript
@@ -152,6 +152,7 @@ tests/test_typescript_adapter_mvp.py
 tests/test_typescript_boundary_resolution_paths.py
 tests/test_typescript_checkpoint_ci.py
 tests/test_typescript_contract_presence.py
+tests/test_typescript_ddt_preview.py
 tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
 tests/test_typescript_package_exports.py
