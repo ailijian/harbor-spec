@@ -1,0 +1,204 @@
+{
+  "advisory": [
+    {
+      "kind": "view",
+      "module": "harbor",
+      "reason": "canonical L2 README unavailable",
+      "status": "unknown",
+      "view": "l2_readme_export"
+    },
+    {
+      "kind": "view",
+      "module": "harbor/core",
+      "reason": "canonical L2 README unavailable",
+      "status": "unknown",
+      "view": "l2_readme_export"
+    },
+    {
+      "kind": "view",
+      "module": "tests",
+      "reason": "canonical L2 README unavailable",
+      "status": "unknown",
+      "view": "l2_readme_export"
+    }
+  ],
+  "ci": true,
+  "ci_failures": [
+    {
+      "guidance": {
+        "automation_policy": "safe_command_only",
+        "decision_required": false,
+        "notes": [
+          "safe_command_only means suggested safe commands only; no automatic command execution."
+        ],
+        "recommended_action": "Refresh generated context using Harbor commands.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-context-refresh",
+        "suggested_validation": [
+          "harbor finish --sync-context",
+          "harbor stale --ci --format json",
+          "harbor doctor --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "Generated context view is stale or unknown."
+      },
+      "kind": "view",
+      "module": "harbor",
+      "reason": "README content mismatch",
+      "status": "stale",
+      "suggested_command": "harbor docs --module harbor --write",
+      "view": "l2_readme"
+    },
+    {
+      "guidance": {
+        "automation_policy": "safe_command_only",
+        "decision_required": false,
+        "notes": [
+          "safe_command_only means suggested safe commands only; no automatic command execution."
+        ],
+        "recommended_action": "Refresh generated context using Harbor commands.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-context-refresh",
+        "suggested_validation": [
+          "harbor finish --sync-context",
+          "harbor stale --ci --format json",
+          "harbor doctor --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "Generated context view is stale or unknown."
+      },
+      "kind": "view",
+      "module": "harbor",
+      "reason": "fingerprint mismatch",
+      "status": "stale",
+      "suggested_command": "harbor module seal harbor --write",
+      "view": "module_capsule"
+    },
+    {
+      "guidance": {
+        "automation_policy": "safe_command_only",
+        "decision_required": false,
+        "notes": [
+          "safe_command_only means suggested safe commands only; no automatic command execution."
+        ],
+        "recommended_action": "Refresh generated context using Harbor commands.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-context-refresh",
+        "suggested_validation": [
+          "harbor finish --sync-context",
+          "harbor stale --ci --format json",
+          "harbor doctor --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "Generated context view is stale or unknown."
+      },
+      "kind": "view",
+      "module": "harbor/core",
+      "reason": "README content mismatch",
+      "status": "stale",
+      "suggested_command": "harbor docs --module harbor/core --write",
+      "view": "l2_readme"
+    },
+    {
+      "guidance": {
+        "automation_policy": "safe_command_only",
+        "decision_required": false,
+        "notes": [
+          "safe_command_only means suggested safe commands only; no automatic command execution."
+        ],
+        "recommended_action": "Refresh generated context using Harbor commands.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-context-refresh",
+        "suggested_validation": [
+          "harbor finish --sync-context",
+          "harbor stale --ci --format json",
+          "harbor doctor --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "Generated context view is stale or unknown."
+      },
+      "kind": "view",
+      "module": "harbor/core",
+      "reason": "fingerprint mismatch",
+      "status": "stale",
+      "suggested_command": "harbor module seal harbor/core --write",
+      "view": "module_capsule"
+    },
+    {
+      "guidance": {
+        "automation_policy": "safe_command_only",
+        "decision_required": false,
+        "notes": [
+          "safe_command_only means suggested safe commands only; no automatic command execution."
+        ],
+        "recommended_action": "Refresh generated context using Harbor commands.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-context-refresh",
+        "suggested_validation": [
+          "harbor finish --sync-context",
+          "harbor stale --ci --format json",
+          "harbor doctor --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "Generated context view is stale or unknown."
+      },
+      "kind": "view",
+      "module": "tests",
+      "reason": "README content mismatch",
+      "status": "stale",
+      "suggested_command": "harbor docs --module tests --write",
+      "view": "l2_readme"
+    },
+    {
+      "guidance": {
+        "automation_policy": "safe_command_only",
+        "decision_required": false,
+        "notes": [
+          "safe_command_only means suggested safe commands only; no automatic command execution."
+        ],
+        "recommended_action": "Refresh generated context using Harbor commands.",
+        "risk_level": "low",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-context-refresh",
+        "suggested_validation": [
+          "harbor finish --sync-context",
+          "harbor stale --ci --format json",
+          "harbor doctor --ci --format json"
+        ],
+        "user_feedback_required": false,
+        "what_happened": "Generated context view is stale or unknown."
+      },
+      "kind": "view",
+      "module": "tests",
+      "reason": "fingerprint mismatch",
+      "status": "stale",
+      "suggested_command": "harbor module seal tests --write",
+      "view": "module_capsule"
+    }
+  ],
+  "command": "stale",
+  "exit_code": 1,
+  "next_steps": [
+    "harbor docs --module harbor --write",
+    "harbor module seal harbor --write",
+    "harbor docs --module harbor/core --write",
+    "harbor module seal harbor/core --write",
+    "harbor docs --module tests --write",
+    "harbor module seal tests --write",
+    "harbor stale",
+    "harbor doctor"
+  ],
+  "status": "fail",
+  "summary": {
+    "advisory_items": 3,
+    "ci_failures": 6,
+    "modules_checked": 4,
+    "scope": "changed"
+  },
+  "writes_files": false
+}

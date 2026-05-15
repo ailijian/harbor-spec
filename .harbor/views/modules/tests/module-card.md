@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.4"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-15T15:29:32Z"
+generated_at: "2026-05-15T17:06:03Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 111
@@ -120,11 +120,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:7bcec71d2b6ad2f92ba518abe21574b117b8494c702bf93330f960d99da9ff34"
-contract_fingerprint: "sha256:0a84cee46a10e7dac14480b49a126881842d68a0d99a08a3772d4ad0bf1fdc10"
+source_fingerprint: "sha256:9aaa045e5eb3b0265396119366d44a943d1147b6f34bf981ed7579676e1aab5c"
+contract_fingerprint: "sha256:21ea3a9645429a7f63cc4ed2de802cd2dad64871a8eefca81418d501b5f0342d"
 generator_fingerprint: "sha256:3cd0a23bc07763f83ef8156adeecebe6acdc1a18f0461cd1c6f001d4216ba45e"
-view_fingerprint: "918b13e5d9a279dbee6d57c4854d7c8fb48d0b2b6018eeed6258aef5c587612f"
-fingerprint: "918b13e5d9a279dbee6d57c4854d7c8fb48d0b2b6018eeed6258aef5c587612f"
+view_fingerprint: "03ccc7d88933d5c916d4fdb4a2e0732c59079f7fd1d0fc93ee6106f37ac81c08"
+fingerprint: "03ccc7d88933d5c916d4fdb4a2e0732c59079f7fd1d0fc93ee6106f37ac81c08"
 ---
 
 # Module Card: tests
@@ -534,6 +534,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_i18n_env.run_cmd_with_code | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_env_language_controls_ci_text | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_env_language_overrides_config | tests/test_cli_i18n_env.py | unknown | standard |
+| tests.test_cli_i18n_env.test_progress_labels_translate_in_both_locales | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_real_cli_doctor_zh_subprocess_output_is_utf8_readable | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_i18n_env.test_real_cli_stale_zh_subprocess_output_is_utf8_readable | tests/test_cli_i18n_env.py | unknown | standard |
 | tests.test_cli_init_output.run_cmd | tests/test_cli_init_output.py | unknown | standard |
@@ -609,10 +610,17 @@ tests/test_workspace_paths.py
 | tests.test_cli_progress._force_en_locale | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_progress._run_cmd | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_progress._sample_report | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress._sample_stale_summary | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_progress._strip_ansi | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_checkpoint_text_mode_does_not_leak_progress_i18n_keys | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_doctor_all_text_mode_shows_multi_stage_progress_on_stderr_when_interactive | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_progress.test_doctor_ci_json_keeps_stdout_single_object_when_progress_forced | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_doctor_text_mode_shows_multi_stage_progress_on_stderr_when_interactive | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_progress.test_progress_reporter_emits_phase_lines_and_does_not_swallow_errors | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_progress.test_should_render_progress_only_for_interactive_text | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_stale_all_text_mode_shows_progress_on_stderr_when_interactive | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_stale_ci_json_keeps_stdout_clean_even_when_progress_forced | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_stale_text_mode_shows_progress_on_stderr_when_interactive | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_progress.test_verify_generated_json_mode_keeps_stdout_clean_even_when_progress_forced | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_progress.test_verify_generated_text_mode_shows_progress_on_stderr_when_interactive | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_project_structure._force_en_locale | tests/test_cli_project_structure.py | unknown | standard |

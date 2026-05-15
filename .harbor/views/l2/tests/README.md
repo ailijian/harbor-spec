@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.4"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-15T15:29:31Z"
+generated_at: "2026-05-15T17:05:29Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 111
@@ -120,8 +120,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:7bcec71d2b6ad2f92ba518abe21574b117b8494c702bf93330f960d99da9ff34"
-contract_fingerprint: "sha256:e808995271d049951496dd85c488a42efbf734cee1577e163ea4020cd87a348e"
+source_fingerprint: "sha256:9aaa045e5eb3b0265396119366d44a943d1147b6f34bf981ed7579676e1aab5c"
+contract_fingerprint: "sha256:1a5484ab9899d78c4802c08145ac1e1aff78861e8b9b58c72da07d4e657ed286"
 generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0ea939d170a9c6f78"
 ---
 
@@ -264,6 +264,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_cli_progress._sample_report | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated._sample_report | — | standard | ⚪ Missing |
 | tests.test_cli_json_output._sample_stale_summary | — | standard | ⚪ Missing |
+| tests.test_cli_progress._sample_stale_summary | — | standard | ⚪ Missing |
 | tests.test_cli_stale._sample_summary | — | standard | ⚪ Missing |
 | tests.test_doctor._sample_summary | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli._seed_draft_evidence | — | standard | ⚪ Missing |
@@ -492,6 +493,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_typescript_ddt_preview.test_checkpoint_json_omits_typescript_ddt_preview_when_disabled | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.test_checkpoint_json_output_is_single_json_object | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_prints_contract_impact_summary_when_dirty | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_checkpoint_text_mode_does_not_leak_progress_i18n_keys | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_verbose_restores_detailed_sections | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_fields_use_ci_failures_and_advisory | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_ci_json_stdout_is_single_object | — | standard | ⚪ Missing |
@@ -610,6 +612,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_cli_docs_modes.test_docs_module_write_canonical_has_frontmatter_export_plain | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_docs_module_write_rejects_explicit_unsafe_module | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat.test_docstring_maps_to_docstring_contract_source | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_doctor_all_text_mode_shows_multi_stage_progress_on_stderr_when_interactive | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_changed_and_all_args_are_recognized | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_ci_arg_is_recognized | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_doctor_ci_fail_on_fail_check | — | standard | ⚪ Missing |
@@ -628,6 +631,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_cli_doctor.test_doctor_module_mode_runs | — | standard | ⚪ Missing |
 | tests.test_doctor.test_doctor_report_formats_pass_warn_fail_skip | — | standard | ⚪ Missing |
 | tests.test_doctor.test_doctor_report_includes_suggestions | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_doctor_text_mode_shows_multi_stage_progress_on_stderr_when_interactive | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_text_output_includes_legacy_diary_advisory | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_text_output_uses_unknown_for_no_indexed_records | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_dry_run_non_tty_uses_safe_defaults | — | standard | ⚪ Missing |
@@ -902,6 +906,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_repair_guidance.test_possible_semantic_drift_requires_decision_and_is_conservative | — | standard | ⚪ Missing |
 | tests.test_contract_presence.test_private_light_helper_without_docstring_is_skippable | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_production_cli_path_remains_possible | — | standard | ⚪ Missing |
+| tests.test_cli_i18n_env.test_progress_labels_translate_in_both_locales | — | standard | ⚪ Missing |
 | tests.test_cli_progress.test_progress_reporter_emits_phase_lines_and_does_not_swallow_errors | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_project_help_lists_structure_and_structure_help_lists_write | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views | — | standard | ⚪ Missing |
@@ -1000,6 +1005,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_release_packaging.test_source_of_truth_priority_and_conflict_docs_are_present | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_advisory_does_not_trigger_write_or_workflow_side_effects | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_all_scope_runs | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_stale_all_text_mode_shows_progress_on_stderr_when_interactive | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_changed_and_all_args_are_recognized | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_changed_checks_both_views | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_changed_duplicate_repo_name_root_does_not_emit_wrong_module_prefix | — | standard | ⚪ Missing |
@@ -1009,6 +1015,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_ci_mode.test_stale_ci_export_stale_is_advisory_only | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_stale_ci_fail_on_canonical_l2_stale | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_stale_ci_fail_on_module_capsule_stale | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_stale_ci_json_keeps_stdout_clean_even_when_progress_forced | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_stale_ci_json_single_object_and_no_abs_path | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_stale_ci_pass_no_canonical_stale | — | standard | ⚪ Missing |
 | tests.test_cli_stale.test_stale_default_is_changed_scope | — | standard | ⚪ Missing |
@@ -1021,6 +1028,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_cli_stale.test_stale_reports_all_up_to_date_message | — | standard | ⚪ Missing |
 | tests.test_stale.test_stale_sanitize_single_path_normalizes_github_actions_windows_module_path | — | standard | ⚪ Missing |
 | tests.test_stale.test_stale_sanitize_single_path_uses_full_repo_root_for_duplicate_repo_name | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_stale_text_mode_shows_progress_on_stderr_when_interactive | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_stale_view_guidance_maps_context_refresh | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_stale_when_fingerprint_mismatch | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_stale_when_fingerprint_missing | — | standard | ⚪ Missing |

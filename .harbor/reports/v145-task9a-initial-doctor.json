@@ -1,0 +1,37 @@
+{
+  "advisory": [
+    {
+      "check": "工作区状态",
+      "kind": "check",
+      "reason": "检测到变更记录：55; drift: 1; untracked: 1",
+      "status": "WARN",
+      "suggested_command": "harbor checkpoint"
+    },
+    {
+      "check": "派生视图",
+      "kind": "check",
+      "reason": "harbor L2 README 过时: README content mismatch; harbor Module README 导出 未知: canonical L2 README unavailable; harbor Module Capsule 过时: fingerprint mismatch; harbor/core L2 README 过时: README content mismatch; harbor/core Module README 导出 未知: canonical L2 README unavailable; harbor/core Module Capsule 过时: fingerprint mismatch; tests L2 README 过时: README content mismatch; tests Module README 导出 未知: canonical L2 README unavailable; tests Module Capsule 过时: fingerprint mismatch",
+      "status": "WARN",
+      "suggested_command": "harbor docs --module harbor --write"
+    }
+  ],
+  "ci": true,
+  "ci_failures": [],
+  "command": "doctor",
+  "exit_code": 0,
+  "next_steps": [
+    "harbor docs --module harbor --write",
+    "harbor stale",
+    "harbor doctor"
+  ],
+  "status": "pass",
+  "summary": {
+    "checks_total": 5,
+    "fail": 0,
+    "pass": 3,
+    "scope": "变更模块",
+    "skip": 0,
+    "warn": 2
+  },
+  "writes_files": false
+}

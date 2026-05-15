@@ -324,6 +324,9 @@ def main():
         human-readable routes may render progress on `stderr`, while
         `--format json`, `--format jsonl`, CI-style machine routes, command
         payload shape, and exit-code semantics remain unchanged.
+      - Progress phase/status text shown in human-readable routes uses
+        localized rendered labels and must not leak raw
+        `cli.progress.label.*` i18n keys into CLI output.
       - `harbor log draft` / `harbor log write` dispatch order remains explicit:
         draft/write subcommands are handled before legacy direct `harbor log`
         message or LLM-assisted draft flows.
@@ -517,6 +520,9 @@ def main():
       恢复详细诊断文本；`checkpoint --ci --format json` 默认保持 full JSON
       契约，`--detail summary` 输出更轻量的机器可读摘要，且不改变 gate status /
       `exit_code` / baseline 语义。
+      Human-readable `checkpoint` / `stale` / `doctor` progress updates stay on
+      `stderr` only, use localized phase labels, and keep JSON/CI stdout free
+      of progress text and raw i18n keys.
       `harbor log draft` emits a reviewable markdown/json draft only, may write
       latest draft runtime cache under `.harbor/state/log/latest-draft.*` only
       when evidence is sufficient for a writable draft, may write one non-diary

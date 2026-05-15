@@ -114,11 +114,17 @@ def test_release_notes_reference_python_ddt_reconciliation_report():
 def test_release_notes_include_v145_plan_summary():
     release_text = (_repo_root() / "RELEASE.md").read_text(encoding="utf-8")
     assert "# Harbor-spec v1.4.5 — Workflow UX & Preview Productization" in release_text
-    assert "状态：规划中" in release_text
+    assert "状态：发布前治理收口中" in release_text
     assert "治理遗留项收口" in release_text
     assert "日常工作流即时反馈增强" in release_text
     assert "运行性能基线建立" in release_text
     assert "Preview 能力产品化交付" in release_text
+    assert "DDT advisory reconciliation completed" in release_text
+    assert "Progress Feedback Framework closure completed" in release_text
+    assert "Runtime Performance Baseline established" in release_text
+    assert "Preview productization entrypoints aligned" in release_text
+    assert "`harbor accept` 仍需人工显式授权后单独执行。" in release_text
+    assert "`harbor log write` 仍需人工显式授权后单独执行。" in release_text
     assert "不做 JavaScript first-class governance" in release_text
     assert "不做大规模性能架构重构" in release_text
     assert "`Task Group B` | DDT Advisory 存量收口" in release_text

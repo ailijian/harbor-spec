@@ -27,6 +27,26 @@ class RuntimeBaselineContextMetrics:
     preview_audit_target_count: Optional[int]
 
     def to_dict(self) -> Dict[str, Optional[int]]:
+        """Serialize baseline context counts into a stable JSON-compatible mapping.
+
+        Behavior:
+          - Preserves stable metric keys for runtime baseline report consumers.
+          - Emits `None` only for preview-audit target counts when that preview
+            signal is unavailable.
+
+        Returns:
+          Dict[str, Optional[int]]: Stable context metric payload.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same metric snapshot.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         return {
             "scan_file_count": int(self.scan_file_count),
             "indexed_target_count": int(self.indexed_target_count),
@@ -47,6 +67,25 @@ class RuntimeMatrixEntry:
     notes: Sequence[str] = field(default_factory=tuple)
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize one runtime command-matrix row into a stable mapping.
+
+        Behavior:
+          - Preserves the command/scenario/status tuple used by baseline docs.
+          - Normalizes `notes` into a JSON-friendly list without changing order.
+
+        Returns:
+          Dict[str, Any]: Stable command-matrix payload.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same matrix row.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         return {
             "command": self.command,
             "scenario": self.scenario,
@@ -77,6 +116,27 @@ class RuntimeBaselineObservation:
     notes: Sequence[str] = field(default_factory=tuple)
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize one runtime observation into stable JSON output.
+
+        Behavior:
+          - Preserves stable performance/reporting keys for machine-readable
+            baseline artifacts.
+          - Rounds timing values deterministically and keeps optional metrics as
+            `None` when unavailable.
+
+        Returns:
+          Dict[str, Any]: Stable runtime observation payload.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same observation state.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         return {
             "command": self.command,
             "argv": list(self.argv),
@@ -109,6 +169,25 @@ class RuntimeHotspotAssessment:
     quick_win_candidate: bool = False
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize one hotspot assessment into a stable JSON-compatible mapping.
+
+        Behavior:
+          - Preserves hotspot/evidence/recommendation fields without renaming.
+          - Emits `quick_win_candidate` as a stable boolean field.
+
+        Returns:
+          Dict[str, Any]: Stable hotspot assessment payload.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same hotspot assessment.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         return {
             "hotspot": self.hotspot,
             "evidence": self.evidence,
@@ -132,6 +211,27 @@ class RuntimePerformanceBaselineReport:
     recommendation: str
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize the runtime baseline report into stable JSON output.
+
+        Behavior:
+          - Delegates to the public report serializer to preserve one canonical
+            JSON contract for docs, scripts, and release evidence.
+          - Keeps additive `writes_files=false` semantics in the serialized
+            payload.
+
+        Returns:
+          Dict[str, Any]: Stable runtime baseline report payload.
+
+        Side Effects:
+          - Writes no files.
+
+        Idempotency:
+          - Deterministic for the same report state.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+        @harbor.idempotency: deterministic
+        """
         return runtime_performance_baseline_report_to_dict(self)
 
 
@@ -271,6 +371,35 @@ def build_runtime_performance_baseline_report(
 
 
 def runtime_performance_baseline_report_to_dict(report: RuntimePerformanceBaselineReport) -> Dict[str, Any]:
+    """Serialize the runtime baseline report into the public JSON contract.
+
+    Behavior:
+      - Preserves stable top-level keys for release evidence and downstream
+        machine consumers.
+      - Serializes nested command-matrix, observation, and hotspot rows through
+        their canonical `to_dict()` helpers.
+      - Declares `writes_files=false` because the payload itself is read-only
+        report data.
+
+    Args:
+      report (RuntimePerformanceBaselineReport): Report to serialize.
+
+    Returns:
+      Dict[str, Any]: Stable JSON-compatible runtime baseline report payload.
+
+    Side Effects:
+      - Writes no files.
+
+    Idempotency:
+      - Deterministic for the same report state.
+
+    Security:
+      - Must not add machine-local file writes or hidden side effects.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    @harbor.idempotency: deterministic
+    """
     return {
         "title": report.title,
         "generated_at": report.generated_at,

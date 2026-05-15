@@ -1,6 +1,6 @@
 # Harbor-spec v1.4.5 — Workflow UX & Preview Productization
 
-状态：规划中  
+状态：发布前治理收口中  
 发布类型：Workflow UX / Advisory Reconciliation / Performance Baseline / Preview Productization
 
 ## Summary
@@ -8,6 +8,33 @@
 - `v1.4.5` 建立在 `v1.4.4` 已完成的 TypeScript Verification Preview 基础之上。
 - 本版本不继续横向扩张治理能力边界，而是转向产品成熟度收口。
 - 当前版本定位聚焦四项：治理遗留项收口、日常工作流即时反馈增强、运行性能基线建立、Preview 能力产品化交付。
+
+## Closure Snapshot
+
+- DDT advisory reconciliation completed:
+  - `5` 条 Python strict DDT advisory 已正式归类为 `ACCEPTED_BACKLOG`。
+  - advisory category 保持 `ddt_version_baseline_missing`，当前不阻塞发布前治理，因为仓库尚无 repo-owned `l3_version` baseline source。
+  - 正式裁决报告：`.harbor/reports/python-ddt-advisory-reconciliation.md`
+- Progress Feedback Framework closure completed:
+  - `checkpoint` / `finish` / `check` / `verify-generated` / `docs` / `module seal` / `stale` / `doctor` 已具备统一文本进度反馈。
+  - `stale` / `doctor` 文本路径的进度分阶段反馈已补齐。
+  - progress phase label 已改为本地化渲染文本，不再泄漏原始 `cli.progress.label.*` i18n key。
+  - `--format json` / `--format jsonl` / `--ci` 机器输出继续保持单对象纯净，不混入 progress 文本。
+- Runtime Performance Baseline established:
+  - 基线报告：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.md`
+  - 机器可读版本：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.json`
+  - `v1.4.5` 仅收口低风险 quick win：`finish` 复用首次状态报告；不扩大为结构性性能重构。
+- Preview productization entrypoints aligned:
+  - guide：`docs/guides/typescript-verification-preview.md`
+  - examples：`examples/typescript-verification-preview/README.md`
+  - demo：`examples/typescript-verification-preview/package-public/README.md`
+  - troubleshooting：`docs/guides/typescript-verification-preview-troubleshooting.md`
+
+## Governance Note
+
+- 本轮为发布前治理收口阶段，不在此处声称 baseline 已接受。
+- `harbor accept` 仍需人工显式授权后单独执行。
+- `harbor log write` 仍需人工显式授权后单独执行。
 
 ## Positioning
 

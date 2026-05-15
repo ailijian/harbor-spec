@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.4"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-15T15:29:32Z"
+generated_at: "2026-05-15T16:43:42Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 64
@@ -73,11 +73,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:b948234b3a7151e60effce5c1274fd106ab4dd3807181f6db0effb5f859f2e82"
-contract_fingerprint: "sha256:8868548034ed1139dd4c6a7478474b10cd5b1fddfc3704067133ebd8d3f28382"
+source_fingerprint: "sha256:e4c4a5f2fa54dba3b11848b5344c0508ffdbc5612c501b4088ae8bde80b650cd"
+contract_fingerprint: "sha256:f6a08c144dd34d6604f4fdd2f70eee0c1c06ba9858f050d4dab27f3d3e5a29fc"
 generator_fingerprint: "sha256:3cd0a23bc07763f83ef8156adeecebe6acdc1a18f0461cd1c6f001d4216ba45e"
-view_fingerprint: "868cb1c56ec4a6a411d88e1ee43df7f9279f9ed8e29c672f49bf1177c9e36f78"
-fingerprint: "868cb1c56ec4a6a411d88e1ee43df7f9279f9ed8e29c672f49bf1177c9e36f78"
+view_fingerprint: "56c840ee5499442a3ffee693698832eea0101f0d41bd95d0c631a50989d6613d"
+fingerprint: "56c840ee5499442a3ffee693698832eea0101f0d41bd95d0c631a50989d6613d"
 ---
 
 # Module Card: harbor
@@ -513,6 +513,7 @@ harbor/utils/i18n.py
 | harbor.core.doctor.DoctorReport.to_dict | harbor/core/doctor.py | public | strict |
 | harbor.core.doctor._collect_next_steps | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._derived_view_detail_status | harbor/core/doctor.py | unknown | standard |
+| harbor.core.doctor._emit_doctor_phase | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._filter_safe_next_steps | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._merge_status | harbor/core/doctor.py | unknown | standard |
 | harbor.core.doctor._parse_generated_frontmatter_safely | harbor/core/doctor.py | unknown | standard |
@@ -793,18 +794,18 @@ harbor/utils/i18n.py
 | harbor.core.path_normalization.normalize_path_separators | harbor/core/path_normalization.py | unknown | standard |
 | harbor.core.path_normalization.repo_relative_path | harbor/core/path_normalization.py | unknown | standard |
 | harbor.core.path_normalization.sanitize_path_for_display | harbor/core/path_normalization.py | unknown | standard |
-| harbor.core.performance_baseline.RuntimeBaselineContextMetrics.to_dict | harbor/core/performance_baseline.py | unknown | standard |
-| harbor.core.performance_baseline.RuntimeBaselineObservation.to_dict | harbor/core/performance_baseline.py | unknown | standard |
-| harbor.core.performance_baseline.RuntimeHotspotAssessment.to_dict | harbor/core/performance_baseline.py | unknown | standard |
-| harbor.core.performance_baseline.RuntimeMatrixEntry.to_dict | harbor/core/performance_baseline.py | unknown | standard |
-| harbor.core.performance_baseline.RuntimePerformanceBaselineReport.to_dict | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.RuntimeBaselineContextMetrics.to_dict | harbor/core/performance_baseline.py | public | strict |
+| harbor.core.performance_baseline.RuntimeBaselineObservation.to_dict | harbor/core/performance_baseline.py | public | strict |
+| harbor.core.performance_baseline.RuntimeHotspotAssessment.to_dict | harbor/core/performance_baseline.py | public | strict |
+| harbor.core.performance_baseline.RuntimeMatrixEntry.to_dict | harbor/core/performance_baseline.py | public | strict |
+| harbor.core.performance_baseline.RuntimePerformanceBaselineReport.to_dict | harbor/core/performance_baseline.py | public | strict |
 | harbor.core.performance_baseline._pushd | harbor/core/performance_baseline.py | unknown | standard |
 | harbor.core.performance_baseline._render_metric_cell | harbor/core/performance_baseline.py | unknown | standard |
 | harbor.core.performance_baseline.build_runtime_baseline_observation | harbor/core/performance_baseline.py | unknown | standard |
 | harbor.core.performance_baseline.build_runtime_performance_baseline_report | harbor/core/performance_baseline.py | unknown | standard |
 | harbor.core.performance_baseline.collect_runtime_baseline_context_metrics | harbor/core/performance_baseline.py | public | standard |
 | harbor.core.performance_baseline.format_runtime_performance_baseline_report | harbor/core/performance_baseline.py | unknown | standard |
-| harbor.core.performance_baseline.runtime_performance_baseline_report_to_dict | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.runtime_performance_baseline_report_to_dict | harbor/core/performance_baseline.py | public | strict |
 | harbor.core.project_structure._area_purpose | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._belongs_to_module | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._build_transient_index_from_files | harbor/core/project_structure.py | unknown | standard |

@@ -68,9 +68,38 @@ Task Group D | Performance Baseline Report
 Task Group A | Preview productization
 ```
 
+### v1.4.5 Closure Snapshot
+
+* DDT advisory reconciliation is now formally adjudicated:
+  * `5` strict Python DDT advisories are classified as `ACCEPTED_BACKLOG`
+  * the category remains `ddt_version_baseline_missing`
+  * these items do not block `v1.4.5` because the repository still lacks a repo-owned `l3_version` baseline source
+  * formal report: `.harbor/reports/python-ddt-advisory-reconciliation.md`
+* The Progress Feedback Framework is closed at release level:
+  * human-readable `checkpoint`, `finish`, `check`, `verify-generated`, `docs`, `module seal`, `stale`, and `doctor` flows now share unified progress feedback
+  * phased text progress for `stale` and `doctor` is now covered
+  * progress phase labels are rendered through localized text instead of leaking raw `cli.progress.label.*` i18n keys
+  * `--format json`, `--format jsonl`, and `--ci` machine outputs remain clean and free of progress text
+* The Runtime Performance Baseline is now established:
+  * report: `.harbor/reports/harbor-spec-runtime-performance-baseline-v145.md`
+  * machine-readable JSON: `.harbor/reports/harbor-spec-runtime-performance-baseline-v145.json`
+  * `v1.4.5` only closes the low-risk quick win of reusing the first status report in `finish`; it does not expand into structural performance refactoring
+* Preview productization entrypoints are aligned:
+  * guide: `docs/guides/typescript-verification-preview.md`
+  * example index: `examples/typescript-verification-preview/README.md`
+  * demo: `examples/typescript-verification-preview/package-public/README.md`
+  * troubleshooting: `docs/guides/typescript-verification-preview-troubleshooting.md`
+
 For details, see:
 
 * `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
+* `RELEASE.md`
+
+Current status:
+
+* `v1.4.5` is still in pre-release governance closure and does not claim baseline acceptance here
+* `harbor accept` still requires separate explicit human authorization
+* `harbor log write` still requires separate explicit human authorization
 
 ### Try TypeScript Verification Preview
 

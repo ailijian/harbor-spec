@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.4"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-15T15:29:29Z"
+generated_at: "2026-05-15T16:43:39Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 41
@@ -50,8 +50,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:e74c8bf6cbebfb3d4d62044769f791a68586f80408ca07e5dd83b798d062cca1"
-contract_fingerprint: "sha256:b3fa2e545dca6ab5e21fa5d016e73fd977c97a98d23e0d7f2a92f844e4b5cf01"
+source_fingerprint: "sha256:5cb6480068d17a9c1295306d1966e9561a53505689149da2ce7c5640a3cbc8d8"
+contract_fingerprint: "sha256:0699b800cc9e494fa4c3aad142969e8f2f24ce065adfa7e70e0791c60e5d4ab0"
 generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0ea939d170a9c6f78"
 ---
 
@@ -112,6 +112,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | harbor.core.verification.resolve_repo_local_file | Resolve a repo-local file path under the repository trust... | strict | ❌ Missing |
 | harbor.core.verification.resolve_typescript_ddt_preview_config | Resolve additive TypeScript DDT preview config with safe ... | strict | ❌ Missing |
 | harbor.core.audit.resolve_typescript_semantic_audit_preview_config | Resolve additive TypeScript semantic-audit preview config. | strict | ❌ Missing |
+| harbor.core.performance_baseline.runtime_performance_baseline_report_to_dict | Serialize the runtime baseline report into the public JSO... | strict | ❌ Missing |
 | harbor.core.log_draft.serialize_diary_draft | Serialize a diary draft payload as markdown or stable JSON. | strict | ❌ Missing |
 | harbor.core.audit.AuditEligibility.to_dict | Serialize one eligibility evaluation into a stable dictio... | strict | ❌ Missing |
 | harbor.core.audit.AuditEvidence.to_dict | Serialize one audit evidence row into a stable dictionary. | strict | ❌ Missing |
@@ -129,6 +130,11 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | harbor.core.generated_verify.GeneratedVerificationReport.to_dict | Serialize the verify-generated domain report via the publ... | strict | ❌ Missing |
 | harbor.core.generated_verify.ModuleGeneratedVerification.to_dict | Serialize one module verification group to a stable JSON-... | strict | ❌ Missing |
 | harbor.core.generated_verify.ProjectGeneratedVerification.to_dict | Serialize project-level verification rows to a stable JSO... | strict | ❌ Missing |
+| harbor.core.performance_baseline.RuntimeBaselineContextMetrics.to_dict | Serialize baseline context counts into a stable JSON-comp... | strict | ❌ Missing |
+| harbor.core.performance_baseline.RuntimeBaselineObservation.to_dict | Serialize one runtime observation into stable JSON output. | strict | ❌ Missing |
+| harbor.core.performance_baseline.RuntimeHotspotAssessment.to_dict | Serialize one hotspot assessment into a stable JSON-compa... | strict | ❌ Missing |
+| harbor.core.performance_baseline.RuntimeMatrixEntry.to_dict | Serialize one runtime command-matrix row into a stable ma... | strict | ❌ Missing |
+| harbor.core.performance_baseline.RuntimePerformanceBaselineReport.to_dict | Serialize the runtime baseline report into stable JSON ou... | strict | ❌ Missing |
 | harbor.core.repair_guidance.RepairGuidance.to_dict | Serialize deterministic repair guidance into a JSON-compa... | strict | ❌ Missing |
 | harbor.core.stale.ModuleStaleSummary.to_dict | Serialize one module stale summary into stable JSON output. | strict | ❌ Missing |
 | harbor.core.stale.ViewStaleResult.to_dict | Serialize one stale-view result into a stable JSON-safe s... | strict | ❌ Missing |
@@ -270,6 +276,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | harbor.core.decorator.DecoratorEngine._docstring_node | — | standard | ⚪ Missing |
 | harbor.core.audit._eligibility_message | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_detected_summary | — | standard | ⚪ Missing |
+| harbor.core.doctor._emit_doctor_phase | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_ide_guidance | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_project_rules_guidance | — | standard | ⚪ Missing |
@@ -688,7 +695,6 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | harbor.core.doctor.run_derived_views_check | 检查模块派生视图状态并汇总为 Doctor 结果。 | standard | ⚪ Missing |
 | harbor.core.doctor.run_skill_reference_check | — | standard | ⚪ Missing |
 | harbor.core.doctor.run_workspace_status_check | — | standard | ⚪ Missing |
-| harbor.core.performance_baseline.runtime_performance_baseline_report_to_dict | — | standard | ⚪ Missing |
 | harbor.core.console_output.safe_console_print | — | standard | ⚪ Missing |
 | harbor.core.path_normalization.sanitize_path_for_display | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.sanitize_text | — | standard | ⚪ Missing |
@@ -704,11 +710,6 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | harbor.core.stale.stale_report_to_dict | 将 stale 检查结果序列化为 machine-readable JSON 对象。 | standard | ⚪ Missing |
 | harbor.core.console_output.CLIProgressReporter.status | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.strip_frontmatter | — | standard | ⚪ Missing |
-| harbor.core.performance_baseline.RuntimeBaselineContextMetrics.to_dict | — | standard | ⚪ Missing |
-| harbor.core.performance_baseline.RuntimeBaselineObservation.to_dict | — | standard | ⚪ Missing |
-| harbor.core.performance_baseline.RuntimeHotspotAssessment.to_dict | — | standard | ⚪ Missing |
-| harbor.core.performance_baseline.RuntimeMatrixEntry.to_dict | — | standard | ⚪ Missing |
-| harbor.core.performance_baseline.RuntimePerformanceBaselineReport.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceGeneratedViewsStatus.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceGitTrackingStatus.to_dict | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.WorkspaceLegacyPathStatus.to_dict | — | standard | ⚪ Missing |

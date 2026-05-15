@@ -1,0 +1,29 @@
+{
+  "advisory": [
+    {
+      "check": "工作区状态",
+      "kind": "check",
+      "reason": "检测到变更记录：55; modified: 1; untracked: 7",
+      "status": "WARN",
+      "suggested_command": "harbor checkpoint"
+    }
+  ],
+  "ci": true,
+  "ci_failures": [],
+  "command": "doctor",
+  "exit_code": 0,
+  "next_steps": [
+    "harbor stale",
+    "harbor doctor"
+  ],
+  "status": "pass",
+  "summary": {
+    "checks_total": 5,
+    "fail": 0,
+    "pass": 4,
+    "scope": "变更模块",
+    "skip": 0,
+    "warn": 1
+  },
+  "writes_files": false
+}

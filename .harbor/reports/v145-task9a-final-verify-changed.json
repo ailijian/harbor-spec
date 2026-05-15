@@ -1,0 +1,16 @@
+{
+  "advisory": [],
+  "ci": true,
+  "ci_failures": [],
+  "command": "verify-generated",
+  "exit_code": 0,
+  "next_steps": [],
+  "status": "pass",
+  "summary": {
+    "advisory_items": 0,
+    "ci_failures": 0,
+    "modules_checked": 4,
+    "scope": "changed"
+  },
+  "writes_files": false
+}

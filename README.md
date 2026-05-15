@@ -69,9 +69,38 @@ Task Group D｜Performance Baseline Report
 Task Group A｜Preview 使用体验产品化
 ```
 
+### v1.4.5 收口快照
+
+* DDT advisory reconciliation 已完成正式裁决：
+  * `5` 条 Python strict DDT advisory 已归类为 `ACCEPTED_BACKLOG`
+  * category 维持 `ddt_version_baseline_missing`
+  * 当前不阻塞 `v1.4.5`，因为仓库尚无 repo-owned `l3_version` baseline source
+  * 正式报告：`.harbor/reports/python-ddt-advisory-reconciliation.md`
+* Progress Feedback Framework 已完成版本级收口：
+  * `checkpoint` / `finish` / `check` / `verify-generated` / `docs` / `module seal` / `stale` / `doctor` 文本路径均具备统一进度反馈
+  * `stale` / `doctor` 的文本分阶段进度已补齐
+  * progress phase label 已改为本地化渲染文本，不再泄漏原始 `cli.progress.label.*` i18n key
+  * `--format json` / `--format jsonl` / `--ci` 的机器输出继续保持纯净，不混入进度文本
+* Runtime Performance Baseline 已建立：
+  * 报告：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.md`
+  * 机器可读 JSON：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.json`
+  * `v1.4.5` 仅收口低风险 quick win：`finish` 复用首次状态报告；不扩大为结构性性能重构
+* Preview productization 入口已统一：
+  * guide：`docs/guides/typescript-verification-preview.md`
+  * example index：`examples/typescript-verification-preview/README.md`
+  * demo：`examples/typescript-verification-preview/package-public/README.md`
+  * troubleshooting：`docs/guides/typescript-verification-preview-troubleshooting.md`
+
 更多细节见：
 
 * `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
+* `RELEASE.md`
+
+当前说明：
+
+* `v1.4.5` 目前处于发布前治理收口阶段，不在此处声称 baseline 已接受
+* `harbor accept` 仍需人工显式授权后单独执行
+* `harbor log write` 仍需人工显式授权后单独执行
 
 ### Try TypeScript Verification Preview
 
