@@ -73,6 +73,22 @@ Task Group A｜Preview 使用体验产品化
 
 * `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
 
+### Try TypeScript Verification Preview
+
+如果你想直接上手 `v1.4.5` 收口后的 Preview 体验，而不是先翻 release note，可以从这里开始：
+
+* Guide: `docs/guides/typescript-verification-preview.md`
+* Example index: `examples/typescript-verification-preview/README.md`
+* Demo scenario: `examples/typescript-verification-preview/package-public/README.md`
+* Semantic audit demo: `examples/typescript-verification-preview/semantic-audit-preview/README.md`
+* Failure explanations: `docs/guides/typescript-verification-preview-troubleshooting.md`
+
+阅读顺序建议：
+
+1. 先看 guide，确认启用方式与 Preview 边界。
+2. 再跑 `package-public` 示例，看 `checkpoint` / `harbor next` 的最小工作流。
+3. 最后看 troubleshooting 与 semantic audit demo，理解常见失败项和 `preview_ineligible`。
+
 ---
 
 ## 🚀 v1.4.4：TypeScript Verification Preview（上一阶段收口主题）

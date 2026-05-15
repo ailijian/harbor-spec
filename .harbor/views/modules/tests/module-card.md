@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.4"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-15T13:39:41Z"
+generated_at: "2026-05-15T15:29:32Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 108
+source_path_count: 111
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -43,6 +43,7 @@ source_paths:
   - "tests/test_cli_module_capsule_batch.py"
   - "tests/test_cli_module_capsule_stale.py"
   - "tests/test_cli_module_skill.py"
+  - "tests/test_cli_progress.py"
   - "tests/test_cli_project_structure.py"
   - "tests/test_cli_stale.py"
   - "tests/test_cli_v2.py"
@@ -85,6 +86,7 @@ source_paths:
   - "tests/test_module_capsule.py"
   - "tests/test_module_capsule_stale.py"
   - "tests/test_module_skill.py"
+  - "tests/test_performance_baseline.py"
   - "tests/test_project_structure.py"
   - "tests/test_python_adapter_compat.py"
   - "tests/test_python_audit_regression.py"
@@ -104,6 +106,7 @@ source_paths:
   - "tests/test_typescript_next_guidance.py"
   - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_typescript_package_exports.py"
+  - "tests/test_typescript_preview_productization_assets.py"
   - "tests/test_typescript_public_boundary_evidence.py"
   - "tests/test_typescript_public_boundary_next.py"
   - "tests/test_typescript_public_boundary_presets.py"
@@ -117,11 +120,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:c1698299840fceb05c444dcf9b35c6b411db177330572db5eb09b2acdc3290b0"
-contract_fingerprint: "sha256:a2b61d557617f525e7461f938a8515f3e8cd0a5fed99cf3f6dafd0ddc4928a35"
+source_fingerprint: "sha256:7bcec71d2b6ad2f92ba518abe21574b117b8494c702bf93330f960d99da9ff34"
+contract_fingerprint: "sha256:0a84cee46a10e7dac14480b49a126881842d68a0d99a08a3772d4ad0bf1fdc10"
 generator_fingerprint: "sha256:3cd0a23bc07763f83ef8156adeecebe6acdc1a18f0461cd1c6f001d4216ba45e"
-view_fingerprint: "1b04d4c789b08cd90ecaff63fe9ebfc1bd1af7fa80795e5e1dcd05f83ac40f5c"
-fingerprint: "1b04d4c789b08cd90ecaff63fe9ebfc1bd1af7fa80795e5e1dcd05f83ac40f5c"
+view_fingerprint: "918b13e5d9a279dbee6d57c4854d7c8fb48d0b2b6018eeed6258aef5c587612f"
+fingerprint: "918b13e5d9a279dbee6d57c4854d7c8fb48d0b2b6018eeed6258aef5c587612f"
 ---
 
 # Module Card: tests
@@ -176,6 +179,7 @@ tests/test_cli_module_capsule.py
 tests/test_cli_module_capsule_batch.py
 tests/test_cli_module_capsule_stale.py
 tests/test_cli_module_skill.py
+tests/test_cli_progress.py
 tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_cli_v2.py
@@ -218,6 +222,7 @@ tests/test_min_count_one.py
 tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py
+tests/test_performance_baseline.py
 tests/test_project_structure.py
 tests/test_python_adapter_compat.py
 tests/test_python_audit_regression.py
@@ -237,6 +242,7 @@ tests/test_typescript_ddt_preview.py
 tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
 tests/test_typescript_package_exports.py
+tests/test_typescript_preview_productization_assets.py
 tests/test_typescript_public_boundary_evidence.py
 tests/test_typescript_public_boundary_next.py
 tests/test_typescript_public_boundary_presets.py
@@ -486,6 +492,7 @@ tests/test_workspace_paths.py
 | tests.test_cli_finish_sync_context.test_emit_json_stdout_falls_back_to_ascii_safe_json_for_cp1252 | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_emit_json_stdout_keeps_localized_json_when_encoding_supports_payload | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | tests/test_cli_finish_sync_context.py | unknown | standard |
+| tests.test_cli_finish_sync_context.test_finish_reuses_status_report_for_full_check | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | tests/test_cli_finish_sync_context.py | unknown | standard |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_no_changed_modules_friendly | tests/test_cli_finish_sync_context.py | unknown | standard |
@@ -598,6 +605,16 @@ tests/test_workspace_paths.py
 | tests.test_cli_module_skill.test_module_promote_skill_missing_capsule | tests/test_cli_module_skill.py | unknown | standard |
 | tests.test_cli_module_skill.test_module_promote_skill_stale_capsule | tests/test_cli_module_skill.py | unknown | standard |
 | tests.test_cli_module_skill.test_module_promote_skill_up_to_date_generates_skill | tests/test_cli_module_skill.py | unknown | standard |
+| tests.test_cli_progress._TTYStringIO.isatty | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress._force_en_locale | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress._run_cmd | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress._sample_report | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress._strip_ansi | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_doctor_ci_json_keeps_stdout_single_object_when_progress_forced | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_progress_reporter_emits_phase_lines_and_does_not_swallow_errors | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_should_render_progress_only_for_interactive_text | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_verify_generated_json_mode_keeps_stdout_clean_even_when_progress_forced | tests/test_cli_progress.py | unknown | standard |
+| tests.test_cli_progress.test_verify_generated_text_mode_shows_progress_on_stderr_when_interactive | tests/test_cli_progress.py | unknown | standard |
 | tests.test_cli_project_structure._force_en_locale | tests/test_cli_project_structure.py | unknown | standard |
 | tests.test_cli_project_structure._write_index | tests/test_cli_project_structure.py | unknown | standard |
 | tests.test_cli_project_structure._write_workspace_config | tests/test_cli_project_structure.py | unknown | standard |
@@ -984,6 +1001,8 @@ tests/test_workspace_paths.py
 | tests.test_module_skill.test_generate_module_skill_contains_thin_template | tests/test_module_skill.py | unknown | standard |
 | tests.test_module_skill.test_normalize_skill_slug_rules_are_stable | tests/test_module_skill.py | unknown | standard |
 | tests.test_module_skill.test_write_module_skill_only_writes_skill_file | tests/test_module_skill.py | unknown | standard |
+| tests.test_performance_baseline.test_collect_runtime_baseline_context_metrics_aggregates_repo_counts | tests/test_performance_baseline.py | unknown | standard |
+| tests.test_performance_baseline.test_runtime_performance_baseline_report_to_dict_and_markdown | tests/test_performance_baseline.py | unknown | standard |
 | tests.test_project_structure._write_index | tests/test_project_structure.py | unknown | standard |
 | tests.test_project_structure._write_source_repo | tests/test_project_structure.py | unknown | standard |
 | tests.test_project_structure.test_classify_project_area_is_stable | tests/test_project_structure.py | unknown | standard |
@@ -1015,10 +1034,13 @@ tests/test_workspace_paths.py
 | tests.test_release_packaging.test_init_templates_package_resources_are_loadable | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_pyproject_declares_cli_runtime_dependencies | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_pyproject_version_and_description_are_release_ready | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_python_ddt_reconciliation_report_is_present_and_explicit | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_readme_contains_release_key_commands | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_readme_en_contains_release_key_commands | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_release_notes_include_v145_plan_summary | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_release_notes_reference_python_ddt_reconciliation_report | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_source_of_truth_priority_and_conflict_docs_are_present | tests/test_release_packaging.py | unknown | standard |
 | tests.test_repair_guidance.test_contract_gap_guidance_defaults | tests/test_repair_guidance.py | unknown | standard |
 | tests.test_repair_guidance.test_ddt_version_baseline_missing_guidance_is_manual | tests/test_repair_guidance.py | unknown | standard |
@@ -1167,6 +1189,9 @@ tests/test_workspace_paths.py
 | tests.test_typescript_package_exports._write | tests/test_typescript_package_exports.py | unknown | standard |
 | tests.test_typescript_package_exports.test_package_exports_default_dist_mapping_adds_high_confidence_evidence | tests/test_typescript_package_exports.py | unknown | standard |
 | tests.test_typescript_package_exports.test_package_exports_source_mapping_and_malformed_package_json_degrade_safely | tests/test_typescript_package_exports.py | unknown | standard |
+| tests.test_typescript_preview_productization_assets._run_cmd | tests/test_typescript_preview_productization_assets.py | unknown | standard |
+| tests.test_typescript_preview_productization_assets.test_package_public_preview_example_matches_documented_checkpoint_and_next | tests/test_typescript_preview_productization_assets.py | unknown | standard |
+| tests.test_typescript_preview_productization_assets.test_semantic_audit_preview_example_matches_documented_jsonl_output | tests/test_typescript_preview_productization_assets.py | unknown | standard |
 | tests.test_typescript_public_boundary_evidence.test_public_boundary_config_defaults_are_backward_compatible | tests/test_typescript_public_boundary_evidence.py | unknown | standard |
 | tests.test_typescript_public_boundary_evidence.test_public_boundary_config_normalizes_invalid_values_safely | tests/test_typescript_public_boundary_evidence.py | unknown | standard |
 | tests.test_typescript_public_boundary_evidence.test_public_boundary_evidence_items_are_sorted_and_deduped_deterministically | tests/test_typescript_public_boundary_evidence.py | unknown | standard |
@@ -1288,6 +1313,7 @@ tests/test_cli_module_capsule.py
 tests/test_cli_module_capsule_batch.py
 tests/test_cli_module_capsule_stale.py
 tests/test_cli_module_skill.py
+tests/test_cli_progress.py
 tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_cli_v2.py
@@ -1330,6 +1356,7 @@ tests/test_min_count_one.py
 tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py
+tests/test_performance_baseline.py
 tests/test_project_structure.py
 tests/test_python_adapter_compat.py
 tests/test_python_audit_regression.py
@@ -1349,6 +1376,7 @@ tests/test_typescript_ddt_preview.py
 tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
 tests/test_typescript_package_exports.py
+tests/test_typescript_preview_productization_assets.py
 tests/test_typescript_public_boundary_evidence.py
 tests/test_typescript_public_boundary_next.py
 tests/test_typescript_public_boundary_presets.py

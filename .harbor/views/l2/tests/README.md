@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.4"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-15T13:39:16Z"
+generated_at: "2026-05-15T15:29:31Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
-source_path_count: 108
+source_path_count: 111
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -43,6 +43,7 @@ source_paths:
   - "tests/test_cli_module_capsule_batch.py"
   - "tests/test_cli_module_capsule_stale.py"
   - "tests/test_cli_module_skill.py"
+  - "tests/test_cli_progress.py"
   - "tests/test_cli_project_structure.py"
   - "tests/test_cli_stale.py"
   - "tests/test_cli_v2.py"
@@ -85,6 +86,7 @@ source_paths:
   - "tests/test_module_capsule.py"
   - "tests/test_module_capsule_stale.py"
   - "tests/test_module_skill.py"
+  - "tests/test_performance_baseline.py"
   - "tests/test_project_structure.py"
   - "tests/test_python_adapter_compat.py"
   - "tests/test_python_audit_regression.py"
@@ -104,6 +106,7 @@ source_paths:
   - "tests/test_typescript_next_guidance.py"
   - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_typescript_package_exports.py"
+  - "tests/test_typescript_preview_productization_assets.py"
   - "tests/test_typescript_public_boundary_evidence.py"
   - "tests/test_typescript_public_boundary_next.py"
   - "tests/test_typescript_public_boundary_presets.py"
@@ -117,8 +120,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:c1698299840fceb05c444dcf9b35c6b411db177330572db5eb09b2acdc3290b0"
-contract_fingerprint: "sha256:de5b708b97a2931e4d2e3c0e459a06061287f9cb6c5ba9123e9663380b741be5"
+source_fingerprint: "sha256:7bcec71d2b6ad2f92ba518abe21574b117b8494c702bf93330f960d99da9ff34"
+contract_fingerprint: "sha256:e808995271d049951496dd85c488a42efbf734cee1577e163ea4020cd87a348e"
 generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0ea939d170a9c6f78"
 ---
 
@@ -203,6 +206,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_cli_module_capsule_batch._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_stale._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_module_skill._force_en_locale | — | standard | ⚪ Missing |
+| tests.test_cli_progress._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_stale._force_en_locale | — | standard | ⚪ Missing |
 | tests.test_cli_v2._force_en_locale | — | standard | ⚪ Missing |
@@ -245,7 +249,9 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_windows_json_stdio_regression._require_windows_powershell_51 | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._run_cli | — | standard | ⚪ Missing |
 | tests.test_cache_isolation_hardening._run_cmd | — | standard | ⚪ Missing |
+| tests.test_cli_progress._run_cmd | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths._run_cmd | — | standard | ⚪ Missing |
+| tests.test_typescript_preview_productization_assets._run_cmd | — | standard | ⚪ Missing |
 | tests.test_cli_stale._run_cmd_with_exit_code | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated._run_cmd_with_exit_code | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._run_git | — | standard | ⚪ Missing |
@@ -255,6 +261,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_python_adapter_compat._sample_contract | — | standard | ⚪ Missing |
 | tests.test_cli_json_output._sample_doctor_report | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._sample_draft_payload | — | standard | ⚪ Missing |
+| tests.test_cli_progress._sample_report | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated._sample_report | — | standard | ⚪ Missing |
 | tests.test_cli_json_output._sample_stale_summary | — | standard | ⚪ Missing |
 | tests.test_cli_stale._sample_summary | — | standard | ⚪ Missing |
@@ -275,6 +282,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_checkpoint_json_additive_compat._status_report | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._status_report_for_paths | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._status_report_with_changed | — | standard | ⚪ Missing |
+| tests.test_cli_progress._strip_ansi | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._stub_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._stub_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
 | tests.test_ci_mode._stub_checkpoint_baseline_artifact | — | standard | ⚪ Missing |
@@ -354,6 +362,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.isatty | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeWindowsStream.isatty | — | standard | ⚪ Missing |
+| tests.test_cli_progress._TTYStringIO.isatty | — | standard | ⚪ Missing |
 | tests.test_init_wizard.StrictEncodingTextIO.isatty | — | standard | ⚪ Missing |
 | tests.test_index_builder.read_index | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._FakeRedirectedStream.reconfigure | — | standard | ⚪ Missing |
@@ -519,6 +528,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_project_structure.test_collect_project_structure_context_prefers_fresh_source_over_cache | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_collect_project_structure_reads_metadata_from_pyproject | — | standard | ⚪ Missing |
+| tests.test_performance_baseline.test_collect_runtime_baseline_context_metrics_aggregates_repo_counts | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_commit_alias_unchanged_maps_to_lock | — | standard | ⚪ Missing |
 | tests.test_sync_engine.test_compare_snapshots_ignores_public_boundary_metadata_only_changes | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_compute_module_fingerprint_is_stable_and_normalized | — | standard | ⚪ Missing |
@@ -603,6 +613,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_cli_doctor.test_doctor_changed_and_all_args_are_recognized | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_ci_arg_is_recognized | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_doctor_ci_fail_on_fail_check | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_doctor_ci_json_keeps_stdout_single_object_when_progress_forced | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_doctor_ci_json_single_object_and_no_abs_path | — | standard | ⚪ Missing |
 | tests.test_ci_mode.test_doctor_ci_warn_only_is_pass | — | standard | ⚪ Missing |
 | tests.test_cli_doctor.test_doctor_default_is_changed_scope | — | standard | ⚪ Missing |
@@ -636,6 +647,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_cli_v2.test_finish_command_recognized | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_default_does_not_run_sync_context_flow | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_finish_does_not_auto_run_docs_log_lock | — | standard | ⚪ Missing |
+| tests.test_cli_finish_sync_context.test_finish_reuses_status_report_for_full_check | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_finish_snapshot_write_failure_does_not_change_exit_code | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_adds_only_indexed_parent_modules | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context.test_finish_sync_context_ignores_changed_modules_outside_workspace | — | standard | ⚪ Missing |
@@ -872,6 +884,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_context_integrity.test_normalized_source_content_for_fingerprint_preserves_non_utf8_bytes | — | standard | ⚪ Missing |
 | tests.test_typescript_package_exports.test_package_exports_default_dist_mapping_adds_high_confidence_evidence | — | standard | ⚪ Missing |
 | tests.test_typescript_package_exports.test_package_exports_source_mapping_and_malformed_package_json_degrade_safely | — | standard | ⚪ Missing |
+| tests.test_typescript_preview_productization_assets.test_package_public_preview_example_matches_documented_checkpoint_and_next | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_async_function | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_arrow_function | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_parse_file_detects_export_const_async_arrow_function | — | standard | ⚪ Missing |
@@ -889,6 +902,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_repair_guidance.test_possible_semantic_drift_requires_decision_and_is_conservative | — | standard | ⚪ Missing |
 | tests.test_contract_presence.test_private_light_helper_without_docstring_is_skippable | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_production_cli_path_remains_possible | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_progress_reporter_emits_phase_lines_and_does_not_swallow_errors | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_project_help_lists_structure_and_structure_help_lists_write | — | standard | ⚪ Missing |
 | tests.test_workspace_gitignore_policy.test_project_structure_canonical_path_is_harbor_views | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_project_structure_docs_export_root_cannot_escape_repo_root | — | standard | ⚪ Missing |
@@ -917,6 +931,7 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_typescript_not_supported_boundaries.test_python_audit_provider_behavior_unchanged | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_python_checkpoint_json_keeps_legacy_fields_and_adds_identity_fields | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_python_checkpoint_pass_fail_semantics_unchanged | — | standard | ⚪ Missing |
+| tests.test_release_packaging.test_python_ddt_reconciliation_report_is_present_and_explicit | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_python_ddt_strict_and_latest_rules_unchanged | — | standard | ⚪ Missing |
 | tests.test_python_ddt_regression.test_python_ddt_strict_forbids_latest_and_strict_version_stays_valid | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_python_method_symbol_kind_and_func_id_stay_compatible | — | standard | ⚪ Missing |
@@ -944,10 +959,13 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | Backward-compatible alias test name kept to avoid baselin... | standard | ⚪ Missing |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | — | standard | ⚪ Missing |
+| tests.test_release_packaging.test_release_notes_include_v145_plan_summary | — | standard | ⚪ Missing |
+| tests.test_release_packaging.test_release_notes_reference_python_ddt_reconciliation_report | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_repair_guidance_has_no_llm_integration_symbols | — | standard | ⚪ Missing |
 | tests.test_contract_impact.test_report_to_dict_is_deterministic_and_sanitized | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_reports_only_evidence_is_insufficient_and_does_not_build_writable_draft | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_retention_keeps_latest_fifty_snapshots | — | standard | ⚪ Missing |
+| tests.test_performance_baseline.test_runtime_performance_baseline_report_to_dict_and_markdown | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_adds_scope_without_breaking_indent | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_safe_does_not_duplicate_tag | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence.test_script_file_targets_are_not_required | — | standard | ⚪ Missing |
@@ -955,12 +973,14 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_init_wizard.test_selector_fallback_does_not_repeat_selector_block | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_selector_source_does_not_use_full_screen_dialog | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_preview.test_semantic_audit_preview_disabled_has_no_side_effect | — | standard | ⚪ Missing |
+| tests.test_typescript_preview_productization_assets.test_semantic_audit_preview_example_matches_documented_jsonl_output | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_contract_gap_without_docstring | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_mismatch_parsing | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_non_required_contract_skips_llm | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_required_contract_skips_llm | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_ok | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_skipped_no_contract_for_internal_helper | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_should_render_progress_only_for_interactive_text | — | standard | ⚪ Missing |
 | tests.test_adapter_basic.test_signature_hash_changes | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence.test_signature_only_public_function_remains_missing_required | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_since_last_accept_falls_back_when_accept_snapshot_is_missing | — | standard | ⚪ Missing |
@@ -1080,9 +1100,11 @@ generator_fingerprint: "sha256:95d715adc3ac612ddfd358f6b096c4bcadd23b1c2bab01c0e
 | tests.test_cli_verify_generated.test_verify_generated_ci_json_uses_ci_failures_and_exit_code | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated.test_verify_generated_default_is_changed_scope | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_verify_generated_help_lists_changed_all_module_and_format_flags | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_verify_generated_json_mode_keeps_stdout_clean_even_when_progress_forced | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated.test_verify_generated_json_output_has_required_fields | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated.test_verify_generated_modes_are_mutually_exclusive | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated.test_verify_generated_module_mode_runs | — | standard | ⚪ Missing |
+| tests.test_cli_progress.test_verify_generated_text_mode_shows_progress_on_stderr_when_interactive | — | standard | ⚪ Missing |
 | tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_windows_absolute_write_path_cannot_escape_repo_root | — | standard | ⚪ Missing |
 | tests.test_workspace_paths.test_windows_posix_path_normalization | — | standard | ⚪ Missing |

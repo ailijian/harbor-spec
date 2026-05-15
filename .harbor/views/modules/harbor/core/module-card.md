@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.4"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-15T13:39:41Z"
+generated_at: "2026-05-15T15:29:32Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 40
+source_path_count: 41
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
@@ -37,6 +37,7 @@ source_paths:
   - "harbor/core/module_capsule.py"
   - "harbor/core/module_skill.py"
   - "harbor/core/path_normalization.py"
+  - "harbor/core/performance_baseline.py"
   - "harbor/core/project_structure.py"
   - "harbor/core/readonly_index.py"
   - "harbor/core/repair_guidance.py"
@@ -49,11 +50,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:9c82d502bedf4e10745a8d5600b33666a23f791868ffae4c3f5a5c0ee51ac69e"
-contract_fingerprint: "sha256:0aa5c092bfb11a851159774edebde46e95eaf9bbc358fc22027c0b781da55e1e"
+source_fingerprint: "sha256:e74c8bf6cbebfb3d4d62044769f791a68586f80408ca07e5dd83b798d062cca1"
+contract_fingerprint: "sha256:467009c85708bfeb6b814dcfacd8196277e280551d1d33eeb4d2eb0572fa058d"
 generator_fingerprint: "sha256:3cd0a23bc07763f83ef8156adeecebe6acdc1a18f0461cd1c6f001d4216ba45e"
-view_fingerprint: "268ae9b68b6142cd70925819b93c349c8f7e2777e963417f7450fb033b280f3d"
-fingerprint: "268ae9b68b6142cd70925819b93c349c8f7e2777e963417f7450fb033b280f3d"
+view_fingerprint: "07277434ba0b11f0fa26f909e4485b3b7f0cf1862819f205629c23790d05be9a"
+fingerprint: "07277434ba0b11f0fa26f909e4485b3b7f0cf1862819f205629c23790d05be9a"
 ---
 
 # Module Card: harbor/core
@@ -102,6 +103,7 @@ harbor/core/log_draft.py
 harbor/core/module_capsule.py
 harbor/core/module_skill.py
 harbor/core/path_normalization.py
+harbor/core/performance_baseline.py
 harbor/core/project_structure.py
 harbor/core/readonly_index.py
 harbor/core/repair_guidance.py
@@ -240,8 +242,19 @@ harbor/core/workspace_migrate.py
 | harbor.core.ci.format_checkpoint_ci_result | harbor/core/ci.py | unknown | standard |
 | harbor.core.ci.format_checkpoint_workflow_summary | harbor/core/ci.py | public | strict |
 | harbor.core.ci.format_ci_result | harbor/core/ci.py | unknown | standard |
+| harbor.core.console_output.CLIProgressReporter.__init__ | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output.CLIProgressReporter.batch | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output.CLIProgressReporter.phase | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output.CLIProgressReporter.status | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output._NoOpBatchProgress.update | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output._RichBatchProgress.__init__ | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output._RichBatchProgress.update | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output._truthy_env | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output.build_cli_progress | harbor/core/console_output.py | unknown | standard |
 | harbor.core.console_output.detect_console_encoding | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output.is_ci_environment | harbor/core/console_output.py | unknown | standard |
 | harbor.core.console_output.safe_console_print | harbor/core/console_output.py | unknown | standard |
+| harbor.core.console_output.should_render_progress | harbor/core/console_output.py | unknown | standard |
 | harbor.core.context_integrity._as_repo_relative | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._decode_scalar | harbor/core/context_integrity.py | unknown | standard |
 | harbor.core.context_integrity._json_stable_hash | harbor/core/context_integrity.py | unknown | standard |
@@ -611,6 +624,18 @@ harbor/core/workspace_migrate.py
 | harbor.core.path_normalization.normalize_path_separators | harbor/core/path_normalization.py | unknown | standard |
 | harbor.core.path_normalization.repo_relative_path | harbor/core/path_normalization.py | unknown | standard |
 | harbor.core.path_normalization.sanitize_path_for_display | harbor/core/path_normalization.py | unknown | standard |
+| harbor.core.performance_baseline.RuntimeBaselineContextMetrics.to_dict | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.RuntimeBaselineObservation.to_dict | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.RuntimeHotspotAssessment.to_dict | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.RuntimeMatrixEntry.to_dict | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.RuntimePerformanceBaselineReport.to_dict | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline._pushd | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline._render_metric_cell | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.build_runtime_baseline_observation | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.build_runtime_performance_baseline_report | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.collect_runtime_baseline_context_metrics | harbor/core/performance_baseline.py | public | standard |
+| harbor.core.performance_baseline.format_runtime_performance_baseline_report | harbor/core/performance_baseline.py | unknown | standard |
+| harbor.core.performance_baseline.runtime_performance_baseline_report_to_dict | harbor/core/performance_baseline.py | unknown | standard |
 | harbor.core.project_structure._area_purpose | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._belongs_to_module | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._build_transient_index_from_files | harbor/core/project_structure.py | unknown | standard |
@@ -810,6 +835,7 @@ tests/test_log_draft_cli.py
 tests/test_module_capsule.py
 tests/test_module_capsule_stale.py
 tests/test_module_skill.py
+tests/test_performance_baseline.py
 tests/test_project_structure.py
 tests/test_python_audit_regression.py
 tests/test_python_ddt_regression.py

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.4"
 view_type: "module_card"
 module: "harbor/cli"
-generated_at: "2026-05-15T13:39:41Z"
+generated_at: "2026-05-15T15:29:32Z"
 generation_command: "harbor module seal harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -11,11 +11,11 @@ source_paths_truncated: false
 source_paths:
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
-source_fingerprint: "sha256:a7af4ec472745fce3991211740cbc19e30d7567c9396164e88eb49d29d4e8f0c"
-contract_fingerprint: "sha256:86ef92e9513dce3b93ca587f0f0c65dd86aca40d592f0236aa924efdeeb5f2b8"
+source_fingerprint: "sha256:31b4aa869423e2d5df18b2c83bf98c2e9104ac253d808cd04544467929080041"
+contract_fingerprint: "sha256:f27117754789dd8cb2dab7914023c102c3bb4cdcd7d804568c870aec2f951b82"
 generator_fingerprint: "sha256:3cd0a23bc07763f83ef8156adeecebe6acdc1a18f0461cd1c6f001d4216ba45e"
-view_fingerprint: "29642a794e1af7b9577a1e24e8490b6ee9564579ff141bd1fc9907f043ef3044"
-fingerprint: "29642a794e1af7b9577a1e24e8490b6ee9564579ff141bd1fc9907f043ef3044"
+view_fingerprint: "9075296289eec76b4e42f621b158781c79050de5c3e12d3ce4c8bbc4feb3508b"
+fingerprint: "9075296289eec76b4e42f621b158781c79050de5c3e12d3ce4c8bbc4feb3508b"
 ---
 
 # Module Card: harbor/cli
@@ -50,6 +50,7 @@ harbor/cli/main.py
 | harbor.cli.main._is_log_write_interactive | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._is_pure_json_output_argv | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._is_utf8_compatible_stdio_encoding | harbor/cli/main.py | unknown | standard |
+| harbor.cli.main._make_progress | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._normalize_windows_stdio_encoding_name | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._resolve_windows_explicit_stdio_config | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._resolve_windows_redirected_stdio_encoding | harbor/cli/main.py | unknown | standard |
@@ -74,6 +75,7 @@ tests/test_cli_module_capsule.py
 tests/test_cli_module_capsule_batch.py
 tests/test_cli_module_capsule_stale.py
 tests/test_cli_module_skill.py
+tests/test_cli_progress.py
 tests/test_cli_project_structure.py
 tests/test_cli_stale.py
 tests/test_cli_v2.py

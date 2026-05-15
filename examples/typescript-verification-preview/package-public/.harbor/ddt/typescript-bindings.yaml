@@ -1,0 +1,10 @@
+schema_version: "1.0"
+bindings:
+  - binding_id: api-binding
+    target_id: typescript:src/index.ts:function:api
+    test_asset:
+      path: tests/api.test.ts
+      label: api smoke
+    strategy: preview_reference
+    contract_expectation: "Nearby TSDoc remains the behavior contract source."
+    note: "Minimal preview_valid example for package_public."

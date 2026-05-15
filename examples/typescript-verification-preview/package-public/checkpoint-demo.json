@@ -1,0 +1,127 @@
+{
+  "advisory": [],
+  "baseline_found": false,
+  "baseline_path": ".harbor/baseline/accepted-checkpoint.json",
+  "baseline_source": "accepted_artifact",
+  "ci": true,
+  "ci_failures": [
+    {
+      "category": "accepted_baseline_missing",
+      "file_path": ".harbor/baseline/accepted-checkpoint.json",
+      "guidance": {
+        "anti_action": "Do not fall back to runtime cache in CI. Do not run harbor lock in CI as a workaround.",
+        "automation_policy": "manual_decision_required",
+        "decision_required": true,
+        "notes": [],
+        "recommended_action": "Run harbor accept locally after review, then commit .harbor/baseline/accepted-checkpoint.json.",
+        "risk_level": "high",
+        "safe_to_auto_fix": false,
+        "suggested_skill": "harbor-contract-change",
+        "suggested_validation": [
+          "harbor checkpoint --ci --format json"
+        ],
+        "user_feedback_required": true,
+        "what_happened": "The accepted checkpoint baseline artifact is missing in CI mode."
+      },
+      "reason": "CI 基线工件缺失；请在本地运行 harbor accept，人工审阅后提交 accepted baseline artifact。",
+      "suggested_action": "请在本地运行 harbor accept，审阅并提交 accepted baseline artifact，然后重新运行 harbor checkpoint --ci。"
+    }
+  ],
+  "command": "checkpoint",
+  "contract_impact": {
+    "advisory": true,
+    "categories": [],
+    "deterministic": true,
+    "findings": [],
+    "level": "no_contract_impact",
+    "notable_findings": [],
+    "summary_counts": {
+      "confirmed_contract_impact": 0,
+      "no_contract_impact": 0,
+      "possible_contract_impact": 0,
+      "unknown": 0
+    }
+  },
+  "exit_code": 1,
+  "next_steps": [
+    "请在人工审阅后于本地运行 harbor accept，生成 .harbor/baseline/accepted-checkpoint.json。",
+    "请先将 accepted baseline artifact 提交到仓库，再重新运行 CI。",
+    "请重新运行 harbor checkpoint --ci。"
+  ],
+  "semantic_audit_preview": {
+    "advisory_count": 0,
+    "eligible_count": 0,
+    "findings": [],
+    "ineligible_count": 0,
+    "model": "deepseek-v4-flash",
+    "previewed_count": 0,
+    "provider": "deepseek",
+    "targets_count": 0
+  },
+  "status": "fail",
+  "summary": {
+    "accepted_baseline_invalid": 0,
+    "accepted_baseline_missing": 1,
+    "confirmed_contract_impact": 0,
+    "contract_changed": 0,
+    "contract_gap": 0,
+    "contract_parse_error": 0,
+    "ddt_advisory": 0,
+    "ddt_bindings": 0,
+    "ddt_failures": 0,
+    "drift": 0,
+    "missing": 0,
+    "modified": 0,
+    "possible_contract_impact": 0,
+    "semantic_audit_preview_advisory": 0,
+    "semantic_audit_preview_eligible": 0,
+    "semantic_audit_preview_ineligible": 0,
+    "semantic_audit_preview_previewed": 0,
+    "semantic_audit_preview_targets": 0,
+    "skipped_no_contract": 0,
+    "typescript_ddt_preview_advisory": 0,
+    "typescript_ddt_preview_bindings": 1,
+    "typescript_ddt_preview_valid": 1,
+    "unknown_contract_impact": 0,
+    "unsupported_syntax_advisory": 0,
+    "untracked": 0
+  },
+  "typescript_ddt_preview": {
+    "advisory_count": 0,
+    "bindings_count": 1,
+    "bindings_file": ".harbor/ddt/typescript-bindings.yaml",
+    "findings": [
+      {
+        "adapter": "typescript",
+        "advisory": true,
+        "binding_id": "api-binding",
+        "bindings_file": ".harbor/ddt/typescript-bindings.yaml",
+        "blocking": false,
+        "boundary_preset_mode": "package_public",
+        "category": "preview_valid",
+        "contract_source_kinds": [
+          "tsdoc"
+        ],
+        "language": "typescript",
+        "preview": true,
+        "public_boundary_confidence": "high",
+        "public_boundary_evidence_kinds": [
+          "direct_export",
+          "package_export"
+        ],
+        "public_boundary_reason": "Package export '.' maps to './dist/index.js' and resolves to a source entrypoint that exposes this target.",
+        "public_boundary_state": "package_export_surface",
+        "reason": "TypeScript DDT preview binding is declared, resolved, and currently advisory-valid.",
+        "source_confidence_summary": "high",
+        "status": "preview_valid",
+        "symbol_kind": "function",
+        "target_file_path": "src/index.ts",
+        "target_id": "typescript:src/index.ts:function:api",
+        "test_asset_label": "api smoke",
+        "test_asset_path": "tests/api.test.ts"
+      }
+    ],
+    "valid_count": 1
+  },
+  "writes_files": false
+}

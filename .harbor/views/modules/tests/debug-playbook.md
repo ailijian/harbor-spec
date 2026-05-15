@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.4"
 view_type: "debug_playbook"
 module: "tests"
-generated_at: "2026-05-15T13:39:41Z"
+generated_at: "2026-05-15T15:29:32Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 108
+source_path_count: 111
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -43,6 +43,7 @@ source_paths:
   - "tests/test_cli_module_capsule_batch.py"
   - "tests/test_cli_module_capsule_stale.py"
   - "tests/test_cli_module_skill.py"
+  - "tests/test_cli_progress.py"
   - "tests/test_cli_project_structure.py"
   - "tests/test_cli_stale.py"
   - "tests/test_cli_v2.py"
@@ -85,6 +86,7 @@ source_paths:
   - "tests/test_module_capsule.py"
   - "tests/test_module_capsule_stale.py"
   - "tests/test_module_skill.py"
+  - "tests/test_performance_baseline.py"
   - "tests/test_project_structure.py"
   - "tests/test_python_adapter_compat.py"
   - "tests/test_python_audit_regression.py"
@@ -104,6 +106,7 @@ source_paths:
   - "tests/test_typescript_next_guidance.py"
   - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_typescript_package_exports.py"
+  - "tests/test_typescript_preview_productization_assets.py"
   - "tests/test_typescript_public_boundary_evidence.py"
   - "tests/test_typescript_public_boundary_next.py"
   - "tests/test_typescript_public_boundary_presets.py"
@@ -117,8 +120,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:c1698299840fceb05c444dcf9b35c6b411db177330572db5eb09b2acdc3290b0"
-contract_fingerprint: "sha256:a2b61d557617f525e7461f938a8515f3e8cd0a5fed99cf3f6dafd0ddc4928a35"
+source_fingerprint: "sha256:7bcec71d2b6ad2f92ba518abe21574b117b8494c702bf93330f960d99da9ff34"
+contract_fingerprint: "sha256:0a84cee46a10e7dac14480b49a126881842d68a0d99a08a3772d4ad0bf1fdc10"
 generator_fingerprint: "sha256:5477e26b374378db6ee243a1618aae255a1c3f1a9e5bd12a156045de96c605c4"
 ---
 

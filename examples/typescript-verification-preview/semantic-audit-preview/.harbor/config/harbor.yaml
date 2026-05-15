@@ -1,0 +1,20 @@
+code_roots:
+  - src
+languages:
+  python:
+    enabled: true
+  typescript:
+    enabled: true
+    public_boundary:
+      mode: package_public
+      follow_re_exports: true
+      read_package_exports: true
+      use_tsconfig_paths: true
+      declaration_surface_preview: false
+      entrypoints: []
+      source_mappings: {}
+    contract_required_strategy: legacy_exported
+verification:
+  semantic_audit:
+    typescript_preview:
+      enabled: true

@@ -72,6 +72,22 @@ For details, see:
 
 * `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
 
+### Try TypeScript Verification Preview
+
+If you want to try the `v1.4.5` productized preview flow directly instead of reading release notes first, start here:
+
+* Guide: `docs/guides/typescript-verification-preview.md`
+* Example index: `examples/typescript-verification-preview/README.md`
+* Demo scenario: `examples/typescript-verification-preview/package-public/README.md`
+* Semantic audit demo: `examples/typescript-verification-preview/semantic-audit-preview/README.md`
+* Failure explanations: `docs/guides/typescript-verification-preview-troubleshooting.md`
+
+Recommended reading order:
+
+1. Read the guide to understand enablement and preview boundaries.
+2. Run the `package-public` example to inspect the minimal `checkpoint` / `harbor next` workflow.
+3. Review troubleshooting and the semantic-audit demo to understand common findings and `preview_ineligible`.
+
 ---
 
 ## 🚀 v1.4.4: TypeScript Verification Preview (Previous Closure Theme)

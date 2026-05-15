@@ -17,6 +17,7 @@
 | harbor.cli.main._is_log_write_interactive | — | standard | ⚪ Missing |
 | harbor.cli.main._is_pure_json_output_argv | Detect pure JSON stdout routes from raw argv without chan... | standard | ⚪ Missing |
 | harbor.cli.main._is_utf8_compatible_stdio_encoding | — | standard | ⚪ Missing |
+| harbor.cli.main._make_progress | — | standard | ⚪ Missing |
 | harbor.cli.main._normalize_windows_stdio_encoding_name | — | standard | ⚪ Missing |
 | harbor.cli.main._resolve_windows_explicit_stdio_config | — | standard | ⚪ Missing |
 | harbor.cli.main._resolve_windows_redirected_stdio_encoding | Backward-compatible access to the resolved Windows stdio ... | standard | ⚪ Missing |
