@@ -121,6 +121,53 @@ def test_configure_windows_stdio_defaults_non_tty_to_utf8(monkeypatch):
     assert stderr.reconfigured_to == ("utf-8", "strict")
 
 
+def test_finish_reuses_status_report_for_full_check(monkeypatch):
+    status_calls = {"count": 0}
+
+    class _FakeSyncEngine:
+        def check_status(self):
+            status_calls["count"] += 1
+            return SimpleNamespace(
+                drift=[],
+                modified=[],
+                contract_changed=[],
+                contract_gap=[],
+                skipped_no_contract=[],
+                contract_parse_error=[],
+                unsupported_syntax_advisory=[],
+                untracked=[],
+                missing=[],
+                counts={
+                    "drift": 0,
+                    "modified": 0,
+                    "contract_changed": 0,
+                    "contract_gap": 0,
+                    "skipped_no_contract": 0,
+                    "contract_parse_error": 0,
+                    "unsupported_syntax_advisory": 0,
+                    "untracked": 0,
+                    "missing": 0,
+                },
+            )
+
+    monkeypatch.setattr(cli_main, "SyncEngine", _FakeSyncEngine)
+    monkeypatch.setattr(cli_main.DDTScanner, "scan_tests", lambda self: [])
+    monkeypatch.setattr(
+        cli_main.DDTValidator,
+        "validate",
+        lambda self, bindings: SimpleNamespace(valid=[], violations=[], advisory=[]),
+    )
+    monkeypatch.setattr(cli_main, "validate_typescript_ddt_preview", lambda repo_root, config: None)
+    monkeypatch.setattr(cli_main, "build_typescript_semantic_audit_preview", lambda *args, **kwargs: None)
+    monkeypatch.setattr(cli_main, "resolve_provider", lambda: SimpleNamespace(name="mock", model="mock-model"))
+    monkeypatch.setattr(cli_main, "SemanticGuard", lambda: SimpleNamespace())
+
+    output = run_cmd(["finish"])
+
+    assert "Finish" in output
+    assert status_calls["count"] == 1
+
+
 def test_configure_windows_stdio_respects_pythonioencoding(monkeypatch):
     stdout = _FakeWindowsStream(encoding="cp936", is_tty=True)
     stderr = _FakeWindowsStream(encoding="cp936", is_tty=True)

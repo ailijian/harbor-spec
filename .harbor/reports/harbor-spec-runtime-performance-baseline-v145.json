@@ -1,0 +1,370 @@
+{
+  "command_matrix": [
+    {
+      "command": "checkpoint",
+      "notes": [
+        "phase-style progress forced through TTY stderr capture"
+      ],
+      "scenario": "interactive text / repo-owned clean workspace",
+      "status": "executed"
+    },
+    {
+      "command": "checkpoint --ci --format json --detail summary",
+      "notes": [
+        "accepted baseline artifact path"
+      ],
+      "scenario": "machine JSON / repo-owned clean workspace",
+      "status": "executed"
+    },
+    {
+      "command": "finish",
+      "notes": [
+        "includes change-window runtime state write"
+      ],
+      "scenario": "interactive text / repo-owned clean workspace",
+      "status": "executed"
+    },
+    {
+      "command": "check",
+      "notes": [
+        "full semantic path with preview disabled by default"
+      ],
+      "scenario": "interactive text / repo-owned clean workspace",
+      "status": "executed"
+    },
+    {
+      "command": "verify-generated --all --ci --format json",
+      "notes": [
+        "all-scope generated verification path"
+      ],
+      "scenario": "machine JSON / repo-owned clean workspace",
+      "status": "executed"
+    },
+    {
+      "command": "stale --all --ci --format json",
+      "notes": [
+        "all-scope stale verification path"
+      ],
+      "scenario": "machine JSON / repo-owned clean workspace",
+      "status": "executed"
+    },
+    {
+      "command": "doctor --all --ci --format json",
+      "notes": [
+        "all-scope doctor report path"
+      ],
+      "scenario": "machine JSON / repo-owned clean workspace",
+      "status": "executed"
+    },
+    {
+      "command": "docs --all --write",
+      "notes": [
+        "write-path measured on temporary scratch copy to avoid mutating working tree"
+      ],
+      "scenario": "interactive text / scratch copy",
+      "status": "executed"
+    },
+    {
+      "command": "module seal --all --write",
+      "notes": [
+        "write-path measured on temporary scratch copy to avoid mutating working tree"
+      ],
+      "scenario": "interactive text / scratch copy",
+      "status": "executed"
+    },
+    {
+      "command": "accept",
+      "notes": [
+        "not executed because Harbor policy requires an explicit user request for harbor accept"
+      ],
+      "scenario": "repo-owned workspace",
+      "status": "policy_gated"
+    }
+  ],
+  "deferred_optimizations": [
+    "Do not introduce a new public performance/profiling CLI surface in v1.4.5.",
+    "Do not start structural cache redesign, concurrency changes, or provider-level semantic-audit tuning in v1.4.5.",
+    "Keep accept in the frozen matrix but leave execution to an explicit user-authorized follow-up."
+  ],
+  "environment": {
+    "executable": "C:/Users/GM/anaconda3/python.exe",
+    "implementation": "CPython",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python_version": "3.11.5"
+  },
+  "generated_at": "2026-05-15T15:00:13Z",
+  "hotspots": [
+    {
+      "evidence": "finish now runs at wall=26.007s after reusing the initial status report; previous implementation called SyncEngine.check_status() twice in the same workflow.",
+      "hotspot": "finish duplicate status scan",
+      "quick_win_candidate": true,
+      "recommendation": "Keep the reuse in v1.4.5 as the only quick win and defer broader finish pipeline restructuring."
+    },
+    {
+      "evidence": "docs --all --write wall=26.117s and module seal --all --write wall=0.605s dominate the measured all-scope write workflows.",
+      "hotspot": "generated context all-scope write paths",
+      "quick_win_candidate": false,
+      "recommendation": "Use these paths as the primary candidates if v1.4.6 becomes a dedicated performance release."
+    },
+    {
+      "evidence": "verify-generated --all --ci --format json completed in wall=23.783s and shares the same source-derived readonly-index path as stale/doctor.",
+      "hotspot": "generated verification all-scope scan",
+      "quick_win_candidate": false,
+      "recommendation": "If future regressions appear, profile repeated module-context and readonly-index construction first."
+    },
+    {
+      "evidence": "checkpoint --ci --format json --detail summary completed in wall=7.987s; stage-level timing is still inferred from code structure rather than explicit per-stage timers.",
+      "hotspot": "checkpoint stage mix",
+      "quick_win_candidate": false,
+      "recommendation": "Do not add new public timing output in v1.4.5; add internal profiling only if v1.4.6 is approved."
+    }
+  ],
+  "observations": [
+    {
+      "argv": [
+        "checkpoint"
+      ],
+      "cache_signal": "runtime_cache_snapshot",
+      "command": "checkpoint",
+      "cpu_time_seconds": 1.296875,
+      "ddt_binding_count": 5,
+      "exit_code": 0,
+      "incremental_signal": "n/a",
+      "indexed_target_count": 1800,
+      "module_count": 10,
+      "notes": [
+        "progress-enabled text path"
+      ],
+      "output_mode": "text",
+      "preview_audit_target_count": null,
+      "preview_binding_count": 0,
+      "progress_rendered": true,
+      "scan_file_count": 174,
+      "scenario": "interactive text / repo-owned clean workspace",
+      "wall_time_seconds": 1.374752,
+      "writes_files": false
+    },
+    {
+      "argv": [
+        "checkpoint",
+        "--ci",
+        "--format",
+        "json",
+        "--detail",
+        "summary"
+      ],
+      "cache_signal": "accepted_artifact",
+      "command": "checkpoint",
+      "cpu_time_seconds": 7.859375,
+      "ddt_binding_count": 5,
+      "exit_code": 1,
+      "incremental_signal": "n/a",
+      "indexed_target_count": 1800,
+      "module_count": 10,
+      "notes": [
+        "summary CI path"
+      ],
+      "output_mode": "json",
+      "preview_audit_target_count": null,
+      "preview_binding_count": 0,
+      "progress_rendered": false,
+      "scan_file_count": 174,
+      "scenario": "machine JSON / repo-owned clean workspace",
+      "wall_time_seconds": 7.986941,
+      "writes_files": false
+    },
+    {
+      "argv": [
+        "finish"
+      ],
+      "cache_signal": "runtime_cache_snapshot",
+      "command": "finish",
+      "cpu_time_seconds": 1.921875,
+      "ddt_binding_count": 5,
+      "exit_code": 0,
+      "incremental_signal": "n/a",
+      "indexed_target_count": 1800,
+      "module_count": 10,
+      "notes": [
+        "post-optimization run reuses status report inside finish"
+      ],
+      "output_mode": "text",
+      "preview_audit_target_count": null,
+      "preview_binding_count": 0,
+      "progress_rendered": true,
+      "scan_file_count": 174,
+      "scenario": "interactive text / repo-owned clean workspace",
+      "wall_time_seconds": 26.007425,
+      "writes_files": true
+    },
+    {
+      "argv": [
+        "check"
+      ],
+      "cache_signal": "runtime_cache_snapshot",
+      "command": "check",
+      "cpu_time_seconds": 1.921875,
+      "ddt_binding_count": 5,
+      "exit_code": 0,
+      "incremental_signal": "n/a",
+      "indexed_target_count": 1800,
+      "module_count": 10,
+      "notes": [
+        "full DDT plus semantic target collection path"
+      ],
+      "output_mode": "text",
+      "preview_audit_target_count": null,
+      "preview_binding_count": 0,
+      "progress_rendered": true,
+      "scan_file_count": 174,
+      "scenario": "interactive text / repo-owned clean workspace",
+      "wall_time_seconds": 11.402996,
+      "writes_files": false
+    },
+    {
+      "argv": [
+        "verify-generated",
+        "--all",
+        "--ci",
+        "--format",
+        "json"
+      ],
+      "cache_signal": "fresh_source_preferred",
+      "command": "verify-generated",
+      "cpu_time_seconds": 23.453125,
+      "ddt_binding_count": 5,
+      "exit_code": 1,
+      "incremental_signal": "all_scope_full",
+      "indexed_target_count": 1800,
+      "module_count": 10,
+      "notes": [
+        "all modules"
+      ],
+      "output_mode": "json",
+      "preview_audit_target_count": null,
+      "preview_binding_count": 0,
+      "progress_rendered": false,
+      "scan_file_count": 174,
+      "scenario": "machine JSON / repo-owned clean workspace",
+      "wall_time_seconds": 23.782829,
+      "writes_files": false
+    },
+    {
+      "argv": [
+        "stale",
+        "--all",
+        "--ci",
+        "--format",
+        "json"
+      ],
+      "cache_signal": "fresh_source_preferred",
+      "command": "stale",
+      "cpu_time_seconds": 15.90625,
+      "ddt_binding_count": 5,
+      "exit_code": 1,
+      "incremental_signal": "all_scope_full",
+      "indexed_target_count": 1800,
+      "module_count": 10,
+      "notes": [
+        "all modules"
+      ],
+      "output_mode": "json",
+      "preview_audit_target_count": null,
+      "preview_binding_count": 0,
+      "progress_rendered": false,
+      "scan_file_count": 174,
+      "scenario": "machine JSON / repo-owned clean workspace",
+      "wall_time_seconds": 16.040112,
+      "writes_files": false
+    },
+    {
+      "argv": [
+        "doctor",
+        "--all",
+        "--ci",
+        "--format",
+        "json"
+      ],
+      "cache_signal": "fresh_source_preferred",
+      "command": "doctor",
+      "cpu_time_seconds": 17.203125,
+      "ddt_binding_count": 5,
+      "exit_code": 0,
+      "incremental_signal": "all_scope_full",
+      "indexed_target_count": 1800,
+      "module_count": 10,
+      "notes": [
+        "all modules"
+      ],
+      "output_mode": "json",
+      "preview_audit_target_count": null,
+      "preview_binding_count": 0,
+      "progress_rendered": false,
+      "scan_file_count": 174,
+      "scenario": "machine JSON / repo-owned clean workspace",
+      "wall_time_seconds": 17.364394,
+      "writes_files": false
+    },
+    {
+      "argv": [
+        "docs",
+        "--all",
+        "--write"
+      ],
+      "cache_signal": "fresh_source_preferred",
+      "command": "docs",
+      "cpu_time_seconds": 25.640625,
+      "ddt_binding_count": 5,
+      "exit_code": 0,
+      "incremental_signal": "all_scope_full",
+      "indexed_target_count": 1800,
+      "module_count": 10,
+      "notes": [
+        "scratch copy"
+      ],
+      "output_mode": "text",
+      "preview_audit_target_count": null,
+      "preview_binding_count": 0,
+      "progress_rendered": true,
+      "scan_file_count": 174,
+      "scenario": "interactive text / scratch copy",
+      "wall_time_seconds": 26.116734,
+      "writes_files": true
+    },
+    {
+      "argv": [
+        "module",
+        "seal",
+        "--all",
+        "--write"
+      ],
+      "cache_signal": "fresh_source_preferred",
+      "command": "module seal",
+      "cpu_time_seconds": 0.59375,
+      "ddt_binding_count": 5,
+      "exit_code": 0,
+      "incremental_signal": "all_scope_full",
+      "indexed_target_count": 1800,
+      "module_count": 10,
+      "notes": [
+        "scratch copy"
+      ],
+      "output_mode": "text",
+      "preview_audit_target_count": null,
+      "preview_binding_count": 0,
+      "progress_rendered": true,
+      "scan_file_count": 174,
+      "scenario": "interactive text / scratch copy",
+      "wall_time_seconds": 0.605148,
+      "writes_files": true
+    }
+  ],
+  "quick_wins": [
+    "Implemented the low-risk finish optimization by reusing the first status report during full check execution."
+  ],
+  "recommendation": "The baseline now exists and the obvious quick win is closed. v1.4.6 should become a dedicated performance release only if generated-context all-scope write paths or repeated readonly-index work show materially worse latency in broader repositories than this harbor-spec baseline.",
+  "repo_root": "E:/project/harbor-spec",
+  "scope": "Task Group D / v1.4.5 runtime baseline on harbor-spec repository",
+  "title": "Harbor-spec Runtime Performance Baseline Report",
+  "writes_files": false
+}

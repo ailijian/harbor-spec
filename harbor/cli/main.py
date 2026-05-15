@@ -1494,7 +1494,17 @@ def main():
             except Exception:
                 pass
 
-    def _run_check(*, fast=False, module=None, func=None, diff_only=True, debug=False, output_format="jsonl", verbose=False):
+    def _run_check(
+        *,
+        fast=False,
+        module=None,
+        func=None,
+        diff_only=True,
+        debug=False,
+        output_format="jsonl",
+        verbose=False,
+        status_report=None,
+    ):
         progress_ui = _make_progress(output_format="text" if output_format == "plain" else output_format, ci=False)
         with progress_ui.status(t("cli.progress.label.check.scan")):
             scanner = DDTScanner()
@@ -1573,8 +1583,10 @@ def main():
         semantic_preview_report = None
         if not fast:
             with progress_ui.status(t("cli.progress.label.check.semantic_status")):
-                eng = SyncEngine()
-                status = eng.check_status()
+                status = status_report
+                if status is None:
+                    eng = SyncEngine()
+                    status = eng.check_status()
             provider = resolve_provider()
             guard = SemanticGuard()
             model = getattr(provider, "model", "n/a")
@@ -2646,7 +2658,12 @@ def main():
         finish_progress.phase(current=1, total=2, label=t("cli.progress.label.finish.status"))
         status_report, _ = _run_status(verbose=getattr(args, "verbose", False), output_format="text")
         finish_progress.phase(current=2, total=2, label=t("cli.progress.label.finish.check"))
-        check_summary = _run_check(fast=False, output_format="plain", verbose=getattr(args, "verbose", False))
+        check_summary = _run_check(
+            fast=False,
+            output_format="plain",
+            verbose=getattr(args, "verbose", False),
+            status_report=status_report,
+        )
         blocking_count = (
             len(list(getattr(status_report, "drift", []) or []))
             + len(list(getattr(status_report, "modified", []) or []))
