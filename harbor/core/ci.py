@@ -10,6 +10,7 @@ from harbor.adapters.base import ContractSubject
 from harbor.core.contract_impact import ContractImpactLevel, contract_impact_report_to_dict
 from harbor.core.advice_config import AdviceSettings
 from harbor.core.doctor import FAIL, DoctorReport
+from harbor.core.verification import TypeScriptDDTPreviewReport
 from harbor.core.repair_guidance import (
     RepairGuidance,
     guidance_for_checkpoint_category,
@@ -264,6 +265,7 @@ class CheckpointCIResult:
     baseline_source: Optional[str] = None
     baseline_path: Optional[str] = None
     baseline_found: bool = False
+    typescript_ddt_preview: Optional[TypeScriptDDTPreviewReport] = None
 
 
 def build_checkpoint_ci_result(
@@ -278,6 +280,7 @@ def build_checkpoint_ci_result(
     baseline_found: bool = False,
     baseline_error_category: Optional[str] = None,
     baseline_error_reason: Optional[str] = None,
+    typescript_ddt_preview: Optional[TypeScriptDDTPreviewReport] = None,
 ) -> CheckpointCIResult:
     settings = advice_settings or AdviceSettings()
     check_errors = list(check_errors or [])
@@ -577,6 +580,10 @@ def build_checkpoint_ci_result(
         "possible_contract_impact": possible_contract_impact,
         "unknown_contract_impact": unknown_contract_impact,
     }
+    if typescript_ddt_preview is not None:
+        summary["typescript_ddt_preview_bindings"] = int(typescript_ddt_preview.bindings_count)
+        summary["typescript_ddt_preview_valid"] = int(typescript_ddt_preview.valid_count)
+        summary["typescript_ddt_preview_advisory"] = int(typescript_ddt_preview.advisory_count)
     next_steps = _collect_checkpoint_next_steps(deduped_failures)
     return CheckpointCIResult(
         command="checkpoint",
@@ -593,6 +600,7 @@ def build_checkpoint_ci_result(
         baseline_source=baseline_source,
         baseline_path=baseline_path,
         baseline_found=baseline_found,
+        typescript_ddt_preview=typescript_ddt_preview,
     )
 
 
@@ -900,6 +908,9 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
       - `ci_failures` / `advisory` item 可稳定包含 additive identity 与 adapter metadata，
         例如 `target_id` / `language` / `symbol_kind` / `adapter` /
         `contract_source_kinds` / `contract_source_fingerprints`；这些字段不破坏旧输出消费。
+      - `typescript_ddt_preview` 为可选 additive preview payload：
+        仅在 preview enabled 时输出，包含非阻断 `bindings_count` / `valid_count` /
+        `advisory_count` / `findings`，且不进入 `ci_failures` 或 `exit_code` 语义。
       - `contract_impact` 保留 checkpoint contract-impact 摘要；TypeScript additive metadata
         与 identity 相关信息仅作附加公开字段，不改变既有 gate 语义。
       - guidance 是 optional additive field：
@@ -926,7 +937,7 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
         exit_code / blocking-failure / advisory 语义。
     """
     include_guidance = result.advice_mode == "basic" and result.include_in_ci_json
-    return {
+    payload = {
         "command": result.command,
         "ci": True,
         "status": result.status,
@@ -941,6 +952,9 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
         "contract_impact": _sanitize_checkpoint_contract_impact(result.contract_impact),
         "next_steps": [_sanitize_json_text(step) for step in result.next_steps],
     }
+    if result.typescript_ddt_preview is not None:
+        payload["typescript_ddt_preview"] = result.typescript_ddt_preview.to_dict()
+    return payload
 
 
 def checkpoint_ci_summary_to_dict(result: CheckpointCIResult) -> dict:
@@ -960,6 +974,8 @@ def checkpoint_ci_summary_to_dict(result: CheckpointCIResult) -> dict:
         `contract_impact` 全量结构，也不会输出 guidance、source fingerprint、
         source confidence、TypeScript 扩展 metadata 等重型细节。
       - 该摘要模式不改变 gate status、`exit_code`、baseline 语义或 next-steps 语义。
+      - `typescript_ddt_preview` 为可选 additive summary payload：仅在 preview enabled
+        时输出 counts，不输出 full findings 明细。
 
     Side Effects:
       - 只读序列化；不写文件、不接受 baseline、不刷新上下文。
@@ -990,7 +1006,7 @@ def checkpoint_ci_summary_to_dict(result: CheckpointCIResult) -> dict:
         if file_path:
             row["file_path"] = file_path
         top_failures.append(row)
-    return {
+    payload = {
         "command": result.command,
         "ci": True,
         "status": result.status,
@@ -1005,6 +1021,9 @@ def checkpoint_ci_summary_to_dict(result: CheckpointCIResult) -> dict:
         "advisory_counts": _checkpoint_category_counts(result.advisory),
         "next_steps": [_sanitize_json_text(step) for step in result.next_steps],
     }
+    if result.typescript_ddt_preview is not None:
+        payload["typescript_ddt_preview"] = result.typescript_ddt_preview.to_summary_dict()
+    return payload
 
 
 def format_checkpoint_workflow_summary(result: CheckpointCIResult) -> str:

@@ -293,6 +293,107 @@ def guidance_for_checkpoint_category(category: str, *, language: Optional[str] =
             user_feedback_required=False,
             risk_level="low",
         )
+    if cat == "preview_valid":
+        return RepairGuidance(
+            what_happened="This TypeScript DDT preview binding is currently valid in advisory-only preview mode.",
+            recommended_action=(
+                "Use this preview result for explainability only and continue reviewing contract, target, and test alignment."
+            ),
+            anti_action="Do not treat preview_valid as a default CI blocker or as proof of test sufficiency.",
+            suggested_skill="harbor-contract-change",
+            suggested_validation=["harbor checkpoint --ci --format json --advice basic"],
+            decision_required=False,
+            safe_to_auto_fix=False,
+            automation_policy="plan_only",
+            user_feedback_required=False,
+            risk_level="low",
+            notes=["TypeScript DDT preview remains preview-only and advisory-first in v1.4.4."],
+        )
+    if cat == "target_not_found":
+        return RepairGuidance(
+            what_happened="A TypeScript DDT preview binding points to a target_id that was not found in the current workspace scan.",
+            recommended_action=(
+                "Review the target_id, verify TypeScript source discovery under code_roots, and confirm the target still exists."
+            ),
+            anti_action="Do not convert this preview finding into a default blocker or silently rewrite target_id values.",
+            suggested_skill="harbor-contract-change",
+            suggested_validation=["harbor checkpoint --ci --format json --advice basic"],
+            decision_required=True,
+            safe_to_auto_fix=False,
+            automation_policy="plan_only",
+            user_feedback_required=True,
+            risk_level="medium",
+            notes=["Preview findings stay outside ci_failures and exit-code semantics."],
+        )
+    if cat == "test_asset_missing":
+        return RepairGuidance(
+            what_happened="A TypeScript DDT preview binding references a test asset path that does not exist.",
+            recommended_action="Review the repo-relative test_asset.path and either restore the test file or update the binding declaration.",
+            anti_action="Do not treat missing preview test assets as proof of runtime failure or as a default blocker.",
+            suggested_skill="harbor-contract-change",
+            suggested_validation=["harbor checkpoint --ci --format json --advice basic"],
+            decision_required=True,
+            safe_to_auto_fix=False,
+            automation_policy="plan_only",
+            user_feedback_required=True,
+            risk_level="medium",
+        )
+    if cat == "contract_source_missing":
+        return RepairGuidance(
+            what_happened="The preview-bound TypeScript target does not currently have enough contract evidence for preview validation.",
+            recommended_action=(
+                "Add or improve adjacent JSDoc/TSDoc contract evidence for the target, then rerun checkpoint/next preview diagnostics."
+            ),
+            anti_action="Do not assume TypeScript signatures or data-contract evidence alone satisfy function-level preview validation.",
+            suggested_skill="harbor-contract-change",
+            suggested_validation=["harbor checkpoint --ci --format json --advice basic"],
+            decision_required=False,
+            safe_to_auto_fix=False,
+            automation_policy="plan_only",
+            user_feedback_required=False,
+            risk_level="medium",
+        )
+    if cat == "public_boundary_unconfirmed":
+        return RepairGuidance(
+            what_happened="The preview-bound TypeScript target does not yet have strong enough public-boundary confirmation for the configured preview check.",
+            recommended_action=(
+                "Review public boundary evidence, preset mode, and entrypoint/export configuration, then decide whether the preview binding should remain advisory."
+            ),
+            anti_action="Do not promote this preview-only boundary result into a default blocking gate.",
+            suggested_skill="harbor-contract-change",
+            suggested_validation=["harbor checkpoint --ci --format json --advice basic"],
+            decision_required=True,
+            safe_to_auto_fix=False,
+            automation_policy="plan_only",
+            user_feedback_required=True,
+            risk_level="medium",
+        )
+    if cat == "binding_schema_invalid":
+        return RepairGuidance(
+            what_happened="The TypeScript DDT preview sidecar schema is invalid or contains unsupported binding fields.",
+            recommended_action="Fix the sidecar schema, required fields, path values, or frozen strategy enum values.",
+            anti_action="Do not bypass invalid preview sidecar structure by treating it as an accepted baseline change.",
+            suggested_skill="harbor-contract-change",
+            suggested_validation=["harbor checkpoint --ci --format json --advice basic"],
+            decision_required=False,
+            safe_to_auto_fix=False,
+            automation_policy="plan_only",
+            user_feedback_required=False,
+            risk_level="medium",
+        )
+    if cat == "duplicate_binding_id":
+        return RepairGuidance(
+            what_happened="Multiple TypeScript DDT preview bindings declare the same binding_id.",
+            recommended_action="Keep binding_id unique across the sidecar and review which declaration should remain.",
+            anti_action="Do not rely on duplicate binding_id ordering or assume Harbor will pick one binding implicitly.",
+            suggested_skill="harbor-contract-change",
+            suggested_validation=["harbor checkpoint --ci --format json --advice basic"],
+            decision_required=True,
+            safe_to_auto_fix=False,
+            automation_policy="plan_only",
+            user_feedback_required=True,
+            risk_level="medium",
+        )
     if cat == "unsupported_syntax_advisory":
         return RepairGuidance(
             what_happened="TypeScript lightweight parser could not safely classify this target.",

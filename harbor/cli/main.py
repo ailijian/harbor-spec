@@ -1,4 +1,5 @@
 import argparse
+from collections import Counter
 import os
 from datetime import datetime, timezone
 import re
@@ -110,6 +111,7 @@ from harbor.core.audit import SemanticGuard, resolve_provider
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
 from harbor.core.init_wizard import InitWizard, InitWizardOptions
 from harbor.core.decorator import DecoratorEngine
+from harbor.core.verification import validate_typescript_ddt_preview
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, write_workspace_config
 
 
@@ -1178,6 +1180,12 @@ def main():
         except Exception:
             return {}
 
+    def _load_typescript_ddt_preview_report_safe():
+        try:
+            return validate_typescript_ddt_preview(Path.cwd(), _load_cfg_data_safe())
+        except Exception:
+            return None
+
     def _repo_display_path(path: Path) -> str:
         try:
             return path.resolve().relative_to(Path.cwd()).as_posix()
@@ -1498,6 +1506,32 @@ def main():
                     print(f"    {adv.message}")
         if not rep.valid and not rep.violations:
             print(f"  {t('cli.check.nobindings')}")
+        preview_report = _load_typescript_ddt_preview_report_safe()
+        if preview_report is not None:
+            print("\n[TypeScript DDT Preview]")
+            print(
+                "  "
+                f"bindings={preview_report.bindings_count} "
+                f"valid={preview_report.valid_count} "
+                f"advisory={preview_report.advisory_count}"
+            )
+            if verbose:
+                for finding in preview_report.findings:
+                    target = str(finding.target_id or finding.binding_id or "").strip()
+                    print(
+                        "  - "
+                        f"{finding.status} "
+                        f"{target} "
+                        f"test_asset={finding.test_asset_path or '-'}"
+                    )
+                    print(f"    {finding.reason}")
+            elif preview_report.advisory_count:
+                categories = Counter(finding.status for finding in preview_report.findings if finding.status != "preview_valid")
+                rendered = ", ".join(f"{key}={value}" for key, value in sorted(categories.items()))
+                print(f"  advisory_summary: {rendered}")
+                print("  preview-only, advisory-first, non-blocking")
+            else:
+                print("  preview-only, advisory-first, non-blocking")
         semantic_targets_count = 0
         semantic_counts = {"OK": 0, "POSSIBLE_SEMANTIC_DRIFT": 0, "CONTRACT_GAP": 0, "SKIPPED_NO_CONTRACT": 0, "ERROR": 0}
         if not fast:
@@ -1604,6 +1638,9 @@ def main():
             "bindings": len(bindings),
             "ddt_violations": len(list(getattr(rep, "violations", []) or [])),
             "ddt_baseline_missing": baseline_missing_count,
+            "typescript_ddt_preview_bindings": int(getattr(preview_report, "bindings_count", 0) or 0),
+            "typescript_ddt_preview_valid": int(getattr(preview_report, "valid_count", 0) or 0),
+            "typescript_ddt_preview_advisory": int(getattr(preview_report, "advisory_count", 0) or 0),
             "semantic_targets": semantic_targets_count,
             "semantic_counts": semantic_counts,
         }
@@ -2106,7 +2143,11 @@ def main():
             "func_id": item.get("func_id"),
             "file_path": item.get("file_path"),
             "reason": item.get("reason"),
+            "binding_id": item.get("binding_id"),
             "target_id": item.get("target_id"),
+            "test_asset_path": item.get("test_asset_path"),
+            "test_asset_label": item.get("test_asset_label"),
+            "target_file_path": item.get("target_file_path"),
             "language": item.get("language"),
             "symbol_kind": item.get("symbol_kind"),
             "adapter": item.get("adapter"),
@@ -2123,6 +2164,7 @@ def main():
             "public_boundary_evidence_items": item.get("public_boundary_evidence_items"),
             "public_boundary_reason": item.get("public_boundary_reason"),
             "boundary_preset_mode": item.get("boundary_preset_mode"),
+            "preview": bool(item.get("preview", False)),
             "blocking": bool(blocking),
         }
         boundary_explanation = _build_boundary_explanation(item)
@@ -2185,16 +2227,26 @@ def main():
             lines.append(f"{title}:")
             for idx, row in enumerate(group_items, start=1):
                 lines.append(f"{idx}. {row.get('category', 'unknown')}")
-                target = row.get("func_id") or row.get("file_path")
+                target = row.get("func_id") or row.get("target_id") or row.get("file_path")
                 if target:
                     lines.append(f"   Target: {target}")
+                if row.get("binding_id"):
+                    lines.append(f"   Binding: {row.get('binding_id')}")
+                if row.get("test_asset_path"):
+                    label = row.get("test_asset_label")
+                    suffix = f" ({label})" if label else ""
+                    lines.append(f"   Test asset: {row.get('test_asset_path')}{suffix}")
                 if row.get("reason"):
                     lines.append(f"   Reason: {row.get('reason')}")
                 context_bits = []
+                if row.get("preview"):
+                    context_bits.append("preview_only=true")
                 if row.get("language"):
                     context_bits.append(f"language={row.get('language')}")
                 if row.get("symbol_kind"):
                     context_bits.append(f"symbol_kind={row.get('symbol_kind')}")
+                if row.get("target_file_path"):
+                    context_bits.append(f"target_file_path={row.get('target_file_path')}")
                 if row.get("export_mode"):
                     context_bits.append(f"export_mode={row.get('export_mode')}")
                 if row.get("data_contract_kind"):
@@ -2295,6 +2347,7 @@ def main():
                     status_report=rep,
                     ddt_report=ddt_report,
                     contract_impact_report=contract_impact_report,
+                    typescript_ddt_preview=_load_typescript_ddt_preview_report_safe(),
                 )
                 print(format_checkpoint_workflow_summary(workflow_result))
                 check_summary = {
@@ -2353,6 +2406,7 @@ def main():
             except Exception as ex:
                 check_errors.append(f"contract_impact_failed: {str(ex)}")
                 contract_impact_report = build_contract_impact_report([])
+            preview_report = _load_typescript_ddt_preview_report_safe()
             ci_result = build_checkpoint_ci_result(
                 status_report=status_report,
                 ddt_report=ddt_report,
@@ -2364,6 +2418,7 @@ def main():
                 baseline_found=baseline_found,
                 baseline_error_category=baseline_error_category,
                 baseline_error_reason=baseline_error_reason,
+                typescript_ddt_preview=preview_report,
             )
             detail = str(getattr(args, "detail", None) or "full")
             if args.format == "json":
@@ -2418,6 +2473,13 @@ def main():
             if not isinstance(row, dict):
                 continue
             items.append(_normalize_next_item(source_command, row, blocking=False, include_guidance=include_guidance))
+        if source_command == "checkpoint":
+            preview_payload = payload.get("typescript_ddt_preview")
+            if isinstance(preview_payload, dict):
+                for row in list(preview_payload.get("findings") or []):
+                    if not isinstance(row, dict):
+                        continue
+                    items.append(_normalize_next_item(source_command, row, blocking=False, include_guidance=include_guidance))
 
         max_items = max(int(getattr(args, "max_items", 20) or 20), 1)
         items = items[:max_items]
