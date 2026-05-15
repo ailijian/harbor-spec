@@ -10,6 +10,7 @@ from harbor.adapters.base import ContractSubject
 from harbor.core.contract_impact import ContractImpactLevel, contract_impact_report_to_dict
 from harbor.core.advice_config import AdviceSettings
 from harbor.core.doctor import FAIL, DoctorReport
+from harbor.core.audit import TypeScriptSemanticAuditPreviewReport
 from harbor.core.verification import TypeScriptDDTPreviewReport
 from harbor.core.repair_guidance import (
     RepairGuidance,
@@ -266,6 +267,7 @@ class CheckpointCIResult:
     baseline_path: Optional[str] = None
     baseline_found: bool = False
     typescript_ddt_preview: Optional[TypeScriptDDTPreviewReport] = None
+    semantic_audit_preview: Optional[TypeScriptSemanticAuditPreviewReport] = None
 
 
 def build_checkpoint_ci_result(
@@ -281,6 +283,7 @@ def build_checkpoint_ci_result(
     baseline_error_category: Optional[str] = None,
     baseline_error_reason: Optional[str] = None,
     typescript_ddt_preview: Optional[TypeScriptDDTPreviewReport] = None,
+    semantic_audit_preview: Optional[TypeScriptSemanticAuditPreviewReport] = None,
 ) -> CheckpointCIResult:
     settings = advice_settings or AdviceSettings()
     check_errors = list(check_errors or [])
@@ -584,6 +587,12 @@ def build_checkpoint_ci_result(
         summary["typescript_ddt_preview_bindings"] = int(typescript_ddt_preview.bindings_count)
         summary["typescript_ddt_preview_valid"] = int(typescript_ddt_preview.valid_count)
         summary["typescript_ddt_preview_advisory"] = int(typescript_ddt_preview.advisory_count)
+    if semantic_audit_preview is not None:
+        summary["semantic_audit_preview_targets"] = int(semantic_audit_preview.targets_count)
+        summary["semantic_audit_preview_eligible"] = int(semantic_audit_preview.eligible_count)
+        summary["semantic_audit_preview_previewed"] = int(semantic_audit_preview.previewed_count)
+        summary["semantic_audit_preview_ineligible"] = int(semantic_audit_preview.ineligible_count)
+        summary["semantic_audit_preview_advisory"] = int(semantic_audit_preview.advisory_count)
     next_steps = _collect_checkpoint_next_steps(deduped_failures)
     return CheckpointCIResult(
         command="checkpoint",
@@ -601,6 +610,7 @@ def build_checkpoint_ci_result(
         baseline_path=baseline_path,
         baseline_found=baseline_found,
         typescript_ddt_preview=typescript_ddt_preview,
+        semantic_audit_preview=semantic_audit_preview,
     )
 
 
@@ -911,6 +921,10 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
       - `typescript_ddt_preview` 为可选 additive preview payload：
         仅在 preview enabled 时输出，包含非阻断 `bindings_count` / `valid_count` /
         `advisory_count` / `findings`，且不进入 `ci_failures` 或 `exit_code` 语义。
+      - `semantic_audit_preview` 为可选 additive preview payload：
+        仅在 preview enabled 时输出，包含 TypeScript semantic audit advisory preview 的
+        `targets_count` / `eligible_count` / `previewed_count` / `ineligible_count` /
+        `advisory_count` / `findings`，且不进入 `ci_failures` 或 `exit_code` 语义。
       - `contract_impact` 保留 checkpoint contract-impact 摘要；TypeScript additive metadata
         与 identity 相关信息仅作附加公开字段，不改变既有 gate 语义。
       - guidance 是 optional additive field：
@@ -954,6 +968,8 @@ def checkpoint_ci_result_to_dict(result: CheckpointCIResult) -> dict:
     }
     if result.typescript_ddt_preview is not None:
         payload["typescript_ddt_preview"] = result.typescript_ddt_preview.to_dict()
+    if result.semantic_audit_preview is not None:
+        payload["semantic_audit_preview"] = result.semantic_audit_preview.to_dict()
     return payload
 
 
@@ -975,6 +991,8 @@ def checkpoint_ci_summary_to_dict(result: CheckpointCIResult) -> dict:
         source confidence、TypeScript 扩展 metadata 等重型细节。
       - 该摘要模式不改变 gate status、`exit_code`、baseline 语义或 next-steps 语义。
       - `typescript_ddt_preview` 为可选 additive summary payload：仅在 preview enabled
+        时输出 counts，不输出 full findings 明细。
+      - `semantic_audit_preview` 为可选 additive summary payload：仅在 preview enabled
         时输出 counts，不输出 full findings 明细。
 
     Side Effects:
@@ -1023,6 +1041,8 @@ def checkpoint_ci_summary_to_dict(result: CheckpointCIResult) -> dict:
     }
     if result.typescript_ddt_preview is not None:
         payload["typescript_ddt_preview"] = result.typescript_ddt_preview.to_summary_dict()
+    if result.semantic_audit_preview is not None:
+        payload["semantic_audit_preview"] = result.semantic_audit_preview.to_summary_dict()
     return payload
 
 
@@ -1082,6 +1102,14 @@ def format_checkpoint_workflow_summary(result: CheckpointCIResult) -> str:
     lines.append(f"- bindings: {bindings}")
     lines.append(f"- violations: {int(result.summary.get('ddt_failures', 0) or 0)}")
     lines.append(f"- advisory: {int(result.summary.get('ddt_advisory', 0) or 0)}")
+    if result.semantic_audit_preview is not None:
+        lines.append("")
+        lines.append("TypeScript Semantic Audit Preview")
+        lines.append(f"- targets: {int(result.summary.get('semantic_audit_preview_targets', 0) or 0)}")
+        lines.append(f"- eligible: {int(result.summary.get('semantic_audit_preview_eligible', 0) or 0)}")
+        lines.append(f"- previewed: {int(result.summary.get('semantic_audit_preview_previewed', 0) or 0)}")
+        lines.append(f"- ineligible: {int(result.summary.get('semantic_audit_preview_ineligible', 0) or 0)}")
+        lines.append(f"- advisory: {int(result.summary.get('semantic_audit_preview_advisory', 0) or 0)}")
 
     top_items = _checkpoint_top_items(result.ci_failures, limit=3)
     if top_items:
@@ -1136,6 +1164,14 @@ def format_checkpoint_ci_result(result: CheckpointCIResult) -> str:
                 lines.append(f"- {label}: {payload.get('reason', '')}")
             if show_guidance:
                 _append_checkpoint_guidance_lines(lines, payload)
+    if result.semantic_audit_preview is not None:
+        lines.append("")
+        lines.append("TypeScript Semantic Audit Preview")
+        lines.append(f"- targets: {int(result.semantic_audit_preview.targets_count)}")
+        lines.append(f"- eligible: {int(result.semantic_audit_preview.eligible_count)}")
+        lines.append(f"- previewed: {int(result.semantic_audit_preview.previewed_count)}")
+        lines.append(f"- ineligible: {int(result.semantic_audit_preview.ineligible_count)}")
+        lines.append(f"- advisory: {int(result.semantic_audit_preview.advisory_count)}")
     if result.next_steps:
         lines.append("")
         lines.append(t("cli.ci.next_steps"))

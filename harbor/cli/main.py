@@ -107,7 +107,11 @@ from harbor.core.log_draft import (
     write_diary_draft_output,
 )
 from harbor.core.diary import DiaryManager
-from harbor.core.audit import SemanticGuard, resolve_provider
+from harbor.core.audit import (
+    SemanticGuard,
+    build_typescript_semantic_audit_preview,
+    resolve_provider,
+)
 from harbor.core.drafting import DiaryDrafter, LLMNotConfiguredError
 from harbor.core.init_wizard import InitWizard, InitWizardOptions
 from harbor.core.decorator import DecoratorEngine
@@ -1186,6 +1190,18 @@ def main():
         except Exception:
             return None
 
+    def _load_typescript_semantic_audit_preview_report_safe(status_report, provider=None, guard=None):
+        try:
+            return build_typescript_semantic_audit_preview(
+                Path.cwd(),
+                status_report,
+                config=_load_cfg_data_safe(),
+                provider=provider,
+                guard=guard,
+            )
+        except Exception:
+            return None
+
     def _repo_display_path(path: Path) -> str:
         try:
             return path.resolve().relative_to(Path.cwd()).as_posix()
@@ -1534,6 +1550,7 @@ def main():
                 print("  preview-only, advisory-first, non-blocking")
         semantic_targets_count = 0
         semantic_counts = {"OK": 0, "POSSIBLE_SEMANTIC_DRIFT": 0, "CONTRACT_GAP": 0, "SKIPPED_NO_CONTRACT": 0, "ERROR": 0}
+        semantic_preview_report = None
         if not fast:
             eng = SyncEngine()
             status = eng.check_status()
@@ -1546,10 +1563,21 @@ def main():
             targets.extend(status.modified)
             if not diff_only:
                 targets.extend(status.contract_changed)
-            semantic_targets_count = len(targets)
-            print(f"targets={len(targets)}")
+            python_targets = [
+                entry
+                for entry in targets
+                if str(getattr(entry, "language", "") or "").strip().lower() != "typescript"
+                and not str(getattr(entry, "file_path", "") or "").strip().lower().endswith(".ts")
+            ]
+            semantic_preview_report = _load_typescript_semantic_audit_preview_report_safe(
+                status_report=status,
+                provider=provider,
+                guard=guard,
+            )
+            semantic_targets_count = len(python_targets) + int(getattr(semantic_preview_report, "targets_count", 0) or 0)
+            print(f"targets={semantic_targets_count}")
             out_lines = []
-            for e in targets:
+            for e in python_targets:
                 try:
                     src = Path(e.file_path).read_text(encoding="utf-8")
                 except Exception as ex:
@@ -1585,7 +1613,7 @@ def main():
                 if debug:
                     print(f"[DEBUG] Prompt >>>\n{res.prompt or ''}\n[DEBUG] Raw <<<\n{res.raw_output or ''}")
                 reason = " ".join((res.reason or "").split())
-                llm_called = res.status not in ("CONTRACT_GAP", "SKIPPED_NO_CONTRACT")
+                llm_called = bool(getattr(res, "llm_called", False))
                 mapped_status = (
                     "OK"
                     if res.status == "OK"
@@ -1595,6 +1623,7 @@ def main():
                         else (res.status if res.status in ("CONTRACT_GAP", "SKIPPED_NO_CONTRACT") else "ERROR")
                     )
                 )
+                semantic_counts[mapped_status if mapped_status in semantic_counts else "ERROR"] += 1
                 if output_format == "jsonl":
                     print(json.dumps({
                         "status": mapped_status,
@@ -1606,7 +1635,6 @@ def main():
                         "llm_called": llm_called,
                     }, ensure_ascii=False))
                 else:
-                    semantic_counts[mapped_status if mapped_status in semantic_counts else "ERROR"] += 1
                     if res.status == "OK":
                         out_lines.append(f"OK {e.id}")
                     elif res.status == "MISMATCH":
@@ -1617,14 +1645,71 @@ def main():
                         out_lines.append(f"SKIPPED_NO_CONTRACT {e.id} :: {reason}")
                     else:
                         out_lines.append(f"ERROR {e.id} :: {reason}")
+            if semantic_preview_report is not None:
+                for finding in semantic_preview_report.findings:
+                    mapped_status = (
+                        "OK"
+                        if finding.status == "preview_ok"
+                        else (
+                            "POSSIBLE_SEMANTIC_DRIFT"
+                            if finding.status == "preview_mismatch"
+                            else ("SKIPPED_NO_CONTRACT" if finding.status == "preview_ineligible" else "ERROR")
+                        )
+                    )
+                    semantic_counts[mapped_status if mapped_status in semantic_counts else "ERROR"] += 1
+                    target_id = str(finding.target_id or finding.qualified_name or "").strip()
+                    if output_format == "jsonl":
+                        print(json.dumps({
+                            "status": mapped_status,
+                            "func_id": target_id,
+                            "target_id": finding.target_id,
+                            "file_path": finding.file_path,
+                            "provider": semantic_preview_report.provider,
+                            "model": semantic_preview_report.model,
+                            "reason": finding.reason if mapped_status != "OK" else None,
+                            "llm_called": finding.llm_called,
+                            "preview": True,
+                            "language": finding.language,
+                            "symbol_kind": finding.symbol_kind,
+                            "eligible": finding.eligible,
+                            "eligibility_reason": finding.eligibility_reason,
+                            "evidence_kinds": list(finding.evidence_kinds),
+                        }, ensure_ascii=False))
+                    else:
+                        if mapped_status == "OK":
+                            out_lines.append(f"OK {target_id} :: preview typescript")
+                        elif mapped_status == "POSSIBLE_SEMANTIC_DRIFT":
+                            out_lines.append(f"POSSIBLE_SEMANTIC_DRIFT {target_id} :: {finding.reason}")
+                        elif mapped_status == "SKIPPED_NO_CONTRACT":
+                            out_lines.append(f"SKIPPED_NO_CONTRACT {target_id} :: {finding.reason}")
+                        else:
+                            out_lines.append(f"ERROR {target_id} :: {finding.reason}")
             if not out_lines:
                 if output_format == "plain":
                     print(t("cli.semantic.notargets"))
             else:
                 if output_format == "plain":
+                    if semantic_preview_report is not None:
+                        print(
+                            "preview_summary: "
+                            f"eligible={int(getattr(semantic_preview_report, 'eligible_count', 0) or 0)} "
+                            f"previewed={int(getattr(semantic_preview_report, 'previewed_count', 0) or 0)} "
+                            f"ineligible={int(getattr(semantic_preview_report, 'ineligible_count', 0) or 0)} "
+                            f"advisory={int(getattr(semantic_preview_report, 'advisory_count', 0) or 0)}"
+                        )
                     if verbose:
                         for ln in out_lines:
                             print(ln)
+                        if semantic_preview_report is not None:
+                            for finding in semantic_preview_report.findings:
+                                target_id = str(finding.target_id or finding.qualified_name or "").strip()
+                                print(
+                                    "  preview - "
+                                    f"{finding.status} "
+                                    f"{target_id} "
+                                    f"eligibility={finding.eligibility_reason or '-'} "
+                                    f"evidence={','.join(finding.evidence_kinds) if finding.evidence_kinds else '-'}"
+                                )
                     elif out_lines:
                         print(
                             "summary: "
@@ -1641,6 +1726,11 @@ def main():
             "typescript_ddt_preview_bindings": int(getattr(preview_report, "bindings_count", 0) or 0),
             "typescript_ddt_preview_valid": int(getattr(preview_report, "valid_count", 0) or 0),
             "typescript_ddt_preview_advisory": int(getattr(preview_report, "advisory_count", 0) or 0),
+            "semantic_audit_preview_targets": int(getattr(semantic_preview_report, "targets_count", 0) or 0),
+            "semantic_audit_preview_eligible": int(getattr(semantic_preview_report, "eligible_count", 0) or 0),
+            "semantic_audit_preview_previewed": int(getattr(semantic_preview_report, "previewed_count", 0) or 0),
+            "semantic_audit_preview_ineligible": int(getattr(semantic_preview_report, "ineligible_count", 0) or 0),
+            "semantic_audit_preview_advisory": int(getattr(semantic_preview_report, "advisory_count", 0) or 0),
             "semantic_targets": semantic_targets_count,
             "semantic_counts": semantic_counts,
         }
@@ -2348,6 +2438,7 @@ def main():
                     ddt_report=ddt_report,
                     contract_impact_report=contract_impact_report,
                     typescript_ddt_preview=_load_typescript_ddt_preview_report_safe(),
+                    semantic_audit_preview=_load_typescript_semantic_audit_preview_report_safe(rep),
                 )
                 print(format_checkpoint_workflow_summary(workflow_result))
                 check_summary = {
@@ -2407,6 +2498,7 @@ def main():
                 check_errors.append(f"contract_impact_failed: {str(ex)}")
                 contract_impact_report = build_contract_impact_report([])
             preview_report = _load_typescript_ddt_preview_report_safe()
+            semantic_preview_report = _load_typescript_semantic_audit_preview_report_safe(status_report)
             ci_result = build_checkpoint_ci_result(
                 status_report=status_report,
                 ddt_report=ddt_report,
@@ -2419,6 +2511,7 @@ def main():
                 baseline_error_category=baseline_error_category,
                 baseline_error_reason=baseline_error_reason,
                 typescript_ddt_preview=preview_report,
+                semantic_audit_preview=semantic_preview_report,
             )
             detail = str(getattr(args, "detail", None) or "full")
             if args.format == "json":

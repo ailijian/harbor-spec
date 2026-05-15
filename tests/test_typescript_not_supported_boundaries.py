@@ -52,8 +52,10 @@ def test_typescript_semantic_audit_is_skipped_without_contract_presence_or_ast(m
         col_offset=0,
     )
     res = SemanticGuard().audit(contract, "export function api(){ return 1; }", _ShouldNotCallProvider(), file_path="src/api.ts")
-    assert res.status in {"SKIPPED_NO_CONTRACT", "NOT_SUPPORTED"}
-    assert "TypeScript semantic audit is not supported in v1.4.0" in (res.reason or "")
+    assert res.status == "SKIPPED_NO_CONTRACT"
+    assert "legacy FunctionContract targets are ineligible" in (res.reason or "")
+    assert res.preview is True
+    assert res.eligibility_reason == "legacy_typescript_target"
     assert res.prompt is None
     assert res.raw_output is None
 
