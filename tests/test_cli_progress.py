@@ -168,6 +168,26 @@ def test_verify_generated_json_mode_keeps_stdout_clean_even_when_progress_forced
     assert out.strip() == json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
 
 
+def test_checkpoint_text_mode_does_not_leak_progress_i18n_keys(monkeypatch):
+    def _force_progress(**kwargs):
+        return build_cli_progress(
+            console=Console(file=sys.stderr, force_terminal=True, width=120),
+            interactive=True,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(cli_main, "build_cli_progress", _force_progress)
+
+    code, out, err = _run_cmd(["checkpoint"])
+
+    rendered = _strip_ansi(err)
+    assert code == 0
+    assert "Harbor Checkpoint:" in out
+    assert "cli.progress.label." not in rendered
+    assert "Phase 1/4: Collecting Harbor status" in rendered
+    assert "Phase 4/4: Loading preview findings" in rendered
+
+
 def test_stale_text_mode_shows_progress_on_stderr_when_interactive(monkeypatch):
     monkeypatch.setattr(
         cli_main.SyncEngine,
@@ -198,6 +218,7 @@ def test_stale_text_mode_shows_progress_on_stderr_when_interactive(monkeypatch):
     assert "All derived context views are up to date." in out
     assert "Phase 1/2:" in rendered
     assert "Phase 2/2:" in rendered
+    assert "cli.progress.label." not in rendered
 
 
 def test_stale_all_text_mode_shows_progress_on_stderr_when_interactive(monkeypatch):
@@ -220,6 +241,7 @@ def test_stale_all_text_mode_shows_progress_on_stderr_when_interactive(monkeypat
     assert "Scope: all indexed modules" in out
     assert "Phase 1/2:" in rendered
     assert "Phase 2/2:" in rendered
+    assert "cli.progress.label." not in rendered
 
 
 def test_stale_ci_json_keeps_stdout_clean_even_when_progress_forced(monkeypatch):
@@ -306,6 +328,7 @@ def test_doctor_text_mode_shows_multi_stage_progress_on_stderr_when_interactive(
     for current in range(1, 7):
         assert f"Phase {current}/6:" in rendered
     assert "Scope: changed modules" in out
+    assert "cli.progress.label." not in rendered
 
 
 def test_doctor_all_text_mode_shows_multi_stage_progress_on_stderr_when_interactive(monkeypatch):
@@ -338,6 +361,7 @@ def test_doctor_all_text_mode_shows_multi_stage_progress_on_stderr_when_interact
     assert "Scope: all indexed modules" in out
     assert "Phase 1/6:" in rendered
     assert "Phase 6/6:" in rendered
+    assert "cli.progress.label." not in rendered
 
 
 def test_doctor_ci_json_keeps_stdout_single_object_when_progress_forced(monkeypatch):

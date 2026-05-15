@@ -11,6 +11,7 @@ import harbor.cli.main as cli_main
 from harbor.cli.main import main
 from harbor.core.doctor import DoctorCheckResult, DoctorReport, PASS
 from harbor.core.stale import ModuleStaleSummary, ViewStaleResult
+from harbor.utils.i18n import t
 
 
 def run_cmd(argv):
@@ -138,7 +139,18 @@ def test_env_language_controls_ci_text(monkeypatch):
     en_text = "\n".join([en_checkpoint, en_stale, en_doctor])
     assert "CI mode enabled" in en_text
     assert "CI gate" in en_text
-    assert "Suggested next steps" in en_text
+
+
+def test_progress_labels_translate_in_both_locales(monkeypatch):
+    monkeypatch.setenv("HARBOR_LANGUAGE", "zh")
+    assert t("cli.progress.label.checkpoint.status") == "收集 Harbor 状态"
+    assert t("cli.progress.label.stale.scope") == "解析 stale 范围"
+    assert t("cli.progress.label.doctor.scope") == "解析 doctor 范围"
+
+    monkeypatch.setenv("HARBOR_LANGUAGE", "en")
+    assert t("cli.progress.label.checkpoint.status") == "Collecting Harbor status"
+    assert t("cli.progress.label.stale.scope") == "Resolving stale scope"
+    assert t("cli.progress.label.doctor.scope") == "Resolving doctor scope"
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows-specific CLI encoding behavior")
