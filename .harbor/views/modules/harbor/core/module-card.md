@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2.2"
+harbor_version: "1.4.3"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-15T06:59:14Z"
+generated_at: "2026-05-15T07:55:35Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 39
@@ -50,7 +50,7 @@ source_paths:
   - "harbor/core/workspace_migrate.py"
 source_fingerprint: "sha256:1317df6b25e77405879c355bfe3b1e8e9c2d3eb9f2e1f1f8466c038e589d1708"
 contract_fingerprint: "sha256:84d40bb1f7641e814d0f32a53a07858dffb496b7e441fb26479e2a364469c227"
-generator_fingerprint: "sha256:81973cbbefc54bb414fae29cd7b22d78af4e1132460cb2c85844b28c5d4d9219"
+generator_fingerprint: "sha256:1ee8496df063eaeaade1b1c2b744b9180548d3bdd6c342105d62952b748253d0"
 view_fingerprint: "45a41ce7d433a7feeb76bde3a579a9fa91fe36b32c6a2961314ee3b5ccf756f3"
 fingerprint: "45a41ce7d433a7feeb76bde3a579a9fa91fe36b32c6a2961314ee3b5ccf756f3"
 ---

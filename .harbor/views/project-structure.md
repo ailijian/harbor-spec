@@ -1,8 +1,8 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2.2"
+harbor_version: "1.4.3"
 view_type: "project_structure"
-generated_at: "2026-05-15T07:23:10Z"
+generated_at: "2026-05-15T07:53:48Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
 source_path_count: 167
@@ -130,7 +130,7 @@ source_paths:
   - "tests/test_index_builder_bad_syntax.py"
 source_fingerprint: "sha256:8045785d7841724c7cd9fb8d2f527ab316d29dcd9c72bb6e72f6c5c97e6d0ad9"
 contract_fingerprint: "sha256:92fa8e18825d84e634c15afbc2d4b9bb785c27555d8db36a551f5faa04acd080"
-generator_fingerprint: "sha256:acbf174dd129bc6f84a47fbab94721946d034f7f5a285b22f3243f1074740d69"
+generator_fingerprint: "sha256:eb4b770e7ce9be0d74d950f1d7a44aa4f8261cfdc523ec063607f6d0ad4b8d01"
 ---
 
 # Project Structure

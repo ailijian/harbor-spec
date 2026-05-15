@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2.2"
+harbor_version: "1.4.3"
 view_type: "l2_readme"
 module: "tests/core"
-generated_at: "2026-05-15T06:02:48Z"
+generated_at: "2026-05-15T07:55:27Z"
 generation_command: "harbor docs --module tests/core --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -13,7 +13,7 @@ source_paths:
   - "tests/core/test_storage_migration.py"
 source_fingerprint: "sha256:5b1b43fea42acddb24983634659bc86ce9c5032ee2ffd08ad1d76316ec9b1da4"
 contract_fingerprint: "sha256:fbb4e933d96b1acbd25c9f813730ef3993e64c0f0ac3240442f0285c989d9eb1"
-generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
+generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d8374a04a87a76f4"
 ---
 
 # Module: tests/core

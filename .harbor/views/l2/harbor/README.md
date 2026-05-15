@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.2.2"
+harbor_version: "1.4.3"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-15T07:23:35Z"
+generated_at: "2026-05-15T07:53:59Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
 source_path_count: 62
@@ -73,7 +73,7 @@ source_paths:
   - "harbor/utils/i18n.py"
 source_fingerprint: "sha256:5536878e3efacebe932b1c8f0c2bd29ff3c595fd0e8709f77eab312959da73f4"
 contract_fingerprint: "sha256:2045f4ab0c9933dfa1689690ed68dba3d679eeeeae53b6ca7dd41e8aefb656c0"
-generator_fingerprint: "sha256:c1ce3559ca9ff43a479363bee03ab606ee1922fae51c1c59776a9cee111bb553"
+generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d8374a04a87a76f4"
 ---
 
 # Module: harbor
