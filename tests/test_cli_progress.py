@@ -24,6 +24,14 @@ from harbor.core.stale import ModuleStaleSummary, ViewStaleResult
 @pytest.fixture(autouse=True)
 def _force_en_locale(monkeypatch):
     monkeypatch.setenv("HARBOR_LANGUAGE", "en")
+    for key in (
+        "CI",
+        "GITHUB_ACTIONS",
+        "TF_BUILD",
+        "BUILD_BUILDID",
+        "TEAMCITY_VERSION",
+    ):
+        monkeypatch.delenv(key, raising=False)
 
 
 class _TTYStringIO(StringIO):
@@ -104,6 +112,12 @@ def test_should_render_progress_only_for_interactive_text():
     non_tty_stream = StringIO()
 
     assert should_render_progress(output_format="text", ci=False, stream=tty_stream) is True
+    assert should_render_progress(
+        output_format="text",
+        ci=False,
+        stream=tty_stream,
+        env={"GITHUB_ACTIONS": "true"},
+    ) is False
     assert should_render_progress(output_format="json", ci=False, stream=tty_stream) is False
     assert should_render_progress(output_format="text", ci=True, stream=tty_stream) is False
     assert should_render_progress(output_format="text", ci=False, stream=non_tty_stream) is False

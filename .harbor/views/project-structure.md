@@ -2,7 +2,7 @@
 generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "project_structure"
-generated_at: "2026-05-15T17:51:59Z"
+generated_at: "2026-05-15T18:58:48Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
 source_path_count: 175
@@ -128,7 +128,7 @@ source_paths:
   - "tests/test_drafting_json_parse.py"
   - "tests/test_generated_verify.py"
   - "tests/test_gitignore_prune.py"
-source_fingerprint: "sha256:afb747babad225ecdff5a39e2ee3db61708fc963fde2dc26054db9d86b2b68d5"
+source_fingerprint: "sha256:0f6a68459f829c95716e38ba442bc6d21021ed6c5ca1982f95540dc00a32f8f5"
 contract_fingerprint: "sha256:a33771d5bf0859efceb6eed457d695f1eab4546caa3f52d75a82c1ac9817d1b3"
 generator_fingerprint: "sha256:7cb91b5679a749a52609ee0fa3a3dd00d7c00ee2ec863c6a6bf002de3cde8266"
 ---
