@@ -1,3 +1,84 @@
+# Harbor-spec v1.4.4 — TypeScript Verification Preview
+
+状态：发布候选 / 待封板  
+发布类型：TypeScript Verification Preview / Governance & Documentation Closure
+
+## Summary
+
+- `v1.4.4` 建立在 `v1.4.3` 已完成的 TypeScript contract source 与 public boundary governance 基础之上。
+- 本版本首次把 TypeScript 纳入 verification preview，正式主题为 `TypeScript Verification Preview: DDT Binding Preview & Semantic Audit Foundation`。
+- 本阶段优先收口 preview governance、文档、规则、ADR、Diary Draft 与 generated context，不把 preview 提前升级为正式 gate。
+
+## Added
+
+- `VerificationBinding` foundation：
+  - language-neutral verification binding 抽象
+  - `target_id` 作为跨语言主锚点
+  - `func_id` 继续保留给 Python 兼容路径
+- sidecar-driven TypeScript DDT Binding Preview：
+  - repo-local sidecar source of truth
+  - 显式 `target_id -> test_asset` 绑定
+  - MVP strategy 冻结为 `preview_strict` / `preview_reference`
+- preview explainability 接入：
+  - `harbor check`
+  - `harbor checkpoint --ci --format json`
+  - `harbor next`
+- semantic audit language-neutral foundation：
+  - `AuditSubject`
+  - `AuditPromptContext`
+  - `AuditEligibility`
+- TypeScript semantic audit advisory preview：
+  - 仅对具备行为型契约证据的函数型 target 开放
+  - `interface` / `type` / `Zod` 只作为辅助 evidence
+
+## Default Behavior
+
+- preview 默认 `enabled=false`
+- `enabled=false` 时不扫描 sidecar、不生成 preview findings、不产生额外副作用
+- preview findings 保持 advisory-only / non-blocking
+- preview 结果不写 baseline truth、不自动修代码、不自动 accept
+- `harbor init` / guidance 只能显式提示 preview 能力，不静默启用
+- TypeScript semantic audit preview 是 opt-in / provider-dependent preview
+- 自动化测试与 release acceptance 使用 mock / deterministic provider，不依赖真实 LLM 可用性
+
+## Non-Goals
+
+- 正式 TypeScript DDT gate
+- 正式 TypeScript semantic audit gate
+- Jest / Vitest AST inference
+- coverage proof
+- 自动 test-to-target 推断
+- 默认 blocking gate 扩张
+
+## Compatibility
+
+- Python DDT 零回归保持硬约束。
+- Python semantic audit 外部语义保持不变。
+- 既有 category / exit code 语义不突变。
+- JSON 输出保持 additive compatibility。
+- Windows full-governance 与 Ubuntu matrix 继续作为正式验收维度。
+
+## Validation Status
+
+- 当前状态为 release candidate / governance closure，尚未声明正式发布完成。
+- Phase 4A 目标是完成 README / RELEASE / rules / ADR / Diary Draft / generated context 收口。
+- Phase 4A 已执行：
+  - `harbor finish --sync-context`
+  - `harbor project structure --write`
+  - `harbor verify-generated --changed --ci --format json`
+  - `harbor stale --ci --format json`
+  - `harbor doctor --ci --format json`
+- Phase 4A 当前结果：
+  - `verify-generated --changed --ci --format json`: `pass`
+  - `stale --ci --format json`: `pass`
+  - `doctor --ci --format json`: `pass`（workspace changed advisory: `WARN`, non-blocking）
+- 当前 checkpoint / finish 仍显示开发中差异与未跟踪 target，说明本仓库仍处于封板前阶段，而不是已完成 baseline acceptance 的正式发布态。
+- Phase 4B 才执行全量发布验收与最终封板判断。
+- 本阶段不执行 `harbor accept`。
+- 本阶段不执行 `harbor log write`。
+
+---
+
 # Harbor-spec v1.4.3 — TypeScript Public Boundary Resolution & Project Presets
 
 状态：正式版

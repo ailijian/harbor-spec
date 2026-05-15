@@ -2,10 +2,10 @@
 generated_by: "harbor-spec"
 harbor_version: "1.4.3"
 view_type: "project_structure"
-generated_at: "2026-05-15T07:53:48Z"
+generated_at: "2026-05-15T11:49:10Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
-source_path_count: 167
+source_path_count: 171
 source_paths_truncated: true
 source_paths:
   - "harbor/__init__.py"
@@ -61,6 +61,7 @@ source_paths:
   - "harbor/core/sync.py"
   - "harbor/core/t_decorate.py"
   - "harbor/core/utils.py"
+  - "harbor/core/verification.py"
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
@@ -127,9 +128,8 @@ source_paths:
   - "tests/test_gitignore_prune.py"
   - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
-  - "tests/test_index_builder_bad_syntax.py"
-source_fingerprint: "sha256:8045785d7841724c7cd9fb8d2f527ab316d29dcd9c72bb6e72f6c5c97e6d0ad9"
-contract_fingerprint: "sha256:92fa8e18825d84e634c15afbc2d4b9bb785c27555d8db36a551f5faa04acd080"
+source_fingerprint: "sha256:50a80e17440559e17e4c0f841e2f19dc845aa3b14e4b7b0013b3e7ca8c7975ec"
+contract_fingerprint: "sha256:1c7a6e9a2c444f2c00b8c0535dc052af77a89ce2fdbbfd8c2fa6cb59836061d5"
 generator_fingerprint: "sha256:eb4b770e7ce9be0d74d950f1d7a44aa4f8261cfdc523ec063607f6d0ad4b8d01"
 ---
 
@@ -171,28 +171,28 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 | Area | Purpose | Discovered Files | Indexed Contracts |
 |---|---|---:|---:|
 | harbor/cli | CLI command parsing and workflow facade | 2 | 11 |
-| harbor/core | Core Harbor logic | 39 | 570 |
+| harbor/core | Core Harbor logic | 40 | 637 |
 | harbor/utils | Shared utilities | 3 | 3 |
-| tests | Test suite | 105 | 955 |
+| tests | Test suite | 108 | 997 |
 | harbor | Derived from indexed files under harbor. | 18 | 112 |
 
 ## Code Modules
 
 | Module | Key Files | L2 README | Module Capsule | Skill |
 |---|---|---|---|---|
-| harbor | harbor/cli/main.py, harbor/core/audit.py, harbor/core/ddt.py, ... (+59 more) | yes | no | no |
+| harbor | harbor/cli/main.py, harbor/core/audit.py, harbor/core/ddt.py, ... (+60 more) | yes | no | no |
 | harbor/adapters | harbor/adapters/base.py, harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, ... (+11 more) | yes | no | no |
 | harbor/adapters/python | harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, harbor/adapters/python/__init__.py | yes | no | no |
 | harbor/adapters/typescript | harbor/adapters/typescript/adapter.py, harbor/adapters/typescript/hashing.py, harbor/adapters/typescript/jsdoc.py, ... (+5 more) | yes | no | no |
 | harbor/cli | harbor/cli/main.py, harbor/cli/__init__.py | yes | no | no |
-| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+36 more) | yes | no | yes |
+| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+37 more) | yes | no | yes |
 | harbor/utils | harbor/utils/formatting.py, harbor/utils/i18n.py, harbor/utils/__init__.py | yes | no | no |
 
 ## Supporting Areas
 
 | Area | Purpose | Key Files |
 |---|---|---|
-| tests | Test suite | tests/conftest.py, tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, ... (+102 more) |
+| tests | Test suite | tests/conftest.py, tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, ... (+105 more) |
 | tests/core | Core test suite | tests/core/test_index_sync_sqlite.py, tests/core/test_storage_migration.py |
 | tests/fixtures_sqlite | Test fixtures | tests/fixtures_sqlite/sample.py |
 

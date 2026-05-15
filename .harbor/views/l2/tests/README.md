@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.3"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-15T07:55:26Z"
+generated_at: "2026-05-15T11:47:33Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
-source_path_count: 105
+source_path_count: 108
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -92,6 +92,7 @@ source_paths:
   - "tests/test_release_packaging.py"
   - "tests/test_repair_guidance.py"
   - "tests/test_semantic_audit_contract_gap.py"
+  - "tests/test_semantic_audit_preview.py"
   - "tests/test_stale.py"
   - "tests/test_sync_engine.py"
   - "tests/test_sync_engine_registry_integration.py"
@@ -99,6 +100,7 @@ source_paths:
   - "tests/test_typescript_boundary_resolution_paths.py"
   - "tests/test_typescript_checkpoint_ci.py"
   - "tests/test_typescript_contract_presence.py"
+  - "tests/test_typescript_ddt_preview.py"
   - "tests/test_typescript_next_guidance.py"
   - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_typescript_package_exports.py"
@@ -107,6 +109,7 @@ source_paths:
   - "tests/test_typescript_public_boundary_presets.py"
   - "tests/test_typescript_re_export_resolver.py"
   - "tests/test_utils_format.py"
+  - "tests/test_verification_foundation.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_windows_json_stdio_regression.py"
   - "tests/test_workspace_gitignore_policy.py"
@@ -114,8 +117,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:8a0e5b72fe6e887c68b1d189813f2d92e80a31e5ac17432145a0ee32b8b6e955"
-contract_fingerprint: "sha256:024b60aa3ec10b805969bfc4e87d380f8cf69f9057ee9eaa2df2cf0a18effdab"
+source_fingerprint: "sha256:c1698299840fceb05c444dcf9b35c6b411db177330572db5eb09b2acdc3290b0"
+contract_fingerprint: "sha256:de5b708b97a2931e4d2e3c0e459a06061287f9cb6c5ba9123e9663380b741be5"
 generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d8374a04a87a76f4"
 ---
 
@@ -145,6 +148,8 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_windows_json_stdio_regression._canonical_json_payload | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._checkpoint_payload | — | standard | ⚪ Missing |
 | tests.test_cli_v2._clean_status_report | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview._config | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview._config | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._configure_accept_cli | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._configure_finish_cli | — | standard | ⚪ Missing |
 | tests.test_windows_json_stdio_regression._contains_cjk | — | standard | ⚪ Missing |
@@ -161,9 +166,13 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_ci_mode._disable_change_window_writes | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._disable_change_window_writes | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_baseline_artifact._disable_ddt | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview._empty_contract_report | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._empty_contract_report | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview._empty_contract_report | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries._empty_contract_report | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview._empty_ddt_report | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._empty_ddt_report | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview._empty_ddt_report | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries._empty_ddt_report | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes._empty_status_report | — | standard | ⚪ Missing |
 | tests.test_cli_doctor._empty_status_report | — | standard | ⚪ Missing |
@@ -172,6 +181,8 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_cli_module_capsule_stale._empty_status_report | — | standard | ⚪ Missing |
 | tests.test_cli_stale._empty_status_report | — | standard | ⚪ Missing |
 | tests.test_doctor._empty_status_report | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview._empty_status_report | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview._empty_status_report | — | standard | ⚪ Missing |
 | tests.test_cli_finish_sync_context._empty_validation_report | — | standard | ⚪ Missing |
 | tests.test_cli_v2._empty_validation_report | — | standard | ⚪ Missing |
 | tests.test_contract_presence._fc | — | standard | ⚪ Missing |
@@ -256,6 +267,7 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_checkpoint_ci._status_entry | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance._status_entry | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat._status_entry | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview._status_entry | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._status_report | — | standard | ⚪ Missing |
 | tests.test_changed_scope._status_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._status_report | — | standard | ⚪ Missing |
@@ -276,9 +288,11 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_windows_json_stdio_regression._with_repo_pythonpath | — | standard | ⚪ Missing |
 | tests.test_init_typescript_guidance._write | — | standard | ⚪ Missing |
 | tests.test_python_ddt_regression._write | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview._write | — | standard | ⚪ Missing |
 | tests.test_sync_engine_registry_integration._write | — | standard | ⚪ Missing |
 | tests.test_typescript_boundary_resolution_paths._write | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._write | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview._write | — | standard | ⚪ Missing |
 | tests.test_typescript_package_exports._write | — | standard | ⚪ Missing |
 | tests.test_typescript_public_boundary_presets._write | — | standard | ⚪ Missing |
 | tests.test_typescript_re_export_resolver._write | — | standard | ⚪ Missing |
@@ -327,6 +341,8 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_cli_workspace_migrate._write_workspace_fixture | — | standard | ⚪ Missing |
 | tests.test_workspace_i18n._write_workspace_fixture | — | standard | ⚪ Missing |
 | tests.test_l2_paths._write_yaml | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview._write_yaml | — | standard | ⚪ Missing |
+| tests.test_verification_foundation._write_yaml | — | standard | ⚪ Missing |
 | tests.test_workspace_paths._write_yaml | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot._FakeSyncEngine.check_status | — | standard | ⚪ Missing |
 | tests.test_drafting._EngStub.check_status | — | standard | ⚪ Missing |
@@ -370,6 +386,7 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_init_governance.run_cmd | — | standard | ⚪ Missing |
 | tests.test_log_draft_cli.run_cmd | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft.run_cmd | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.run_cmd | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance.run_cmd | — | standard | ⚪ Missing |
 | tests.test_typescript_public_boundary_next.run_cmd | — | standard | ⚪ Missing |
 | tests.test_workspace_i18n.run_cmd | — | standard | ⚪ Missing |
@@ -392,6 +409,7 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_adopted_roots.test_adopted_roots_write_and_remove | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.test_advice_off_removes_guidance_field | — | standard | ⚪ Missing |
 | tests.test_decorator_engine.test_aggressive_inserts_todo_docstring | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview.test_audit_foundation_models_serialize_stably | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_auto_discovery_skips_non_utf8_reports | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_bad_json_snapshot_is_skipped_with_warning | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_bad_snapshot_json_is_skipped_without_crashing | — | standard | ⚪ Missing |
@@ -459,6 +477,10 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_checkpoint_json_additive_shape_is_stable_for_golden_assert | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview.test_checkpoint_json_adds_semantic_audit_preview_without_changing_exit_code | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_checkpoint_json_adds_typescript_ddt_preview_without_polluting_ci_failures | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview.test_checkpoint_json_omits_semantic_audit_preview_when_disabled | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_checkpoint_json_omits_typescript_ddt_preview_when_disabled | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci_guidance.test_checkpoint_json_output_is_single_json_object | — | standard | ⚪ Missing |
 | tests.test_cli_v2.test_checkpoint_prints_contract_impact_summary_when_dirty | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_verbose_restores_detailed_sections | — | standard | ⚪ Missing |
@@ -684,6 +706,7 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_init_wizard.test_init_wizard_source_has_no_legacy_yes_no_prompt_tokens | — | standard | ⚪ Missing |
 | tests.test_init_llm_env.test_init_wizard_source_removes_legacy_yes_no_brackets | — | standard | ⚪ Missing |
 | tests.test_init_typescript_guidance.test_initializer_detects_typescript_hints_and_roots | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview.test_interface_type_zod_are_auxiliary_only_and_do_not_trigger_preview | — | standard | ⚪ Missing |
 | tests.test_typescript_contract_presence.test_internal_helper_is_not_required | — | standard | ⚪ Missing |
 | tests.test_cli_json_output.test_invalid_format_values_return_argparse_error | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_invalid_marker_falls_back_to_accept_with_explicit_note | — | standard | ⚪ Missing |
@@ -820,6 +843,7 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_init_wizard.test_new_project_next_steps_do_not_suggest_immediate_checkpoint | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_can_consume_verify_generated_ci_json | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_can_read_utf16_report | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_next_consumes_checkpoint_preview_findings_and_keeps_them_non_blocking | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_contract_gap | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_skipped_no_contract | — | standard | ⚪ Missing |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_unsupported_syntax_advisory | — | standard | ⚪ Missing |
@@ -829,6 +853,7 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_harbor_next.test_next_json_preserves_typescript_additive_checkpoint_metadata | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_reads_checkpoint_report_and_groups_output | — | standard | ⚪ Missing |
 | tests.test_typescript_public_boundary_next.test_next_text_explains_package_public_boundary_relationship | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_next_text_explains_preview_binding_context | — | standard | ⚪ Missing |
 | tests.test_harbor_next.test_next_unknown_category_graceful_degrade | — | standard | ⚪ Missing |
 | tests.test_cli_docs_modes.test_no_changed_modules_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat.test_no_docstring_maps_to_empty_contract_sources | — | standard | ⚪ Missing |
@@ -841,6 +866,7 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_log_write_from_draft.test_normalize_cli_input_path_converts_repo_relative_windows_separators | — | standard | ⚪ Missing |
 | tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | — | standard | ⚪ Missing |
 | tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix | — | standard | ⚪ Missing |
+| tests.test_verification_foundation.test_normalize_repo_relative_path_normalizes_windows_and_posix_forms | — | standard | ⚪ Missing |
 | tests.test_module_skill.test_normalize_skill_slug_rules_are_stable | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_normalized_source_content_for_fingerprint_converts_cr_to_lf | — | standard | ⚪ Missing |
 | tests.test_context_integrity.test_normalized_source_content_for_fingerprint_preserves_non_utf8_bytes | — | standard | ⚪ Missing |
@@ -897,6 +923,7 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_init_detector.test_python_project_excludes_do_not_contain_py_globs | — | standard | ⚪ Missing |
 | tests.test_python_audit_regression.test_python_semantic_audit_mismatch_mapping_unchanged | — | standard | ⚪ Missing |
 | tests.test_python_audit_regression.test_python_semantic_audit_still_calls_provider_and_returns_ok | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview.test_python_semantic_audit_zero_regression | — | standard | ⚪ Missing |
 | tests.test_drafting.test_raise_when_llm_not_configured | — | standard | ⚪ Missing |
 | tests.test_project_structure.test_rank_key_file_prioritizes_entrypoints_and_impl_files | — | standard | ⚪ Missing |
 | tests.test_typescript_re_export_resolver.test_re_export_resolver_adds_named_star_and_default_as_evidence | — | standard | ⚪ Missing |
@@ -927,6 +954,7 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_init_wizard.test_select_one_is_encoding_safe_for_cp1252 | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_selector_fallback_does_not_repeat_selector_block | — | standard | ⚪ Missing |
 | tests.test_init_wizard.test_selector_source_does_not_use_full_screen_dialog | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview.test_semantic_audit_preview_disabled_has_no_side_effect | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_contract_gap_without_docstring | — | standard | ⚪ Missing |
 | tests.test_audit.test_semantic_guard_mismatch_parsing | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_non_required_contract_skips_llm | — | standard | ⚪ Missing |
@@ -1021,17 +1049,34 @@ generator_fingerprint: "sha256:e56acbe29580d6f92afe374dd3468a22637b19ed090da161d
 | tests.test_checkpoint_json_additive_compat.test_typescript_checkpoint_json_explains_low_confidence_doc_as_contract_gap | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_typescript_contract_subject_json_has_task6a_ready_fields | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_ddt_binding_is_advisory_not_supported | — | standard | ⚪ Missing |
+| tests.test_verification_foundation.test_typescript_ddt_preview_config_defaults_disabled_and_safe | — | standard | ⚪ Missing |
+| tests.test_verification_foundation.test_typescript_ddt_preview_disabled_does_not_parse_sidecar | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_disabled_has_no_side_effect | — | standard | ⚪ Missing |
+| tests.test_verification_foundation.test_typescript_ddt_preview_rejects_repo_escape_in_test_asset_path | — | standard | ⚪ Missing |
+| tests.test_verification_foundation.test_typescript_ddt_preview_rejects_unknown_strategy | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_dedupes_and_sorts_findings_deterministically | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_binding_schema_invalid | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_contract_source_missing | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_duplicate_binding_id | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_preview_valid | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_public_boundary_unconfirmed | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_target_not_found_and_test_asset_missing | — | standard | ⚪ Missing |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_test_asset_missing | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci.test_typescript_default_excluded_extensions_do_not_enter_checkpoint | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview.test_typescript_eligible_target_enters_preview | — | standard | ⚪ Missing |
 | tests.test_adapter_registry.test_typescript_enabled_in_config_but_not_implemented_does_not_crash | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration.test_typescript_enabled_persists_ts_subjects_without_breaking_python_index | — | standard | ⚪ Missing |
 | tests.test_sync_engine_registry_integration.test_typescript_enabled_unavailable_does_not_affect_python_status | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_semantic_audit_is_skipped_without_contract_presence_or_ast | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_typescript_unsupported_syntax_advisory_remains_non_blocking | — | standard | ⚪ Missing |
+| tests.test_semantic_audit_preview.test_typescript_without_behavior_contract_does_not_enter_preview | — | standard | ⚪ Missing |
 | tests.test_repair_guidance.test_unknown_checkpoint_category_graceful_degrade | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule.test_unknown_module_does_not_crash_and_prints_friendly_message | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_unknown_module_is_friendly_stale | — | standard | ⚪ Missing |
 | tests.test_typescript_re_export_resolver.test_unresolved_re_export_is_ignored_without_crashing | — | standard | ⚪ Missing |
 | tests.test_module_capsule_stale.test_up_to_date_when_fingerprint_matches | — | standard | ⚪ Missing |
+| tests.test_verification_foundation.test_verification_binding_maps_python_ddt_without_polluting_comparison_metadata | — | standard | ⚪ Missing |
+| tests.test_verification_foundation.test_verification_binding_uses_target_id_as_primary_anchor_for_typescript_sidecar | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated.test_verify_generated_ci_json_uses_ci_failures_and_exit_code | — | standard | ⚪ Missing |
 | tests.test_cli_verify_generated.test_verify_generated_default_is_changed_scope | — | standard | ⚪ Missing |
 | tests.test_cli_help_and_ux.test_verify_generated_help_lists_changed_all_module_and_format_flags | — | standard | ⚪ Missing |

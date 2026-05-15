@@ -9,10 +9,14 @@
 | harbor.core.diary.DiaryManager.append_json_line | Append one structured JSON line to canonical diary storage. | strict | ❌ Missing |
 | harbor.core.init.Initializer.autodetect | 高级启发式自动探测。 | strict | ❌ Missing |
 | harbor.core.index.IndexBuilder.build | 构建或增量更新 L3 索引到缓存。 | strict | ❌ Missing |
+| harbor.core.audit.build_audit_prompt_context | Build the unified prompt context consumed by semantic-aud... | strict | ❌ Missing |
 | harbor.core.log_draft.build_diary_draft | Build a deterministic diary draft from existing change-wi... | strict | ❌ Missing |
 | harbor.core.generated_verify.build_generated_verification_ci_result | Build the public CI gate result for verify-generated. | strict | ❌ Missing |
 | harbor.core.generated_verify.build_generated_verification_report | Verify tracked generated context by recomputing expected ... | strict | ❌ Missing |
 | harbor.core.log_draft.build_log_write_preview | Build summary-level preview data for interactive `harbor ... | strict | ❌ Missing |
+| harbor.core.audit.build_python_audit_subject | Adapt the existing Python semantic-audit path to the unif... | strict | ❌ Missing |
+| harbor.core.audit.build_typescript_audit_subject | Adapt one TypeScript `ContractSubject` into the unified a... | strict | ❌ Missing |
+| harbor.core.audit.build_typescript_semantic_audit_preview | Build the additive TypeScript semantic-audit preview report. | strict | ❌ Missing |
 | harbor.core.log_draft.build_written_diary_entry | Build one structured written diary entry payload from an ... | strict | ❌ Missing |
 | harbor.core.stale.check_module_derived_views_stale | Check one module's derived-view stale status against fres... | strict | ❌ Missing |
 | harbor.core.sync.SyncEngine.check_status | 对比缓存索引与当前代码，输出 Harbor 上下文状态。 | strict | ✅ Valid |
@@ -27,6 +31,7 @@
 | harbor.core.contract_impact.contract_impact_report_to_dict | Serialize contract-impact analysis into stable JSON output. | strict | ❌ Missing |
 | harbor.core.init.ProjectDetector.detect | 启发式探测技术栈并生成配置建议。 | strict | ❌ Missing |
 | harbor.core.init.Initializer.detect_code_roots | 智能探测项目代码根目录。 | strict | ❌ Missing |
+| harbor.core.audit.evaluate_audit_eligibility | Evaluate whether a subject may enter semantic audit. | strict | ❌ Missing |
 | harbor.core.ci.format_checkpoint_workflow_summary | Render the default `harbor checkpoint` text output in a s... | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.generate | 生成指定模块的 L2 README Markdown 文本。 | strict | ❌ Missing |
 | harbor.core.project_structure.generate_project_structure_markdown | Render a deterministic Markdown view from project-structu... | strict | ❌ Missing |
@@ -37,14 +42,26 @@
 | harbor.core.index.IndexBuilder.iter_build | 以生成器方式构建索引，逐文件产出进度事件。 | strict | ❌ Missing |
 | harbor.core.utils.iter_project_files | 生成待扫描的 Python 文件列表（统一剪枝逻辑）。 | strict | ❌ Missing |
 | harbor.core.readonly_index.load_readonly_index | Load a read-only Harbor index snapshot for analysis paths. | strict | ❌ Missing |
+| harbor.core.verification.load_typescript_ddt_preview_sidecar | Load the TypeScript DDT preview sidecar only when preview... | strict | ❌ Missing |
 | harbor.core.diary.DiaryManager.log | 写入一条 DiaryEntry 到当月 JSONL。 | strict | ❌ Missing |
 | harbor.core.git_utils.GitIgnoreMatcher.match_dir | 判断相对路径目录是否被忽略（用于剪枝）。 | strict | ❌ Missing |
 | harbor.core.git_utils.GitIgnoreMatcher.match_file | 判断相对路径文件是否被忽略。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.migrate_from_json | 从旧版 JSON 索引迁移到 SQLite。 | strict | ❌ Missing |
+| harbor.core.verification.normalize_repo_relative_path | Normalize one repo-local path into stable POSIX-style rel... | strict | ❌ Missing |
 | harbor.core.index.process_file_worker | 并行 Worker：解析并计算单文件条目。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.purge_missing | 删除 DB 中存在但磁盘已缺失的文件记录。 | strict | ❌ Missing |
 | harbor.core.log_draft.render_diary_draft_markdown | Render a stable markdown diary draft from the JSON payload. | strict | ❌ Missing |
+| harbor.core.verification.resolve_repo_local_file | Resolve a repo-local file path under the repository trust... | strict | ❌ Missing |
+| harbor.core.verification.resolve_typescript_ddt_preview_config | Resolve additive TypeScript DDT preview config with safe ... | strict | ❌ Missing |
+| harbor.core.audit.resolve_typescript_semantic_audit_preview_config | Resolve additive TypeScript semantic-audit preview config. | strict | ❌ Missing |
 | harbor.core.log_draft.serialize_diary_draft | Serialize a diary draft payload as markdown or stable JSON. | strict | ❌ Missing |
+| harbor.core.audit.AuditEligibility.to_dict | Serialize one eligibility evaluation into a stable dictio... | strict | ❌ Missing |
+| harbor.core.audit.AuditEvidence.to_dict | Serialize one audit evidence row into a stable dictionary. | strict | ❌ Missing |
+| harbor.core.audit.AuditPromptContext.to_dict | Serialize one prompt context into a stable dictionary. | strict | ❌ Missing |
+| harbor.core.audit.AuditSubject.to_dict | Serialize one audit subject into a stable dictionary. | strict | ❌ Missing |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewConfig.to_dict | Serialize normalized TypeScript semantic-audit preview co... | strict | ❌ Missing |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewFinding.to_dict | Serialize one TypeScript semantic-audit preview finding. | strict | ❌ Missing |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewReport.to_dict | Serialize the TypeScript semantic-audit preview report. | strict | ❌ Missing |
 | harbor.core.change_window.ChangeWindowSnapshot.to_dict | Serialize the current snapshot into a JSON-friendly chang... | strict | ❌ Missing |
 | harbor.core.ci.CIFailure.to_dict | 将通用 CI failure/advisory 项序列化为 machine-readable JSON-compa... | strict | ❌ Missing |
 | harbor.core.ci.CheckpointCIItem.to_dict | 将 checkpoint CI failure/advisory 项序列化为 machine-readable J... | strict | ❌ Missing |
@@ -57,9 +74,20 @@
 | harbor.core.repair_guidance.RepairGuidance.to_dict | Serialize deterministic repair guidance into a JSON-compa... | strict | ❌ Missing |
 | harbor.core.stale.ModuleStaleSummary.to_dict | Serialize one module stale summary into stable JSON output. | strict | ❌ Missing |
 | harbor.core.stale.ViewStaleResult.to_dict | Serialize one stale-view result into a stable JSON-safe s... | strict | ❌ Missing |
+| harbor.core.verification.TypeScriptDDTPreviewConfig.to_dict | Serialize normalized preview config into a stable diction... | strict | ❌ Missing |
+| harbor.core.verification.TypeScriptDDTPreviewFinding.to_dict | Serialize one TypeScript DDT preview finding into a stabl... | strict | ❌ Missing |
+| harbor.core.verification.TypeScriptDDTPreviewReport.to_dict | Serialize the preview validator report into a stable dict... | strict | ❌ Missing |
+| harbor.core.verification.TypeScriptDDTPreviewSidecar.to_dict | Serialize parsed preview sidecar data into a stable dicti... | strict | ❌ Missing |
+| harbor.core.verification.VerificationBinding.to_dict | Serialize verification binding metadata into a stable dic... | strict | ❌ Missing |
+| harbor.core.verification.VerificationTargetRef.to_dict | Serialize verification target identity into a stable dict... | strict | ❌ Missing |
+| harbor.core.verification.VerificationTestAsset.to_dict | Serialize verification test asset metadata into a stable ... | strict | ❌ Missing |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewReport.to_summary_dict | Serialize the compact preview summary without finding rows. | strict | ❌ Missing |
+| harbor.core.verification.TypeScriptDDTPreviewReport.to_summary_dict | Serialize the lightweight preview summary without full fi... | strict | ❌ Missing |
+| harbor.core.ddt.DDTBinding.to_verification_binding | Convert the legacy Python-first DDT binding into a langua... | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.transaction | 事务上下文管理器（单文件原子写入）。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_entry | 插入或更新函数条目。 | strict | ❌ Missing |
 | harbor.core.storage.HarborDB.upsert_file | 插入或更新文件记录。 | strict | ❌ Missing |
+| harbor.core.verification.validate_typescript_ddt_preview | Validate TypeScript DDT preview bindings in advisory-only... | strict | ❌ Missing |
 | harbor.core.l2.L2Generator.write | Write the canonical L2 README and synchronized metadata f... | strict | ❌ Missing |
 | harbor.core.change_window.write_change_window_snapshot | Write one change-window snapshot under `.harbor/state/cha... | strict | ❌ Missing |
 | harbor.core.init.Initializer.write_config | 写入 `.harbor/config/harbor.yaml`。 | strict | ❌ Missing |
@@ -88,6 +116,7 @@
 | harbor.core.init_wizard.InitWizard.__init__ | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB.__init__ | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine.__init__ | — | standard | ⚪ Missing |
+| harbor.core.verification.VerificationTargetRef.__post_init__ | — | standard | ⚪ Missing |
 | harbor.core.ci._append_checkpoint_guidance_lines | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._append_missing_env_keys | — | standard | ⚪ Missing |
 | harbor.core.log_draft._append_text_value | — | standard | ⚪ Missing |
@@ -98,17 +127,20 @@
 | harbor.core.init_wizard.InitWizard._ask_language | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._ask_project | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._ask_yes_no | — | standard | ⚪ Missing |
+| harbor.core.audit._audit_evidence_from_contract_source | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._belongs_to_module | — | standard | ⚪ Missing |
 | harbor.core.project_structure._belongs_to_module | — | standard | ⚪ Missing |
 | harbor.core.log_draft._bucket_for_path | — | standard | ⚪ Missing |
 | harbor.core.workspace._build_path | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._build_prompt | — | standard | ⚪ Missing |
 | harbor.core.log_draft._build_risks | — | standard | ⚪ Missing |
+| harbor.core.audit.SemanticGuard._build_subject_prompt | — | standard | ⚪ Missing |
 | harbor.core.log_draft._build_suggested_diary_entry | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._build_summary | — | standard | ⚪ Missing |
 | harbor.core.log_draft._build_summary | — | standard | ⚪ Missing |
 | harbor.core.readonly_index._build_transient_index | — | standard | ⚪ Missing |
 | harbor.core.project_structure._build_transient_index_from_files | — | standard | ⚪ Missing |
+| harbor.core.verification._build_typescript_ddt_preview_report | — | standard | ⚪ Missing |
 | harbor.core.log_draft._build_why | — | standard | ⚪ Missing |
 | harbor.core.project_structure._capsule_exists | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._check_git_ignored | — | standard | ⚪ Missing |
@@ -137,7 +169,10 @@
 | harbor.core.sync.SyncEngine._collect_python_snapshot_items | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._collect_repair_commands | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._collect_typescript_entrypoints | — | standard | ⚪ Missing |
+| harbor.core.verification._collect_typescript_preview_subjects | — | standard | ⚪ Missing |
+| harbor.core.audit._collect_typescript_preview_targets | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._collect_typescript_snapshot_items | — | standard | ⚪ Missing |
+| harbor.core.audit._collect_typescript_subjects | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._compare_snapshots | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._compose_expected_canonical_l2_markdown | — | standard | ⚪ Missing |
 | harbor.core.generated_verify._compose_expected_capsule_markdown | — | standard | ⚪ Missing |
@@ -151,6 +186,8 @@
 | harbor.core.init.ProjectDetector._dedup | — | standard | ⚪ Missing |
 | harbor.core.log_draft._dedupe_changed_files | — | standard | ⚪ Missing |
 | harbor.core.ci._dedupe_checkpoint_items | — | standard | ⚪ Missing |
+| harbor.core.verification._dedupe_preview_findings | — | standard | ⚪ Missing |
+| harbor.core.audit._dedupe_typescript_preview_findings | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_language | — | standard | ⚪ Missing |
 | harbor.core.index_entry._default_name | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._default_project | — | standard | ⚪ Missing |
@@ -171,6 +208,7 @@
 | harbor.core.log_draft._determine_draft_status | — | standard | ⚪ Missing |
 | harbor.core.log_draft._discover_report_summaries | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine._docstring_node | — | standard | ⚪ Missing |
+| harbor.core.audit._eligibility_message | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_detected_summary | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_ide_guidance | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._emit_next_steps | — | standard | ⚪ Missing |
@@ -181,6 +219,8 @@
 | harbor.core.l2.L2Generator._ensure_within_root | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._ensure_within_root | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._entry_dedupe_key | — | standard | ⚪ Missing |
+| harbor.core.audit._evaluate_python_audit_eligibility | — | standard | ⚪ Missing |
+| harbor.core.audit._evaluate_typescript_audit_eligibility | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._exclude_covers_root | — | standard | ⚪ Missing |
 | harbor.core.log_draft._extract_bullet_items | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._extract_code_context | — | standard | ⚪ Missing |
@@ -218,6 +258,7 @@
 | harbor.core.decorator.DecoratorEngine._has_scope_tag | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._has_typescript_sources | — | standard | ⚪ Missing |
 | harbor.core.index.IndexBuilder._index_entry | — | standard | ⚪ Missing |
+| harbor.core.audit._ineligible_audit_result | — | standard | ⚪ Missing |
 | harbor.core.project_structure._infer_area | — | standard | ⚪ Missing |
 | harbor.core.log_draft._infer_contract_impact | — | standard | ⚪ Missing |
 | harbor.core.audit._infer_file_path_from_contract | — | standard | ⚪ Missing |
@@ -275,7 +316,9 @@
 | harbor.core.context_integrity._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.l2._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.project_structure._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
+| harbor.core.verification._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
 | harbor.core.workspace._looks_like_windows_absolute_path | — | standard | ⚪ Missing |
+| harbor.core.verification._make_repo_relative_target_id | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._mask_key | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._max_level | — | standard | ⚪ Missing |
 | harbor.core.log_draft._merge_affected_area_mappings | — | standard | ⚪ Missing |
@@ -307,6 +350,7 @@
 | harbor.core.project_structure._normalize_rel_path | — | standard | ⚪ Missing |
 | harbor.core.sync.SyncEngine._normalize_repo_file_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_report_status | — | standard | ⚪ Missing |
+| harbor.core.audit._normalize_subject_source_path | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol | — | standard | ⚪ Missing |
 | harbor.core.contract_impact._normalize_symbol_for_classification | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._normalize_typescript_contract_strategy | — | standard | ⚪ Missing |
@@ -315,16 +359,20 @@
 | harbor.core.context_integrity._now_iso | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._package_has_exports | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_affected_areas_section | — | standard | ⚪ Missing |
+| harbor.core.audit._parse_audit_output | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_diary_draft_lines | — | standard | ⚪ Missing |
 | harbor.core.doctor._parse_generated_frontmatter_safely | — | standard | ⚪ Missing |
 | harbor.core.change_window._parse_git_status_line | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._parse_gitignore | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_markdown_draft_fields | — | standard | ⚪ Missing |
+| harbor.core.verification._parse_preview_binding_for_validation | — | standard | ⚪ Missing |
 | harbor.core.ci._parse_target_id | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._parse_ts | — | standard | ⚪ Missing |
+| harbor.core.verification._parse_typescript_ddt_preview_binding | — | standard | ⚪ Missing |
 | harbor.core.log_draft._parse_validation_lines | — | standard | ⚪ Missing |
 | harbor.core.log_draft._pick_first_nonempty | — | standard | ⚪ Missing |
 | harbor.core.storage.HarborDB._posix_rel | — | standard | ⚪ Missing |
+| harbor.core.verification._preview_finding | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._print | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_draft_source_file | — | standard | ⚪ Missing |
@@ -357,9 +405,11 @@
 | harbor.core.module_capsule._resolve_module_target_dir | — | standard | ⚪ Missing |
 | harbor.core.log_draft._resolve_output_path | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._resolve_repo_root | — | standard | ⚪ Missing |
+| harbor.core.audit._resolve_subject_source_path | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._resolve_typescript_entrypoints | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._resolve_typescript_language_config | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._resolve_typescript_source_candidate | — | standard | ⚪ Missing |
+| harbor.core.audit._resolve_typescript_subject_for_entry | — | standard | ⚪ Missing |
 | harbor.core.change_window._run_git | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._safe_console_print | — | standard | ⚪ Missing |
 | harbor.core.log_draft._safe_excerpt | — | standard | ⚪ Missing |
@@ -392,7 +442,9 @@
 | harbor.core.l2.L2Generator._save_meta | — | standard | ⚪ Missing |
 | harbor.core.log_draft._select_snapshots | — | standard | ⚪ Missing |
 | harbor.core.init_wizard.InitWizard._select_typescript_preset | — | standard | ⚪ Missing |
+| harbor.core.audit._semantic_preview_finding_from_result | — | standard | ⚪ Missing |
 | harbor.core.project_structure._skill_exists | — | standard | ⚪ Missing |
+| harbor.core.audit._slice_source_excerpt | — | standard | ⚪ Missing |
 | harbor.core.change_window._snapshot_from_payload | — | standard | ⚪ Missing |
 | harbor.core.log_draft._snapshot_summary | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._sort_unique | — | standard | ⚪ Missing |
@@ -407,6 +459,9 @@
 | harbor.core.doctor._status_to_json | — | standard | ⚪ Missing |
 | harbor.core.module_capsule._strictness_rank | — | standard | ⚪ Missing |
 | harbor.core.path_normalization._strip_root_prefix | — | standard | ⚪ Missing |
+| harbor.core.verification._strongest_contract_confidence | — | standard | ⚪ Missing |
+| harbor.core.audit._strongest_subject_confidence | — | standard | ⚪ Missing |
+| harbor.core.verification._subject_preview_metadata | — | standard | ⚪ Missing |
 | harbor.core.sync._subject_source_confidence_summary | — | standard | ⚪ Missing |
 | harbor.core.sync._subject_source_fingerprints | — | standard | ⚪ Missing |
 | harbor.core.sync._subject_source_kinds | — | standard | ⚪ Missing |
@@ -418,6 +473,8 @@
 | harbor.core.project_structure._table_cell | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._title_with_marker | — | standard | ⚪ Missing |
 | harbor.core.advice_config._to_bool | — | standard | ⚪ Missing |
+| harbor.core.audit._to_bool | — | standard | ⚪ Missing |
+| harbor.core.verification._to_bool | — | standard | ⚪ Missing |
 | harbor.core.workspace._to_bool | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect._to_display_path | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate._to_display_path | — | standard | ⚪ Missing |
@@ -426,10 +483,12 @@
 | harbor.core.log_draft._to_repo_relative_display | — | standard | ⚪ Missing |
 | harbor.core.drafting.DiaryDrafter._trim_segment | — | standard | ⚪ Missing |
 | harbor.core.init_prompt._try_arrow_select | — | standard | ⚪ Missing |
+| harbor.core.audit._typescript_ineligibility_hint | — | standard | ⚪ Missing |
 | harbor.core.doctor._unique | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._update_managed_block | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._utc_now_iso | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._validate_artifact | — | standard | ⚪ Missing |
+| harbor.core.verification._validate_preview_binding_against_subject | — | standard | ⚪ Missing |
 | harbor.core.workspace._validate_within_repo | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._write_file_with_policy | — | standard | ⚪ Missing |
 | harbor.core.context_integrity._yaml_quote | — | standard | ⚪ Missing |
@@ -438,6 +497,7 @@
 | harbor.core.sync.SyncEngine.adapter | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine.apply | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.audit | — | standard | ⚪ Missing |
+| harbor.core.audit.SemanticGuard.audit_subject | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact.build_checkpoint_baseline_artifact | Build the accepted checkpoint baseline artifact payload. | standard | ⚪ Missing |
 | harbor.core.ci.build_checkpoint_ci_result | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.build_context_integrity_metadata | — | standard | ⚪ Missing |
@@ -446,6 +506,7 @@
 | harbor.core.doctor.build_doctor_report | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.build_module_card_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.audit.SemanticGuard.build_prompt | — | standard | ⚪ Missing |
+| harbor.core.audit.SemanticGuard.build_prompt_from_context | — | standard | ⚪ Missing |
 | harbor.core.log_draft.build_saved_diary_draft_output_path | Build a timestamped safe reports path for `harbor log dra... | standard | ⚪ Missing |
 | harbor.core.ci.build_stale_ci_result | — | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.build_workspace_inspect_report | — | standard | ⚪ Missing |
@@ -477,7 +538,9 @@
 | harbor.core.init_prompt.confirm | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.content_without_generated_at_for_compare | — | standard | ⚪ Missing |
 | harbor.core.index_entry.contract_subject_to_index_entry | — | standard | ⚪ Missing |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewFinding.dedupe_key | — | standard | ⚪ Missing |
 | harbor.core.ci.CheckpointCIItem.dedupe_key | — | standard | ⚪ Missing |
+| harbor.core.verification.TypeScriptDDTPreviewFinding.dedupe_key | — | standard | ⚪ Missing |
 | harbor.core.utils.derive_adopted_roots | — | standard | ⚪ Missing |
 | harbor.core.console_output.detect_console_encoding | — | standard | ⚪ Missing |
 | harbor.core.changed_scope.detect_generator_integrity_changes | — | standard | ⚪ Missing |
@@ -499,6 +562,7 @@
 | harbor.core.stale.format_stale_summary | 将 stale 检查结果渲染为 CLI 文本摘要。 | standard | ⚪ Missing |
 | harbor.core.workspace_inspect.format_workspace_inspect_report | — | standard | ⚪ Missing |
 | harbor.core.workspace_migrate.format_workspace_migrate_report | — | standard | ⚪ Missing |
+| harbor.core.verification.VerificationBinding.from_legacy_ddt_binding | — | standard | ⚪ Missing |
 | harbor.core.git_utils.GitIgnoreMatcher.from_root | — | standard | ⚪ Missing |
 | harbor.core.index_entry.function_contract_to_index_entry | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.generate_debug_playbook | — | standard | ⚪ Missing |
@@ -535,6 +599,7 @@
 | harbor.core.workspace.parse_workspace_export_options | — | standard | ⚪ Missing |
 | harbor.core.decorator.DecoratorEngine.preview | — | standard | ⚪ Missing |
 | harbor.core.module_capsule.preview_module_capsule | — | standard | ⚪ Missing |
+| harbor.core.verification.VerificationTargetRef.primary_anchor | Return the preferred stable anchor for verification bindi... | standard | ⚪ Missing |
 | harbor.core.change_window.prune_change_windows | Delete change-window snapshots older than the newest `lim... | standard | ⚪ Missing |
 | harbor.core.project_structure.rank_key_file | — | standard | ⚪ Missing |
 | harbor.core.generated_verify.re_match_absolute_path | — | standard | ⚪ Missing |
@@ -561,6 +626,8 @@
 | harbor.core.ddt.DDTScanner.scan_tests | — | standard | ⚪ Missing |
 | harbor.core.init_prompt.select_one | — | standard | ⚪ Missing |
 | harbor.core.module_skill.skill_dir_for_module | — | standard | ⚪ Missing |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewFinding.sort_key | — | standard | ⚪ Missing |
+| harbor.core.verification.TypeScriptDDTPreviewFinding.sort_key | — | standard | ⚪ Missing |
 | harbor.core.context_integrity.split_frontmatter | — | standard | ⚪ Missing |
 | harbor.core.stale.stale_report_to_dict | 将 stale 检查结果序列化为 machine-readable JSON 对象。 | standard | ⚪ Missing |
 | harbor.core.context_integrity.strip_frontmatter | — | standard | ⚪ Missing |

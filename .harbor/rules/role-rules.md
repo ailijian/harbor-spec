@@ -144,8 +144,13 @@ Rules:
 - Unsupported TypeScript syntax should be advisory (`unsupported_syntax_advisory`), not `contract_parse_error`.
 - JavaScript is not first-class in v1.4.x.
 - `.js/.jsx/.tsx/.d.ts` default scanning is not enabled in v1.4.x.
-- TypeScript semantic audit is not supported in v1.4.x.
-- TypeScript DDT is not supported in v1.4.x.
+- v1.4.4 adds sidecar-driven TypeScript DDT Binding Preview: opt-in, advisory-first, non-blocking.
+- preview binding is governance metadata only, not coverage proof, and formal TypeScript DDT gate remains unsupported.
+- v1.4.4 adds language-neutral semantic audit foundation plus TypeScript semantic audit advisory preview.
+- TypeScript semantic audit preview only applies to function-like targets with direct behavior-oriented contract evidence.
+- `interface` / `type` / `Zod` remain auxiliary evidence and do not independently qualify a function-level preview subject.
+- preview results do not write baseline truth, do not auto-fix code, and do not become default blockers.
+- release acceptance for semantic audit preview must use mock / deterministic provider rather than real LLM availability.
 
 Contract authoring trigger:
 

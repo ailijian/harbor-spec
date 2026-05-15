@@ -40,6 +40,54 @@ It is a repo-local **context governance layer**.
 
 ---
 
+## 🚀 v1.4.4: TypeScript Verification Preview (Current Closure Theme)
+
+Harbor-spec v1.4.4 builds on the TypeScript contract-source and public-boundary governance completed in `v1.4.3`, and brings TypeScript into **verification preview** for the first time. Its formal theme is:
+
+> **TypeScript Verification Preview: DDT Binding Preview & Semantic Audit Foundation**
+
+### What v1.4.4 adds
+
+* VerificationBinding foundation:
+  * a language-neutral verification binding abstraction
+  * `target_id` as the primary cross-language anchor
+  * `func_id` retained for existing Python DDT compatibility paths
+* sidecar-driven TypeScript DDT preview:
+  * a repo-local sidecar file as the source of truth
+  * explicit `target_id -> test_asset` declarations
+  * frozen MVP strategies: `preview_strict` / `preview_reference`
+* explainability across existing command surfaces:
+  * `harbor check`
+  * `harbor checkpoint --ci --format json`
+  * `harbor next`
+* semantic audit language-neutral foundation:
+  * generalize the audit substrate first
+  * then add advisory preview for TypeScript
+* TypeScript semantic audit advisory preview:
+  * only for function-like targets with behavior-oriented contract evidence
+  * `interface` / `type` / `Zod` remain auxiliary evidence only
+
+### Explicit non-goals in v1.4.4
+
+* not a formal TypeScript DDT gate
+* not a formal TypeScript semantic audit gate
+* no Jest / Vitest AST inference
+* no coverage proof
+* no automatic test-to-target inference
+* no default blocking-gate expansion
+
+### Default behavior and validation boundaries
+
+* preview stays `disabled` by default
+* when `enabled=false`, Harbor does not scan sidecars, emit preview findings, or add side effects
+* preview findings remain advisory-only / non-blocking
+* `harbor init` / guidance may mention preview capabilities explicitly, but do not silently enable them
+* TypeScript semantic audit preview is an opt-in / provider-dependent preview
+* automated tests and release acceptance do not depend on a real LLM being available
+* mock / deterministic providers are the supported acceptance path
+
+---
+
 ## 🚀 v1.4.3: TypeScript Public Boundary Resolution & Project Presets
 
 Harbor-spec v1.4.3 builds on the TypeScript persistence, `contract_hash`, and accepted-baseline comparison-compatible foundation completed in `v1.4.2`, and formally moves into **project-level public boundary governance**.
@@ -1188,6 +1236,12 @@ DDT baseline advisory (new):
 * Harbor cannot auto-decide whether `l3_version` should be bumped; review baseline state first, then `harbor accept`.
 * This does not mean DDT is semantically verified forever.
 
+v1.4.4 preview note:
+
+* TypeScript DDT now has a sidecar-driven binding preview, but it remains preview-first, opt-in, and advisory-first.
+* Preview binding only expresses a governed relationship; it is not coverage proof and does not promote itself into the default gate.
+* Jest / Vitest AST inference, test-body semantic inference, and automatic test-to-target inference remain out of scope for `v1.4.4`.
+
 ---
 
 ### 7. Diary: decision memory
@@ -1236,6 +1290,14 @@ Semantic audit short-circuit behavior (current):
 * LLM is not called for `CONTRACT_GAP` / `SKIPPED_NO_CONTRACT`.
 * `harbor check --format jsonl` emits `llm_called=false` for skipped cases.
 * `harbor check --format jsonl` is not pure JSONL-only output: it still prints human-readable DDT blocks, while semantic audit rows are JSONL.
+
+v1.4.4 preview note:
+
+* TypeScript semantic audit preview only runs when explicitly enabled.
+* Only TypeScript function-like targets with direct behavior-oriented contract evidence may enter preview.
+* `interface` / `type` / `Zod` remain auxiliary evidence and do not independently qualify a function-level preview subject.
+* Preview results do not write baseline truth, do not auto-fix code, and do not become default blockers.
+* Automated tests and release acceptance use mock / deterministic providers rather than real LLM availability.
 
 ---
 

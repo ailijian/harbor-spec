@@ -34,8 +34,11 @@ Tests should verify the intended contract, not blindly follow the newest impleme
 v1.4.x boundary reminder:
 
 ```text
-DDT remains Python-first.
-TypeScript DDT is not supported.
+DDT remains Python-first for formal gate semantics.
+v1.4.4 adds TypeScript DDT Binding Preview.
+The preview is sidecar-driven, advisory-first, opt-in, and non-blocking.
+Preview binding governs target-to-test relationship only; it is not coverage proof.
+Formal TypeScript DDT gate is still not supported.
 ```
 
 ---
@@ -68,18 +71,19 @@ user-visible behavior
 file write behavior
 ```
 
-The list above describes conceptual contract sources. In v1.4.x implementation, Harbor DDT binding remains Python-first. TypeScript type / Zod / Vitest / Jest binding is future work and must not be claimed as supported.
+The list above describes conceptual contract sources. In v1.4.x implementation, Harbor DDT binding remains Python-first for formal gate semantics. v1.4.4 adds a narrow TypeScript binding preview, but TypeScript type / Zod / Vitest / Jest inference must not be claimed as a formal Harbor DDT gate.
 
 If multiple contract sources exist, DDT should verify the intended contract across them.
 
 TypeScript DDT boundary in v1.4.x:
 
 ```text
-Vitest / Jest are valid test runners but not Harbor DDT binding sources for TypeScript yet.
-comment-based TypeScript binding is not a valid Harbor DDT binding yet.
-target_id-based TypeScript DDT binding is not a valid Harbor DDT binding yet.
-TS DDT-related findings should be advisory with not_supported semantics.
-Do not claim TypeScript DDT coverage.
+v1.4.4 preview uses repo-local sidecar bindings as the source of truth.
+preview bindings are anchored by target_id and may retain func_id only for Python compatibility paths.
+Vitest / Jest AST inference, comment inference, and test-body semantic inference are not v1.4.4 sources of truth.
+preview findings stay advisory-only / non-blocking and do not become baseline truth.
+preview strategy stays frozen to preview_strict / preview_reference in the MVP.
+Do not claim formal TypeScript DDT gate or coverage proof from preview binding alone.
 ```
 
 ---

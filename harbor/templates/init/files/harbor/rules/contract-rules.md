@@ -1099,8 +1099,11 @@ TypeScript authoring boundaries in v1.4.x:
 
 ```text
 These templates help satisfy contract_presence / contract_required / checkpoint governance.
-They do not imply TypeScript semantic audit support.
-They do not imply TypeScript DDT support.
+v1.4.4 may use behavior-oriented contract evidence to determine TypeScript semantic audit preview eligibility when that preview is explicitly enabled.
+interface/type/Zod may assist as additive context, but they do not independently qualify function-level semantic audit preview.
+v1.4.4 may layer TypeScript DDT Binding Preview through sidecar bindings, but verification binding remains separate from contract source.
+They do not imply a formal TypeScript semantic audit gate.
+They do not imply a formal TypeScript DDT gate.
 Vitest / Jest comments alone are not Harbor DDT binding sources.
 Public Boundary Evidence is separate from Contract Source.
 Nearby JSDoc / TSDoc remains the expected contract source for required exported targets.

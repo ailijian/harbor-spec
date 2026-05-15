@@ -41,6 +41,54 @@ HarborSpec 的目标是：
 
 ---
 
+## 🚀 v1.4.4：TypeScript Verification Preview（当前收口主题）
+
+Harbor-spec v1.4.4 建立在 `v1.4.3` 已完成的 TypeScript contract source 与 public boundary governance 基础之上，首次把 TypeScript 纳入 **verification preview**，正式主题为：
+
+> **TypeScript Verification Preview: DDT Binding Preview & Semantic Audit Foundation**
+
+### v1.4.4 新增能力
+
+* VerificationBinding foundation：
+  * language-neutral verification binding 抽象
+  * `target_id` 作为跨语言主锚点
+  * `func_id` 继续保留给既有 Python DDT 兼容路径
+* sidecar-driven TypeScript DDT preview：
+  * 使用 repo-local sidecar 作为 source of truth
+  * 显式声明 `target_id -> test_asset` 关系
+  * MVP strategy 冻结为 `preview_strict` / `preview_reference`
+* explainability 接入现有命令面：
+  * `harbor check`
+  * `harbor checkpoint --ci --format json`
+  * `harbor next`
+* semantic audit language-neutral foundation：
+  * 先抽象 language-neutral audit substrate
+  * 再为 TypeScript 提供 advisory preview
+* TypeScript semantic audit advisory preview：
+  * 仅对具备行为型契约证据的函数型 target 开放
+  * `interface` / `type` / `Zod` 只作为辅助 evidence
+
+### v1.4.4 明确非目标
+
+* 不是正式 TypeScript DDT gate
+* 不是正式 TypeScript semantic audit gate
+* 不做 Jest / Vitest AST inference
+* 不做 coverage 证明
+* 不做自动 test-to-target 推断
+* 不扩大默认 blocking gate
+
+### v1.4.4 默认行为与验收边界
+
+* preview 默认 `disabled`
+* `enabled=false` 时不扫描 sidecar、不生成 preview findings、不引入额外副作用
+* preview findings 保持 advisory-only / non-blocking
+* `harbor init` / guidance 只能显式提示 preview 能力，不会静默开启
+* TypeScript semantic audit preview 是 opt-in / provider-dependent preview
+* 自动化测试与 release acceptance 不依赖真实 LLM 可用性
+* mock / deterministic provider 是正式验收路径
+
+---
+
 ## 🚀 v1.4.3：TypeScript Public Boundary Resolution & Project Presets
 
 Harbor-spec v1.4.3 建立在 `v1.4.2` 已完成的 TypeScript persistence、`contract_hash` 与 accepted baseline comparison-compatible 基础之上，正式进入 **project-level public boundary governance**。
@@ -1192,6 +1240,12 @@ DDT baseline advisory（新增）：
 * Harbor 不能自动判断是否应 bump `l3_version`，需要人工先复核 baseline 再 `harbor accept`。
 * 这不代表“DDT 永久语义通过”，只代表当前无法完成版本基线核验。
 
+v1.4.4 preview 补充：
+
+* TypeScript DDT 进入 sidecar-driven binding preview，但仍是 preview-first、opt-in、advisory-first。
+* preview binding 只表达治理关系，不代表 coverage proof，也不会自动升级为默认 gate。
+* Jest / Vitest AST inference、测试体语义推断与自动 test-to-target 推断都不在 `v1.4.4` 范围内。
+
 ---
 
 ### 7. Diary：决策记忆
@@ -1240,6 +1294,14 @@ HARBOR_LANGUAGE=zh
 * `CONTRACT_GAP` 与 `SKIPPED_NO_CONTRACT` 场景不会调用 LLM。
 * `harbor check --format jsonl` 在跳过场景会输出 `llm_called=false`。
 * `harbor check --format jsonl` 当前不是“纯 JSONL-only”输出：仍会包含人类可读 DDT 区块，语义审计部分输出 JSONL 行。
+
+v1.4.4 preview 补充：
+
+* TypeScript semantic audit preview 仅在显式启用后运行。
+* 只有具备直接行为型契约证据的 TypeScript 函数型 target 才可进入 preview。
+* `interface` / `type` / `Zod` 只作为辅助 evidence，不单独构成函数级 preview eligibility。
+* preview 结果不写 baseline truth、不自动修代码、不成为默认 blocker。
+* 自动化测试与 release acceptance 使用 mock / deterministic provider，不依赖真实 LLM 服务可用性。
 
 ---
 

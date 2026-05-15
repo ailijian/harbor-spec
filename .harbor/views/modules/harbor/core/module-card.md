@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.3"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-15T07:55:35Z"
+generated_at: "2026-05-15T11:47:34Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
-source_path_count: 39
+source_path_count: 40
 source_paths_truncated: false
 source_paths:
   - "harbor/core/__init__.py"
@@ -45,14 +45,15 @@ source_paths:
   - "harbor/core/sync.py"
   - "harbor/core/t_decorate.py"
   - "harbor/core/utils.py"
+  - "harbor/core/verification.py"
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:1317df6b25e77405879c355bfe3b1e8e9c2d3eb9f2e1f1f8466c038e589d1708"
-contract_fingerprint: "sha256:84d40bb1f7641e814d0f32a53a07858dffb496b7e441fb26479e2a364469c227"
+source_fingerprint: "sha256:9c82d502bedf4e10745a8d5600b33666a23f791868ffae4c3f5a5c0ee51ac69e"
+contract_fingerprint: "sha256:0aa5c092bfb11a851159774edebde46e95eaf9bbc358fc22027c0b781da55e1e"
 generator_fingerprint: "sha256:1ee8496df063eaeaade1b1c2b744b9180548d3bdd6c342105d62952b748253d0"
-view_fingerprint: "45a41ce7d433a7feeb76bde3a579a9fa91fe36b32c6a2961314ee3b5ccf756f3"
-fingerprint: "45a41ce7d433a7feeb76bde3a579a9fa91fe36b32c6a2961314ee3b5ccf756f3"
+view_fingerprint: "268ae9b68b6142cd70925819b93c349c8f7e2777e963417f7450fb033b280f3d"
+fingerprint: "268ae9b68b6142cd70925819b93c349c8f7e2777e963417f7450fb033b280f3d"
 ---
 
 # Module Card: harbor/core
@@ -109,6 +110,7 @@ harbor/core/storage.py
 harbor/core/sync.py
 harbor/core/t_decorate.py
 harbor/core/utils.py
+harbor/core/verification.py
 harbor/core/workspace.py
 harbor/core/workspace_inspect.py
 harbor/core/workspace_migrate.py
@@ -124,15 +126,51 @@ harbor/core/workspace_migrate.py
 | harbor.core.advice_config._normalize_mode_optional | harbor/core/advice_config.py | unknown | standard |
 | harbor.core.advice_config._to_bool | harbor/core/advice_config.py | unknown | standard |
 | harbor.core.advice_config.resolve_advice_settings | harbor/core/advice_config.py | unknown | standard |
+| harbor.core.audit.AuditEligibility.to_dict | harbor/core/audit.py | public | strict |
+| harbor.core.audit.AuditEvidence.to_dict | harbor/core/audit.py | public | strict |
+| harbor.core.audit.AuditPromptContext.to_dict | harbor/core/audit.py | public | strict |
+| harbor.core.audit.AuditSubject.to_dict | harbor/core/audit.py | public | strict |
 | harbor.core.audit.LLMProvider.infer | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.MockProvider.infer | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.OpenAIProvider.__init__ | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.OpenAIProvider.infer | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit.SemanticGuard._build_subject_prompt | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.SemanticGuard.audit | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit.SemanticGuard.audit_subject | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit.SemanticGuard.build_prompt | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit.SemanticGuard.build_prompt_from_context | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewConfig.to_dict | harbor/core/audit.py | public | strict |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewFinding.dedupe_key | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewFinding.sort_key | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewFinding.to_dict | harbor/core/audit.py | public | strict |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewReport.to_dict | harbor/core/audit.py | public | strict |
+| harbor.core.audit.TypeScriptSemanticAuditPreviewReport.to_summary_dict | harbor/core/audit.py | public | strict |
+| harbor.core.audit._audit_evidence_from_contract_source | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._collect_typescript_preview_targets | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._collect_typescript_subjects | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._dedupe_typescript_preview_findings | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._eligibility_message | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._evaluate_python_audit_eligibility | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._evaluate_typescript_audit_eligibility | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._ineligible_audit_result | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit._infer_file_path_from_contract | harbor/core/audit.py | unknown | standard |
 | harbor.core.audit._is_typescript_target | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._normalize_subject_source_path | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._parse_audit_output | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._resolve_subject_source_path | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._resolve_typescript_subject_for_entry | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._semantic_preview_finding_from_result | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._slice_source_excerpt | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._strongest_subject_confidence | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._to_bool | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit._typescript_ineligibility_hint | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit.build_audit_prompt_context | harbor/core/audit.py | public | strict |
+| harbor.core.audit.build_python_audit_subject | harbor/core/audit.py | public | strict |
+| harbor.core.audit.build_typescript_audit_subject | harbor/core/audit.py | public | strict |
+| harbor.core.audit.build_typescript_semantic_audit_preview | harbor/core/audit.py | public | strict |
+| harbor.core.audit.evaluate_audit_eligibility | harbor/core/audit.py | public | strict |
 | harbor.core.audit.resolve_provider | harbor/core/audit.py | unknown | standard |
+| harbor.core.audit.resolve_typescript_semantic_audit_preview_config | harbor/core/audit.py | public | strict |
 | harbor.core.baseline_artifact._normalize_contract_presence | harbor/core/baseline_artifact.py | unknown | standard |
 | harbor.core.baseline_artifact._normalize_hash | harbor/core/baseline_artifact.py | unknown | standard |
 | harbor.core.baseline_artifact._normalize_items | harbor/core/baseline_artifact.py | unknown | standard |
@@ -253,6 +291,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.contract_presence._looks_like_contract_doc | harbor/core/contract_presence.py | unknown | standard |
 | harbor.core.contract_presence.evaluate_contract_presence | harbor/core/contract_presence.py | unknown | standard |
 | harbor.core.contract_presence.is_contract_required | harbor/core/contract_presence.py | unknown | standard |
+| harbor.core.ddt.DDTBinding.to_verification_binding | harbor/core/ddt.py | public | strict |
 | harbor.core.ddt.DDTScanner.__init__ | harbor/core/ddt.py | unknown | standard |
 | harbor.core.ddt.DDTScanner._iter_py_files | harbor/core/ddt.py | unknown | standard |
 | harbor.core.ddt.DDTScanner._load_config | harbor/core/ddt.py | unknown | standard |
@@ -655,6 +694,36 @@ harbor/core/workspace_migrate.py
 | harbor.core.utils.find_function_node | harbor/core/utils.py | unknown | standard |
 | harbor.core.utils.iter_project_files | harbor/core/utils.py | public | strict |
 | harbor.core.utils.resolve_code_roots | harbor/core/utils.py | unknown | standard |
+| harbor.core.verification.TypeScriptDDTPreviewConfig.to_dict | harbor/core/verification.py | public | strict |
+| harbor.core.verification.TypeScriptDDTPreviewFinding.dedupe_key | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification.TypeScriptDDTPreviewFinding.sort_key | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification.TypeScriptDDTPreviewFinding.to_dict | harbor/core/verification.py | public | strict |
+| harbor.core.verification.TypeScriptDDTPreviewReport.to_dict | harbor/core/verification.py | public | strict |
+| harbor.core.verification.TypeScriptDDTPreviewReport.to_summary_dict | harbor/core/verification.py | public | strict |
+| harbor.core.verification.TypeScriptDDTPreviewSidecar.to_dict | harbor/core/verification.py | public | strict |
+| harbor.core.verification.VerificationBinding.from_legacy_ddt_binding | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification.VerificationBinding.to_dict | harbor/core/verification.py | public | strict |
+| harbor.core.verification.VerificationTargetRef.__post_init__ | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification.VerificationTargetRef.primary_anchor | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification.VerificationTargetRef.to_dict | harbor/core/verification.py | public | strict |
+| harbor.core.verification.VerificationTestAsset.to_dict | harbor/core/verification.py | public | strict |
+| harbor.core.verification._build_typescript_ddt_preview_report | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._collect_typescript_preview_subjects | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._dedupe_preview_findings | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._looks_like_windows_absolute_path | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._make_repo_relative_target_id | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._parse_preview_binding_for_validation | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._parse_typescript_ddt_preview_binding | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._preview_finding | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._strongest_contract_confidence | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._subject_preview_metadata | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._to_bool | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification._validate_preview_binding_against_subject | harbor/core/verification.py | unknown | standard |
+| harbor.core.verification.load_typescript_ddt_preview_sidecar | harbor/core/verification.py | public | strict |
+| harbor.core.verification.normalize_repo_relative_path | harbor/core/verification.py | public | strict |
+| harbor.core.verification.resolve_repo_local_file | harbor/core/verification.py | public | strict |
+| harbor.core.verification.resolve_typescript_ddt_preview_config | harbor/core/verification.py | public | strict |
+| harbor.core.verification.validate_typescript_ddt_preview | harbor/core/verification.py | public | strict |
 | harbor.core.workspace._build_path | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace._looks_like_windows_absolute_path | harbor/core/workspace.py | unknown | standard |
 | harbor.core.workspace._normalize_path_like | harbor/core/workspace.py | unknown | standard |
@@ -746,12 +815,15 @@ tests/test_python_audit_regression.py
 tests/test_python_ddt_regression.py
 tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
+tests/test_semantic_audit_preview.py
 tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_sync_engine_registry_integration.py
 tests/test_typescript_checkpoint_ci.py
 tests/test_typescript_contract_presence.py
+tests/test_typescript_ddt_preview.py
 tests/test_utils_format.py
+tests/test_verification_foundation.py
 tests/test_workspace_gitignore_policy.py
 tests/test_workspace_i18n.py
 tests/test_workspace_inspect.py

@@ -721,13 +721,25 @@ public boundary metadata is additive explainability only.
 public boundary metadata does not enter contract_hash / body_hash / baseline comparison semantics.
 ```
 
-Not supported in TypeScript v1.4.x:
+TypeScript verification preview in v1.4.4:
+
+```text
+VerificationBinding foundation
+sidecar-driven TypeScript DDT Binding Preview
+preview bindings keyed by target_id with func_id kept for Python compatibility
+opt-in preview config with enabled=false default
+checkpoint / check / harbor next additive explainability for preview findings
+language-neutral semantic audit foundation
+TypeScript semantic audit advisory preview for behavior-contract-backed function targets
+```
+
+Still not supported as a formal TypeScript gate in v1.4.x:
 
 ```text
 JavaScript first-class governance
 .js/.jsx/.tsx/.d.ts default scanning
-TypeScript semantic audit
-TypeScript DDT
+formal TypeScript DDT gate
+formal TypeScript semantic audit gate
 full TypeScript compiler / full module graph
 full npm package resolution / bundler alias resolution
 full Zod semantics / schema-to-type consistency audit
@@ -735,7 +747,8 @@ framework presets
 interface/type blocking gate
 ```
 
-Do not claim TypeScript DDT or TypeScript semantic audit coverage in v1.4.x.
+Do not claim formal TypeScript DDT gate or formal TypeScript semantic audit gate in v1.4.x.
+v1.4.4 only adds preview-first, advisory-first, opt-in coverage.
 
 ---
 
@@ -775,8 +788,11 @@ inspect whether tests still verify the intended contract
 v1.4.x boundary:
 
 ```text
-DDT remains Python-first.
-TypeScript DDT is not supported.
+DDT remains Python-first for formal gate semantics.
+v1.4.4 adds TypeScript DDT Binding Preview only.
+TypeScript preview binding is sidecar-driven, advisory-first, opt-in, and non-blocking.
+TypeScript preview binding is governance metadata, not coverage proof.
+Formal TypeScript DDT gate is still not supported.
 ```
 
 ---

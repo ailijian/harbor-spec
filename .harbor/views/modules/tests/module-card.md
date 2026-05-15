@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.3"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-15T07:55:35Z"
+generated_at: "2026-05-15T11:47:34Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 105
+source_path_count: 108
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -92,6 +92,7 @@ source_paths:
   - "tests/test_release_packaging.py"
   - "tests/test_repair_guidance.py"
   - "tests/test_semantic_audit_contract_gap.py"
+  - "tests/test_semantic_audit_preview.py"
   - "tests/test_stale.py"
   - "tests/test_sync_engine.py"
   - "tests/test_sync_engine_registry_integration.py"
@@ -99,6 +100,7 @@ source_paths:
   - "tests/test_typescript_boundary_resolution_paths.py"
   - "tests/test_typescript_checkpoint_ci.py"
   - "tests/test_typescript_contract_presence.py"
+  - "tests/test_typescript_ddt_preview.py"
   - "tests/test_typescript_next_guidance.py"
   - "tests/test_typescript_not_supported_boundaries.py"
   - "tests/test_typescript_package_exports.py"
@@ -107,6 +109,7 @@ source_paths:
   - "tests/test_typescript_public_boundary_presets.py"
   - "tests/test_typescript_re_export_resolver.py"
   - "tests/test_utils_format.py"
+  - "tests/test_verification_foundation.py"
   - "tests/test_windows_abs_path_prefix.py"
   - "tests/test_windows_json_stdio_regression.py"
   - "tests/test_workspace_gitignore_policy.py"
@@ -114,11 +117,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:8a0e5b72fe6e887c68b1d189813f2d92e80a31e5ac17432145a0ee32b8b6e955"
-contract_fingerprint: "sha256:55c1e488f80cccb49c0811c5ddd3a3faf812b46ec2d7d71563c39dff2b1f1eee"
+source_fingerprint: "sha256:c1698299840fceb05c444dcf9b35c6b411db177330572db5eb09b2acdc3290b0"
+contract_fingerprint: "sha256:a2b61d557617f525e7461f938a8515f3e8cd0a5fed99cf3f6dafd0ddc4928a35"
 generator_fingerprint: "sha256:1ee8496df063eaeaade1b1c2b744b9180548d3bdd6c342105d62952b748253d0"
-view_fingerprint: "fca2c89cf13778ac3ec0b141e567657c519ac3f63af60ee5c7b90096ecb477ca"
-fingerprint: "fca2c89cf13778ac3ec0b141e567657c519ac3f63af60ee5c7b90096ecb477ca"
+view_fingerprint: "1b04d4c789b08cd90ecaff63fe9ebfc1bd1af7fa80795e5e1dcd05f83ac40f5c"
+fingerprint: "1b04d4c789b08cd90ecaff63fe9ebfc1bd1af7fa80795e5e1dcd05f83ac40f5c"
 ---
 
 # Module Card: tests
@@ -222,6 +225,7 @@ tests/test_python_ddt_regression.py
 tests/test_release_packaging.py
 tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
+tests/test_semantic_audit_preview.py
 tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_sync_engine_registry_integration.py
@@ -229,6 +233,7 @@ tests/test_typescript_adapter_mvp.py
 tests/test_typescript_boundary_resolution_paths.py
 tests/test_typescript_checkpoint_ci.py
 tests/test_typescript_contract_presence.py
+tests/test_typescript_ddt_preview.py
 tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
 tests/test_typescript_package_exports.py
@@ -237,6 +242,7 @@ tests/test_typescript_public_boundary_next.py
 tests/test_typescript_public_boundary_presets.py
 tests/test_typescript_re_export_resolver.py
 tests/test_utils_format.py
+tests/test_verification_foundation.py
 tests/test_windows_abs_path_prefix.py
 tests/test_windows_json_stdio_regression.py
 tests/test_workspace_gitignore_policy.py
@@ -1024,6 +1030,20 @@ tests/test_workspace_paths.py
 | tests.test_semantic_audit_contract_gap._ShouldNotCallProvider.infer | tests/test_semantic_audit_contract_gap.py | unknown | standard |
 | tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_non_required_contract_skips_llm | tests/test_semantic_audit_contract_gap.py | unknown | standard |
 | tests.test_semantic_audit_contract_gap.test_semantic_guard_missing_required_contract_skips_llm | tests/test_semantic_audit_contract_gap.py | unknown | standard |
+| tests.test_semantic_audit_preview._config | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview._empty_contract_report | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview._empty_ddt_report | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview._empty_status_report | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview._status_entry | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview._write | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview.test_audit_foundation_models_serialize_stably | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview.test_checkpoint_json_adds_semantic_audit_preview_without_changing_exit_code | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview.test_checkpoint_json_omits_semantic_audit_preview_when_disabled | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview.test_interface_type_zod_are_auxiliary_only_and_do_not_trigger_preview | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview.test_python_semantic_audit_zero_regression | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview.test_semantic_audit_preview_disabled_has_no_side_effect | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview.test_typescript_eligible_target_enters_preview | tests/test_semantic_audit_preview.py | unknown | standard |
+| tests.test_semantic_audit_preview.test_typescript_without_behavior_contract_does_not_enter_preview | tests/test_semantic_audit_preview.py | unknown | standard |
 | tests.test_stale._write_index | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_l2_export_config | tests/test_stale.py | unknown | standard |
 | tests.test_stale._write_sample_repo | tests/test_stale.py | unknown | standard |
@@ -1110,6 +1130,26 @@ tests/test_workspace_paths.py
 | tests.test_typescript_contract_presence.test_script_file_targets_are_not_required | tests/test_typescript_contract_presence.py | unknown | standard |
 | tests.test_typescript_contract_presence.test_signature_only_public_function_remains_missing_required | tests/test_typescript_contract_presence.py | unknown | standard |
 | tests.test_typescript_contract_presence.test_tsdoc_with_code_gap_is_not_attached_to_symbol | tests/test_typescript_contract_presence.py | unknown | standard |
+| tests.test_typescript_ddt_preview._config | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview._empty_contract_report | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview._empty_ddt_report | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview._empty_status_report | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview._write | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview._write_yaml | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.run_cmd | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_checkpoint_json_adds_typescript_ddt_preview_without_polluting_ci_failures | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_checkpoint_json_omits_typescript_ddt_preview_when_disabled | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_next_consumes_checkpoint_preview_findings_and_keeps_them_non_blocking | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_next_text_explains_preview_binding_context | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_disabled_has_no_side_effect | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_dedupes_and_sorts_findings_deterministically | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_binding_schema_invalid | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_contract_source_missing | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_duplicate_binding_id | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_preview_valid | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_public_boundary_unconfirmed | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_target_not_found_and_test_asset_missing | tests/test_typescript_ddt_preview.py | unknown | standard |
+| tests.test_typescript_ddt_preview.test_typescript_ddt_preview_validator_reports_test_asset_missing | tests/test_typescript_ddt_preview.py | unknown | standard |
 | tests.test_typescript_next_guidance._write_report | tests/test_typescript_next_guidance.py | unknown | standard |
 | tests.test_typescript_next_guidance.run_cmd | tests/test_typescript_next_guidance.py | unknown | standard |
 | tests.test_typescript_next_guidance.test_next_explains_typescript_contract_gap | tests/test_typescript_next_guidance.py | unknown | standard |
@@ -1146,6 +1186,14 @@ tests/test_workspace_paths.py
 | tests.test_utils_format.test_format_size_kb | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_mb | tests/test_utils_format.py | unknown | standard |
 | tests.test_utils_format.test_format_size_negative_raises | tests/test_utils_format.py | unknown | standard |
+| tests.test_verification_foundation._write_yaml | tests/test_verification_foundation.py | unknown | standard |
+| tests.test_verification_foundation.test_normalize_repo_relative_path_normalizes_windows_and_posix_forms | tests/test_verification_foundation.py | unknown | standard |
+| tests.test_verification_foundation.test_typescript_ddt_preview_config_defaults_disabled_and_safe | tests/test_verification_foundation.py | unknown | standard |
+| tests.test_verification_foundation.test_typescript_ddt_preview_disabled_does_not_parse_sidecar | tests/test_verification_foundation.py | unknown | standard |
+| tests.test_verification_foundation.test_typescript_ddt_preview_rejects_repo_escape_in_test_asset_path | tests/test_verification_foundation.py | unknown | standard |
+| tests.test_verification_foundation.test_typescript_ddt_preview_rejects_unknown_strategy | tests/test_verification_foundation.py | unknown | standard |
+| tests.test_verification_foundation.test_verification_binding_maps_python_ddt_without_polluting_comparison_metadata | tests/test_verification_foundation.py | unknown | standard |
+| tests.test_verification_foundation.test_verification_binding_uses_target_id_as_primary_anchor_for_typescript_sidecar | tests/test_verification_foundation.py | unknown | standard |
 | tests.test_windows_abs_path_prefix.test_windows_abs_path_prefix | tests/test_windows_abs_path_prefix.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._all_case_diagnostics | tests/test_windows_json_stdio_regression.py | unknown | standard |
 | tests.test_windows_json_stdio_regression._cached_canonical_json_payload | tests/test_windows_json_stdio_regression.py | unknown | standard |
@@ -1289,6 +1337,7 @@ tests/test_python_ddt_regression.py
 tests/test_release_packaging.py
 tests/test_repair_guidance.py
 tests/test_semantic_audit_contract_gap.py
+tests/test_semantic_audit_preview.py
 tests/test_stale.py
 tests/test_sync_engine.py
 tests/test_sync_engine_registry_integration.py
@@ -1296,6 +1345,7 @@ tests/test_typescript_adapter_mvp.py
 tests/test_typescript_boundary_resolution_paths.py
 tests/test_typescript_checkpoint_ci.py
 tests/test_typescript_contract_presence.py
+tests/test_typescript_ddt_preview.py
 tests/test_typescript_next_guidance.py
 tests/test_typescript_not_supported_boundaries.py
 tests/test_typescript_package_exports.py
@@ -1304,6 +1354,7 @@ tests/test_typescript_public_boundary_next.py
 tests/test_typescript_public_boundary_presets.py
 tests/test_typescript_re_export_resolver.py
 tests/test_utils_format.py
+tests/test_verification_foundation.py
 tests/test_windows_abs_path_prefix.py
 tests/test_windows_json_stdio_regression.py
 tests/test_workspace_gitignore_policy.py
