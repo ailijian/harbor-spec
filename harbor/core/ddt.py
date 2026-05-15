@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import ast
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -19,6 +19,21 @@ class DDTBinding:
     strategy: str
     file_path: str
     test_name: str
+    target_id: Optional[str] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_verification_binding(self):
+        """Convert the legacy Python-first DDT binding into a language-neutral binding.
+
+        @harbor.scope: public
+        @harbor.l3_strictness: strict
+
+        Returns:
+          VerificationBinding: Compatibility mapping used by the v1.4.4 verification foundation.
+        """
+        from harbor.core.verification import VerificationBinding
+
+        return VerificationBinding.from_legacy_ddt_binding(self)
 
 
 @dataclass
