@@ -1,13 +1,13 @@
 # Harbor-spec v1.4.4 — TypeScript Verification Preview
 
-状态：发布候选 / 待封板  
-发布类型：TypeScript Verification Preview / Governance & Documentation Closure
+状态：正式版  
+发布类型：TypeScript Verification Preview / DDT Binding Preview / Semantic Audit Foundation
 
 ## Summary
 
 - `v1.4.4` 建立在 `v1.4.3` 已完成的 TypeScript contract source 与 public boundary governance 基础之上。
 - 本版本首次把 TypeScript 纳入 verification preview，正式主题为 `TypeScript Verification Preview: DDT Binding Preview & Semantic Audit Foundation`。
-- 本阶段优先收口 preview governance、文档、规则、ADR、Diary Draft 与 generated context，不把 preview 提前升级为正式 gate。
+- 本版本完成 preview governance、文档、规则、ADR、Diary、accepted baseline 与 generated context 的正式收口，不把 preview 提前升级为正式 gate。
 
 ## Added
 
@@ -60,22 +60,27 @@
 
 ## Validation Status
 
-- 当前状态为 release candidate / governance closure，尚未声明正式发布完成。
-- Phase 4A 目标是完成 README / RELEASE / rules / ADR / Diary Draft / generated context 收口。
-- Phase 4A 已执行：
-  - `harbor finish --sync-context`
-  - `harbor project structure --write`
-  - `harbor verify-generated --changed --ci --format json`
-  - `harbor stale --ci --format json`
-  - `harbor doctor --ci --format json`
-- Phase 4A 当前结果：
-  - `verify-generated --changed --ci --format json`: `pass`
-  - `stale --ci --format json`: `pass`
-  - `doctor --ci --format json`: `pass`（workspace changed advisory: `WARN`, non-blocking）
-- 当前 checkpoint / finish 仍显示开发中差异与未跟踪 target，说明本仓库仍处于封板前阶段，而不是已完成 baseline acceptance 的正式发布态。
-- Phase 4B 才执行全量发布验收与最终封板判断。
-- 本阶段不执行 `harbor accept`。
-- 本阶段不执行 `harbor log write`。
+- `pytest`: `738 passed`
+- `harbor log write --from-draft .harbor/reports/v1.4.4-phase-4a-governance-diary-draft.md --yes`: `pass`
+- `harbor accept`: `pass`
+- `harbor checkpoint --ci --format json --advice basic`: `pass`
+- `harbor verify-generated --changed --ci --format json`: `pass`
+- `harbor verify-generated --all --ci --format json`: `pass`
+- `harbor stale --ci --format json`: `pass`
+- `harbor doctor --ci --format json`: `pass`
+- accepted baseline updated at `.harbor/baseline/accepted-checkpoint.json`
+- post-accept checkpoint closure:
+  - `drift=0`
+  - `modified=0`
+  - `missing=0`
+  - `untracked=0`
+  - `possible_contract_impact=0`
+  - `ci_failures=0`
+- generated context closure completed via `harbor finish --sync-context -> harbor project structure --write -> harbor docs --all --write -> harbor module seal --all --write`
+- release acceptance for preview semantic audit remains mock / deterministic-provider based and does not depend on a real LLM
+- non-blocking follow-up remains:
+  - `ddt_advisory=5`
+  - classification: existing governance backlog, not a v1.4.4 release blocker
 
 ---
 

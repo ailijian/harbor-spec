@@ -2,7 +2,7 @@
 generated_by: "harbor-spec"
 harbor_version: "1.4.3"
 view_type: "project_structure"
-generated_at: "2026-05-15T11:49:10Z"
+generated_at: "2026-05-15T12:28:05Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
 source_path_count: 171
@@ -128,7 +128,7 @@ source_paths:
   - "tests/test_gitignore_prune.py"
   - "tests/test_harbor_next.py"
   - "tests/test_index_builder.py"
-source_fingerprint: "sha256:50a80e17440559e17e4c0f841e2f19dc845aa3b14e4b7b0013b3e7ca8c7975ec"
+source_fingerprint: "sha256:58efe1a42a9e06fb4f51fd3bed3df307f6afdcc857b83ef82978113d958e760b"
 contract_fingerprint: "sha256:1c7a6e9a2c444f2c00b8c0535dc052af77a89ce2fdbbfd8c2fa6cb59836061d5"
 generator_fingerprint: "sha256:eb4b770e7ce9be0d74d950f1d7a44aa4f8261cfdc523ec063607f6d0ad4b8d01"
 ---
@@ -143,7 +143,7 @@ generator_fingerprint: "sha256:eb4b770e7ce9be0d74d950f1d7a44aa4f8261cfdc523ec063
 | Field | Value |
 |---|---|
 | Name | harbor-spec |
-| Version | 1.4.3 |
+| Version | 1.4.4 |
 | Description | Harbor-spec: context governance engine for AI coding, with contract drift detection, DDT validation, workflow facades, L2 README generation, module capsules, and advisory health checks. |
 | CLI Entrypoint | harbor.cli.main:main |
 
