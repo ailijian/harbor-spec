@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 from rich.console import Console
 from rich.table import Table
-from rich.progress import Progress, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
 import json
 from rich.panel import Panel
 from rich.prompt import Prompt
@@ -117,10 +116,15 @@ from harbor.core.init_wizard import InitWizard, InitWizardOptions
 from harbor.core.decorator import DecoratorEngine
 from harbor.core.verification import validate_typescript_ddt_preview
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, write_workspace_config
+from harbor.core.console_output import build_cli_progress
 
 
 def _is_log_write_interactive() -> bool:
     return bool(sys.stdin.isatty() and sys.stdout.isatty())
+
+
+def _make_progress(*, output_format: str = "text", ci: bool = False):
+    return build_cli_progress(output_format=output_format, ci=ci)
 
 
 def _normalize_windows_stdio_encoding_name(value: Optional[str]) -> Optional[str]:
@@ -315,6 +319,10 @@ def main():
         the full localized payload, Harbor automatically falls back to
         ASCII-escaped JSON for that write only so stdout remains one parseable
         JSON object without changing payload semantics, routing, or exit codes.
+      - Unified workflow progress feedback is text-mode only: interactive
+        human-readable routes may render progress on `stderr`, while
+        `--format json`, `--format jsonl`, CI-style machine routes, command
+        payload shape, and exit-code semantics remain unchanged.
       - `harbor log draft` / `harbor log write` dispatch order remains explicit:
         draft/write subcommands are handled before legacy direct `harbor log`
         message or LLM-assisted draft flows.
@@ -1211,40 +1219,42 @@ def main():
     def _write_cfg_data(data):
         write_workspace_config(Path.cwd(), data)
 
-    def _run_lock(*, code_roots=None, cache_dir=None, no_incremental=False, no_register_adopted=False, register_scan=False):
+    def _run_lock(
+        *,
+        code_roots=None,
+        cache_dir=None,
+        no_incremental=False,
+        no_register_adopted=False,
+        register_scan=False,
+        output_format="text",
+        ci=False,
+    ):
         builder = IndexBuilder(code_roots=code_roots, cache_dir=cache_dir)
         scanned = 0
         updated = 0
         skipped = 0
         items_total = 0
-        console = Console()
-        with Progress(
-            TextColumn("[bold blue]{task.description}"),
-            BarColumn(),
-            MofNCompleteColumn(),
-            TimeElapsedColumn(),
-            console=console,
-        ) as progress:
-            task_id = progress.add_task(t("cli.lock.init"), total=0)
+        progress_ui = _make_progress(output_format=output_format, ci=ci)
+        with progress_ui.batch(t("cli.progress.label.lock"), total=0) as progress:
             total_set = False
             for ev in builder.iter_build(incremental=not no_incremental):
                 if not total_set:
-                    progress.update(task_id, total=ev.total)
+                    progress.update(total=ev.total)
                     total_set = True
                 if ev.status == "scanning":
-                    progress.update(task_id, description=t("cli.lock.scanning", path=f"{ev.path}"))
+                    progress.update(description=t("cli.lock.scanning", path=f"{ev.path}"))
                 elif ev.status == "parsed":
                     scanned += 1
                     updated += 1
                     items_total += ev.items_count
-                    progress.update(task_id, advance=1, description=t("cli.lock.done", path=f"{ev.path}"))
+                    progress.update(advance=1, description=t("cli.lock.done", path=f"{ev.path}"))
                 elif ev.status == "skipped":
                     scanned += 1
                     skipped += 1
-                    progress.update(task_id, advance=1, description=t("cli.lock.skipped", path=f"{ev.path}"))
+                    progress.update(advance=1, description=t("cli.lock.skipped", path=f"{ev.path}"))
                 elif ev.status == "error":
                     scanned += 1
-                    progress.update(task_id, advance=1, description=t("cli.lock.error", path=f"{ev.path}"))
+                    progress.update(advance=1, description=t("cli.lock.error", path=f"{ev.path}"))
         print(t("cli.lock.summary", scanned=scanned, updated=updated, skipped=skipped, items=items_total, db=builder.db.db_path.as_posix()))
         try:
             db = builder.db
@@ -1310,16 +1320,23 @@ def main():
                 )
         return items
 
-    def _run_accept(*, output_path=None, no_cache_refresh=False):
-        baseline_items = _collect_checkpoint_baseline_items()
+    def _run_accept(*, output_path=None, no_cache_refresh=False, output_format="text", ci=False):
+        progress_ui = _make_progress(output_format=output_format, ci=ci)
+        progress_ui.phase(current=1, total=2, label=t("cli.progress.label.accept.collect"))
+        with progress_ui.status(t("cli.progress.label.accept.collect")):
+            baseline_items = _collect_checkpoint_baseline_items()
         lock_summary = None
         if not no_cache_refresh:
-            lock_summary = _run_lock()
-        artifact = build_checkpoint_baseline_artifact(items=baseline_items)
-        written_path = write_checkpoint_baseline_artifact(
-            artifact,
-            path=Path(output_path) if output_path else None,
-        )
+            progress_ui.phase(current=2, total=2, label=t("cli.progress.label.accept.refresh"))
+            lock_summary = _run_lock(output_format=output_format, ci=ci)
+        else:
+            progress_ui.phase(current=2, total=2, label=t("cli.progress.label.accept.write"))
+        with progress_ui.status(t("cli.progress.label.accept.write")):
+            artifact = build_checkpoint_baseline_artifact(items=baseline_items)
+            written_path = write_checkpoint_baseline_artifact(
+                artifact,
+                path=Path(output_path) if output_path else None,
+            )
         return {
             "accepted": True,
             "artifact_written": True,
@@ -1330,9 +1347,9 @@ def main():
             "writes_files": True,
         }
 
-    def _run_status(*, verbose=False):
-        console = Console()
-        with console.status(f"[bold blue]{t('cli.status.scanning')}", spinner="dots"):
+    def _run_status(*, verbose=False, output_format="text", ci=False):
+        progress_ui = _make_progress(output_format=output_format, ci=ci)
+        with progress_ui.status(t("cli.status.scanning")):
             rep = _collect_status_report()
         total = sum(rep.counts.values())
         if total == 0:
@@ -1478,14 +1495,17 @@ def main():
                 pass
 
     def _run_check(*, fast=False, module=None, func=None, diff_only=True, debug=False, output_format="jsonl", verbose=False):
-        scanner = DDTScanner()
-        bindings = scanner.scan_tests()
+        progress_ui = _make_progress(output_format="text" if output_format == "plain" else output_format, ci=False)
+        with progress_ui.status(t("cli.progress.label.check.scan")):
+            scanner = DDTScanner()
+            bindings = scanner.scan_tests()
         if func:
             bindings = [b for b in bindings if b.func_id == func]
         if module:
             bindings = [b for b in bindings if b.func_id.startswith(module)]
-        validator = DDTValidator()
-        rep = validator.validate(bindings)
+        with progress_ui.status(t("cli.progress.label.check.validate")):
+            validator = DDTValidator()
+            rep = validator.validate(bindings)
         print(t("cli.check.title"))
         print(f"\n{t('cli.check.ddt')}")
         print(t("cli.check.bindings", count=len(bindings)))
@@ -1552,8 +1572,9 @@ def main():
         semantic_counts = {"OK": 0, "POSSIBLE_SEMANTIC_DRIFT": 0, "CONTRACT_GAP": 0, "SKIPPED_NO_CONTRACT": 0, "ERROR": 0}
         semantic_preview_report = None
         if not fast:
-            eng = SyncEngine()
-            status = eng.check_status()
+            with progress_ui.status(t("cli.progress.label.check.semantic_status")):
+                eng = SyncEngine()
+                status = eng.check_status()
             provider = resolve_provider()
             guard = SemanticGuard()
             model = getattr(provider, "model", "n/a")
@@ -1569,11 +1590,12 @@ def main():
                 if str(getattr(entry, "language", "") or "").strip().lower() != "typescript"
                 and not str(getattr(entry, "file_path", "") or "").strip().lower().endswith(".ts")
             ]
-            semantic_preview_report = _load_typescript_semantic_audit_preview_report_safe(
-                status_report=status,
-                provider=provider,
-                guard=guard,
-            )
+            with progress_ui.status(t("cli.progress.label.check.semantic_preview")):
+                semantic_preview_report = _load_typescript_semantic_audit_preview_report_safe(
+                    status_report=status,
+                    provider=provider,
+                    guard=guard,
+                )
             semantic_targets_count = len(python_targets) + int(getattr(semantic_preview_report, "targets_count", 0) or 0)
             print(f"targets={semantic_targets_count}")
             out_lines = []
@@ -2019,7 +2041,12 @@ def main():
         if not modules:
             print(t("cli.finish.sync_context.self_check.skipped"))
             return True
-        results = [check_module_derived_views_stale(module) for module in modules]
+        stale_progress = _make_progress(output_format="text", ci=False)
+        with stale_progress.batch(t("cli.progress.label.stale.batch"), total=len(modules)) as batch:
+            results = []
+            for module in modules:
+                results.append(check_module_derived_views_stale(module))
+                batch.update(advance=1, description=t("cli.progress.label.stale.item", module=module))
         residual = _finish_self_check_rows(results)
         if not residual:
             print(t("cli.finish.sync_context.self_check.pass", count=len(modules)))
@@ -2063,7 +2090,7 @@ def main():
         print("  - harbor docs --all --write")
         print("  - harbor module seal --all --write")
 
-    def _run_docs_changed(*, write=False, force=False, modules=None):
+    def _run_docs_changed(*, write=False, force=False, modules=None, output_format="text", ci=False):
         gen = L2Generator(prefer_fresh_source=True)
         raw_modules = modules if modules is not None else _collect_changed_modules()
         target_modules, skipped = _select_safe_modules(list(raw_modules), strict=False)
@@ -2078,14 +2105,17 @@ def main():
             print("")
             print(t("cli.docs.preview_only"))
         updated = []
-        for module in target_modules:
-            md = gen.generate(module)
-            if write:
-                targets = _normalize_l2_write_paths(gen.write(module, md, force=force))
-                updated.extend(targets)
-            else:
-                print("")
-                print(md)
+        progress_ui = _make_progress(output_format=output_format, ci=ci)
+        with progress_ui.batch(t("cli.progress.label.docs.batch"), total=len(target_modules)) as batch:
+            for module in target_modules:
+                md = gen.generate(module)
+                if write:
+                    targets = _normalize_l2_write_paths(gen.write(module, md, force=force))
+                    updated.extend(targets)
+                else:
+                    print("")
+                    print(md)
+                batch.update(advance=1, description=t("cli.progress.label.docs.item", module=module))
         if write:
             if not updated:
                 print(t("cli.docs.nochanges"))
@@ -2096,7 +2126,7 @@ def main():
                     print(f"- {_to_repo_relative_display(path)}")
         return target_modules
 
-    def _run_module_seal_changed(*, write=False, modules=None):
+    def _run_module_seal_changed(*, write=False, modules=None, output_format="text", ci=False):
         target_modules = modules if modules is not None else _collect_changed_modules()
         if not target_modules:
             print(t("cli.module.seal.changed.none"))
@@ -2132,28 +2162,37 @@ def main():
             return target_modules
 
         updated = []
-        for context in valid_contexts:
-            result = write_module_capsule(context)
-            updated.extend(result.canonical_paths)
-            updated.extend(result.exported_paths)
+        progress_ui = _make_progress(output_format=output_format, ci=ci)
+        with progress_ui.batch(t("cli.progress.label.module_seal.batch"), total=len(valid_contexts)) as batch:
+            for context in valid_contexts:
+                result = write_module_capsule(context)
+                updated.extend(result.canonical_paths)
+                updated.extend(result.exported_paths)
+                batch.update(
+                    advance=1,
+                    description=t("cli.progress.label.module_seal.item", module=context.get("module", "")),
+                )
         print(t("cli.module.seal.batch.updated"))
         for path in updated:
             print(f"- {_to_repo_relative_display(path)}")
         return target_modules
 
-    def _run_module_stale_changed(*, modules=None):
+    def _run_module_stale_changed(*, modules=None, output_format="text", ci=False):
         target_modules = modules if modules is not None else _collect_changed_modules()
         if not target_modules:
             print(t("cli.module.stale.none_changed"))
             return []
         print(t("cli.module.stale.changed.found"))
-        for module in target_modules:
-            context = _collect_module_context_for_generated_context(module)
-            result = check_module_capsule_stale(context)
-            status_text = t("cli.module.stale.up_to_date") if result.get("status") == "up_to_date" else t(
-                "cli.module.stale.stale"
-            )
-            print(f"- {module}: {status_text}")
+        progress_ui = _make_progress(output_format=output_format, ci=ci)
+        with progress_ui.batch(t("cli.progress.label.module_stale.batch"), total=len(target_modules)) as batch:
+            for module in target_modules:
+                context = _collect_module_context_for_generated_context(module)
+                result = check_module_capsule_stale(context)
+                status_text = t("cli.module.stale.up_to_date") if result.get("status") == "up_to_date" else t(
+                    "cli.module.stale.stale"
+                )
+                print(f"- {module}: {status_text}")
+                batch.update(advance=1, description=t("cli.progress.label.module_stale.item", module=module))
         return target_modules
 
     def _coerce_report_items(payload_obj, key: str):
@@ -2388,6 +2427,7 @@ def main():
         accept_summary = _run_accept(
             output_path=getattr(args, "output", None),
             no_cache_refresh=bool(getattr(args, "no_cache_refresh", False)),
+            output_format=getattr(args, "format", "text"),
         )
         if getattr(args, "format", "text") == "json":
             _emit_json_stdout(accept_summary)
@@ -2410,7 +2450,7 @@ def main():
         )
     elif args.command == "start":
         print(t("cli.start.title"))
-        _, clean = _run_status(verbose=False)
+        _, clean = _run_status(verbose=False, output_format="text")
         if clean:
             print(t("cli.start.clean"))
         else:
@@ -2425,20 +2465,31 @@ def main():
         if not getattr(args, "ci", False):
             if getattr(args, "verbose", False):
                 print(t("cli.checkpoint.title"))
-                rep, clean = _run_status(verbose=True)
+                rep, clean = _run_status(verbose=True, output_format="text")
                 if not clean:
                     _print_checkpoint_contract_impact(rep)
-                check_summary = _run_check(fast=True, verbose=True)
+                check_summary = _run_check(fast=True, verbose=True, output_format="plain")
             else:
-                rep = _collect_status_report()
-                ddt_report = _run_fast_ddt_for_ci()
-                contract_impact_report = build_contract_impact_report(_collect_status_records_for_checkpoint_ci(rep))
+                progress_ui = _make_progress(output_format="text", ci=False)
+                progress_ui.phase(current=1, total=4, label=t("cli.progress.label.checkpoint.status"))
+                with progress_ui.status(t("cli.progress.label.checkpoint.status")):
+                    rep = _collect_status_report()
+                progress_ui.phase(current=2, total=4, label=t("cli.progress.label.checkpoint.ddt"))
+                with progress_ui.status(t("cli.progress.label.checkpoint.ddt")):
+                    ddt_report = _run_fast_ddt_for_ci()
+                progress_ui.phase(current=3, total=4, label=t("cli.progress.label.checkpoint.contract"))
+                with progress_ui.status(t("cli.progress.label.checkpoint.contract")):
+                    contract_impact_report = build_contract_impact_report(_collect_status_records_for_checkpoint_ci(rep))
+                progress_ui.phase(current=4, total=4, label=t("cli.progress.label.checkpoint.preview"))
+                with progress_ui.status(t("cli.progress.label.checkpoint.preview")):
+                    typescript_preview = _load_typescript_ddt_preview_report_safe()
+                    semantic_preview = _load_typescript_semantic_audit_preview_report_safe(rep)
                 workflow_result = build_checkpoint_ci_result(
                     status_report=rep,
                     ddt_report=ddt_report,
                     contract_impact_report=contract_impact_report,
-                    typescript_ddt_preview=_load_typescript_ddt_preview_report_safe(),
-                    semantic_audit_preview=_load_typescript_semantic_audit_preview_report_safe(rep),
+                    typescript_ddt_preview=typescript_preview,
+                    semantic_audit_preview=semantic_preview,
                 )
                 print(format_checkpoint_workflow_summary(workflow_result))
                 check_summary = {
@@ -2591,7 +2642,10 @@ def main():
             print(_render_next_text(source_command, items))
     elif args.command == "finish":
         print(t("cli.finish.title"))
-        status_report, _ = _run_status(verbose=getattr(args, "verbose", False))
+        finish_progress = _make_progress(output_format="text", ci=False)
+        finish_progress.phase(current=1, total=2, label=t("cli.progress.label.finish.status"))
+        status_report, _ = _run_status(verbose=getattr(args, "verbose", False), output_format="text")
+        finish_progress.phase(current=2, total=2, label=t("cli.progress.label.finish.check"))
         check_summary = _run_check(fast=False, output_format="plain", verbose=getattr(args, "verbose", False))
         blocking_count = (
             len(list(getattr(status_report, "drift", []) or []))
@@ -2641,12 +2695,15 @@ def main():
             if not changed_modules:
                 print(t("cli.finish.sync_context.none"))
             else:
+                finish_progress.phase(current=1, total=3, label=t("cli.progress.label.finish.docs"))
                 print(t("cli.finish.sync_context.docs"))
-                _run_docs_changed(write=True, modules=changed_modules)
+                _run_docs_changed(write=True, modules=changed_modules, output_format="text")
                 print("")
+                finish_progress.phase(current=2, total=3, label=t("cli.progress.label.finish.capsules"))
                 print(t("cli.finish.sync_context.capsules"))
-                _run_module_seal_changed(write=True, modules=changed_modules)
+                _run_module_seal_changed(write=True, modules=changed_modules, output_format="text")
                 print("")
+                finish_progress.phase(current=3, total=3, label=t("cli.progress.label.finish.stale"))
                 print(t("cli.finish.sync_context.stale"))
                 _print_finish_sync_context_self_check(changed_modules)
             _print_finish_sync_context_advisory(changed_paths)
@@ -2736,7 +2793,7 @@ def main():
             _write_cfg_data(data)
             print(t("cli.config.adopted.wrote", count=len(derived)))
     elif args.command == "status":
-        _run_status(verbose=getattr(args, "verbose", False))
+        _run_status(verbose=getattr(args, "verbose", False), output_format="text")
     elif args.command == "check":
         _run_check(
             fast=args.fast,
@@ -2752,14 +2809,17 @@ def main():
         if docs_mode_count != 1:
             parser.error(t("cli.docs.mode_conflict"))
         gen = L2Generator(prefer_fresh_source=True)
+        docs_progress = _make_progress(output_format="text", ci=False)
         if args.module:
             module_name = args.module
             if args.write:
                 selected, _ = _select_safe_modules([args.module], strict=True)
                 module_name = selected[0]
-            md = gen.generate(module_name)
+            with docs_progress.status(t("cli.progress.label.docs.item", module=module_name)):
+                md = gen.generate(module_name)
             if args.write:
-                targets = _normalize_l2_write_paths(gen.write(module_name, md, force=args.force))
+                with docs_progress.status(t("cli.progress.label.docs.write", module=module_name)):
+                    targets = _normalize_l2_write_paths(gen.write(module_name, md, force=args.force))
                 if not targets:
                     print(t("cli.docs.nochanges"))
                 else:
@@ -2770,7 +2830,7 @@ def main():
                 print(md)
         else:
             if args.changed:
-                _run_docs_changed(write=args.write, force=args.force)
+                _run_docs_changed(write=args.write, force=args.force, output_format="text")
                 return
             else:
                 raw_modules = _collect_all_indexed_modules_for_generated_context()
@@ -2786,14 +2846,16 @@ def main():
                 print("")
                 print(t("cli.docs.preview_only"))
             updated = []
-            for module in modules:
-                md = gen.generate(module)
-                if args.write:
-                    targets = _normalize_l2_write_paths(gen.write(module, md, force=args.force))
-                    updated.extend(targets)
-                else:
-                    print("")
-                    print(md)
+            with docs_progress.batch(t("cli.progress.label.docs.batch"), total=len(modules)) as batch:
+                for module in modules:
+                    md = gen.generate(module)
+                    if args.write:
+                        targets = _normalize_l2_write_paths(gen.write(module, md, force=args.force))
+                        updated.extend(targets)
+                    else:
+                        print("")
+                        print(md)
+                    batch.update(advance=1, description=t("cli.progress.label.docs.item", module=module))
             if args.write:
                 if not updated:
                     print(t("cli.docs.nochanges"))
@@ -2880,10 +2942,12 @@ def main():
         else:
             modules = _collect_changed_modules()
 
-        report = build_doctor_report(
-            scope=scope_text,
-            modules=sorted(modules) if args.format == "json" else modules,
-        )
+        doctor_progress = _make_progress(output_format=args.format, ci=bool(args.ci))
+        with doctor_progress.status(t("cli.progress.label.doctor.run")):
+            report = build_doctor_report(
+                scope=scope_text,
+                modules=sorted(modules) if args.format == "json" else modules,
+            )
         if args.ci:
             advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
             ci_result = build_doctor_ci_result(report, advice_settings=advice_settings)
@@ -2946,7 +3010,9 @@ def main():
                     print(t("cli.verify_generated.none_changed"))
                 return
 
-        report = build_generated_verification_report(scope=scope_value, modules=modules)
+        verify_progress = _make_progress(output_format=args.format, ci=bool(args.ci))
+        with verify_progress.status(t("cli.progress.label.verify_generated.run")):
+            report = build_generated_verification_report(scope=scope_value, modules=modules)
         if args.ci:
             advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
             ci_result = build_generated_verification_ci_result(report, advice_settings=advice_settings)
@@ -3011,6 +3077,7 @@ def main():
         mode_count = int(bool(args.module)) + int(bool(args.changed)) + int(bool(args.all_modules))
         if mode_count != 1:
             parser.error(t("cli.module.seal.mode_conflict"))
+        module_progress = _make_progress(output_format="text", ci=False)
 
         if args.module:
             context = _collect_module_context_for_generated_context(args.module)
@@ -3022,8 +3089,9 @@ def main():
                 print(t("cli.module.seal.none", module=module_name))
                 return
             print(t("cli.module.seal.title", module=module_name))
-            previews = preview_module_capsule(context)
             if not args.write:
+                with module_progress.status(t("cli.progress.label.module_seal.item", module=module_name)):
+                    previews = preview_module_capsule(context)
                 resolved = resolve_module_capsule_paths(module_name, root=Path.cwd()).get("canonical_dir")
                 preview_path = _to_repo_relative_display(resolved) if resolved is not None else ".harbor/views/modules/<module>"
                 print(t("cli.module.seal.preview_only", path=preview_path))
@@ -3032,7 +3100,8 @@ def main():
                     print(f"--- {name} ---")
                     print(previews[name])
             else:
-                result = write_module_capsule(context)
+                with module_progress.status(t("cli.progress.label.module_seal.item", module=module_name)):
+                    result = write_module_capsule(context)
                 updated = list(result.canonical_paths) + list(result.exported_paths)
                 print(t("cli.module.seal.updated"))
                 for path in updated:
@@ -3040,7 +3109,7 @@ def main():
             return
 
         if args.changed:
-            _run_module_seal_changed(write=args.write)
+            _run_module_seal_changed(write=args.write, output_format="text")
             return
         else:
             modules = _collect_all_indexed_modules_for_generated_context()
@@ -3082,10 +3151,15 @@ def main():
             return
 
         updated = []
-        for context in valid_contexts:
-            result = write_module_capsule(context)
-            updated.extend(result.canonical_paths)
-            updated.extend(result.exported_paths)
+        with module_progress.batch(t("cli.progress.label.module_seal.batch"), total=len(valid_contexts)) as batch:
+            for context in valid_contexts:
+                result = write_module_capsule(context)
+                updated.extend(result.canonical_paths)
+                updated.extend(result.exported_paths)
+                batch.update(
+                    advance=1,
+                    description=t("cli.progress.label.module_seal.item", module=context.get("module", "")),
+                )
         print(t("cli.module.seal.batch.updated"))
         for path in updated:
             print(f"- {_to_repo_relative_display(path)}")
@@ -3097,7 +3171,9 @@ def main():
         if args.module:
             context = _collect_module_context_for_generated_context(args.module)
             module_name = context.get("module", "") or args.module
-            result = check_module_capsule_stale(context)
+            stale_progress = _make_progress(output_format="text", ci=False)
+            with stale_progress.status(t("cli.progress.label.module_stale.item", module=module_name)):
+                result = check_module_capsule_stale(context)
             print(t("cli.module.stale.title", module=module_name))
             if result.get("status") == "up_to_date":
                 print(f"- {t('cli.module.stale.status')}: {t('cli.module.stale.up_to_date')}")
@@ -3111,7 +3187,7 @@ def main():
             return
 
         if args.changed:
-            _run_module_stale_changed()
+            _run_module_stale_changed(output_format="text")
             return
         else:
             modules = _collect_all_indexed_modules_for_generated_context()
@@ -3120,13 +3196,16 @@ def main():
                 return
             print(t("cli.module.stale.all.found"))
 
-        for module in modules:
-            context = _collect_module_context_for_generated_context(module)
-            result = check_module_capsule_stale(context)
-            status_text = t("cli.module.stale.up_to_date") if result.get("status") == "up_to_date" else t(
-                "cli.module.stale.stale"
-            )
-            print(f"- {module}: {status_text}")
+        stale_progress = _make_progress(output_format="text", ci=False)
+        with stale_progress.batch(t("cli.progress.label.module_stale.batch"), total=len(modules)) as batch:
+            for module in modules:
+                context = _collect_module_context_for_generated_context(module)
+                result = check_module_capsule_stale(context)
+                status_text = t("cli.module.stale.up_to_date") if result.get("status") == "up_to_date" else t(
+                    "cli.module.stale.stale"
+                )
+                print(f"- {module}: {status_text}")
+                batch.update(advance=1, description=t("cli.progress.label.module_stale.item", module=module))
     elif args.command == "module" and args.module_cmd == "promote-skill":
         context = collect_module_context(args.module)
         check = check_capsule_ready_for_skill(args.module, context=context)
@@ -3155,8 +3234,11 @@ def main():
         print(f"- .harbor/views/modules/{module_name}/review-checklist.md")
         print(f"- .harbor/views/modules/{module_name}/debug-playbook.md")
     elif args.command == "project" and args.project_cmd == "structure":
-        context = collect_project_structure_context(Path.cwd())
-        markdown = generate_project_structure_markdown(context)
+        project_progress = _make_progress(output_format="text", ci=False)
+        project_progress.phase(current=1, total=2, label=t("cli.progress.label.project_structure.collect"))
+        with project_progress.status(t("cli.progress.label.project_structure.collect")):
+            context = collect_project_structure_context(Path.cwd())
+            markdown = generate_project_structure_markdown(context)
         workspace_paths = load_workspace_paths(Path.cwd(), enforce_write_safety=True)
         canonical_display = workspace_paths.project_structure_path.as_posix()
         try:
@@ -3170,7 +3252,9 @@ def main():
             if not context.has_indexed_modules:
                 print(t("cli.project.structure.no_index"))
             return
-        write_result = write_project_structure(context, Path.cwd())
+        project_progress.phase(current=2, total=2, label=t("cli.progress.label.project_structure.write"))
+        with project_progress.status(t("cli.progress.label.project_structure.write")):
+            write_result = write_project_structure(context, Path.cwd())
         updated_paths = [write_result.canonical_path] + list(write_result.exported_paths)
         print(t("cli.project.structure.updated"))
         for updated in updated_paths:
@@ -3393,8 +3477,10 @@ def main():
         _print_log_write_result(entry, mgr)
     elif args.command == "adopt":
         console = Console()
+        adopt_progress = _make_progress(output_format="text", ci=False)
         eng = DecoratorEngine()
-        candidates = eng.scan(args.path, strategy=args.strategy)
+        with adopt_progress.status(t("cli.progress.label.adopt.scan")):
+            candidates = eng.scan(args.path, strategy=args.strategy)
         table = Table(title=t("cli.adopt.table.title"))
         table.add_column(t("cli.adopt.table.action"))
         table.add_column(t("cli.adopt.table.func"))
