@@ -3,6 +3,7 @@ from io import StringIO
 import json
 import re
 import sys
+from types import SimpleNamespace
 
 import pytest
 from rich.console import Console
@@ -17,6 +18,7 @@ from harbor.core.generated_verify import (
     ModuleGeneratedVerification,
     ProjectGeneratedVerification,
 )
+from harbor.core.stale import ModuleStaleSummary, ViewStaleResult
 
 
 @pytest.fixture(autouse=True)
@@ -81,6 +83,15 @@ def _sample_report(scope: str) -> GeneratedVerificationReport:
         },
         repair_commands=[],
         writes_files=False,
+    )
+
+
+def _sample_stale_summary(module: str) -> ModuleStaleSummary:
+    return ModuleStaleSummary(
+        module=module,
+        l2_readme=ViewStaleResult("L2 README", "up_to_date", "up to date", None),
+        l2_readme_export=ViewStaleResult("L2 README Export", "up_to_date", "up to date", None),
+        module_capsule=ViewStaleResult("Module Capsule", "up_to_date", "up to date", None),
     )
 
 
@@ -155,6 +166,178 @@ def test_verify_generated_json_mode_keeps_stdout_clean_even_when_progress_forced
     assert payload["scope"] == "module:harbor/core"
     assert "generated context" not in _strip_ansi(err).lower()
     assert out.strip() == json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
+
+
+def test_stale_text_mode_shows_progress_on_stderr_when_interactive(monkeypatch):
+    monkeypatch.setattr(
+        cli_main.SyncEngine,
+        "check_status",
+        lambda self: SimpleNamespace(
+            drift=[SimpleNamespace(file_path="harbor/core/sync.py")],
+            modified=[],
+            contract_changed=[],
+            untracked=[],
+            missing=[],
+        ),
+    )
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _sample_stale_summary(module))
+
+    def _force_progress(**kwargs):
+        return build_cli_progress(
+            console=Console(file=sys.stderr, force_terminal=True, width=120),
+            interactive=True,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(cli_main, "build_cli_progress", _force_progress)
+
+    code, out, err = _run_cmd(["stale"])
+
+    rendered = _strip_ansi(err)
+    assert code == 0
+    assert "All derived context views are up to date." in out
+    assert "Phase 1/2:" in rendered
+    assert "Phase 2/2:" in rendered
+
+
+def test_stale_all_text_mode_shows_progress_on_stderr_when_interactive(monkeypatch):
+    monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda prefer_fresh_source=True: ["harbor/core", "tests"])
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _sample_stale_summary(module))
+
+    def _force_progress(**kwargs):
+        return build_cli_progress(
+            console=Console(file=sys.stderr, force_terminal=True, width=120),
+            interactive=True,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(cli_main, "build_cli_progress", _force_progress)
+
+    code, out, err = _run_cmd(["stale", "--all"])
+
+    rendered = _strip_ansi(err)
+    assert code == 0
+    assert "Scope: all indexed modules" in out
+    assert "Phase 1/2:" in rendered
+    assert "Phase 2/2:" in rendered
+
+
+def test_stale_ci_json_keeps_stdout_clean_even_when_progress_forced(monkeypatch):
+    monkeypatch.setattr(
+        cli_main.SyncEngine,
+        "check_status",
+        lambda self: SimpleNamespace(
+            drift=[SimpleNamespace(file_path="harbor/core/sync.py")],
+            modified=[],
+            contract_changed=[],
+            untracked=[],
+            missing=[],
+        ),
+    )
+    monkeypatch.setattr(cli_main, "check_module_derived_views_stale", lambda module: _sample_stale_summary(module))
+
+    def _force_progress(**kwargs):
+        return build_cli_progress(
+            console=Console(file=sys.stderr, force_terminal=True, width=120),
+            interactive=True,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(cli_main, "build_cli_progress", _force_progress)
+
+    code, out, err = _run_cmd(["stale", "--ci", "--format", "json"])
+    payload = json.loads(out)
+
+    assert code == 0
+    assert payload["command"] == "stale"
+    assert "Resolving stale scope" not in _strip_ansi(err)
+    assert out.strip() == json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
+
+
+def test_doctor_text_mode_shows_multi_stage_progress_on_stderr_when_interactive(monkeypatch):
+    def _sample_doctor_report(scope: str, modules, on_phase_start=None):
+        for phase_name in ("config_index", "workspace_status", "ddt_fast", "derived_views", "skill_refs"):
+            if on_phase_start is not None:
+                on_phase_start(phase_name)
+        return DoctorReport(
+            scope=scope,
+            checks=[DoctorCheckResult("Config / Index", PASS, ["ok"], [])],
+        )
+
+    monkeypatch.setattr(
+        cli_main.SyncEngine,
+        "check_status",
+        lambda self: SimpleNamespace(
+            counts={
+                "drift": 1,
+                "modified": 0,
+                "contract_changed": 0,
+                "contract_gap": 0,
+                "skipped_no_contract": 0,
+                "contract_parse_error": 0,
+                "untracked": 0,
+                "missing": 0,
+            },
+            drift=[SimpleNamespace(file_path="harbor/core/sync.py")],
+            modified=[],
+            contract_changed=[],
+            contract_gap=[],
+            skipped_no_contract=[],
+            contract_parse_error=[],
+            untracked=[],
+            missing=[],
+        ),
+    )
+    monkeypatch.setattr(cli_main, "build_doctor_report", _sample_doctor_report)
+
+    def _force_progress(**kwargs):
+        return build_cli_progress(
+            console=Console(file=sys.stderr, force_terminal=True, width=120),
+            interactive=True,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(cli_main, "build_cli_progress", _force_progress)
+
+    code, out, err = _run_cmd(["doctor"])
+
+    rendered = _strip_ansi(err)
+    assert code == 0
+    for current in range(1, 7):
+        assert f"Phase {current}/6:" in rendered
+    assert "Scope: changed modules" in out
+
+
+def test_doctor_all_text_mode_shows_multi_stage_progress_on_stderr_when_interactive(monkeypatch):
+    monkeypatch.setattr(cli_main, "collect_all_indexed_modules", lambda prefer_fresh_source=True: ["harbor/core"])
+
+    def _sample_doctor_report(scope: str, modules, on_phase_start=None):
+        for phase_name in ("config_index", "workspace_status", "ddt_fast", "derived_views", "skill_refs"):
+            if on_phase_start is not None:
+                on_phase_start(phase_name)
+        return DoctorReport(
+            scope=scope,
+            checks=[DoctorCheckResult("Config / Index", PASS, ["ok"], [])],
+        )
+
+    monkeypatch.setattr(cli_main, "build_doctor_report", _sample_doctor_report)
+
+    def _force_progress(**kwargs):
+        return build_cli_progress(
+            console=Console(file=sys.stderr, force_terminal=True, width=120),
+            interactive=True,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(cli_main, "build_cli_progress", _force_progress)
+
+    code, out, err = _run_cmd(["doctor", "--all"])
+
+    rendered = _strip_ansi(err)
+    assert code == 0
+    assert "Scope: all indexed modules" in out
+    assert "Phase 1/6:" in rendered
+    assert "Phase 6/6:" in rendered
 
 
 def test_doctor_ci_json_keeps_stdout_single_object_when_progress_forced(monkeypatch):

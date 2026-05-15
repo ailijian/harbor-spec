@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Set
+from typing import Callable, List, Optional, Set
 
 from harbor.core.context_integrity import parse_frontmatter
 from harbor.core.ddt import DDTScanner, DDTValidator
@@ -403,15 +403,31 @@ def run_skill_reference_check(skills_root: Path = Path(".agents") / "skills") ->
     )
 
 
-def build_doctor_report(scope: str, modules: List[str]) -> DoctorReport:
+def build_doctor_report(
+    scope: str,
+    modules: List[str],
+    *,
+    on_phase_start: Optional[Callable[[str], None]] = None,
+) -> DoctorReport:
     checks = [
-        run_config_index_check(),
-        run_workspace_status_check(),
-        run_ddt_fast_check(),
-        run_derived_views_check(modules),
-        run_skill_reference_check(),
+        _emit_doctor_phase(on_phase_start, "config_index", run_config_index_check),
+        _emit_doctor_phase(on_phase_start, "workspace_status", run_workspace_status_check),
+        _emit_doctor_phase(on_phase_start, "ddt_fast", run_ddt_fast_check),
+        _emit_doctor_phase(on_phase_start, "derived_views", run_derived_views_check, modules),
+        _emit_doctor_phase(on_phase_start, "skill_refs", run_skill_reference_check),
     ]
     return DoctorReport(scope=scope, checks=checks)
+
+
+def _emit_doctor_phase(
+    callback: Optional[Callable[[str], None]],
+    phase_name: str,
+    fn: Callable,
+    *args,
+):
+    if callback is not None:
+        callback(phase_name)
+    return fn(*args)
 
 
 def format_doctor_report(report: DoctorReport) -> str:

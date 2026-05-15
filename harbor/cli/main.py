@@ -1,5 +1,6 @@
 import argparse
 from collections import Counter
+import inspect
 import os
 from datetime import datetime, timezone
 import re
@@ -2886,46 +2887,42 @@ def main():
         if mode_count > 1:
             parser.error(t("cli.stale.mode_conflict"))
 
-        scope_text = t("cli.stale.scope.changed")
-        scope_value = "changed"
-        if args.module:
-            modules = [args.module]
-            scope_text = t("cli.stale.scope.module", module=args.module)
-            scope_value = f"module:{args.module}"
-        elif args.all_modules:
-            modules = _collect_all_indexed_modules_for_generated_context()
-            scope_text = t("cli.stale.scope.all")
-            scope_value = "all"
-            if not modules:
-                if args.ci:
-                    advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
-                    ci_result = build_stale_ci_result([], scope=scope_value, advice_settings=advice_settings)
-                    if args.format == "json":
-                        _emit_json_stdout(ci_result_to_dict(ci_result))
-                    else:
-                        print(format_ci_result(ci_result))
-                elif args.format == "json":
-                    _emit_json_stdout(stale_report_to_dict([], scope=scope_value))
-                else:
-                    print(t("cli.stale.none_all"))
-                return
-        else:
-            modules = _collect_changed_modules()
-            if not modules:
-                if args.ci:
-                    advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
-                    ci_result = build_stale_ci_result([], scope=scope_value, advice_settings=advice_settings)
-                    if args.format == "json":
-                        _emit_json_stdout(ci_result_to_dict(ci_result))
-                    else:
-                        print(format_ci_result(ci_result))
-                elif args.format == "json":
-                    _emit_json_stdout(stale_report_to_dict([], scope=scope_value))
-                else:
-                    print(t("cli.stale.none_changed"))
-                return
+        stale_progress = _make_progress(output_format=args.format, ci=bool(args.ci))
+        stale_progress.phase(current=1, total=2, label=t("cli.progress.label.stale.scope"))
+        with stale_progress.status(t("cli.progress.label.stale.scope")):
+            scope_text = t("cli.stale.scope.changed")
+            scope_value = "changed"
+            if args.module:
+                modules = [args.module]
+                scope_text = t("cli.stale.scope.module", module=args.module)
+                scope_value = f"module:{args.module}"
+            elif args.all_modules:
+                modules = _collect_all_indexed_modules_for_generated_context()
+                scope_text = t("cli.stale.scope.all")
+                scope_value = "all"
+            else:
+                modules = _collect_changed_modules()
 
-        results = [check_module_derived_views_stale(module) for module in modules]
+        if not modules:
+            if args.ci:
+                advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
+                ci_result = build_stale_ci_result([], scope=scope_value, advice_settings=advice_settings)
+                if args.format == "json":
+                    _emit_json_stdout(ci_result_to_dict(ci_result))
+                else:
+                    print(format_ci_result(ci_result))
+            elif args.format == "json":
+                _emit_json_stdout(stale_report_to_dict([], scope=scope_value))
+            else:
+                print(t("cli.stale.none_all") if args.all_modules else t("cli.stale.none_changed"))
+            return
+
+        stale_progress.phase(current=2, total=2, label=t("cli.progress.label.stale.batch"))
+        with stale_progress.batch(t("cli.progress.label.stale.batch"), total=len(modules)) as batch:
+            results = []
+            for module in modules:
+                results.append(check_module_derived_views_stale(module))
+                batch.update(advance=1, description=t("cli.progress.label.stale.item", module=module))
         if args.ci:
             advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
             ci_result = build_stale_ci_result(results, scope=scope_value, advice_settings=advice_settings)
@@ -2946,24 +2943,49 @@ def main():
         if mode_count > 1:
             parser.error(t("cli.doctor.mutually_exclusive"))
 
-        scope_text = t("cli.doctor.scope.changed")
-        scope_value = "changed"
-        if args.module:
-            modules = [args.module]
-            scope_text = t("cli.doctor.scope.module", module=args.module)
-            scope_value = f"module:{args.module}"
-        elif args.all_modules:
-            modules = _collect_all_indexed_modules_for_generated_context()
-            scope_text = t("cli.doctor.scope.all")
-            scope_value = "all"
-        else:
-            modules = _collect_changed_modules()
-
         doctor_progress = _make_progress(output_format=args.format, ci=bool(args.ci))
-        with doctor_progress.status(t("cli.progress.label.doctor.run")):
+        doctor_progress.phase(current=1, total=6, label=t("cli.progress.label.doctor.scope"))
+        with doctor_progress.status(t("cli.progress.label.doctor.scope")):
+            scope_text = t("cli.doctor.scope.changed")
+            scope_value = "changed"
+            if args.module:
+                modules = [args.module]
+                scope_text = t("cli.doctor.scope.module", module=args.module)
+                scope_value = f"module:{args.module}"
+            elif args.all_modules:
+                modules = _collect_all_indexed_modules_for_generated_context()
+                scope_text = t("cli.doctor.scope.all")
+                scope_value = "all"
+            else:
+                modules = _collect_changed_modules()
+
+        doctor_modules = sorted(modules) if args.format == "json" else modules
+        phase_labels = {
+            "config_index": (2, t("cli.progress.label.doctor.config_index")),
+            "workspace_status": (3, t("cli.progress.label.doctor.workspace_status")),
+            "ddt_fast": (4, t("cli.progress.label.doctor.ddt_fast")),
+            "derived_views": (5, t("cli.progress.label.doctor.derived_views")),
+            "skill_refs": (6, t("cli.progress.label.doctor.skill_refs")),
+        }
+
+        def _doctor_phase_start(phase_name: str) -> None:
+            phase = phase_labels.get(phase_name)
+            if phase is None:
+                return
+            current, label = phase
+            doctor_progress.phase(current=current, total=6, label=label)
+
+        build_doctor_sig = inspect.signature(build_doctor_report)
+        if "on_phase_start" in build_doctor_sig.parameters:
             report = build_doctor_report(
                 scope=scope_text,
-                modules=sorted(modules) if args.format == "json" else modules,
+                modules=doctor_modules,
+                on_phase_start=_doctor_phase_start,
+            )
+        else:
+            report = build_doctor_report(
+                scope=scope_text,
+                modules=doctor_modules,
             )
         if args.ci:
             advice_settings = resolve_advice_settings(cli_advice=getattr(args, "advice", None), repo_root=Path.cwd())
