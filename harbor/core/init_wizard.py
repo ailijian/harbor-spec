@@ -6,13 +6,14 @@ import sys
 from dataclasses import dataclass, field
 from importlib import resources
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from rich.console import Console
 from rich.prompt import Prompt
 
+from harbor.adapters.typescript.public_boundary import normalize_typescript_governance_config
 from harbor.core.console_output import safe_console_print
-from harbor.core.init import Initializer
+from harbor.core.init import Initializer, TypeScriptProjectHints
 from harbor.core.init_prompt import Choice, confirm, select_one
 
 
@@ -50,6 +51,10 @@ class InitWizardOptions:
     llm: Optional[bool] = None
     advice_mode: Optional[str] = None
     update_gitignore: Optional[bool] = None
+    typescript_enabled: Optional[bool] = None
+    typescript_preset: Optional[str] = None
+    typescript_entrypoints: Optional[List[str]] = None
+    typescript_contract_strategy: Optional[str] = None
 
 
 @dataclass
@@ -296,7 +301,196 @@ class InitWizard:
             console=self.console,
         )
 
-    def _emit_detected_summary(self, language: str, stacks: List[str], roots: List[str]) -> None:
+    def _label_typescript_preset(self, preset: str, language: str) -> str:
+        labels = {
+            "legacy_exported": (
+                "legacy_exported（保持 v1.4.2 exported 兼容语义）",
+                "legacy_exported (keep v1.4.2 exported-compatible semantics)",
+            ),
+            "package_public": (
+                "package_public（优先使用 package exports 作为 public boundary）",
+                "package_public (prefer package exports as the public boundary signal)",
+            ),
+            "custom_entrypoints": (
+                "custom_entrypoints（使用显式 entrypoints 确认 public boundary）",
+                "custom_entrypoints (confirm public boundary from configured entrypoints)",
+            ),
+        }
+        zh_label, en_label = labels.get(
+            preset,
+            (preset, preset),
+        )
+        return zh_label if language == "zh" else en_label
+
+    def _emit_typescript_guidance(self, language: str, hints: TypeScriptProjectHints) -> None:
+        if not hints.detected:
+            return
+        signals: List[str] = []
+        if hints.package_json:
+            signals.append("package.json")
+        if hints.tsconfig_json:
+            signals.append("tsconfig.json")
+        if hints.package_exports:
+            signals.append("package.json exports")
+        if language == "zh":
+            self._print("检测到 TypeScript 项目线索：")
+            self._print(f"- 线索：{', '.join(signals) if signals else '.ts sources'}")
+            if hints.entrypoint_candidates:
+                self._print(f"- public entrypoint 候选：{', '.join(hints.entrypoint_candidates)}")
+            if hints.workspace_markers:
+                self._print(f"- workspace / monorepo 标记：{', '.join(hints.workspace_markers)}")
+            self._print(f"- 推荐 preset：{self._label_typescript_preset(hints.recommended_preset, language)}")
+            self._print("- TypeScript 默认仍为 opt-in；未显式确认时不会静默写入 languages.typescript.enabled。")
+            return
+        self._print("Detected TypeScript governance hints:")
+        self._print(f"- Signals: {', '.join(signals) if signals else '.ts sources'}")
+        if hints.entrypoint_candidates:
+            self._print(f"- Public entrypoint candidates: {', '.join(hints.entrypoint_candidates)}")
+        if hints.workspace_markers:
+            self._print(f"- Workspace / monorepo markers: {', '.join(hints.workspace_markers)}")
+        self._print(f"- Recommended preset: {self._label_typescript_preset(hints.recommended_preset, language)}")
+        self._print("- TypeScript remains opt-in by default; `languages.typescript.enabled` is not written without explicit confirmation.")
+
+    def _normalize_typescript_preset(self, preset: Optional[str], default: str) -> str:
+        text = str(preset or "").strip().lower()
+        if text in {"legacy_exported", "package_public", "custom_entrypoints"}:
+            return text
+        return default
+
+    def _normalize_typescript_contract_strategy(self, strategy: Optional[str]) -> str:
+        text = str(strategy or "").strip().lower()
+        if text in {
+            "legacy_exported",
+            "confirmed_boundary_advisory",
+            "confirmed_boundary_policy_preview",
+        }:
+            return text
+        return "legacy_exported"
+
+    def _select_typescript_preset(self, language: str, recommended: str) -> str:
+        configured = self._normalize_typescript_preset(self.options.typescript_preset, recommended)
+        if self.options.typescript_preset:
+            return configured
+        if not self.interactive:
+            return configured
+        title = "选择 TypeScript public boundary preset：" if language == "zh" else "Choose a TypeScript public boundary preset:"
+        options = [
+            Choice(
+                value="legacy_exported",
+                label_zh="legacy_exported",
+                label_en="legacy_exported",
+                description_zh="保持默认 exported 兼容语义，边界证据先进入 explainability。",
+                description_en="Keep exported-compatible semantics; boundary evidence stays explainability-first.",
+            ),
+            Choice(
+                value="package_public",
+                label_zh="package_public",
+                label_en="package_public",
+                description_zh="当 package exports 是主入口时推荐。",
+                description_en="Recommended when package exports define the public package surface.",
+            ),
+            Choice(
+                value="custom_entrypoints",
+                label_zh="custom_entrypoints",
+                label_en="custom_entrypoints",
+                description_zh="当你需要显式确认项目级 public entrypoints 时推荐。",
+                description_en="Recommended when you want explicit project-level public entrypoints.",
+            ),
+        ]
+        return select_one(
+            title,
+            options=options,
+            default=configured,
+            language=language,
+            console=self.console,
+        )
+
+    def _resolve_typescript_entrypoints(self, language: str, hints: TypeScriptProjectHints, preset: str) -> List[str]:
+        if preset != "custom_entrypoints":
+            return []
+        configured = [str(value).strip() for value in list(self.options.typescript_entrypoints or []) if str(value).strip()]
+        if configured:
+            return configured
+        detected = list(hints.entrypoint_candidates)
+        if not self.interactive:
+            return detected
+        if detected:
+            use_detected = self._ask_yes_no(
+                "使用探测到的 TypeScript public entrypoints 吗？"
+                if language == "zh"
+                else "Use detected TypeScript public entrypoints?",
+                True,
+            )
+            if use_detected:
+                return detected
+        prompt_text = (
+            "输入 TypeScript public entrypoints（逗号分隔）："
+            if language == "zh"
+            else "Enter TypeScript public entrypoints (comma-separated):"
+        )
+        default_value = ",".join(detected) if detected else "src/index.ts"
+        entered = Prompt.ask(prompt_text, default=default_value)
+        return [value.strip() for value in entered.split(",") if value.strip()]
+
+    def _resolve_typescript_language_config(
+        self,
+        language: str,
+        hints: TypeScriptProjectHints,
+    ) -> Optional[Dict[str, Any]]:
+        explicit_enable = self.options.typescript_enabled
+        if explicit_enable is False:
+            return None
+        if not hints.detected and explicit_enable is not True:
+            return None
+
+        should_write = explicit_enable is True
+        if explicit_enable is None and self.interactive:
+            should_write = self._ask_yes_no(
+                "检测到 TypeScript 项目线索，是否现在写入 TypeScript governance 配置？"
+                if language == "zh"
+                else "Detected TypeScript governance hints. Write TypeScript governance config now?",
+                False,
+            )
+        if not should_write:
+            self.result.notes.append(
+                "已保留 TypeScript guidance 仅供参考；未写入 languages.typescript 配置。"
+                if language == "zh"
+                else "Kept TypeScript guidance advisory-only; did not write languages.typescript config."
+            )
+            return None
+
+        preset = self._select_typescript_preset(language, hints.recommended_preset)
+        entrypoints = self._resolve_typescript_entrypoints(language, hints, preset)
+        strategy = self._normalize_typescript_contract_strategy(self.options.typescript_contract_strategy)
+        governance = normalize_typescript_governance_config(
+            {
+                "public_boundary": {
+                    "mode": preset,
+                    "entrypoints": entrypoints,
+                },
+                "contract_required_strategy": strategy,
+            }
+        )
+        typescript_config: Dict[str, Any] = {"enabled": True}
+        typescript_config.update(governance)
+        self.result.notes.append(
+            "已显式启用 TypeScript governance，并写入 languages.typescript 配置。"
+            if language == "zh"
+            else "Explicitly enabled TypeScript governance and wrote languages.typescript config."
+        )
+        if entrypoints:
+            self.result.notes.append(
+                f"TypeScript entrypoints: {', '.join(entrypoints)}"
+            )
+        return {"typescript": typescript_config}
+
+    def _emit_detected_summary(
+        self,
+        language: str,
+        stacks: List[str],
+        roots: List[str],
+        ts_hints: Optional[TypeScriptProjectHints] = None,
+    ) -> None:
         stack_text = ", ".join(stacks) if stacks else ("Python" if language == "en" else "Python")
         root_text = ", ".join(roots) if roots else "**/*.py"
         if language == "zh":
@@ -304,11 +498,15 @@ class InitWizard:
             self._print(f"默认扫描范围：{root_text}")
             self._print("已自动排除：缓存、虚拟环境、构建产物、.git、.harbor 等运行目录")
             self._print("完整配置可稍后运行：harbor config list")
+            if ts_hints is not None:
+                self._emit_typescript_guidance(language, ts_hints)
             return
         self._print(f"Detected stack: {stack_text}")
         self._print(f"Default scan roots: {root_text}")
         self._print("Auto-excluded: cache, virtual env, build artifacts, .git, .harbor and runtime directories")
         self._print("See full config later with: harbor config list")
+        if ts_hints is not None:
+            self._emit_typescript_guidance(language, ts_hints)
 
     def _emit_project_rules_guidance(self, language: str) -> None:
         if language == "zh":
@@ -436,6 +634,7 @@ class InitWizard:
     def run(self) -> InitWizardResult:
         init = Initializer(cwd=self.cwd)
         stacks, roots, excludes = init.autodetect()
+        ts_hints = init.detect_typescript_hints()
         detect_warnings = list(init.last_warnings)
 
         language = self._ask_language()
@@ -443,7 +642,7 @@ class InitWizard:
         project = self._ask_project(stacks, roots)
         self.result.project = project
         advice_mode = self._ask_advice_mode()
-        self._emit_detected_summary(language, stacks, roots)
+        self._emit_detected_summary(language, stacks, roots, ts_hints)
         for warn in detect_warnings:
             if language == "zh":
                 self._print(f"警告：{warn}")
@@ -463,6 +662,8 @@ class InitWizard:
             if custom:
                 roots = custom
 
+        languages_config = self._resolve_typescript_language_config(language, ts_hints)
+
         # write config
         config_target = init.config_path
         if self.options.dry_run:
@@ -477,6 +678,7 @@ class InitWizard:
                 exclude_paths=excludes,
                 language=language,
                 advice_mode=advice_mode,
+                languages_config=languages_config,
             )
             if path.exists():
                 if config_target.exists() and not self.options.force:

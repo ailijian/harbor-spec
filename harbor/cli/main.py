@@ -1138,6 +1138,36 @@ def main():
     p_init_gitignore.add_argument("--update-gitignore", dest="update_gitignore", action="store_true")
     p_init_gitignore.add_argument("--no-update-gitignore", dest="update_gitignore", action="store_false")
     p_init.set_defaults(update_gitignore=None)
+    p_init.add_argument(
+        "--enable-typescript",
+        dest="typescript_enabled",
+        action="store_true",
+        help="Explicitly enable TypeScript governance during init",
+    )
+    p_init.set_defaults(typescript_enabled=None)
+    p_init.add_argument(
+        "--typescript-preset",
+        choices=["legacy_exported", "package_public", "custom_entrypoints"],
+        default=None,
+        help="Explicit TypeScript public boundary preset to write during init",
+    )
+    p_init.add_argument(
+        "--typescript-entrypoint",
+        dest="typescript_entrypoints",
+        action="append",
+        default=None,
+        help="TypeScript public entrypoint candidate to write during init (repeatable)",
+    )
+    p_init.add_argument(
+        "--typescript-contract-strategy",
+        choices=[
+            "legacy_exported",
+            "confirmed_boundary_advisory",
+            "confirmed_boundary_policy_preview",
+        ],
+        default=None,
+        help="Explicit TypeScript contract_required strategy to write during init",
+    )
 
     args = parser.parse_args(argv_mapped)
 
@@ -2022,6 +2052,53 @@ def main():
             return payload_obj
         raise ValueError("failed to parse report JSON: " + "; ".join(decode_errors))
 
+    def _build_boundary_explanation(item: dict) -> Optional[str]:
+        state = str(item.get("public_boundary_state") or "").strip()
+        confidence = str(item.get("public_boundary_confidence") or "").strip()
+        preset = str(item.get("boundary_preset_mode") or "").strip()
+        evidence_kinds = item.get("public_boundary_evidence_kinds")
+        evidence_list = [
+            str(value).strip()
+            for value in list(evidence_kinds or [])
+            if str(value or "").strip()
+        ]
+        reason = str(item.get("public_boundary_reason") or "").strip()
+        if not any((state, confidence, preset, evidence_list, reason)):
+            return None
+
+        preset_text = {
+            "legacy_exported": "Preset legacy_exported keeps v1.4.2 exported-compatible semantics.",
+            "package_public": "Preset package_public treats package exports as the strongest public boundary signal.",
+            "custom_entrypoints": "Preset custom_entrypoints confirms public boundary from configured entrypoints.",
+        }.get(preset, f"Preset {preset} is active." if preset else "")
+        state_text = {
+            "direct_export_only": "Boundary state is direct_export_only: only direct export evidence is confirmed so far.",
+            "re_exported_surface": "Boundary state is re_exported_surface: a re-export chain reaches this target.",
+            "package_export_surface": "Boundary state is package_export_surface: package export evidence confirms package-level public surface.",
+            "configured_entrypoint_surface": "Boundary state is configured_entrypoint_surface: configured entrypoints confirm project-level public surface.",
+            "internal_or_unconfirmed": "Boundary state is internal_or_unconfirmed: no stronger public boundary evidence is confirmed yet.",
+            "declaration_surface_preview": "Boundary state is declaration_surface_preview: only future-preview declaration evidence is available.",
+            "unknown": "Boundary state is unknown: evidence does not yet resolve to a stronger public boundary classification.",
+        }.get(state, f"Boundary state is {state}." if state else "")
+        evidence_text = {
+            "direct_export": "direct export",
+            "default_export": "default export",
+            "named_re_export": "named re-export",
+            "star_re_export": "star re-export",
+            "package_export": "package export",
+            "configured_entrypoint": "configured entrypoint",
+            "declaration_surface_preview": "declaration surface preview",
+        }
+        evidence_summary = ", ".join(evidence_text.get(kind, kind) for kind in evidence_list)
+        parts = [part for part in [preset_text, state_text] if part]
+        if confidence:
+            parts.append(f"Confidence: {confidence}.")
+        if evidence_summary:
+            parts.append(f"Evidence: {evidence_summary}.")
+        if reason:
+            parts.append(f"Reason: {reason}")
+        return " ".join(parts)
+
     def _normalize_next_item(source_command: str, raw_item: dict, *, blocking: bool, include_guidance: bool) -> dict:
         item = dict(raw_item or {})
         normalized = {
@@ -2048,6 +2125,9 @@ def main():
             "boundary_preset_mode": item.get("boundary_preset_mode"),
             "blocking": bool(blocking),
         }
+        boundary_explanation = _build_boundary_explanation(item)
+        if boundary_explanation:
+            normalized["boundary_explanation"] = boundary_explanation
         if include_guidance:
             existing = item.get("guidance")
             if isinstance(existing, dict):
@@ -2086,6 +2166,11 @@ def main():
                 guidance_payload = generic_conservative_guidance(
                     what_happened="Report source is unknown; using conservative fallback guidance."
                 ).to_dict()
+            if boundary_explanation:
+                notes = list(guidance_payload.get("notes") or [])
+                if boundary_explanation not in notes:
+                    notes.append(boundary_explanation)
+                guidance_payload["notes"] = notes
             normalized["guidance"] = guidance_payload
         return normalized
 
@@ -2120,8 +2205,18 @@ def main():
                     context_bits.append(
                         f"source_confidence_summary={row.get('source_confidence_summary')}"
                     )
+                if row.get("boundary_preset_mode"):
+                    context_bits.append(f"boundary_preset_mode={row.get('boundary_preset_mode')}")
+                if row.get("public_boundary_state"):
+                    context_bits.append(f"public_boundary_state={row.get('public_boundary_state')}")
+                if row.get("public_boundary_confidence"):
+                    context_bits.append(
+                        f"public_boundary_confidence={row.get('public_boundary_confidence')}"
+                    )
                 if context_bits:
                     lines.append(f"   Context: {', '.join(context_bits)}")
+                if row.get("boundary_explanation"):
+                    lines.append(f"   Boundary: {row.get('boundary_explanation')}")
                 guidance = row.get("guidance")
                 if isinstance(guidance, dict):
                     lines.append(f"   What happened: {guidance.get('what_happened', '')}")
@@ -3231,6 +3326,10 @@ def main():
                 llm=getattr(args, "llm", None),
                 advice_mode=getattr(args, "advice", None),
                 update_gitignore=getattr(args, "update_gitignore", None),
+                typescript_enabled=getattr(args, "typescript_enabled", None),
+                typescript_preset=getattr(args, "typescript_preset", None),
+                typescript_entrypoints=getattr(args, "typescript_entrypoints", None),
+                typescript_contract_strategy=getattr(args, "typescript_contract_strategy", None),
             ),
         )
         wiz.run()

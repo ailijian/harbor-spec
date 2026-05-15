@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import yaml
 
@@ -14,6 +15,18 @@ class DefaultConfig:
     code_roots: List[str]
     exclude_paths: List[str]
     language: str
+
+
+@dataclass(frozen=True)
+class TypeScriptProjectHints:
+    detected: bool = False
+    package_json: bool = False
+    tsconfig_json: bool = False
+    package_exports: bool = False
+    workspace_markers: List[str] = field(default_factory=list)
+    entrypoint_candidates: List[str] = field(default_factory=list)
+    recommended_preset: str = "legacy_exported"
+    package_name: Optional[str] = None
 
 
 class ProjectDetector:
@@ -59,6 +72,12 @@ class ProjectDetector:
             code_roots.extend(node_roots)
             excludes.extend(node_excl)
 
+        ts_roots, ts_excl, ts_stack = self._detect_typescript()
+        if ts_stack:
+            stacks.append(ts_stack)
+            code_roots.extend(ts_roots)
+            excludes.extend(ts_excl)
+
         go_roots, go_excl, go_stack = self._detect_go()
         if go_stack:
             stacks.append(go_stack)
@@ -89,6 +108,34 @@ class ProjectDetector:
         self.last_warnings = warnings
 
         return stacks or ["Python"], code_roots, excludes
+
+    def detect_typescript_hints(self) -> TypeScriptProjectHints:
+        package_json_path = self.cwd / "package.json"
+        package_payload = self._load_package_json()
+        package_json_exists = package_json_path.exists()
+        tsconfig_exists = (self.cwd / "tsconfig.json").exists() or (self.cwd / "tsconfig.base.json").exists()
+        package_exports = self._package_has_exports(package_payload)
+        workspace_markers = self._detect_workspace_markers(package_payload)
+        entrypoints = self._collect_typescript_entrypoints(package_payload)
+        detected = bool(tsconfig_exists or package_exports or entrypoints or self._has_typescript_sources())
+        recommended_preset = "legacy_exported"
+        if package_exports:
+            recommended_preset = "package_public"
+        elif entrypoints:
+            recommended_preset = "custom_entrypoints"
+        package_name = None
+        if isinstance(package_payload, dict):
+            package_name = str(package_payload.get("name") or "").strip() or None
+        return TypeScriptProjectHints(
+            detected=detected,
+            package_json=package_json_exists,
+            tsconfig_json=tsconfig_exists,
+            package_exports=package_exports,
+            workspace_markers=workspace_markers,
+            entrypoint_candidates=entrypoints,
+            recommended_preset=recommended_preset,
+            package_name=package_name,
+        )
 
     def _normalize_glob(self, pattern: str) -> str:
         p = (pattern or "").strip().replace("\\", "/")
@@ -166,6 +213,40 @@ class ProjectDetector:
             excludes.extend(["node_modules/**", "dist/**", ".next/**", "build/**"])
         return roots, self._dedup(excludes), stack
 
+    def _detect_typescript(self) -> Tuple[List[str], List[str], Optional[str]]:
+        hints = self.detect_typescript_hints()
+        if not hints.detected:
+            return [], [], None
+
+        roots: List[str] = []
+        src_dir = self.cwd / "src"
+        if src_dir.exists() and src_dir.is_dir():
+            roots.append("src/**")
+
+        for workspace_root in ("packages", "apps"):
+            root_path = self.cwd / workspace_root
+            if not root_path.exists() or not root_path.is_dir():
+                continue
+            for src_path in root_path.glob("*/src"):
+                if src_path.exists() and src_path.is_dir():
+                    roots.append(f"{src_path.relative_to(self.cwd).as_posix()}/**")
+
+        if not roots:
+            for entrypoint in hints.entrypoint_candidates:
+                parent = Path(entrypoint).parent.as_posix()
+                roots.append("*.ts" if parent in ("", ".") else f"{parent}/**")
+
+        if not roots:
+            root_level_ts = [path for path in self.cwd.glob("*.ts") if self._is_typescript_source_file(path)]
+            if root_level_ts:
+                roots.append("*.ts")
+
+        if not roots:
+            roots.append("**/*.ts")
+
+        excludes = ["node_modules/**", "dist/**", ".next/**", "build/**"]
+        return self._dedup(roots), self._dedup(excludes), "TypeScript"
+
     def _detect_go(self) -> Tuple[List[str], List[str], Optional[str]]:
         roots: List[str] = []
         excludes: List[str] = []
@@ -194,6 +275,116 @@ class ProjectDetector:
             stack = "Python"
             excludes.extend([".venv/**", "venv/**", "env/**"])
         return self._dedup(roots), self._dedup(excludes), stack
+
+    def _load_package_json(self) -> Optional[Dict[str, Any]]:
+        package_json_path = self.cwd / "package.json"
+        if not package_json_path.exists():
+            return None
+        try:
+            loaded = json.loads(package_json_path.read_text(encoding="utf-8"))
+        except Exception:
+            return None
+        return loaded if isinstance(loaded, dict) else None
+
+    def _package_has_exports(self, package_payload: Optional[Dict[str, Any]]) -> bool:
+        if not isinstance(package_payload, dict):
+            return False
+        exports = package_payload.get("exports")
+        if isinstance(exports, str):
+            return bool(exports.strip())
+        if isinstance(exports, dict):
+            return bool(exports)
+        return False
+
+    def _detect_workspace_markers(self, package_payload: Optional[Dict[str, Any]]) -> List[str]:
+        markers: List[str] = []
+        if isinstance(package_payload, dict) and package_payload.get("workspaces"):
+            markers.append("package.json#workspaces")
+        for filename in ("pnpm-workspace.yaml", "turbo.json", "nx.json", "lerna.json"):
+            if (self.cwd / filename).exists():
+                markers.append(filename)
+        return self._dedup(markers)
+
+    def _collect_typescript_entrypoints(self, package_payload: Optional[Dict[str, Any]]) -> List[str]:
+        candidates: List[str] = []
+        for relative_path in ("src/index.ts", "src/public.ts", "index.ts"):
+            if (self.cwd / relative_path).exists():
+                candidates.append(relative_path)
+
+        if isinstance(package_payload, dict):
+            for key in ("source", "types", "typings", "main", "module"):
+                mapped = self._resolve_typescript_source_candidate(package_payload.get(key))
+                if mapped:
+                    candidates.append(mapped)
+            for export_target in self._iter_package_export_targets(package_payload.get("exports")):
+                mapped = self._resolve_typescript_source_candidate(export_target)
+                if mapped:
+                    candidates.append(mapped)
+        return self._dedup(candidates)
+
+    def _iter_package_export_targets(self, value: Any) -> List[str]:
+        targets: List[str] = []
+        if isinstance(value, str):
+            text = value.strip()
+            if text:
+                targets.append(text)
+            return targets
+        if isinstance(value, dict):
+            for nested in value.values():
+                targets.extend(self._iter_package_export_targets(nested))
+        return targets
+
+    def _resolve_typescript_source_candidate(self, raw_value: Any) -> Optional[str]:
+        text = str(raw_value or "").strip()
+        if not text:
+            return None
+        normalized = text.replace("\\", "/").lstrip("./")
+        candidates = [normalized]
+        if normalized.endswith(".d.ts"):
+            candidates.append(normalized[:-5] + ".ts")
+        if normalized.endswith(".js"):
+            candidates.append(normalized[:-3] + ".ts")
+            if normalized.startswith("dist/"):
+                candidates.append("src/" + normalized[5:-3] + ".ts")
+            if normalized.startswith("lib/"):
+                candidates.append("src/" + normalized[4:-3] + ".ts")
+        for candidate in candidates:
+            resolved = self.cwd / candidate
+            if resolved.exists() and self._is_typescript_source_file(resolved):
+                return candidate
+        return None
+
+    def _has_typescript_sources(self) -> bool:
+        for path in self.cwd.rglob("*.ts"):
+            if self._is_typescript_source_file(path):
+                return True
+        return False
+
+    def _is_typescript_source_file(self, path: Path) -> bool:
+        if not path.is_file():
+            return False
+        if path.name.endswith(".d.ts"):
+            return False
+        ignored_dirs = {
+            ".git",
+            ".harbor",
+            ".idea",
+            ".next",
+            ".venv",
+            ".vscode",
+            "__pycache__",
+            "build",
+            "dist",
+            "env",
+            "htmlcov",
+            "node_modules",
+            "venv",
+        }
+        try:
+            relative_parts = path.relative_to(self.cwd).parts
+        except Exception:
+            relative_parts = path.parts
+        return not any(part in ignored_dirs for part in relative_parts[:-1])
 
     def _parse_gitignore(self) -> List[str]:
         gi = self.cwd / ".gitignore"
@@ -265,6 +456,21 @@ class Initializer:
         stacks, roots, excludes = detector.detect()
         self.last_warnings = list(detector.last_warnings)
         return stacks, roots, excludes
+
+    def detect_typescript_hints(self) -> TypeScriptProjectHints:
+        """Detect TypeScript onboarding hints for `harbor init`.
+
+        Behavior:
+          - Detects common TypeScript governance signals such as `package.json`,
+            `tsconfig.json`, package `exports`, workspace markers, and public
+            entrypoint candidates like `src/index.ts`.
+          - Recommends one preset for init guidance without mutating config.
+          - Stays advisory-first so callers can show guidance before opting in.
+
+        Returns:
+          TypeScriptProjectHints: Stable detection summary for init guidance.
+        """
+        return ProjectDetector(cwd=self.cwd).detect_typescript_hints()
 
     def detect_code_roots(self) -> List[str]:
         """智能探测项目代码根目录。
@@ -339,11 +545,14 @@ class Initializer:
         exclude_paths: Optional[List[str]] = None,
         language: str = "auto",
         advice_mode: str = "basic",
+        languages_config: Optional[Dict[str, Any]] = None,
     ) -> Path:
         """写入 `.harbor/config/harbor.yaml`。
 
         功能:
           - 在 `.harbor/` 目录生成配置文件，包含 `code_roots/exclude_paths/profile`。
+          - 允许以 additive 方式写入显式 `languages.*` 配置，例如
+            TypeScript governance onboarding 所需的 `languages.typescript`。
           - 写入 advice 配置段：
             - `advice.mode`: `basic|off`
             - `advice.include_in_ci_json`: `true`
@@ -367,6 +576,7 @@ class Initializer:
           force (bool): 是否覆盖已有配置。
           profile (str): 配置文件中的默认 profile。
           advice_mode (str): deterministic repair guidance 模式（`basic` 或 `off`）。
+          languages_config (Optional[Dict[str, Any]]): 可选语言配置段；缺省时保持旧配置形状。
 
         Returns:
           Path: 配置文件的路径。
@@ -408,6 +618,8 @@ class Initializer:
                 "include_in_text": True,
             },
         }
+        if isinstance(languages_config, dict) and languages_config:
+            payload["languages"] = languages_config
         text = yaml.safe_dump(payload, allow_unicode=True, sort_keys=False)
         self.config_path.write_text(text, encoding="utf-8")
         return self.config_path
