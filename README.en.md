@@ -12,7 +12,7 @@
 **HarborSpec is a context governance engine for agentic coding.**
 Keep code, contracts, tests, generated context, decision memory, and CI gates aligned.
 
-[Quick Start](#quick-start) · [Core Mental Model](#core-mental-modell1-l2-l3) · [Daily Workflow](#daily-workflow) · [CI Gates](#ci-gates) · [Workspace Layout](#harbor-workspace-layout) · [Cheat Sheet](#command-cheat-sheet) · [Deep Dive](#deep-dive)
+[Quick Start](#-quick-start) · [Core Mental Model](#core-mental-modell1--l2--l3) · [Daily Workflow](#-daily-workflow) · [CI Gates](#-ci-gates) · [Workspace Layout](#-harbor-workspace-layout) · [Cheat Sheet](#-command-cheat-sheet) · [Deep Dive](#-deep-dive)
 
 </div>
 
