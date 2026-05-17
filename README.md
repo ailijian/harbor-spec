@@ -1039,7 +1039,7 @@ HarborSpec 默认遵守以下原则：
 * `.harbor/rules/role-rules.md`：TRAE / IDE 轻入口
 * `.harbor/rules/project-rules.md`：本项目专属规则
 * `docs/design/harbor-workspace-layout-v1.md`：workspace layout 设计说明
-* [案例：代码变了，契约没变（IndexBuilder.iter_build 漂移治理）](docs/examples/代码变了，契约没变：一次%20IndexBuilder.iter_build%20的真实漂移治理.md)：一个关于“实现变更与契约同步”的真实治理案例
+* [案例：代码变了，契约没变（IndexBuilder.iter_build 漂移治理）](examples\代码变了，契约没变：一次 IndexBuilder.iter_build 的真实漂移治理.md)：一个关于“实现变更与契约同步”的真实治理案例
 * `.harbor/views/project-structure.md`：canonical project structure view
 * `.harbor/views/l2/**`：canonical L2 README
 * `.harbor/views/modules/**`：canonical Module Capsule
