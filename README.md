@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
 [![Strictness](https://img.shields.io/badge/Harbor-L3%20Strict-purple?style=flat-square)](https://github.com/your-org/harbor-spec)
 
-**面向 AI 编程工作流的本地上下文治理引擎。**
+**Harbor-spec 是 AI coding 时代的上下文治理引擎。**
 让代码、契约、测试、派生上下文、决策记录与 CI 门禁保持一致。
 
 [快速开始](#-快速开始) · [核心心智模型](#-核心心智模型l1--l2--l3) · [日常工作流](#-日常工作流) · [CI 门禁](#-ci-门禁) · [工作区布局](#-harbor-workspace-布局) · [命令速查](#-命令速查cheat-sheet) · [核心机制深潜](#-核心机制深潜deep-dive)
@@ -19,6 +19,21 @@
 语言: 中文 | [English](README.en.md)
 
 ---
+
+<!-- Hero Section Start -->
+
+# 为什么AI写的代码你不敢相信？为什么大型企业级项目不敢使用AI编程？
+AI coding 让写代码越来越快，但也让代码与契约之间更容易出现不同步，导致修一个bug可能新增好几个bug。
+HarborSpec 让代码、契约、派生上下文、复核基线与 CI 门禁保持一致，从而让代码可验证、可追溯、可治理。
+
+### 怎么用
+- 开始日常工作流：`harbor start`
+- 完成并同步上下文：`harbor finish --sync-context`
+- 人工复核并接受新的基线：`harbor accept`
+
+![Harbor-spec 核心闭环](images/harbor-spec核心能力演示图.png)
+
+<!-- Hero Section End -->
 
 ## HarborSpec 是什么？
 
@@ -39,453 +54,15 @@ HarborSpec 的目标是：
 它不是另一个文档生成器，也不是另一个 Copilot。
 它是一个 repo-local 的 **context governance layer**。
 
----
-
-## 🚀 v1.4.5：Workflow UX & Preview Productization（当前正式版本）
-
-Harbor-spec `v1.4.5` 建立在 `v1.4.4` 已完成的 TypeScript Verification Preview 基础之上，当前重点不是继续横向扩张治理能力，而是做产品成熟度收口。
-
-### v1.4.5 版本定位
-
-* 治理遗留项收口
-* 日常工作流即时反馈增强
-* 运行性能基线建立
-* Preview 能力产品化交付
-
-### v1.4.5 明确非目标
-
-* 不新增 JavaScript first-class governance
-* 不扩大到 TSX / JSX / `.d.ts`
-* 不把 TS DDT Preview / Semantic Audit Preview 升级为正式 gate
-* 不做 Jest / Vitest AST inference、coverage proof、自动 test-to-target binding
-* 不做大规模性能架构重构
-
-### v1.4.5 实施顺序
-
-```text
-Task Group B｜DDT Advisory 存量收口
-Task Group C｜Progress Feedback Framework
-Task Group D｜Performance Baseline Report
-Task Group A｜Preview 使用体验产品化
-```
-
-### v1.4.5 收口快照
-
-* DDT advisory reconciliation 已完成正式裁决：
-  * `5` 条 Python strict DDT advisory 已归类为 `ACCEPTED_BACKLOG`
-  * category 维持 `ddt_version_baseline_missing`
-  * 当前不阻塞 `v1.4.5`，因为仓库尚无 repo-owned `l3_version` baseline source
-  * 正式报告：`.harbor/reports/python-ddt-advisory-reconciliation.md`
-* Progress Feedback Framework 已完成版本级收口：
-  * `checkpoint` / `finish` / `check` / `verify-generated` / `docs` / `module seal` / `stale` / `doctor` 文本路径均具备统一进度反馈
-  * `stale` / `doctor` 的文本分阶段进度已补齐
-  * progress phase label 已改为本地化渲染文本，不再泄漏原始 `cli.progress.label.*` i18n key
-  * `--format json` / `--format jsonl` / `--ci` 的机器输出继续保持纯净，不混入进度文本
-* Runtime Performance Baseline 已建立：
-  * 报告：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.md`
-  * 机器可读 JSON：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.json`
-  * `v1.4.5` 仅收口低风险 quick win：`finish` 复用首次状态报告；不扩大为结构性性能重构
-* Preview productization 入口已统一：
-  * guide：`docs/guides/typescript-verification-preview.md`
-  * example index：`examples/typescript-verification-preview/README.md`
-  * demo：`examples/typescript-verification-preview/package-public/README.md`
-  * troubleshooting：`docs/guides/typescript-verification-preview-troubleshooting.md`
-
-更多细节见：
-
-* `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
-* `RELEASE.md`
-
-当前说明：
-
-* `v1.4.5` 已完成 baseline acceptance、正式 Diary 写入、全量 context closure 与全量发布验证
-* `ddt_version_baseline_missing=5` 已正式裁决为 `ACCEPTED_BACKLOG`，继续保持 non-blocking
-* `v1.4.5` 不扩治理边界，而是聚焦产品成熟度与工作流体验收口
-
-### Try TypeScript Verification Preview
-
-如果你想直接上手 `v1.4.5` 收口后的 Preview 体验，而不是先翻 release note，可以从这里开始：
-
-* Guide: `docs/guides/typescript-verification-preview.md`
-* Example index: `examples/typescript-verification-preview/README.md`
-* Demo scenario: `examples/typescript-verification-preview/package-public/README.md`
-* Semantic audit demo: `examples/typescript-verification-preview/semantic-audit-preview/README.md`
-* Failure explanations: `docs/guides/typescript-verification-preview-troubleshooting.md`
-
-阅读顺序建议：
-
-1. 先看 guide，确认启用方式与 Preview 边界。
-2. 再跑 `package-public` 示例，看 `checkpoint` / `harbor next` 的最小工作流。
-3. 最后看 troubleshooting 与 semantic audit demo，理解常见失败项和 `preview_ineligible`。
-
----
-
-## 🚀 v1.4.4：TypeScript Verification Preview（上一阶段收口主题）
-
-Harbor-spec v1.4.4 建立在 `v1.4.3` 已完成的 TypeScript contract source 与 public boundary governance 基础之上，首次把 TypeScript 纳入 **verification preview**，正式主题为：
-
-> **TypeScript Verification Preview: DDT Binding Preview & Semantic Audit Foundation**
-
-### v1.4.4 新增能力
-
-* VerificationBinding foundation：
-  * language-neutral verification binding 抽象
-  * `target_id` 作为跨语言主锚点
-  * `func_id` 继续保留给既有 Python DDT 兼容路径
-* sidecar-driven TypeScript DDT preview：
-  * 使用 repo-local sidecar 作为 source of truth
-  * 显式声明 `target_id -> test_asset` 关系
-  * MVP strategy 冻结为 `preview_strict` / `preview_reference`
-* explainability 接入现有命令面：
-  * `harbor check`
-  * `harbor checkpoint --ci --format json`
-  * `harbor next`
-* semantic audit language-neutral foundation：
-  * 先抽象 language-neutral audit substrate
-  * 再为 TypeScript 提供 advisory preview
-* TypeScript semantic audit advisory preview：
-  * 仅对具备行为型契约证据的函数型 target 开放
-  * `interface` / `type` / `Zod` 只作为辅助 evidence
-
-### v1.4.4 明确非目标
-
-* 不是正式 TypeScript DDT gate
-* 不是正式 TypeScript semantic audit gate
-* 不做 Jest / Vitest AST inference
-* 不做 coverage 证明
-* 不做自动 test-to-target 推断
-* 不扩大默认 blocking gate
-
-### v1.4.4 默认行为与验收边界
-
-* preview 默认 `disabled`
-* `enabled=false` 时不扫描 sidecar、不生成 preview findings、不引入额外副作用
-* preview findings 保持 advisory-only / non-blocking
-* `harbor init` / guidance 只能显式提示 preview 能力，不会静默开启
-* TypeScript semantic audit preview 是 opt-in / provider-dependent preview
-* 自动化测试与 release acceptance 不依赖真实 LLM 可用性
-* mock / deterministic provider 是正式验收路径
-
----
-
-## 🚀 v1.4.3：TypeScript Public Boundary Resolution & Project Presets
-
-Harbor-spec v1.4.3 建立在 `v1.4.2` 已完成的 TypeScript persistence、`contract_hash` 与 accepted baseline comparison-compatible 基础之上，正式进入 **project-level public boundary governance**。
-
-### v1.4.3 当前支持
-
-* Public Boundary Evidence 模型：
-  * `direct_export`
-  * `default_export`
-  * `named_re_export`
-  * `star_re_export`
-  * `package_export`
-  * `configured_entrypoint`
-  * `declaration_surface_preview` 仅作为 future preview 占位
-* Public Boundary metadata / JSON additive explainability：
-  * `public_boundary_state`
-  * `public_boundary_confidence`
-  * `public_boundary_evidence_kinds`
-  * `public_boundary_evidence_items`
-  * `public_boundary_reason`
-  * `boundary_preset_mode`
-* Minimal boundary resolution：
-  * package root 识别
-  * 相对路径解析
-  * `.ts` 优先与 `index.ts` fallback
-  * 最小 `tsconfig baseUrl/paths` 支持
-  * package exports 规范化与常见 `dist/*.js -> src/*.ts` source mapping
-* Project-level public boundary presets：
-  * `legacy_exported`
-  * `package_public`
-  * `custom_entrypoints`
-* `harbor init` TypeScript governance guidance：
-  * 探测 `package.json`
-  * 探测 `tsconfig.json`
-  * 探测 `src/index.ts` / public entrypoint candidates
-  * 探测 `package.json exports`
-  * 探测 workspace / monorepo 标记
-* `harbor next` preset-aware explanation：
-  * 解释 direct export、re-export、package export、configured entrypoint、confidence 与 preset 的关系
-  * 继续保持只读解释，不写文件、不自动修复、不调用 `accept/log/lock`
-
-### v1.4.3 关键边界
-
-* `Contract Source` 与 `Public Boundary Evidence` 明确分离：
-  * re-export / package exports / configured entrypoints 不进入 `contract_source_kinds`
-  * boundary evidence 不进入 `contract_hash` / `body_hash`
-  * boundary metadata 变化不触发 `contract_changed` / `modified` / `drift`
-* 默认兼容策略保持不变：
-  * 默认仍是 `legacy_exported`
-  * `contract_required_strategy` 默认仍是 `legacy_exported`
-  * 非交互 `harbor init` 不会静默开启 TypeScript governance
-* Windows full-governance 继续是正式验收维度
-
-### v1.4.3 配置示例
-
-```yaml
-languages:
-  python:
-    enabled: true
-  typescript:
-    enabled: true
-    public_boundary:
-      mode: package_public
-      follow_re_exports: true
-      read_package_exports: true
-      use_tsconfig_paths: true
-      declaration_surface_preview: false
-      entrypoints: []
-      source_mappings: {}
-    contract_required_strategy: legacy_exported
-```
-
-### v1.4.3 明确不支持（Not Supported Yet）
-
-* JavaScript first-class governance
-* `.js/.jsx/.tsx/.d.ts` 默认扫描
-* TypeScript semantic audit
-* TypeScript DDT
-* full TypeScript compiler / full module graph
-* full npm package resolution / bundler alias resolution
-* framework-specific governance / validation
-* full Zod schema semantics / schema-to-type consistency audit
-* `interface/type`、Zod、boundary evidence 默认升级为 blocking gate
-
----
-
-## 🚀 v1.4.2.2：Windows JSON Stdout Compatibility Closure
-
-Harbor-spec v1.4.2.2 是围绕 Windows 主机编码兼容性的维护补丁版本，用于完成 cp1252 runner closure，并收口纯 JSON stdout 的统一输出策略。
-
-### v1.4.2.2 本轮修复
-
-* 纯 JSON CLI 输出点统一迁移到 `_emit_json_stdout()`：
-  * localized JSON when stdout encoding can strictly encode payload
-  * ASCII-safe fallback when it cannot
-* Windows 非 UTF-8 主机编码下保持纯 JSON stdout 稳定：
-  * cp936 主机继续优先输出 localized JSON
-  * cp1252 等无法严格编码本地化文本的主机自动回退到 ASCII-safe JSON
-* `main()` contract/docstring、accepted baseline 与 generated context 一并对齐
-
-### v1.4.2.2 已验证
-
-* `python -m harbor.cli.main accept`
-* `python -m harbor.cli.main checkpoint --ci --format json`
-* `python -m harbor.cli.main stale --ci --format json`
-* `python -m harbor.cli.main doctor --ci --format json`
-* GitHub Actions `CI`：
-  * Ubuntu `3.9`
-  * Ubuntu `3.10`
-  * Ubuntu `3.11`
-  * `windows-full-governance`
-
----
-
-## 🚀 v1.4.2：TypeScript Contract Source Strengthening
-
-Harbor-spec v1.4.2 在 `v1.4.1` 的 Log Draft / Controlled Write workflow 之上，恢复 TypeScript 主线，并先补齐 richer contract source 之前必须稳定的治理基础。
-
-### v1.4.2 当前支持
-
-* TypeScript subject generalized persistence：
-  * `IndexBuilder` / runtime cache / SQLite 持久化路径统一接入 `.ts`
-  * additive identity metadata：`target_id` / `func_id` / `language` / `symbol_kind` / `qualified_name`
-  * additive contract metadata：`contract_source_kinds` / `contract_source_fingerprints` / `source_confidence_summary`
-* accepted baseline artifact 继续作为 `checkpoint --ci` 的正式 baseline truth：
-  * `.harbor/baseline/accepted-checkpoint.json`
-  * runtime cache 仅做本地加速与兼容，不承担 CI truth
-* richer TypeScript source strengthening：
-  * exported `interface` / `type` advisory-first data contract discovery
-  * `z.object(...)` / `z.enum(...)` shallow Zod source recognition
-  * `export default function` / `export default class` public surface evidence
-  * `contract_hash = normalized contract source bundle hash`
-* additive checkpoint / `harbor next` / JSON metadata 输出：
-  * `export_mode`
-  * `data_contract_kind`
-  * `schema_source_kind`
-  * `contract_source_kinds`
-  * `contract_source_fingerprints`
-  * `source_confidence_summary`
-* generated context closure 收口：
-  * `harbor finish --sync-context`
-  * `harbor stale --ci --format json`
-  * `harbor doctor --ci --format json`
-
-### v1.4.2 明确不支持（Not Supported Yet）
-
-* re-export graph
-* `.d.ts` scanning
-* `package exports` / `tsconfig` path alias
-* framework preset
-* TypeScript DDT
-* TypeScript semantic audit
-* JavaScript first-class governance
-* full Zod schema semantics / schema-to-type consistency audit
-* `interface/type` 或 Zod 自动升级为 blocking gate
-
-### v1.4.2 兼容与验收边界
-
-* Python zero regression 是硬约束：
-  * Python parser / checkpoint / DDT / semantic audit / stale / doctor 不回归
-  * `func_id` / `target_id` 兼容不回归
-* Windows full-governance 是正式验收维度：
-  * Ubuntu Python matrix 仍必须通过
-  * Windows path normalization regression 必须覆盖
-* `v1.4.1` Log Draft / Controlled Write workflow 保持零回归
-
----
-
-## 🚀 v1.4.0：Core Neutralization + TypeScript Contract Governance MVP
-
-Harbor-spec v1.4.0 引入 **first-class TypeScript contract governance**。  
-这不是“仅增加 TS 文件扫描”，而是 Harbor 从 Python `FunctionContract` / docstring-centric 治理，演进到 language-neutral `ContractSubject` 模型的第一步。
-
-### v1.4.0 当前支持（MVP）
-
-* language-neutral 核心模型：`ContractSubject` / `ContractSource` / `LanguageAdapter`
-* `AdapterRegistry`：统一语言适配器入口
-* TypeScript `.ts` 文件发现（需显式启用）
-* symbol 识别：
-  * `export function`
-  * `export async function`
-  * `export const` arrow / async arrow
-  * `export class` public method
-* JSDoc/TSDoc proximity extraction
-* `contract_presence` / `contract_required`
-* `checkpoint --ci` TypeScript MVP category：
-  * `contract_gap`
-  * `skipped_no_contract`
-  * `unsupported_syntax_advisory`
-* `harbor next` 对 TypeScript MVP category 的 deterministic guidance
-
-### v1.4.0 明确不支持（Not Supported Yet）
-
-* JavaScript first-class governance
-* `.js/.jsx/.tsx/.d.ts` 默认扫描
-* TypeScript semantic audit
-* TypeScript DDT
-* Zod schema governance
-* `interface/type` blocking gate
-* Next.js / Express / React framework preset
-* TypeScript Compiler API / tree-sitter backend
-
-### 启用示例
-
-```yaml
-languages:
-  python:
-    enabled: true
-  typescript:
-    enabled: true
-```
-
-### 默认策略与兼容性
-
-* Python 默认 `enabled=true`
-* TypeScript 默认 `enabled=false`，需要显式启用
-* 启用 TypeScript 后默认仅扫描 `.ts`
-* `.tsx/.js/.jsx/.d.ts` 默认不扫描
-* Python 行为保持 zero regression：
-  * Python checkpoint / DDT / semantic audit 语义保持兼容
-  * `func_id` 保留兼容
-  * `target_id/language/symbol_kind/adapter` 以 additive identity fields 方式新增
-
----
-
-## 🚀 v1.4.1：Log Draft + Controlled Write Workflow MVP
-
-Harbor-spec v1.4.1 将日志工作流明确分为三层：
-
-```text
-Evidence -> Draft Cache / Save -> Controlled Write
-```
-
-### 1. Evidence
-
-这些命令会为当前 change window 产生运行时证据：
-
-```powershell
-harbor checkpoint
-harbor finish
-harbor accept
-```
-
-规则：
-
-* change-window snapshots 写入 `.harbor/state/change-windows/**`
-* snapshots 属于 runtime evidence，不是 source-of-truth memory
-* 这些证据可以被后续 `harbor log draft` 总结，但不会直接成为 Written Diary Entry
-
-### 2. Draft
-
-```powershell
-harbor log draft
-harbor log draft --save
-harbor log draft --since-last-accept
-harbor log draft --output .harbor/reports/log-draft.md
-```
-
-规则：
-
-* `harbor log draft` 默认在 stdout 展示 reviewable draft
-* 默认只有在存在 meaningful new evidence 时，才会生成可写入 Diary 的 draft
-* 默认模式下 auto-discovered reports 只是 supplementary evidence，单独存在时不会触发新的可写 draft
-* 如果 boundary 之后只有 `.harbor/diary/**` 变化，也不会单独触发新的可写 draft
-* 只有显式 `--from-report <path>` 时，report 才可作为主 evidence 生成 draft
-* 生成可写 draft 时，`harbor log draft` 才会写：
-  * `.harbor/state/log/latest-draft.md`
-  * `.harbor/state/log/latest-draft.json`
-* 如果 evidence 不足，则输出 no-op 结果，且不会刷新 latest draft cache
-* `harbor log draft` 默认边界策略是：marker-first -> accept-fallback -> recent-fallback
-* `harbor log draft --since-last-log` 强制使用 `last_log_marker`
-* `harbor log draft --since-last-accept` 强制使用 latest accept
-* `harbor log draft --save` 会生成：
-  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.md`
-  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.json`
-* `harbor log draft --output <path>` 使用显式输出路径，且优先于 `--save`
-* `harbor log draft` 不写 `.harbor/diary/**`
-* `harbor log draft` 不推进 `last_log_marker`
-* `harbor log draft --output` 指向 `.harbor/diary/**` 必须拒绝
-
-### 3. Write
-
-```powershell
-harbor log write
-harbor log write --yes
-harbor log write --from-latest-draft
-harbor log write --from-draft .harbor/reports/log-draft.md
-```
-
-规则：
-
-* `harbor log write` 默认读取 latest draft
-* 不带 `--yes` 时必须交互确认
-* 非交互环境不带 `--yes` 必须拒绝
-* `--yes` 是显式授权写入 source-of-truth decision memory
-* `--from-draft` 只允许受控来源：`.harbor/reports/**` 或 latest draft cache
-* `.harbor/diary/**`、`.env`、`.env.*`、`secrets/**`、repo 外路径必须拒绝为 draft source
-* 成功写入 `.harbor/diary/YYYY-MM.jsonl` 后，更新 `.harbor/state/log/last_log_marker.json`
-* `last_log_marker` 代表“上一次已经正式写入 Diary 的日志节点”，属于 runtime state，不是 source-of-truth memory
-
-### 安全边界
-
-* `harbor log draft` 不写 Diary，`harbor log write` 才会写 Diary
-* `.harbor/state/**` 和 `.harbor/reports/**` 都不是 source of truth
-* `.harbor/diary/**` 才是 source-of-truth decision memory
-* v1.4.1 不调用 LLM
-* LLM-assisted draft/write 属于 future work，且必须显式 opt-in
-* 不读取或输出文件正文、diff 正文或 secret 值
-* AI 可以运行 `harbor log draft` / `harbor log draft --save`
-* AI 不得自动运行 `harbor log write` 或 `harbor log write --yes`
-* 真正写 Diary 仍需人工明确授权
-
-### 语言与 i18n
-
-* Harbor 工作语言可按配置使用中文或英文
-* CLI 面向用户的提示文案遵循 Harbor i18n / language 机制
-* JSON schema keys 保持稳定英文标识符
-* v1.4.1 为 log write 的提示与错误补充了 zh/en message keys
+1. 区别于 AI IDE
+ - Cursor / Claude Code / Codex 解决“怎么更快改代码”；
+ - Harbor-spec 解决“改完之后项目是否仍然可信”。
+2. 区别于 Spec Kit
+ - Spec Kit 偏“开工前把意图说明白”；
+ - Harbor-spec 偏“开发过程中与开发之后持续防止语义漂移”。
+3. 区别于 AGENTS.md
+ - AGENTS.md 是 Agent 的行为说明；
+ - Harbor-spec 是工程上下文的一致性治理层。
 
 ---
 
@@ -1319,12 +896,6 @@ DDT baseline advisory（新增）：
 * Harbor 不能自动判断是否应 bump `l3_version`，需要人工先复核 baseline 再 `harbor accept`。
 * 这不代表“DDT 永久语义通过”，只代表当前无法完成版本基线核验。
 
-v1.4.4 preview 补充：
-
-* TypeScript DDT 进入 sidecar-driven binding preview，但仍是 preview-first、opt-in、advisory-first。
-* preview binding 只表达治理关系，不代表 coverage proof，也不会自动升级为默认 gate。
-* Jest / Vitest AST inference、测试体语义推断与自动 test-to-target 推断都不在 `v1.4.4` 范围内。
-
 ---
 
 ### 7. Diary：决策记忆
@@ -1373,14 +944,6 @@ HARBOR_LANGUAGE=zh
 * `CONTRACT_GAP` 与 `SKIPPED_NO_CONTRACT` 场景不会调用 LLM。
 * `harbor check --format jsonl` 在跳过场景会输出 `llm_called=false`。
 * `harbor check --format jsonl` 当前不是“纯 JSONL-only”输出：仍会包含人类可读 DDT 区块，语义审计部分输出 JSONL 行。
-
-v1.4.4 preview 补充：
-
-* TypeScript semantic audit preview 仅在显式启用后运行。
-* 只有具备直接行为型契约证据的 TypeScript 函数型 target 才可进入 preview。
-* `interface` / `type` / `Zod` 只作为辅助 evidence，不单独构成函数级 preview eligibility。
-* preview 结果不写 baseline truth、不自动修代码、不成为默认 blocker。
-* 自动化测试与 release acceptance 使用 mock / deterministic provider，不依赖真实 LLM 服务可用性。
 
 ---
 
@@ -1576,6 +1139,241 @@ harbor workspace migrate --dry-run
 ```
 
 它只输出迁移计划，不写文件。
+
+---
+
+## 🚀 v1.4.2.2：Windows JSON Stdout Compatibility Closure
+
+Harbor-spec v1.4.2.2 是围绕 Windows 主机编码兼容性的维护补丁版本，用于完成 cp1252 runner closure，并收口纯 JSON stdout 的统一输出策略。
+
+### v1.4.2.2 本轮修复
+
+* 纯 JSON CLI 输出点统一迁移到 `_emit_json_stdout()`：
+  * localized JSON when stdout encoding can strictly encode payload
+  * ASCII-safe fallback when it cannot
+* Windows 非 UTF-8 主机编码下保持纯 JSON stdout 稳定：
+  * cp936 主机继续优先输出 localized JSON
+  * cp1252 等无法严格编码本地化文本的主机自动回退到 ASCII-safe JSON
+* `main()` contract/docstring、accepted baseline 与 generated context 一并对齐
+
+### v1.4.2.2 已验证
+
+* `python -m harbor.cli.main accept`
+* `python -m harbor.cli.main checkpoint --ci --format json`
+* `python -m harbor.cli.main stale --ci --format json`
+* `python -m harbor.cli.main doctor --ci --format json`
+* GitHub Actions `CI`：
+  * Ubuntu `3.9`
+  * Ubuntu `3.10`
+  * Ubuntu `3.11`
+  * `windows-full-governance`
+
+---
+
+## 🚀 v1.4.2：TypeScript Contract Source Strengthening
+
+Harbor-spec v1.4.2 在 `v1.4.1` 的 Log Draft / Controlled Write workflow 之上，恢复 TypeScript 主线，并先补齐 richer contract source 之前必须稳定的治理基础。
+
+### v1.4.2 当前支持
+
+* TypeScript subject generalized persistence：
+  * `IndexBuilder` / runtime cache / SQLite 持久化路径统一接入 `.ts`
+  * additive identity metadata：`target_id` / `func_id` / `language` / `symbol_kind` / `qualified_name`
+  * additive contract metadata：`contract_source_kinds` / `contract_source_fingerprints` / `source_confidence_summary`
+* accepted baseline artifact 继续作为 `checkpoint --ci` 的正式 baseline truth：
+  * `.harbor/baseline/accepted-checkpoint.json`
+  * runtime cache 仅做本地加速与兼容，不承担 CI truth
+* richer TypeScript source strengthening：
+  * exported `interface` / `type` advisory-first data contract discovery
+  * `z.object(...)` / `z.enum(...)` shallow Zod source recognition
+  * `export default function` / `export default class` public surface evidence
+  * `contract_hash = normalized contract source bundle hash`
+* additive checkpoint / `harbor next` / JSON metadata 输出：
+  * `export_mode`
+  * `data_contract_kind`
+  * `schema_source_kind`
+  * `contract_source_kinds`
+  * `contract_source_fingerprints`
+  * `source_confidence_summary`
+* generated context closure 收口：
+  * `harbor finish --sync-context`
+  * `harbor stale --ci --format json`
+  * `harbor doctor --ci --format json`
+
+### v1.4.2 明确不支持（Not Supported Yet）
+
+* re-export graph
+* `.d.ts` scanning
+* `package exports` / `tsconfig` path alias
+* framework preset
+* TypeScript DDT
+* TypeScript semantic audit
+* JavaScript first-class governance
+* full Zod schema semantics / schema-to-type consistency audit
+* `interface/type` 或 Zod 自动升级为 blocking gate
+
+### v1.4.2 兼容与验收边界
+
+* Python zero regression 是硬约束：
+  * Python parser / checkpoint / DDT / semantic audit / stale / doctor 不回归
+  * `func_id` / `target_id` 兼容不回归
+* Windows full-governance 是正式验收维度：
+  * Ubuntu Python matrix 仍必须通过
+  * Windows path normalization regression 必须覆盖
+* `v1.4.1` Log Draft / Controlled Write workflow 保持零回归
+
+---
+
+## 🚀 v1.4.0：Core Neutralization + TypeScript Contract Governance MVP
+
+Harbor-spec v1.4.0 引入 **first-class TypeScript contract governance**。  
+这不是“仅增加 TS 文件扫描”，而是 Harbor 从 Python `FunctionContract` / docstring-centric 治理，演进到 language-neutral `ContractSubject` 模型的第一步。
+
+### v1.4.0 当前支持（MVP）
+
+* language-neutral 核心模型：`ContractSubject` / `ContractSource` / `LanguageAdapter`
+* `AdapterRegistry`：统一语言适配器入口
+* TypeScript `.ts` 文件发现（需显式启用）
+* symbol 识别：
+  * `export function`
+  * `export async function`
+  * `export const` arrow / async arrow
+  * `export class` public method
+* JSDoc/TSDoc proximity extraction
+* `contract_presence` / `contract_required`
+* `checkpoint --ci` TypeScript MVP category：
+  * `contract_gap`
+  * `skipped_no_contract`
+  * `unsupported_syntax_advisory`
+* `harbor next` 对 TypeScript MVP category 的 deterministic guidance
+
+### v1.4.0 明确不支持（Not Supported Yet）
+
+* JavaScript first-class governance
+* `.js/.jsx/.tsx/.d.ts` 默认扫描
+* TypeScript semantic audit
+* TypeScript DDT
+* Zod schema governance
+* `interface/type` blocking gate
+* Next.js / Express / React framework preset
+* TypeScript Compiler API / tree-sitter backend
+
+### 启用示例
+
+```yaml
+languages:
+  python:
+    enabled: true
+  typescript:
+    enabled: true
+```
+
+### 默认策略与兼容性
+
+* Python 默认 `enabled=true`
+* TypeScript 默认 `enabled=false`，需要显式启用
+* 启用 TypeScript 后默认仅扫描 `.ts`
+* `.tsx/.js/.jsx/.d.ts` 默认不扫描
+* Python 行为保持 zero regression：
+  * Python checkpoint / DDT / semantic audit 语义保持兼容
+  * `func_id` 保留兼容
+  * `target_id/language/symbol_kind/adapter` 以 additive identity fields 方式新增
+
+---
+
+## 🚀 v1.4.1：Log Draft + Controlled Write Workflow MVP
+
+Harbor-spec v1.4.1 将日志工作流明确分为三层：
+
+```text
+Evidence -> Draft Cache / Save -> Controlled Write
+```
+
+### 1. Evidence
+
+这些命令会为当前 change window 产生运行时证据：
+
+```powershell
+harbor checkpoint
+harbor finish
+harbor accept
+```
+
+规则：
+
+* change-window snapshots 写入 `.harbor/state/change-windows/**`
+* snapshots 属于 runtime evidence，不是 source-of-truth memory
+* 这些证据可以被后续 `harbor log draft` 总结，但不会直接成为 Written Diary Entry
+
+### 2. Draft
+
+```powershell
+harbor log draft
+harbor log draft --save
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/log-draft.md
+```
+
+规则：
+
+* `harbor log draft` 默认在 stdout 展示 reviewable draft
+* 默认只有在存在 meaningful new evidence 时，才会生成可写入 Diary 的 draft
+* 默认模式下 auto-discovered reports 只是 supplementary evidence，单独存在时不会触发新的可写 draft
+* 如果 boundary 之后只有 `.harbor/diary/**` 变化，也不会单独触发新的可写 draft
+* 只有显式 `--from-report <path>` 时，report 才可作为主 evidence 生成 draft
+* 生成可写 draft 时，`harbor log draft` 才会写：
+  * `.harbor/state/log/latest-draft.md`
+  * `.harbor/state/log/latest-draft.json`
+* 如果 evidence 不足，则输出 no-op 结果，且不会刷新 latest draft cache
+* `harbor log draft` 默认边界策略是：marker-first -> accept-fallback -> recent-fallback
+* `harbor log draft --since-last-log` 强制使用 `last_log_marker`
+* `harbor log draft --since-last-accept` 强制使用 latest accept
+* `harbor log draft --save` 会生成：
+  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.md`
+  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.json`
+* `harbor log draft --output <path>` 使用显式输出路径，且优先于 `--save`
+* `harbor log draft` 不写 `.harbor/diary/**`
+* `harbor log draft` 不推进 `last_log_marker`
+* `harbor log draft --output` 指向 `.harbor/diary/**` 必须拒绝
+
+### 3. Write
+
+```powershell
+harbor log write
+harbor log write --yes
+harbor log write --from-latest-draft
+harbor log write --from-draft .harbor/reports/log-draft.md
+```
+
+规则：
+
+* `harbor log write` 默认读取 latest draft
+* 不带 `--yes` 时必须交互确认
+* 非交互环境不带 `--yes` 必须拒绝
+* `--yes` 是显式授权写入 source-of-truth decision memory
+* `--from-draft` 只允许受控来源：`.harbor/reports/**` 或 latest draft cache
+* `.harbor/diary/**`、`.env`、`.env.*`、`secrets/**`、repo 外路径必须拒绝为 draft source
+* 成功写入 `.harbor/diary/YYYY-MM.jsonl` 后，更新 `.harbor/state/log/last_log_marker.json`
+* `last_log_marker` 代表“上一次已经正式写入 Diary 的日志节点”，属于 runtime state，不是 source-of-truth memory
+
+### 安全边界
+
+* `harbor log draft` 不写 Diary，`harbor log write` 才会写 Diary
+* `.harbor/state/**` 和 `.harbor/reports/**` 都不是 source of truth
+* `.harbor/diary/**` 才是 source-of-truth decision memory
+* v1.4.1 不调用 LLM
+* LLM-assisted draft/write 属于 future work，且必须显式 opt-in
+* 不读取或输出文件正文、diff 正文或 secret 值
+* AI 可以运行 `harbor log draft` / `harbor log draft --save`
+* AI 不得自动运行 `harbor log write` 或 `harbor log write --yes`
+* 真正写 Diary 仍需人工明确授权
+
+### 语言与 i18n
+
+* Harbor 工作语言可按配置使用中文或英文
+* CLI 面向用户的提示文案遵循 Harbor i18n / language 机制
+* JSON schema keys 保持稳定英文标识符
+* v1.4.1 为 log write 的提示与错误补充了 zh/en message keys
 
 ---
 

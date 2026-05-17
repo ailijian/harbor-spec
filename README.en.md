@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
 [![Strictness](https://img.shields.io/badge/Harbor-L3%20Strict-purple?style=flat-square)](https://github.com/your-org/harbor-spec)
 
-**A repo-local context governance engine for AI coding workflows.**
+**HarborSpec is a context governance engine for agentic coding.**
 Keep code, contracts, tests, generated context, decision memory, and CI gates aligned.
 
 [Quick Start](#-quick-start) · [Core Mental Model](#-core-mental-modell1--l2--l3) · [Daily Workflow](#-daily-workflow) · [CI Gates](#-ci-gates) · [Workspace Layout](#-harbor-workspace-layout) · [Cheat Sheet](#-command-cheat-sheet) · [Deep Dive](#-deep-dive)
@@ -19,6 +19,20 @@ Keep code, contracts, tests, generated context, decision memory, and CI gates al
 Language: [中文](README.md) | English
 
 ---
+
+<!-- Hero Section Start -->
+
+# AI coding writes code faster.It also makes codebases drift faster.
+HarborSpec keeps code, contracts, generated context, review baselines, and CI gates aligned.
+
+### How to use
+- Start your daily workflow: `harbor start`
+- Finish and sync context: `harbor finish --sync-context`
+- Human review and accept new baseline: `harbor accept`
+
+![Harbor-spec core loop](images/harbor-spec核心能力演示图.png)
+
+<!-- Hero Section End -->
 
 ## What is HarborSpec?
 
@@ -37,455 +51,6 @@ HarborSpec aims to make context, contracts, generated documentation, and semanti
 It is not just another documentation generator.
 It is not another Copilot.
 It is a repo-local **context governance layer**.
-
----
-
-## 🚀 v1.4.5: Workflow UX & Preview Productization (Current Stable Release)
-
-Harbor-spec `v1.4.5` builds on the TypeScript Verification Preview completed in `v1.4.4`. The current focus is no longer expanding governance scope horizontally, but closing the gap between capability and day-to-day product usability.
-
-### Positioning in v1.4.5
-
-* close existing governance leftovers
-* improve real-time feedback in daily workflows
-* establish a runtime performance baseline
-* productize the preview experience for external adoption
-
-### Explicit non-goals in v1.4.5
-
-* no new JavaScript first-class governance
-* no expansion to TSX / JSX / `.d.ts`
-* no upgrade of TS DDT Preview or Semantic Audit Preview into a formal gate
-* no Jest / Vitest AST inference, coverage proof, or automatic test-to-target binding
-* no large-scale performance architecture refactor
-
-### Implementation order
-
-```text
-Task Group B | DDT Advisory reconciliation
-Task Group C | Progress Feedback Framework
-Task Group D | Performance Baseline Report
-Task Group A | Preview productization
-```
-
-### v1.4.5 Closure Snapshot
-
-* DDT advisory reconciliation is now formally adjudicated:
-  * `5` strict Python DDT advisories are classified as `ACCEPTED_BACKLOG`
-  * the category remains `ddt_version_baseline_missing`
-  * these items do not block `v1.4.5` because the repository still lacks a repo-owned `l3_version` baseline source
-  * formal report: `.harbor/reports/python-ddt-advisory-reconciliation.md`
-* The Progress Feedback Framework is closed at release level:
-  * human-readable `checkpoint`, `finish`, `check`, `verify-generated`, `docs`, `module seal`, `stale`, and `doctor` flows now share unified progress feedback
-  * phased text progress for `stale` and `doctor` is now covered
-  * progress phase labels are rendered through localized text instead of leaking raw `cli.progress.label.*` i18n keys
-  * `--format json`, `--format jsonl`, and `--ci` machine outputs remain clean and free of progress text
-* The Runtime Performance Baseline is now established:
-  * report: `.harbor/reports/harbor-spec-runtime-performance-baseline-v145.md`
-  * machine-readable JSON: `.harbor/reports/harbor-spec-runtime-performance-baseline-v145.json`
-  * `v1.4.5` only closes the low-risk quick win of reusing the first status report in `finish`; it does not expand into structural performance refactoring
-* Preview productization entrypoints are aligned:
-  * guide: `docs/guides/typescript-verification-preview.md`
-  * example index: `examples/typescript-verification-preview/README.md`
-  * demo: `examples/typescript-verification-preview/package-public/README.md`
-  * troubleshooting: `docs/guides/typescript-verification-preview-troubleshooting.md`
-
-For details, see:
-
-* `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
-* `RELEASE.md`
-
-Current status:
-
-* `v1.4.5` has completed baseline acceptance, formal Diary write, full context closure, and full release validation
-* `ddt_version_baseline_missing=5` is formally adjudicated as `ACCEPTED_BACKLOG` and remains non-blocking
-* `v1.4.5` does not expand governance scope; it is a product-maturity and workflow-UX closure release
-
-### Try TypeScript Verification Preview
-
-If you want to try the `v1.4.5` productized preview flow directly instead of reading release notes first, start here:
-
-* Guide: `docs/guides/typescript-verification-preview.md`
-* Example index: `examples/typescript-verification-preview/README.md`
-* Demo scenario: `examples/typescript-verification-preview/package-public/README.md`
-* Semantic audit demo: `examples/typescript-verification-preview/semantic-audit-preview/README.md`
-* Failure explanations: `docs/guides/typescript-verification-preview-troubleshooting.md`
-
-Recommended reading order:
-
-1. Read the guide to understand enablement and preview boundaries.
-2. Run the `package-public` example to inspect the minimal `checkpoint` / `harbor next` workflow.
-3. Review troubleshooting and the semantic-audit demo to understand common findings and `preview_ineligible`.
-
----
-
-## 🚀 v1.4.4: TypeScript Verification Preview (Previous Closure Theme)
-
-Harbor-spec v1.4.4 builds on the TypeScript contract-source and public-boundary governance completed in `v1.4.3`, and brings TypeScript into **verification preview** for the first time. Its formal theme is:
-
-> **TypeScript Verification Preview: DDT Binding Preview & Semantic Audit Foundation**
-
-### What v1.4.4 adds
-
-* VerificationBinding foundation:
-  * a language-neutral verification binding abstraction
-  * `target_id` as the primary cross-language anchor
-  * `func_id` retained for existing Python DDT compatibility paths
-* sidecar-driven TypeScript DDT preview:
-  * a repo-local sidecar file as the source of truth
-  * explicit `target_id -> test_asset` declarations
-  * frozen MVP strategies: `preview_strict` / `preview_reference`
-* explainability across existing command surfaces:
-  * `harbor check`
-  * `harbor checkpoint --ci --format json`
-  * `harbor next`
-* semantic audit language-neutral foundation:
-  * generalize the audit substrate first
-  * then add advisory preview for TypeScript
-* TypeScript semantic audit advisory preview:
-  * only for function-like targets with behavior-oriented contract evidence
-  * `interface` / `type` / `Zod` remain auxiliary evidence only
-
-### Explicit non-goals in v1.4.4
-
-* not a formal TypeScript DDT gate
-* not a formal TypeScript semantic audit gate
-* no Jest / Vitest AST inference
-* no coverage proof
-* no automatic test-to-target inference
-* no default blocking-gate expansion
-
-### Default behavior and validation boundaries
-
-* preview stays `disabled` by default
-* when `enabled=false`, Harbor does not scan sidecars, emit preview findings, or add side effects
-* preview findings remain advisory-only / non-blocking
-* `harbor init` / guidance may mention preview capabilities explicitly, but do not silently enable them
-* TypeScript semantic audit preview is an opt-in / provider-dependent preview
-* automated tests and release acceptance do not depend on a real LLM being available
-* mock / deterministic providers are the supported acceptance path
-
----
-
-## 🚀 v1.4.3: TypeScript Public Boundary Resolution & Project Presets
-
-Harbor-spec v1.4.3 builds on the TypeScript persistence, `contract_hash`, and accepted-baseline comparison-compatible foundation completed in `v1.4.2`, and formally moves into **project-level public boundary governance**.
-
-### What v1.4.3 includes
-
-* A Public Boundary Evidence model with:
-  * `direct_export`
-  * `default_export`
-  * `named_re_export`
-  * `star_re_export`
-  * `package_export`
-  * `configured_entrypoint`
-  * `declaration_surface_preview` as a future-preview placeholder only
-* Additive public-boundary explainability metadata / JSON fields:
-  * `public_boundary_state`
-  * `public_boundary_confidence`
-  * `public_boundary_evidence_kinds`
-  * `public_boundary_evidence_items`
-  * `public_boundary_reason`
-  * `boundary_preset_mode`
-* Minimal boundary resolution support for:
-  * package-root detection
-  * relative path resolution
-  * `.ts` priority and `index.ts` fallback
-  * minimal `tsconfig baseUrl/paths`
-  * normalized package exports plus common `dist/*.js -> src/*.ts` source mapping
-* Project-level public boundary presets:
-  * `legacy_exported`
-  * `package_public`
-  * `custom_entrypoints`
-* TypeScript governance guidance in `harbor init`:
-  * detect `package.json`
-  * detect `tsconfig.json`
-  * detect `src/index.ts` / public entrypoint candidates
-  * detect `package.json exports`
-  * detect workspace / monorepo markers
-* Preset-aware explanation in `harbor next`:
-  * explain the relationship among direct export, re-export, package export, configured entrypoint, confidence, and preset
-  * remain read-only: no file writes, no auto-repair, no `accept/log/lock`
-
-### v1.4.3 boundaries
-
-* `Contract Source` stays separate from `Public Boundary Evidence`:
-  * re-exports, package exports, and configured entrypoints do not enter `contract_source_kinds`
-  * boundary evidence does not enter `contract_hash` or `body_hash`
-  * boundary metadata changes do not trigger `contract_changed`, `modified`, or `drift`
-* Default compatibility remains unchanged:
-  * default preset stays `legacy_exported`
-  * default `contract_required_strategy` stays `legacy_exported`
-  * non-interactive `harbor init` does not silently enable TypeScript governance
-* Windows full-governance remains a formal acceptance dimension
-
-### v1.4.3 configuration example
-
-```yaml
-languages:
-  python:
-    enabled: true
-  typescript:
-    enabled: true
-    public_boundary:
-      mode: package_public
-      follow_re_exports: true
-      read_package_exports: true
-      use_tsconfig_paths: true
-      declaration_surface_preview: false
-      entrypoints: []
-      source_mappings: {}
-    contract_required_strategy: legacy_exported
-```
-
-### Not supported in v1.4.3
-
-* JavaScript as first-class governance
-* default scanning of `.js/.jsx/.tsx/.d.ts`
-* TypeScript semantic audit
-* TypeScript DDT
-* full TypeScript compiler / full module graph
-* full npm package resolution / bundler alias resolution
-* framework-specific governance / validation
-* full Zod schema semantics / schema-to-type consistency audit
-* automatic blocking-gate expansion from `interface/type`, Zod, or boundary evidence
-
----
-
-## 🚀 v1.4.2.2: Windows JSON Stdout Compatibility Closure
-
-Harbor-spec v1.4.2.2 is a maintenance patch focused on Windows host-encoding compatibility, closing the cp1252 runner gap and unifying the pure JSON stdout emission path.
-
-### What v1.4.2.2 fixes
-
-* all pure JSON CLI output paths now route through `_emit_json_stdout()`:
-  * localized JSON when stdout encoding can strictly encode the payload
-  * ASCII-safe fallback when it cannot
-* pure JSON stdout remains stable on non-UTF-8 Windows host encodings:
-  * cp936 hosts continue to prefer localized JSON
-  * cp1252-style hosts fall back to ASCII-safe JSON when localized content is not strictly encodable
-* `main()` contract/docstring, accepted baseline, and generated context stay synchronized
-
-### What v1.4.2.2 validates
-
-* `python -m harbor.cli.main accept`
-* `python -m harbor.cli.main checkpoint --ci --format json`
-* `python -m harbor.cli.main stale --ci --format json`
-* `python -m harbor.cli.main doctor --ci --format json`
-* GitHub Actions `CI`:
-  * Ubuntu `3.9`
-  * Ubuntu `3.10`
-  * Ubuntu `3.11`
-  * `windows-full-governance`
-
----
-
-## 🚀 v1.4.2: TypeScript Contract Source Strengthening
-
-Harbor-spec v1.4.2 resumes the TypeScript roadmap after `v1.4.1` and tightens the governance foundation required before broader contract-source expansion.
-
-### What v1.4.2 includes
-
-* TypeScript subject generalized persistence through `IndexBuilder`, SQLite `entries`, and runtime cache snapshots
-* additive identity metadata across persistence and checkpoint JSON:
-  * `target_id`
-  * `func_id` / `legacy_func_id`
-  * `language`
-  * `symbol_kind`
-  * `qualified_name`
-  * `lineno` / `end_lineno`
-  * `visibility`
-* richer TypeScript contract-source evidence:
-  * exported `interface` / `type` advisory-first discovery
-  * shallow `z.object(...)` / `z.enum(...)` recognition
-  * `export default function` / `export default class` public-surface evidence
-  * `contract_hash` from normalized contract source bundle hash
-* additive checkpoint / `harbor next` metadata:
-  * `export_mode`
-  * `public_surface_evidence`
-  * `data_contract_kind`
-  * `schema_source_kind`
-  * `contract_source_kinds`
-  * `contract_source_fingerprints`
-  * `source_confidence_summary`
-* release-closure expectations:
-  * Windows redirected CLI stdout/stderr default to UTF-8 unless explicitly overridden
-  * generated context clean parity is restored
-  * generated context closure follows `harbor finish --sync-context -> harbor stale --ci --format json -> harbor doctor --ci --format json`
-
-### Not supported in v1.4.2
-
-* re-export graph
-* `.d.ts` scanning
-* `package exports` / `tsconfig` path alias resolution
-* framework presets
-* TypeScript DDT
-* TypeScript semantic audit
-* JavaScript as first-class governance
-* full Zod schema semantics / schema-to-type consistency audit
-* automatic blocking-gate expansion for `interface/type`, Zod, or default-export evidence
-
-### Compatibility and release boundaries
-
-* Python behavior remains zero-regression-compatible
-* `checkpoint --ci` still uses `.harbor/baseline/accepted-checkpoint.json` as the accepted baseline source of truth
-* runtime cache remains local acceleration only and does not become CI truth
-* Windows full-governance remains a formal release gate alongside the Ubuntu Python matrix
-* the `v1.4.1` Log Draft / Controlled Write workflow remains zero-regression-compatible
-
----
-
-## 🚀 v1.4.0: Core Neutralization + TypeScript Contract Governance MVP
-
-Harbor-spec v1.4.0 introduces **first-class TypeScript contract governance**.  
-This is not a narrow “TS file scanner” feature. It is the first production step from Python `FunctionContract` / docstring-centric governance to a language-neutral `ContractSubject` core.
-
-### What v1.4.0 includes
-
-* Language-neutral core model: `ContractSubject`, `ContractSource`, `LanguageAdapter`
-* `AdapterRegistry` for language routing
-* TypeScript `.ts` discovery (opt-in)
-* TypeScript symbol coverage:
-  * `export function`
-  * `export async function`
-  * exported const arrow / async arrow functions
-  * exported class public methods
-* JSDoc/TSDoc proximity-based contract-source extraction
-* `contract_presence` and `contract_required` for TypeScript targets
-* TypeScript MVP categories in `checkpoint --ci`:
-  * `contract_gap`
-  * `skipped_no_contract`
-  * `unsupported_syntax_advisory`
-* Deterministic TypeScript guidance in `harbor next`
-
-### Not supported in v1.4.0
-
-* JavaScript as first-class governance target
-* default scanning of `.js/.jsx/.tsx/.d.ts`
-* TypeScript semantic audit
-* TypeScript DDT
-* Zod schema governance
-* interface/type blocking gate
-* Next.js / Express / React framework presets
-* TypeScript Compiler API / tree-sitter backend
-
-### Configuration example
-
-```yaml
-languages:
-  python:
-    enabled: true
-  typescript:
-    enabled: true
-```
-
-### Defaults and compatibility
-
-* Python is enabled by default
-* TypeScript is disabled by default and requires explicit enablement
-* When enabled, TypeScript scans `.ts` only by default
-* `.tsx/.js/.jsx/.d.ts` remain excluded by default
-* Python behavior remains zero-regression-compatible:
-  * checkpoint / DDT / semantic audit semantics remain stable
-  * `func_id` remains preserved for compatibility
-  * `target_id/language/symbol_kind/adapter` are additive identity fields
-
----
-
-## 🚀 v1.4.1: Log Draft + Controlled Write Workflow MVP
-
-Harbor-spec v1.4.1 makes the log workflow explicit as three layers:
-
-```text
-Evidence -> Draft Cache / Save -> Controlled Write
-```
-
-### 1. Evidence
-
-These commands produce runtime evidence for the current change window:
-
-```powershell
-harbor checkpoint
-harbor finish
-harbor accept
-```
-
-Rules:
-
-* change-window snapshots are written under `.harbor/state/change-windows/**`
-* snapshots are runtime evidence, not source-of-truth memory
-* this evidence may be summarized by `harbor log draft`, but it does not become a Written Diary Entry by itself
-
-### 2. Draft
-
-```powershell
-harbor log draft
-harbor log draft --save
-harbor log draft --since-last-accept
-harbor log draft --output .harbor/reports/log-draft.md
-```
-
-Rules:
-
-* `harbor log draft` prints a reviewable draft to stdout by default
-* by default, it generates a writable Diary Draft only when meaningful new evidence exists
-* in default mode, auto-discovered reports are supplementary evidence only and do not trigger a writable draft by themselves
-* if the only post-boundary change is under `.harbor/diary/**`, that alone does not trigger a new writable draft
-* only explicit `--from-report <path>` allows a report to act as primary evidence
-* when a writable draft is generated, `harbor log draft` also writes:
-  * `.harbor/state/log/latest-draft.md`
-  * `.harbor/state/log/latest-draft.json`
-* when evidence is insufficient, Harbor returns a no-op result and does not refresh latest draft cache
-* the default `harbor log draft` boundary strategy is marker-first -> accept-fallback -> recent-fallback
-* `harbor log draft --since-last-log` forces `last_log_marker`
-* `harbor log draft --since-last-accept` forces the latest accept boundary
-* `harbor log draft --save` creates:
-  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.md`
-  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.json`
-* `harbor log draft --output <path>` uses the explicit output path and takes priority over `--save`
-* `harbor log draft` does not write `.harbor/diary/**`
-* `harbor log draft` does not advance `last_log_marker`
-* `harbor log draft --output` targeting `.harbor/diary/**` must be rejected
-
-### 3. Write
-
-```powershell
-harbor log write
-harbor log write --yes
-harbor log write --from-latest-draft
-harbor log write --from-draft .harbor/reports/log-draft.md
-```
-
-Rules:
-
-* `harbor log write` reads the latest draft by default
-* without `--yes`, it requires interactive confirmation
-* in non-interactive environments, write without `--yes` must be rejected
-* `--yes` is explicit authorization to write source-of-truth decision memory
-* `--from-draft` only allows controlled sources: `.harbor/reports/**` or the latest draft cache
-* `.harbor/diary/**`, `.env`, `.env.*`, `secrets/**`, and repo-external paths must be rejected as draft sources
-* after a successful write to `.harbor/diary/YYYY-MM.jsonl`, Harbor updates `.harbor/state/log/last_log_marker.json`
-* `last_log_marker` means “the last formally written Diary node” and remains runtime state rather than source-of-truth memory
-
-### Safety Boundaries
-
-* `harbor log draft` never writes Diary; only `harbor log write` writes Diary
-* `.harbor/state/**` and `.harbor/reports/**` are not source of truth
-* `.harbor/diary/**` is the source-of-truth decision memory
-* v1.4.1 does not call LLM
-* LLM-assisted draft/write remains future work and must be explicit opt-in
-* Harbor does not read or output file bodies, diff bodies, or secret values in this workflow
-* AI may run `harbor log draft` and `harbor log draft --save`
-* AI must not automatically run `harbor log write` or `harbor log write --yes`
-* writing a real Diary entry still requires explicit human authorization
-
-### Language and i18n
-
-* Harbor may be used with Chinese or English working language, depending on configuration
-* CLI user-facing messages follow Harbor's i18n / language mechanism
-* JSON schema keys remain stable English identifiers
-* v1.4.1 adds zh/en message keys for log write prompts and errors
 
 ---
 
@@ -1315,12 +880,6 @@ DDT baseline advisory (new):
 * Harbor cannot auto-decide whether `l3_version` should be bumped; review baseline state first, then `harbor accept`.
 * This does not mean DDT is semantically verified forever.
 
-v1.4.4 preview note:
-
-* TypeScript DDT now has a sidecar-driven binding preview, but it remains preview-first, opt-in, and advisory-first.
-* Preview binding only expresses a governed relationship; it is not coverage proof and does not promote itself into the default gate.
-* Jest / Vitest AST inference, test-body semantic inference, and automatic test-to-target inference remain out of scope for `v1.4.4`.
-
 ---
 
 ### 7. Diary: decision memory
@@ -1369,14 +928,6 @@ Semantic audit short-circuit behavior (current):
 * LLM is not called for `CONTRACT_GAP` / `SKIPPED_NO_CONTRACT`.
 * `harbor check --format jsonl` emits `llm_called=false` for skipped cases.
 * `harbor check --format jsonl` is not pure JSONL-only output: it still prints human-readable DDT blocks, while semantic audit rows are JSONL.
-
-v1.4.4 preview note:
-
-* TypeScript semantic audit preview only runs when explicitly enabled.
-* Only TypeScript function-like targets with direct behavior-oriented contract evidence may enter preview.
-* `interface` / `type` / `Zod` remain auxiliary evidence and do not independently qualify a function-level preview subject.
-* Preview results do not write baseline truth, do not auto-fix code, and do not become default blockers.
-* Automated tests and release acceptance use mock / deterministic providers rather than real LLM availability.
 
 ---
 
@@ -1569,6 +1120,243 @@ harbor workspace migrate --dry-run
 ```
 
 It prints a migration plan and does not write files.
+
+---
+
+
+## 🚀 v1.4.2.2: Windows JSON Stdout Compatibility Closure
+
+Harbor-spec v1.4.2.2 is a maintenance patch focused on Windows host-encoding compatibility, closing the cp1252 runner gap and unifying the pure JSON stdout emission path.
+
+### What v1.4.2.2 fixes
+
+* all pure JSON CLI output paths now route through `_emit_json_stdout()`:
+  * localized JSON when stdout encoding can strictly encode the payload
+  * ASCII-safe fallback when it cannot
+* pure JSON stdout remains stable on non-UTF-8 Windows host encodings:
+  * cp936 hosts continue to prefer localized JSON
+  * cp1252-style hosts fall back to ASCII-safe JSON when localized content is not strictly encodable
+* `main()` contract/docstring, accepted baseline, and generated context stay synchronized
+
+### What v1.4.2.2 validates
+
+* `python -m harbor.cli.main accept`
+* `python -m harbor.cli.main checkpoint --ci --format json`
+* `python -m harbor.cli.main stale --ci --format json`
+* `python -m harbor.cli.main doctor --ci --format json`
+* GitHub Actions `CI`:
+  * Ubuntu `3.9`
+  * Ubuntu `3.10`
+  * Ubuntu `3.11`
+  * `windows-full-governance`
+
+---
+
+## 🚀 v1.4.2: TypeScript Contract Source Strengthening
+
+Harbor-spec v1.4.2 resumes the TypeScript roadmap after `v1.4.1` and tightens the governance foundation required before broader contract-source expansion.
+
+### What v1.4.2 includes
+
+* TypeScript subject generalized persistence through `IndexBuilder`, SQLite `entries`, and runtime cache snapshots
+* additive identity metadata across persistence and checkpoint JSON:
+  * `target_id`
+  * `func_id` / `legacy_func_id`
+  * `language`
+  * `symbol_kind`
+  * `qualified_name`
+  * `lineno` / `end_lineno`
+  * `visibility`
+* richer TypeScript contract-source evidence:
+  * exported `interface` / `type` advisory-first discovery
+  * shallow `z.object(...)` / `z.enum(...)` recognition
+  * `export default function` / `export default class` public-surface evidence
+  * `contract_hash` from normalized contract source bundle hash
+* additive checkpoint / `harbor next` metadata:
+  * `export_mode`
+  * `public_surface_evidence`
+  * `data_contract_kind`
+  * `schema_source_kind`
+  * `contract_source_kinds`
+  * `contract_source_fingerprints`
+  * `source_confidence_summary`
+* release-closure expectations:
+  * Windows redirected CLI stdout/stderr default to UTF-8 unless explicitly overridden
+  * generated context clean parity is restored
+  * generated context closure follows `harbor finish --sync-context -> harbor stale --ci --format json -> harbor doctor --ci --format json`
+
+### Not supported in v1.4.2
+
+* re-export graph
+* `.d.ts` scanning
+* `package exports` / `tsconfig` path alias resolution
+* framework presets
+* TypeScript DDT
+* TypeScript semantic audit
+* JavaScript as first-class governance
+* full Zod schema semantics / schema-to-type consistency audit
+* automatic blocking-gate expansion for `interface/type`, Zod, or default-export evidence
+
+### Compatibility and release boundaries
+
+* Python behavior remains zero-regression-compatible
+* `checkpoint --ci` still uses `.harbor/baseline/accepted-checkpoint.json` as the accepted baseline source of truth
+* runtime cache remains local acceleration only and does not become CI truth
+* Windows full-governance remains a formal release gate alongside the Ubuntu Python matrix
+* the `v1.4.1` Log Draft / Controlled Write workflow remains zero-regression-compatible
+
+---
+
+## 🚀 v1.4.0: Core Neutralization + TypeScript Contract Governance MVP
+
+Harbor-spec v1.4.0 introduces **first-class TypeScript contract governance**.  
+This is not a narrow “TS file scanner” feature. It is the first production step from Python `FunctionContract` / docstring-centric governance to a language-neutral `ContractSubject` core.
+
+### What v1.4.0 includes
+
+* Language-neutral core model: `ContractSubject`, `ContractSource`, `LanguageAdapter`
+* `AdapterRegistry` for language routing
+* TypeScript `.ts` discovery (opt-in)
+* TypeScript symbol coverage:
+  * `export function`
+  * `export async function`
+  * exported const arrow / async arrow functions
+  * exported class public methods
+* JSDoc/TSDoc proximity-based contract-source extraction
+* `contract_presence` and `contract_required` for TypeScript targets
+* TypeScript MVP categories in `checkpoint --ci`:
+  * `contract_gap`
+  * `skipped_no_contract`
+  * `unsupported_syntax_advisory`
+* Deterministic TypeScript guidance in `harbor next`
+
+### Not supported in v1.4.0
+
+* JavaScript as first-class governance target
+* default scanning of `.js/.jsx/.tsx/.d.ts`
+* TypeScript semantic audit
+* TypeScript DDT
+* Zod schema governance
+* interface/type blocking gate
+* Next.js / Express / React framework presets
+* TypeScript Compiler API / tree-sitter backend
+
+### Configuration example
+
+```yaml
+languages:
+  python:
+    enabled: true
+  typescript:
+    enabled: true
+```
+
+### Defaults and compatibility
+
+* Python is enabled by default
+* TypeScript is disabled by default and requires explicit enablement
+* When enabled, TypeScript scans `.ts` only by default
+* `.tsx/.js/.jsx/.d.ts` remain excluded by default
+* Python behavior remains zero-regression-compatible:
+  * checkpoint / DDT / semantic audit semantics remain stable
+  * `func_id` remains preserved for compatibility
+  * `target_id/language/symbol_kind/adapter` are additive identity fields
+
+---
+
+## 🚀 v1.4.1: Log Draft + Controlled Write Workflow MVP
+
+Harbor-spec v1.4.1 makes the log workflow explicit as three layers:
+
+```text
+Evidence -> Draft Cache / Save -> Controlled Write
+```
+
+### 1. Evidence
+
+These commands produce runtime evidence for the current change window:
+
+```powershell
+harbor checkpoint
+harbor finish
+harbor accept
+```
+
+Rules:
+
+* change-window snapshots are written under `.harbor/state/change-windows/**`
+* snapshots are runtime evidence, not source-of-truth memory
+* this evidence may be summarized by `harbor log draft`, but it does not become a Written Diary Entry by itself
+
+### 2. Draft
+
+```powershell
+harbor log draft
+harbor log draft --save
+harbor log draft --since-last-accept
+harbor log draft --output .harbor/reports/log-draft.md
+```
+
+Rules:
+
+* `harbor log draft` prints a reviewable draft to stdout by default
+* by default, it generates a writable Diary Draft only when meaningful new evidence exists
+* in default mode, auto-discovered reports are supplementary evidence only and do not trigger a writable draft by themselves
+* if the only post-boundary change is under `.harbor/diary/**`, that alone does not trigger a new writable draft
+* only explicit `--from-report <path>` allows a report to act as primary evidence
+* when a writable draft is generated, `harbor log draft` also writes:
+  * `.harbor/state/log/latest-draft.md`
+  * `.harbor/state/log/latest-draft.json`
+* when evidence is insufficient, Harbor returns a no-op result and does not refresh latest draft cache
+* the default `harbor log draft` boundary strategy is marker-first -> accept-fallback -> recent-fallback
+* `harbor log draft --since-last-log` forces `last_log_marker`
+* `harbor log draft --since-last-accept` forces the latest accept boundary
+* `harbor log draft --save` creates:
+  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.md`
+  * `.harbor/reports/log-draft-YYYYMMDD-HHMMSS.json`
+* `harbor log draft --output <path>` uses the explicit output path and takes priority over `--save`
+* `harbor log draft` does not write `.harbor/diary/**`
+* `harbor log draft` does not advance `last_log_marker`
+* `harbor log draft --output` targeting `.harbor/diary/**` must be rejected
+
+### 3. Write
+
+```powershell
+harbor log write
+harbor log write --yes
+harbor log write --from-latest-draft
+harbor log write --from-draft .harbor/reports/log-draft.md
+```
+
+Rules:
+
+* `harbor log write` reads the latest draft by default
+* without `--yes`, it requires interactive confirmation
+* in non-interactive environments, write without `--yes` must be rejected
+* `--yes` is explicit authorization to write source-of-truth decision memory
+* `--from-draft` only allows controlled sources: `.harbor/reports/**` or the latest draft cache
+* `.harbor/diary/**`, `.env`, `.env.*`, `secrets/**`, and repo-external paths must be rejected as draft sources
+* after a successful write to `.harbor/diary/YYYY-MM.jsonl`, Harbor updates `.harbor/state/log/last_log_marker.json`
+* `last_log_marker` means “the last formally written Diary node” and remains runtime state rather than source-of-truth memory
+
+### Safety Boundaries
+
+* `harbor log draft` never writes Diary; only `harbor log write` writes Diary
+* `.harbor/state/**` and `.harbor/reports/**` are not source of truth
+* `.harbor/diary/**` is the source-of-truth decision memory
+* v1.4.1 does not call LLM
+* LLM-assisted draft/write remains future work and must be explicit opt-in
+* Harbor does not read or output file bodies, diff bodies, or secret values in this workflow
+* AI may run `harbor log draft` and `harbor log draft --save`
+* AI must not automatically run `harbor log write` or `harbor log write --yes`
+* writing a real Diary entry still requires explicit human authorization
+
+### Language and i18n
+
+* Harbor may be used with Chinese or English working language, depending on configuration
+* CLI user-facing messages follow Harbor's i18n / language mechanism
+* JSON schema keys remain stable English identifiers
+* v1.4.1 adds zh/en message keys for log write prompts and errors
 
 ---
 
