@@ -4,15 +4,15 @@
 
 ### A Context Governance Engine for Agentic Coding
 
-[![CI Status](https://img.shields.io/github/actions/workflow/status/your-org/harbor-spec/ci.yml?style=flat-square)](https://github.com/your-org/harbor-spec/actions)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/ailijian/harbor-spec/ci.yml?style=flat-square)](https://github.com/ailijian/harbor-spec/actions)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue?style=flat-square)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
-[![Strictness](https://img.shields.io/badge/Harbor-L3%20Strict-purple?style=flat-square)](https://github.com/your-org/harbor-spec)
+[![Strictness](https://img.shields.io/badge/Harbor-L3%20Strict-purple?style=flat-square)](https://github.com/ailijian/harbor-spec)
 
 **Harbor-spec 是 AI coding 时代的上下文治理引擎。**
 让代码、契约、测试、派生上下文、决策记录与 CI 门禁保持一致。
 
-[快速开始](#-快速开始) · [核心心智模型](#-核心心智模型l1--l2--l3) · [日常工作流](#-日常工作流) · [CI 门禁](#-ci-门禁) · [工作区布局](#-harbor-workspace-布局) · [命令速查](#-命令速查cheat-sheet) · [核心机制深潜](#-核心机制深潜deep-dive)
+[快速开始](#快速开始) · [核心心智模型](#核心心智模型l1-l2-l3) · [日常工作流](#日常工作流) · [CI 门禁](#ci-门禁) · [工作区布局](#harbor-workspace-布局) · [命令速查](#命令速查cheat-sheet) · [核心机制深潜](#核心机制深潜deep-dive)
 
 </div>
 

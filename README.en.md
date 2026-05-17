@@ -4,15 +4,15 @@
 
 ### A Context Governance Engine for Agentic Coding
 
-[![CI Status](https://img.shields.io/github/actions/workflow/status/your-org/harbor-spec/ci.yml?style=flat-square)](https://github.com/your-org/harbor-spec/actions)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/ailijian/harbor-spec/ci.yml?style=flat-square)](https://github.com/ailijian/harbor-spec/actions)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue?style=flat-square)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
-[![Strictness](https://img.shields.io/badge/Harbor-L3%20Strict-purple?style=flat-square)](https://github.com/your-org/harbor-spec)
+[![Strictness](https://img.shields.io/badge/Harbor-L3%20Strict-purple?style=flat-square)](https://github.com/ailijian/harbor-spec)
 
 **HarborSpec is a context governance engine for agentic coding.**
 Keep code, contracts, tests, generated context, decision memory, and CI gates aligned.
 
-[Quick Start](#-quick-start) · [Core Mental Model](#-core-mental-modell1--l2--l3) · [Daily Workflow](#-daily-workflow) · [CI Gates](#-ci-gates) · [Workspace Layout](#-harbor-workspace-layout) · [Cheat Sheet](#-command-cheat-sheet) · [Deep Dive](#-deep-dive)
+[Quick Start](#quick-start) · [Core Mental Model](#core-mental-modell1-l2-l3) · [Daily Workflow](#daily-workflow) · [CI Gates](#ci-gates) · [Workspace Layout](#harbor-workspace-layout) · [Cheat Sheet](#command-cheat-sheet) · [Deep Dive](#deep-dive)
 
 </div>
 
