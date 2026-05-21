@@ -1340,8 +1340,9 @@ accessing external network when risk is unclear
 Default deny:
 
 ```text
-reading .env secrets
+printing .env secrets
 printing secrets / tokens / passwords
+exfiltrating .env contents to logs, reports, external services, or LLMs
 deleting user data
 deleting important repository files without explicit request
 auto-relaxing AI tool permissions
@@ -1360,6 +1361,7 @@ list files before deletion
 show diff before writing
 backup before rewrite
 rollback plan
+read .env only for local non-display automation
 modify .env.example instead of .env
 create migration draft instead of applying migration
 run tests before accepting baseline

@@ -623,12 +623,17 @@ Ask before:
 Default deny:
 
 ```text
-- reading or printing secrets
+- printing or exfiltrating secrets
 - deleting user data without explicit request
 - relaxing safety policy silently
 - generating allow-all permission configs
 - fabricating command execution results
 ```
+
+`.env` / `.env.*` may be read locally when a task genuinely requires
+non-display automation, but their contents must never be printed to the
+terminal, persisted into logs or reports, or forwarded to external services
+or LLM prompts.
 
 PowerShell safety:
 

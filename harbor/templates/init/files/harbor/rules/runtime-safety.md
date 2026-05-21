@@ -215,8 +215,9 @@ Use `DENY` when an operation is unsafe, secret-exposing, clearly outside the use
 Default deny:
 
 ```text
-reading .env secrets
+printing .env secrets
 printing secrets / tokens / passwords
+exfiltrating .env contents to logs, reports, external services, or LLMs
 exfiltrating credentials
 deleting user data without explicit request
 deleting important repository files without explicit request
@@ -349,9 +350,11 @@ Recommended default policy:
 
 ```yaml
 protected_paths:
-  deny_read:
+  allow_read:
     - ".env"
     - ".env.*"
+
+  deny_read:
     - "secrets/**"
 
   deny_write:
@@ -378,6 +381,10 @@ protected_paths:
 Meaning:
 
 ```text
+allow_read:
+  Local agent may read for non-display automation only.
+  Never print, echo, serialize, or forward values to logs, external services, or LLMs.
+
 deny_read:
   Do not read or print file contents by default.
 
@@ -526,11 +533,13 @@ Remove-Item .\target -Recurse -WhatIf
 
 ### 13.2 Secrets and Environment Files
 
-Do not read or print secrets.
+Do not print or exfiltrate secrets.
 
 Prefer:
 
 ```text
+read .env only when the task requires local non-display automation
+prefer targeted variable access or presence checks over full-file dumps
 modify .env.example
 describe required environment variable names without values
 ask user to update real .env manually

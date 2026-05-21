@@ -339,8 +339,9 @@ Use `DENY` when the operation is unsafe, secret-exposing, clearly outside the us
 Default deny:
 
 ```text id="l9dbhw"
-reading .env secrets
+printing .env secrets
 printing secrets / tokens / passwords
+exfiltrating .env contents to logs, reports, external services, or LLMs
 exfiltrating credentials
 deleting user data without explicit request
 deleting important repository files without explicit request
@@ -468,9 +469,11 @@ If unavailable, use this default policy:
 
 ```yaml id="03hpvi"
 protected_paths:
-  deny_read:
+  allow_read:
     - ".env"
     - ".env.*"
+
+  deny_read:
     - "secrets/**"
 
   deny_write:
@@ -497,6 +500,8 @@ protected_paths:
 Rules:
 
 ```text id="hyxoub"
+allow_read means local agent may read for non-display automation only.
+allow_read values must never be printed, echoed, serialized, or forwarded to logs, reports, external services, or LLMs.
 deny_read means do not read or print file contents by default.
 deny_write means do not write by default.
 ask_write means ask for explicit user confirmation before writing.
@@ -602,12 +607,14 @@ delete only after confirmation
 Use:
 
 ```text id="0tjyyp"
+read .env only when the task requires local non-display automation
+prefer targeted variable access or presence checks over full-file dumps
 modify .env.example
 describe variable names without values
 ask user to update real .env manually
 ```
 
-Do not read or print secrets.
+Do not print or exfiltrate secrets.
 
 ### 12.3 Database Migrations
 

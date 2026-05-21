@@ -3,6 +3,12 @@ runtime:
   default_network: ask
 
 protected_paths:
+  # Local agents may read env files only for non-display automation.
+  # Never print, echo, serialize, or forward their contents to terminal output,
+  # logs, reports, external services, or LLM prompts.
+  allow_read:
+    - ".env"
+    - ".env.*"
   deny_write:
     - ".env"
     - ".env.*"

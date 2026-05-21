@@ -826,13 +826,17 @@ publishing releases or tags
 Default deny:
 
 ```text
-reading or printing secrets
+printing or exfiltrating secrets
 exfiltrating credentials
 auto-relaxing tool permissions
 bypassing tests while claiming completion
 fabricating command execution results
 running destructive commands without confirmation
 ```
+
+Local `.env` / `.env.*` reads may be allowed when a task genuinely requires
+non-display automation, but agents must never print, echo, log, or forward
+those contents to external services or LLM prompts.
 
 Use safer alternatives when possible:
 
