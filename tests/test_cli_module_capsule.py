@@ -91,8 +91,11 @@ def test_module_seal_write_creates_three_files(tmp_path: Path, monkeypatch):
     assert checklist.startswith("---\n")
     assert playbook.startswith("---\n")
     assert "# Module Card: harbor/core" in card
+    assert "## High-Risk Boundaries" in card
     assert "## Contract Checks" in checklist
+    assert "## Module-Specific Focus" in checklist
     assert "## First Files to Inspect" in playbook
+    assert "harbor/core/__init__.py" not in playbook
     assert not (tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core" / "module-card.md").exists()
 
 

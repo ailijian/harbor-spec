@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-22T07:09:11Z"
+generated_at: "2026-05-22T08:23:42Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 41
@@ -50,11 +50,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:8954d1653f562eed6d6822b8871e12e5f49643fb3be0f75fd47d41485945b0a0"
-contract_fingerprint: "sha256:39e9a53affb470a92199b35dd5357c05d7a2fee8847b6c37a721a8e399eb048f"
+source_fingerprint: "sha256:342aa68a5eca337025c1634a62e2c9e2a504be82704c34afe18e2b3c4e2b1502"
+contract_fingerprint: "sha256:b11f571b0b4b3f3d9d6ebdaee2c6cdacb6140c1067004fc9f81096a7d3d8157b"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "f7aed6e70b7a784c8fa5fb6ff7e6c8591a9db16f2cd60b78dfc923acab9606e4"
-fingerprint: "f7aed6e70b7a784c8fa5fb6ff7e6c8591a9db16f2cd60b78dfc923acab9606e4"
+view_fingerprint: "49317c18d1793fe7cd4be4f7a935e0222e83ca750536342ec35ca498cbb96e2b"
+fingerprint: "49317c18d1793fe7cd4be4f7a935e0222e83ca750536342ec35ca498cbb96e2b"
 ---
 
 # Module Card: harbor/core
@@ -64,15 +64,38 @@ fingerprint: "f7aed6e70b7a784c8fa5fb6ff7e6c8591a9db16f2cd60b78dfc923acab9606e4"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Coordinates Harbor core workflows for generated context, stale checks, doctor checks, and verification.
+- Owns workspace/path safety, file-write boundaries, and readonly index driven views.
+- Hosts contract, DDT, CI, diary, baseline, and change-window related core logic.
 
-```text
-harbor/core
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- JSON output and machine-readable CLI payload stability.
+- Workspace path normalization, file write targets, and generated context safety.
+- stale / doctor / verify-generated behavior drift across local and CI environments.
+- Diary, change-window, and baseline logic that can mislead release or governance flows.
 
-## Key Files
+## Common Change Entry Points
+
+- harbor/core/doctor.py (workflow file, indexed contracts)
+- harbor/core/generated_verify.py (workflow file, indexed contracts)
+- harbor/core/l2.py (workflow file, indexed contracts)
+
+## Best Files To Inspect First
+
+- harbor/core/doctor.py (workflow file, indexed contracts)
+- harbor/core/generated_verify.py (workflow file, indexed contracts)
+- harbor/core/l2.py (workflow file, indexed contracts)
+- harbor/core/module_capsule.py (workflow file, indexed contracts)
+- harbor/core/project_structure.py (workflow file, indexed contracts)
+
+## Relevant Tests
+
+- tests/test_change_window_snapshot.py (file-name match, imports target symbols)
+- tests/test_cli_finish_sync_context.py (file-name match, imports target symbols)
+- tests/test_module_capsule.py (file-name match, imports target symbols)
+
+## Detailed Key Files
 
 ```text
 harbor/core/__init__.py
@@ -118,7 +141,7 @@ harbor/core/workspace_inspect.py
 harbor/core/workspace_migrate.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -493,19 +516,26 @@ harbor/core/workspace_migrate.py
 | harbor.core.l2.L2Generator._ensure_within_root | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_index | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_meta | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._normalize_meta_key | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._read_meta_file | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._resolve_export_readme_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._resolve_meta_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._safe_module_subpath | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._sanitize_meta_entries | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._save_meta | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.canonical_readme_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.write | harbor/core/l2.py | public | strict |
+| harbor.core.l2._collect_module_dependency_summary | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._extract_import_tokens | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._looks_like_windows_absolute_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._repo_relative_index_path | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._resolve_import_token_to_module | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._safe_read_text | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._strictness_rank | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._to_repo_relative | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.collect_all_indexed_modules | harbor/core/l2.py | public | strict |
 | harbor.core.l2.collect_modules_from_paths | harbor/core/l2.py | unknown | standard |
@@ -592,12 +622,23 @@ harbor/core/workspace_migrate.py
 | harbor.core.log_draft.write_last_log_marker | harbor/core/log_draft.py | public | strict |
 | harbor.core.log_draft.write_latest_diary_draft_cache | harbor/core/log_draft.py | public | strict |
 | harbor.core.module_capsule._belongs_to_module | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._contracts_by_file | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._ensure_within_root | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._extract_import_tokens | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._format_bullets | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._keyword_tokens | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._load_index | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._module_profile | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._module_specific_checklist_lines | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._normalize_rel_path | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._rank_debug_files | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._rank_tests | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._resolve_module_target_dir | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._safe_module_subpath | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._safe_read_text | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._score_debug_file | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._score_test_candidate | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._sort_unique | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._stable_contract_rows | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._strictness_rank | harbor/core/module_capsule.py | unknown | standard |
@@ -642,6 +683,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.project_structure._belongs_to_module | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._build_transient_index_from_files | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._capsule_exists | harbor/core/project_structure.py | unknown | standard |
+| harbor.core.project_structure._capsule_export_exists | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._collect_fallback_files | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._extract_toml_string_block | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._infer_area | harbor/core/project_structure.py | unknown | standard |
@@ -785,97 +827,6 @@ harbor/core/workspace_migrate.py
 | harbor.core.workspace_migrate.format_workspace_migrate_report | harbor/core/workspace_migrate.py | unknown | standard |
 | harbor.core.workspace_migrate.sanitize_text | harbor/core/workspace_migrate.py | unknown | standard |
 | harbor.core.workspace_migrate.workspace_migrate_report_to_dict | harbor/core/workspace_migrate.py | unknown | standard |
-
-## Tests
-
-```text
-tests/core/test_index_sync_sqlite.py
-tests/core/test_storage_migration.py
-tests/test_audit.py
-tests/test_baseline_artifact.py
-tests/test_change_window_snapshot.py
-tests/test_changed_scope.py
-tests/test_checkpoint_ci.py
-tests/test_checkpoint_ci_baseline_artifact.py
-tests/test_checkpoint_ci_guidance.py
-tests/test_ci_mode.py
-tests/test_ci_workflow.py
-tests/test_cli_doctor.py
-tests/test_cli_finish_sync_context.py
-tests/test_cli_init_output.py
-tests/test_cli_module_capsule.py
-tests/test_cli_module_capsule_batch.py
-tests/test_cli_module_capsule_stale.py
-tests/test_cli_module_skill.py
-tests/test_cli_project_structure.py
-tests/test_cli_stale.py
-tests/test_cli_workspace_inspect.py
-tests/test_cli_workspace_migrate.py
-tests/test_context_integrity.py
-tests/test_contract_impact.py
-tests/test_contract_presence.py
-tests/test_ddt_validate.py
-tests/test_ddt_version_baseline.py
-tests/test_decorator_engine.py
-tests/test_diary_workspace_paths.py
-tests/test_doctor.py
-tests/test_drafting.py
-tests/test_drafting_json_parse.py
-tests/test_generated_verify.py
-tests/test_index_builder.py
-tests/test_index_builder_bad_syntax.py
-tests/test_index_builder_registry_integration.py
-tests/test_index_progress.py
-tests/test_init_detector.py
-tests/test_init_governance.py
-tests/test_init_llm_env.py
-tests/test_init_typescript_guidance.py
-tests/test_init_wizard.py
-tests/test_initializer.py
-tests/test_l2_paths.py
-tests/test_log_draft.py
-tests/test_log_draft_cli.py
-tests/test_module_capsule.py
-tests/test_module_capsule_stale.py
-tests/test_module_skill.py
-tests/test_performance_baseline.py
-tests/test_project_structure.py
-tests/test_python_audit_regression.py
-tests/test_python_ddt_regression.py
-tests/test_repair_guidance.py
-tests/test_semantic_audit_contract_gap.py
-tests/test_semantic_audit_preview.py
-tests/test_stale.py
-tests/test_sync_engine.py
-tests/test_sync_engine_registry_integration.py
-tests/test_typescript_checkpoint_ci.py
-tests/test_typescript_contract_presence.py
-tests/test_typescript_ddt_preview.py
-tests/test_utils_format.py
-tests/test_verification_foundation.py
-tests/test_workspace_gitignore_policy.py
-tests/test_workspace_i18n.py
-tests/test_workspace_inspect.py
-tests/test_workspace_migrate.py
-tests/test_workspace_paths.py
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-harbor/core/__init__.py
-harbor/core/advice_config.py
-```
-
 ## Related Views
 
 ```text

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/utils"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:44Z"
 generation_command: "harbor module seal harbor/utils --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -15,8 +15,8 @@ source_paths:
 source_fingerprint: "sha256:c9f9e2225a3519d07a8b60e11edd6d6f663db4eb0835f6f97487b1ff64d37729"
 contract_fingerprint: "sha256:885d2ce9187f1f00625f908557d61bb1becce82dd1922e18e33a7a9b2420383c"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "beea82cf588f8dcca7e4713158e59a372fb8c445dd59ca84dbb16496d81e810e"
-fingerprint: "beea82cf588f8dcca7e4713158e59a372fb8c445dd59ca84dbb16496d81e810e"
+view_fingerprint: "0e46c5983036d23b269019016e6e9204e186fb82c90380b7a9056872942239c9"
+fingerprint: "0e46c5983036d23b269019016e6e9204e186fb82c90380b7a9056872942239c9"
 ---
 
 # Module Card: harbor/utils
@@ -26,15 +26,32 @@ fingerprint: "beea82cf588f8dcca7e4713158e59a372fb8c445dd59ca84dbb16496d81e810e"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Covers code and indexed contracts under `harbor/utils`.
+- Acts as a generated maintenance view entrypoint for focused code changes.
 
-```text
-harbor/utils
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- Public behavior, schema, or file-write changes may require synchronized contract/test updates.
 
-## Key Files
+## Common Change Entry Points
+
+- harbor/utils/formatting.py (indexed contracts, strict target)
+- harbor/utils/i18n.py (indexed contracts, covered by matching tests)
+- harbor/utils/__init__.py (package marker only)
+
+## Best Files To Inspect First
+
+- harbor/utils/formatting.py (indexed contracts, strict target)
+- harbor/utils/i18n.py (indexed contracts, covered by matching tests)
+- harbor/utils/__init__.py (package marker only)
+
+## Relevant Tests
+
+- tests/test_utils_format.py (module match, imports target symbols)
+- tests/test_cli_i18n_env.py (file-name match, imports target symbols)
+- tests/test_cli_i18n.py (file-name match, imports target symbols)
+
+## Detailed Key Files
 
 ```text
 harbor/utils/__init__.py
@@ -42,39 +59,13 @@ harbor/utils/formatting.py
 harbor/utils/i18n.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
 | harbor.utils.formatting.format_size | harbor/utils/formatting.py | public | strict |
 | harbor.utils.i18n.get_lang | harbor/utils/i18n.py | public | standard |
 | harbor.utils.i18n.t | harbor/utils/i18n.py | public | standard |
-
-## Tests
-
-```text
-tests/test_cli_i18n.py
-tests/test_cli_i18n_env.py
-tests/test_utils_format.py
-tests/test_workspace_i18n.py
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-harbor/utils/__init__.py
-harbor/utils/formatting.py
-```
-
 ## Related Views
 
 ```text

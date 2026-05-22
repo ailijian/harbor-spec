@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "harbor/core"
-generated_at: "2026-05-22T07:09:11Z"
+generated_at: "2026-05-22T08:23:42Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 41
@@ -50,8 +50,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:8954d1653f562eed6d6822b8871e12e5f49643fb3be0f75fd47d41485945b0a0"
-contract_fingerprint: "sha256:39e9a53affb470a92199b35dd5357c05d7a2fee8847b6c37a721a8e399eb048f"
+source_fingerprint: "sha256:342aa68a5eca337025c1634a62e2c9e2a504be82704c34afe18e2b3c4e2b1502"
+contract_fingerprint: "sha256:b11f571b0b4b3f3d9d6ebdaee2c6cdacb6140c1067004fc9f81096a7d3d8157b"
 generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2d5a103de17b5441"
 ---
 
@@ -62,18 +62,25 @@ generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2
 
 ## First Files to Inspect
 
-```text
-harbor/core/__init__.py
-harbor/core/advice_config.py
-```
+- harbor/core/doctor.py (workflow file, indexed contracts)
+- harbor/core/generated_verify.py (workflow file, indexed contracts)
+- harbor/core/l2.py (workflow file, indexed contracts)
 
 ## Minimal Checks
 
 Run targeted tests first if available.
 
 ```powershell
-pytest tests/core/test_index_sync_sqlite.py
+pytest tests/test_change_window_snapshot.py
+pytest tests/test_cli_finish_sync_context.py
+pytest tests/test_module_capsule.py
 ```
+
+## Why These Tests
+
+- tests/test_change_window_snapshot.py (file-name match, imports target symbols)
+- tests/test_cli_finish_sync_context.py (file-name match, imports target symbols)
+- tests/test_module_capsule.py (file-name match, imports target symbols)
 
 ## Common Debug Questions
 

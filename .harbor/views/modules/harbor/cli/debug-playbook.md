@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "harbor/cli"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:42Z"
 generation_command: "harbor module seal harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -23,18 +23,24 @@ generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2
 
 ## First Files to Inspect
 
-```text
-harbor/cli/__init__.py
-harbor/cli/main.py
-```
+- harbor/cli/main.py (entrypoint, indexed contracts)
+- harbor/cli/__init__.py (package marker only)
 
 ## Minimal Checks
 
 Run targeted tests first if available.
 
 ```powershell
-pytest tests/test_accept_cli.py
+pytest tests/test_cli_finish_sync_context.py
+pytest tests/test_cli_doctor.py
+pytest tests/test_cli_i18n_env.py
 ```
+
+## Why These Tests
+
+- tests/test_cli_finish_sync_context.py (module match, imports target symbols)
+- tests/test_cli_doctor.py (module match, imports target symbols)
+- tests/test_cli_i18n_env.py (module match, imports target symbols)
 
 ## Common Debug Questions
 

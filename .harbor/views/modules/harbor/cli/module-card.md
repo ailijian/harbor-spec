@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/cli"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:42Z"
 generation_command: "harbor module seal harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -14,8 +14,8 @@ source_paths:
 source_fingerprint: "sha256:d4f8bce0ebf11073ba3367b7075474719195ea79b09dcbd17d40ea3734181db1"
 contract_fingerprint: "sha256:f27117754789dd8cb2dab7914023c102c3bb4cdcd7d804568c870aec2f951b82"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "9075296289eec76b4e42f621b158781c79050de5c3e12d3ce4c8bbc4feb3508b"
-fingerprint: "9075296289eec76b4e42f621b158781c79050de5c3e12d3ce4c8bbc4feb3508b"
+view_fingerprint: "6cf4227ecbeea144c301c55e6b00c8c4a2ab59867d50fe8c1db6d95e98be78ab"
+fingerprint: "6cf4227ecbeea144c301c55e6b00c8c4a2ab59867d50fe8c1db6d95e98be78ab"
 ---
 
 # Module Card: harbor/cli
@@ -25,22 +25,38 @@ fingerprint: "9075296289eec76b4e42f621b158781c79050de5c3e12d3ce4c8bbc4feb3508b"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Defines Harbor CLI entrypoints, command routing, and user-visible workflow orchestration.
+- Bridges core behaviors into stable flags, stdout/stderr, and exit behavior.
 
-```text
-harbor/cli
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- CLI args, exit behavior, and stdout/stderr contract drift.
+- Windows/i18n text output and `--format json` compatibility.
 
-## Key Files
+## Common Change Entry Points
+
+- harbor/cli/main.py (entrypoint, indexed contracts)
+- harbor/cli/__init__.py (package marker only)
+
+## Best Files To Inspect First
+
+- harbor/cli/main.py (entrypoint, indexed contracts)
+- harbor/cli/__init__.py (package marker only)
+
+## Relevant Tests
+
+- tests/test_cli_finish_sync_context.py (module match, imports target symbols)
+- tests/test_cli_doctor.py (module match, imports target symbols)
+- tests/test_cli_i18n_env.py (module match, imports target symbols)
+
+## Detailed Key Files
 
 ```text
 harbor/cli/__init__.py
 harbor/cli/main.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -56,51 +72,6 @@ harbor/cli/main.py
 | harbor.cli.main._resolve_windows_redirected_stdio_encoding | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._resolve_windows_stdio_target | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main.main | harbor/cli/main.py | public | strict |
-
-## Tests
-
-```text
-tests/test_accept_cli.py
-tests/test_cli_config.py
-tests/test_cli_decorate.py
-tests/test_cli_docs_modes.py
-tests/test_cli_doctor.py
-tests/test_cli_finish_sync_context.py
-tests/test_cli_help_and_ux.py
-tests/test_cli_i18n.py
-tests/test_cli_i18n_env.py
-tests/test_cli_init_output.py
-tests/test_cli_json_output.py
-tests/test_cli_module_capsule.py
-tests/test_cli_module_capsule_batch.py
-tests/test_cli_module_capsule_stale.py
-tests/test_cli_module_skill.py
-tests/test_cli_progress.py
-tests/test_cli_project_structure.py
-tests/test_cli_stale.py
-tests/test_cli_v2.py
-tests/test_cli_verify_generated.py
-tests/test_cli_workspace_inspect.py
-tests/test_cli_workspace_migrate.py
-tests/test_log_draft_cli.py
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-harbor/cli/__init__.py
-harbor/cli/main.py
-```
-
 ## Related Views
 
 ```text

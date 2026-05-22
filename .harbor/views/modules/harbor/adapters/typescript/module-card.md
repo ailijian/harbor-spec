@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/adapters/typescript"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:42Z"
 generation_command: "harbor module seal harbor/adapters/typescript --write"
 stale_policy: "advisory"
 source_path_count: 8
@@ -20,8 +20,8 @@ source_paths:
 source_fingerprint: "sha256:91cfd04c76c47b37c15481c1675c814d85cf52cd999d2c18cfec01c146b02e64"
 contract_fingerprint: "sha256:936f7c64785da71e89c4de5acbd3e0fa0e2012fd50a2874e8d7a97a1535cb420"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "86aa6827e38fbace407d5e5d208597bb4f7442e99abc87da1fef8af5fb1f9918"
-fingerprint: "86aa6827e38fbace407d5e5d208597bb4f7442e99abc87da1fef8af5fb1f9918"
+view_fingerprint: "8179feff9639db1f5aad918ecf25ece2c9fd121f3438fa13af73f8b5f72cc10f"
+fingerprint: "8179feff9639db1f5aad918ecf25ece2c9fd121f3438fa13af73f8b5f72cc10f"
 ---
 
 # Module Card: harbor/adapters/typescript
@@ -31,15 +31,35 @@ fingerprint: "86aa6827e38fbace407d5e5d208597bb4f7442e99abc87da1fef8af5fb1f9918"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Implements TypeScript public-boundary, contract-source, and preview/advisory logic.
+- Keeps TypeScript governance additive and non-blocking where v1.4.x requires preview-only behavior.
 
-```text
-harbor/adapters/typescript
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- Preview/advisory semantics accidentally becoming blocking behavior.
+- Incorrect JSDoc/TSDoc contract expectations or public-boundary explainability drift.
 
-## Key Files
+## Common Change Entry Points
+
+- harbor/adapters/typescript/public_boundary.py (indexed contracts, strict target)
+- harbor/adapters/typescript/adapter.py (indexed contracts, covered by matching tests)
+- harbor/adapters/typescript/resolution.py (indexed contracts, covered by matching tests)
+
+## Best Files To Inspect First
+
+- harbor/adapters/typescript/public_boundary.py (indexed contracts, strict target)
+- harbor/adapters/typescript/adapter.py (indexed contracts, covered by matching tests)
+- harbor/adapters/typescript/resolution.py (indexed contracts, covered by matching tests)
+- harbor/adapters/typescript/hashing.py (indexed contracts)
+- harbor/adapters/typescript/jsdoc.py (indexed contracts)
+
+## Relevant Tests
+
+- tests/test_typescript_adapter_mvp.py (module match, file-name match)
+- tests/test_typescript_boundary_resolution_paths.py (module match, file-name match)
+- tests/test_typescript_public_boundary_evidence.py (module match, file-name match)
+
+## Detailed Key Files
 
 ```text
 harbor/adapters/typescript/__init__.py
@@ -52,7 +72,7 @@ harbor/adapters/typescript/resolution.py
 harbor/adapters/typescript/symbols.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -140,45 +160,6 @@ harbor/adapters/typescript/symbols.py
 | harbor.adapters.typescript.resolution._split_named_specifiers | harbor/adapters/typescript/resolution.py | unknown | standard |
 | harbor.adapters.typescript.resolution._to_lineno | harbor/adapters/typescript/resolution.py | unknown | standard |
 | harbor.adapters.typescript.resolution._tsconfig_path_candidates | harbor/adapters/typescript/resolution.py | unknown | standard |
-
-## Tests
-
-```text
-tests/test_adapter_basic.py
-tests/test_adapter_registry.py
-tests/test_init_typescript_guidance.py
-tests/test_python_adapter_compat.py
-tests/test_typescript_adapter_mvp.py
-tests/test_typescript_boundary_resolution_paths.py
-tests/test_typescript_checkpoint_ci.py
-tests/test_typescript_contract_presence.py
-tests/test_typescript_ddt_preview.py
-tests/test_typescript_next_guidance.py
-tests/test_typescript_not_supported_boundaries.py
-tests/test_typescript_package_exports.py
-tests/test_typescript_preview_productization_assets.py
-tests/test_typescript_public_boundary_evidence.py
-tests/test_typescript_public_boundary_next.py
-tests/test_typescript_public_boundary_presets.py
-tests/test_typescript_re_export_resolver.py
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-harbor/adapters/typescript/__init__.py
-harbor/adapters/typescript/adapter.py
-```
-
 ## Related Views
 
 ```text

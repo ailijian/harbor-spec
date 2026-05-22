@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "tests/fixtures_sqlite"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:46Z"
 generation_command: "harbor module seal tests/fixtures_sqlite --write"
 stale_policy: "advisory"
 source_path_count: 1
@@ -22,17 +22,23 @@ generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2
 
 ## First Files to Inspect
 
-```text
-tests/fixtures_sqlite/sample.py
-```
+- tests/fixtures_sqlite/sample.py (indexed contracts, strict target)
 
 ## Minimal Checks
 
 Run targeted tests first if available.
 
-```text
-No module-specific test command detected. Use project-level test commands from Project Rules.
+```powershell
+pytest tests/test_change_window_snapshot.py
+pytest tests/test_checkpoint_ci.py
+pytest tests/test_checkpoint_ci_baseline_artifact.py
 ```
+
+## Why These Tests
+
+- tests/test_change_window_snapshot.py (mentions target workflow, ddt-aware)
+- tests/test_checkpoint_ci.py (mentions target workflow, ddt-aware)
+- tests/test_checkpoint_ci_baseline_artifact.py (mentions target workflow, ddt-aware)
 
 ## Common Debug Questions
 

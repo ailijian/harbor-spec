@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "tests/fixtures_sqlite"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:46Z"
 generation_command: "harbor module seal tests/fixtures_sqlite --write"
 stale_policy: "advisory"
 source_path_count: 1
@@ -13,8 +13,8 @@ source_paths:
 source_fingerprint: "sha256:4366e71d00d3548af0c9334a2541193888a12981225580bbd4470ac2065d9fc2"
 contract_fingerprint: "sha256:6297e41a589efd86eb34a56f81c76bcaf2266209e98a8a393bf6ce58f01f9f51"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "99b9f111854aeedd60431bda246e8fcd249ddf2e47c1b326d62b13135fe3acbf"
-fingerprint: "99b9f111854aeedd60431bda246e8fcd249ddf2e47c1b326d62b13135fe3acbf"
+view_fingerprint: "8cf214f32856f1f23766ee8ce88385ac91148ef8c2f5d3813c08c09475e14c71"
+fingerprint: "8cf214f32856f1f23766ee8ce88385ac91148ef8c2f5d3813c08c09475e14c71"
 ---
 
 # Module Card: tests/fixtures_sqlite
@@ -24,47 +24,38 @@ fingerprint: "99b9f111854aeedd60431bda246e8fcd249ddf2e47c1b326d62b13135fe3acbf"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Provides regression, contract, CLI, and generated-context coverage for Harbor behavior.
 
-```text
-tests/fixtures_sqlite
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- Weakening assertions or shifting tests away from contract intent.
+- DDT/version binding drift and loss of coverage for strict targets.
 
-## Key Files
+## Common Change Entry Points
+
+- tests/fixtures_sqlite/sample.py (indexed contracts, strict target)
+
+## Best Files To Inspect First
+
+- tests/fixtures_sqlite/sample.py (indexed contracts, strict target)
+
+## Relevant Tests
+
+- tests/test_change_window_snapshot.py (mentions target workflow, ddt-aware)
+- tests/test_checkpoint_ci.py (mentions target workflow, ddt-aware)
+- tests/test_checkpoint_ci_baseline_artifact.py (mentions target workflow, ddt-aware)
+
+## Detailed Key Files
 
 ```text
 tests/fixtures_sqlite/sample.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
 | tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict |
-
-## Tests
-
-```text
-No test files detected by Harbor.
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-tests/fixtures_sqlite/sample.py
-```
-
 ## Related Views
 
 ```text

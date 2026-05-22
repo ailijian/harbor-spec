@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/adapters/python"
-generated_at: "2026-05-22T07:09:11Z"
+generated_at: "2026-05-22T08:03:41Z"
 generation_command: "harbor module seal harbor/adapters/python --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -15,8 +15,8 @@ source_paths:
 source_fingerprint: "sha256:bd7cc0652e5fa35029e33fbae3acf5d6b824ad752c4747ed0754e41e2a26b962"
 contract_fingerprint: "sha256:4776bd421c93a3c9be1aa666ef36a76fa41db4698842de438752c34c21873a33"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "29f5b8bdc2511ccaee46ee9ec1e99da0852c3fa93fecb6c9614bf416727d510f"
-fingerprint: "29f5b8bdc2511ccaee46ee9ec1e99da0852c3fa93fecb6c9614bf416727d510f"
+view_fingerprint: "097e4a409d44780441617fba463b3b15f55a48f4504d756226ee27f0749ab0e0"
+fingerprint: "097e4a409d44780441617fba463b3b15f55a48f4504d756226ee27f0749ab0e0"
 ---
 
 # Module Card: harbor/adapters/python
@@ -26,15 +26,33 @@ fingerprint: "29f5b8bdc2511ccaee46ee9ec1e99da0852c3fa93fecb6c9614bf416727d510f"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Parses and normalizes Python contract-bearing source for Harbor governance workflows.
+- Connects Python-specific syntax, compatibility, and export logic to the readonly index.
 
-```text
-harbor/adapters/python
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- Parser/contract extraction regressions that silently reduce governance coverage.
+- Cross-version compatibility and exported evidence drift.
 
-## Key Files
+## Common Change Entry Points
+
+- harbor/adapters/python/parser.py (indexed contracts, strict target)
+- harbor/adapters/python/compat.py (indexed contracts, covered by matching tests)
+- harbor/adapters/python/__init__.py (package marker only)
+
+## Best Files To Inspect First
+
+- harbor/adapters/python/parser.py (indexed contracts, strict target)
+- harbor/adapters/python/compat.py (indexed contracts, covered by matching tests)
+- harbor/adapters/python/__init__.py (package marker only)
+
+## Relevant Tests
+
+- tests/test_python_adapter_compat.py (module match, file-name match)
+- tests/test_checkpoint_json_additive_compat.py (file-name match, imports target symbols)
+- tests/test_python_audit_regression.py (module match, imports target symbols)
+
+## Detailed Key Files
 
 ```text
 harbor/adapters/python/__init__.py
@@ -42,7 +60,7 @@ harbor/adapters/python/compat.py
 harbor/adapters/python/parser.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -56,33 +74,6 @@ harbor/adapters/python/parser.py
 | harbor.adapters.python.parser.PythonAdapter._parse_tags | harbor/adapters/python/parser.py | internal | standard |
 | harbor.adapters.python.parser.PythonAdapter._signature_hash | harbor/adapters/python/parser.py | internal | standard |
 | harbor.adapters.python.parser.PythonAdapter.parse_file | harbor/adapters/python/parser.py | public | strict |
-
-## Tests
-
-```text
-tests/test_checkpoint_json_additive_compat.py
-tests/test_python_adapter_compat.py
-tests/test_python_audit_regression.py
-tests/test_python_contract_source_recognition.py
-tests/test_python_ddt_regression.py
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-harbor/adapters/python/__init__.py
-harbor/adapters/python/compat.py
-```
-
 ## Related Views
 
 ```text

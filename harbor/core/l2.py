@@ -67,6 +67,105 @@ def normalize_indexed_module_candidate(path: str | Path, *, repo_root: Optional[
     return infer_module_from_path(path)
 
 
+def _safe_read_text(path: Path) -> str:
+    try:
+        return path.read_text(encoding="utf-8")
+    except Exception:
+        return ""
+
+
+def _strictness_rank(value: str) -> int:
+    mapping = {"light": 1, "standard": 2, "strict": 3}
+    return mapping.get((value or "standard").lower(), 2)
+
+
+def _extract_import_tokens(source: str) -> List[str]:
+    if not source.strip():
+        return []
+    try:
+        tree = ast.parse(source)
+    except Exception:
+        return []
+    tokens: List[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                tokens.append(str(alias.name or ""))
+        elif isinstance(node, ast.ImportFrom):
+            module = str(node.module or "")
+            if module:
+                tokens.append(module)
+            for alias in node.names:
+                name = str(alias.name or "")
+                if module and name:
+                    tokens.append(f"{module}.{name}")
+                elif name:
+                    tokens.append(name)
+    return tokens
+
+
+def _resolve_import_token_to_module(token: str, *, repo_root: Path) -> str:
+    raw = str(token or "").strip()
+    if not raw:
+        return ""
+    parts = [part for part in raw.split(".") if part]
+    while parts:
+        rel = "/".join(parts)
+        candidate_dir = repo_root / rel
+        candidate_file = repo_root / f"{rel}.py"
+        if candidate_dir.is_dir() or candidate_file.is_file():
+            return rel.strip("/")
+        parts = parts[:-1]
+    return ""
+
+
+def _collect_module_dependency_summary(module_path: str, module_files: List[str], *, repo_root: Path) -> Dict[str, List[str]]:
+    normalized_module = str(module_path or "").replace("\\", "/").strip("/")
+    python_files = [fp for fp in module_files if str(fp).endswith(".py")]
+    outbound: set[str] = set()
+    inbound: set[str] = set()
+
+    for rel in python_files:
+        source = _safe_read_text(repo_root / rel)
+        for token in _extract_import_tokens(source):
+            resolved = _resolve_import_token_to_module(token, repo_root=repo_root)
+            if not resolved or resolved == normalized_module or resolved.startswith(f"{normalized_module}/"):
+                continue
+            outbound.add(resolved)
+
+    scan_roots = ["harbor", "tests"]
+    all_python_files: List[Path] = []
+    for root_name in scan_roots:
+        root_dir = repo_root / root_name
+        if root_dir.exists():
+            all_python_files.extend(sorted(root_dir.rglob("*.py")))
+    module_file_set = {str(fp).replace("\\", "/").strip("/") for fp in python_files}
+    target_prefixes = {normalized_module}
+    target_prefixes.update(module_file_set)
+
+    for abs_path in all_python_files:
+        rel = abs_path.resolve().relative_to(repo_root).as_posix()
+        if rel in module_file_set:
+            continue
+        source = _safe_read_text(abs_path)
+        imports = [_resolve_import_token_to_module(token, repo_root=repo_root) for token in _extract_import_tokens(source)]
+        imports = [token for token in imports if token]
+        if not imports:
+            continue
+        if any(
+            imported == normalized_module
+            or imported.startswith(f"{normalized_module}/")
+            or imported in module_file_set
+            for imported in imports
+        ):
+            inbound.add(infer_module_from_path(rel))
+
+    return {
+        "outbound": sorted(outbound)[:8],
+        "inbound": sorted({item for item in inbound if item})[:8],
+    }
+
+
 def collect_all_indexed_modules(index_path: Optional[Path] = None, *, prefer_fresh_source: bool = False) -> List[str]:
     """Collect normalized module paths from readonly index records.
 
@@ -172,6 +271,7 @@ class L2Generator:
         """
         idx = self._load_index(self.index_path)
         items: List[Dict[str, Any]] = []
+        module_files: List[str] = []
         cwd = Path.cwd().resolve()
         module_norm = module_path.replace("\\", "/")
         for fp, meta in idx.get("files", {}).items():
@@ -182,9 +282,11 @@ class L2Generator:
                 rel = Path(fp).as_posix()
             if f"{module_norm}/" not in rel.replace("\\", "/"):
                 continue
+            module_files.append(rel.replace("\\", "/"))
             for it in meta.get("items", []):
                 it2 = dict(it)
                 it2["_file_path"] = fp
+                it2["_rel_file_path"] = rel.replace("\\", "/")
                 items.append(it2)
         bindings = self.scanner.scan_tests()
         rep = self.validator.validate(bindings)
@@ -229,42 +331,130 @@ class L2Generator:
             first = doc.strip().split("\n", 1)[0].strip()
             return (first[:57] + "...") if len(first) > 60 else first
 
-        pub = [it for it in items if (it.get("scope") or "internal") == "public"]
-        internal = [it for it in items if (it.get("scope") or "internal") != "public"]
-        pub_sorted = sorted(pub, key=item_sort_key)
-        int_sorted = sorted(internal, key=item_sort_key)
+        items_sorted = sorted(items, key=item_sort_key)
+
+        def file_path_for(it: Dict[str, Any]) -> str:
+            return str(it.get("_rel_file_path") or _to_repo_relative(str(it.get("_file_path") or ""), cwd) or "").replace("\\", "/")
+
+        def risk_score(it: Dict[str, Any]) -> Tuple[int, str]:
+            fn = str(it.get("qualified_name") or it.get("id") or "")
+            scope = str(it.get("scope") or "internal")
+            strictness = str(it.get("strictness") or "standard")
+            status = ddt_status(it)
+            file_rel = file_path_for(it)
+            score = 0
+            reasons: List[str] = []
+            if strictness == "strict":
+                score += 40
+                reasons.append("strict")
+            if scope == "public":
+                score += 30
+                reasons.append("public")
+            if status.startswith("❌"):
+                score += 50
+                reasons.append("missing DDT")
+            elif status.startswith("⚠️"):
+                score += 35
+                reasons.append("DDT violation")
+            lowered = f"{fn} {file_rel}".lower()
+            for keyword, weight, reason in (
+                ("write", 20, "file-write path"),
+                ("export", 16, "export path"),
+                ("json", 14, "json/output"),
+                ("to_dict", 16, "json serialization"),
+                ("report_to_dict", 16, "report serialization"),
+                ("main", 12, "entrypoint"),
+                ("doctor", 12, "doctor workflow"),
+                ("stale", 12, "stale workflow"),
+                ("verify", 12, "verification"),
+            ):
+                if keyword in lowered:
+                    score += weight
+                    reasons.append(reason)
+            return score, ", ".join(reasons[:3]) or "indexed target"
+
+        summary_rows = {
+            "Public by contract": sum(1 for it in items_sorted if (it.get("scope") or "internal") == "public"),
+            "Strict targets": sum(1 for it in items_sorted if str(it.get("strictness") or "standard") == "strict"),
+            "Private-named but strict": sum(
+                1 for it in items_sorted if (it.get("scope") or "internal") != "public" and str(it.get("strictness") or "standard") == "strict"
+            ),
+            "Internal indexed": sum(1 for it in items_sorted if (it.get("scope") or "internal") != "public"),
+            "Strict targets missing DDT": sum(
+                1 for it in items_sorted if str(it.get("strictness") or "standard") == "strict" and ddt_status(it).startswith("❌")
+            ),
+            "Targets with DDT warnings": sum(1 for it in items_sorted if ddt_status(it).startswith("⚠️")),
+        }
+        ranked_targets = sorted(
+            [
+                {
+                    "item": it,
+                    "score": risk_score(it)[0],
+                    "reason": risk_score(it)[1],
+                }
+                for it in items_sorted
+            ],
+            key=lambda row: (-row["score"], item_sort_key(row["item"])),
+        )
+        top_targets = ranked_targets[:15]
+        dependencies = _collect_module_dependency_summary(module_norm, sorted(set(module_files)), repo_root=cwd)
 
         lines: List[str] = []
         lines.append(f"# Module: {module_path}")
         lines.append("")
-        lines.append("## Public API")
-        lines.append("| Function | Summary | Strictness | DDT Status |")
-        lines.append("|---|---|---|---|")
-        for it in pub_sorted:
-            fn = it.get("qualified_name", it["id"])
-            sm = summary_for(it)
-            st = it.get("strictness", "standard") or "standard"
-            ds = ddt_status(it)
-            lines.append(f"| {fn} | {sm} | {st} | {ds} |")
+        lines.append("## Public API Summary")
+        lines.append("| Metric | Count |")
+        lines.append("|---|---:|")
+        for label, count in summary_rows.items():
+            lines.append(f"| {label} | {count} |")
         lines.append("")
-        if int_sorted:
-            lines.append("## Internal Details (optional)")
+        lines.append("## High-Risk Targets")
+        if top_targets:
+            lines.append("| Function | File | Scope | Strictness | DDT Status | Why |")
+            lines.append("|---|---|---|---|---|---|")
+            for row in top_targets:
+                it = row["item"]
+                lines.append(
+                    f"| {it.get('qualified_name', it.get('id', ''))} | {file_path_for(it)} | {it.get('scope', 'internal')} | {it.get('strictness', 'standard')} | {ddt_status(it)} | {row['reason']} |"
+                )
+        else:
+            lines.append("```text")
+            lines.append("No indexed contracts found for this module.")
+            lines.append("```")
+        lines.append("")
+        lines.append("## Full Indexed Contracts")
+        if items_sorted:
             lines.append("<details>")
-            lines.append("<summary>Internal functions</summary>")
+            lines.append("<summary>All indexed contracts</summary>")
             lines.append("")
-            lines.append("| Function | Summary | Strictness | DDT Status |")
-            lines.append("|---|---|---|---|")
-            for it in int_sorted:
-                fn = it.get("qualified_name", it["id"])
-                sm = summary_for(it)
-                st = it.get("strictness", "standard") or "standard"
-                ds = ddt_status(it)
-                lines.append(f"| {fn} | {sm} | {st} | {ds} |")
+            lines.append("| Function | File | Scope | Strictness | DDT Status | Summary |")
+            lines.append("|---|---|---|---|---|---|")
+            for it in items_sorted:
+                lines.append(
+                    f"| {it.get('qualified_name', it.get('id', ''))} | {file_path_for(it)} | {it.get('scope', 'internal')} | {it.get('strictness', 'standard')} | {ddt_status(it)} | {summary_for(it)} |"
+                )
             lines.append("")
             lines.append("</details>")
+        else:
+            lines.append("```text")
+            lines.append("No indexed contracts found for this module.")
+            lines.append("```")
         lines.append("")
-        lines.append("## Dependency (MVP)")
-        lines.append("- (TBD) 未来基于 import 简要分析模块依赖。")
+        lines.append("## Dependency Summary")
+        lines.append("")
+        lines.append("**Outbound Dependencies**")
+        if dependencies["outbound"]:
+            for dep in dependencies["outbound"]:
+                lines.append(f"- {dep}")
+        else:
+            lines.append("- None detected from repo-local Python imports.")
+        lines.append("")
+        lines.append("**Inbound Dependents**")
+        if dependencies["inbound"]:
+            for dep in dependencies["inbound"]:
+                lines.append(f"- {dep}")
+        else:
+            lines.append("- None detected from repo-local Python imports.")
         md = "\n".join(lines)
         return md
 
@@ -318,6 +508,7 @@ class L2Generator:
         if not module_norm:
             raise ValueError("Invalid module path: module path cannot be empty.")
 
+        raw_canonical_meta = self._read_meta_file(self.meta_path)
         meta = self._load_meta()
         current_hash = self.compute_meta_hash(md)
         prev_hash = meta.get(module_norm)
@@ -357,7 +548,11 @@ class L2Generator:
             and content_without_generated_at_for_compare(previous)
             == content_without_generated_at_for_compare(canonical_markdown)
         )
-        if prev_hash == current_hash and not force and canonical_matches and export_matches:
+        meta_after_write = dict(meta)
+        meta_after_write[module_norm] = current_hash
+        meta_after_write = self._sanitize_meta_entries(meta_after_write)
+        meta_needs_write = (not self.meta_path.exists()) or (raw_canonical_meta != meta_after_write)
+        if prev_hash == current_hash and not force and canonical_matches and export_matches and not meta_needs_write:
             return None
 
         written_paths: List[Path] = []
@@ -372,8 +567,7 @@ class L2Generator:
                 export_readme.write_text(md, encoding="utf-8")
                 written_paths.append(export_readme)
 
-        meta[module_norm] = current_hash
-        self._save_meta(self.meta_path, meta)
+        self._save_meta(self.meta_path, meta_after_write)
         return written_paths
 
     def compute_meta_hash(self, md: str) -> str:
@@ -421,11 +615,11 @@ class L2Generator:
 
     def _load_meta(self, path: Optional[Path] = None) -> Dict[str, Any]:
         if path is not None:
-            return self._read_meta_file(path)
-        meta = self._read_meta_file(self.meta_path)
+            return self._sanitize_meta_entries(self._read_meta_file(path))
+        meta = self._sanitize_meta_entries(self._read_meta_file(self.meta_path))
         if meta:
             return meta
-        return self._read_meta_file(self.legacy_meta_path)
+        return self._sanitize_meta_entries(self._read_meta_file(self.legacy_meta_path))
 
     def _read_meta_file(self, path: Path) -> Dict[str, Any]:
         if not path.exists():
@@ -436,8 +630,37 @@ class L2Generator:
             return {}
 
     def _save_meta(self, path: Path, meta: Dict[str, Any]) -> None:
+        cleaned = self._sanitize_meta_entries(meta)
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+        path.write_text(json.dumps(cleaned, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def _sanitize_meta_entries(self, meta: Dict[str, Any]) -> Dict[str, Any]:
+        cleaned: Dict[str, Any] = {}
+        for raw_key, value in (meta or {}).items():
+            normalized = self._normalize_meta_key(str(raw_key or ""))
+            if not normalized:
+                continue
+            cleaned[normalized] = value
+        return {key: cleaned[key] for key in sorted(cleaned)}
+
+    def _normalize_meta_key(self, raw_key: str) -> str:
+        text = str(raw_key or "").strip()
+        if not text:
+            return ""
+
+        normalized = text.replace("\\", "/")
+        if looks_like_absolute_path(normalized):
+            rel = _repo_relative_index_path(normalized, repo_root=self.repo_root)
+            if rel is None:
+                return ""
+            return normalize_indexed_module_candidate(rel, repo_root=self.repo_root)
+
+        candidate = normalize_indexed_module_candidate(normalized, repo_root=self.repo_root)
+        if not candidate:
+            return ""
+        if candidate.startswith("../") or candidate.startswith("/"):
+            return ""
+        return candidate
 
     def _resolve_meta_path(self, meta_path: Optional[Path]) -> Path:
         if meta_path is None:

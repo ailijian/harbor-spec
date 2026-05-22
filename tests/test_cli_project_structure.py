@@ -56,6 +56,7 @@ def test_project_structure_preview_runs_and_does_not_write(tmp_path: Path, monke
     assert "## Supporting Areas" in out
     assert "## Module Index" not in out
     assert "| Mode | Harbor index |" in out
+    assert "| Module | Key Files | L2 README | Canonical Capsule | Docs Export | Skill |" in out
     assert "Preview only. Use --write to update .harbor/views/project-structure.md." in out
     assert not (tmp_path / ".harbor" / "views" / "project-structure.md").exists()
     assert not (tmp_path / "docs" / "harbor" / "project-structure.md").exists()

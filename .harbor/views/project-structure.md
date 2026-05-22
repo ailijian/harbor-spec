@@ -2,7 +2,7 @@
 generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "project_structure"
-generated_at: "2026-05-22T07:10:55Z"
+generated_at: "2026-05-22T08:30:02Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
 source_path_count: 176
@@ -128,8 +128,8 @@ source_paths:
   - "tests/test_drafting_json_parse.py"
   - "tests/test_generated_verify.py"
   - "tests/test_gitignore_prune.py"
-source_fingerprint: "sha256:ad148e725a9912bcd024a49007bdeae9852d2fa1274d5360471ec2e2dae94806"
-contract_fingerprint: "sha256:d8017b770a61bcaa0574378a4d530071db85fc5d64a83ea155f0f6c560f381ab"
+source_fingerprint: "sha256:5ecca2628f5940ce7ba24599b8104a457324d0e1e24932eadfdff3063fedff9e"
+contract_fingerprint: "sha256:bdc069a69e7e91f925980bb4b8d7ad982f74e77667d02857b8bb0e31fdc6d708"
 generator_fingerprint: "sha256:7cb91b5679a749a52609ee0fa3a3dd00d7c00ee2ec863c6a6bf002de3cde8266"
 ---
 
@@ -171,22 +171,22 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 | Area | Purpose | Discovered Files | Indexed Contracts |
 |---|---|---:|---:|
 | harbor/cli | CLI command parsing and workflow facade | 2 | 12 |
-| harbor/core | Core Harbor logic | 41 | 663 |
+| harbor/core | Core Harbor logic | 41 | 682 |
 | harbor/utils | Shared utilities | 3 | 3 |
-| tests | Test suite | 112 | 1033 |
+| tests | Test suite | 112 | 1039 |
 | harbor | Derived from indexed files under harbor. | 18 | 112 |
 
 ## Code Modules
 
-| Module | Key Files | L2 README | Module Capsule | Skill |
-|---|---|---|---|---|
-| harbor | harbor/cli/main.py, harbor/core/audit.py, harbor/core/ddt.py, ... (+61 more) | yes | no | no |
-| harbor/adapters | harbor/adapters/base.py, harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, ... (+11 more) | yes | no | no |
-| harbor/adapters/python | harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, harbor/adapters/python/__init__.py | yes | no | no |
-| harbor/adapters/typescript | harbor/adapters/typescript/adapter.py, harbor/adapters/typescript/hashing.py, harbor/adapters/typescript/jsdoc.py, ... (+5 more) | yes | no | no |
-| harbor/cli | harbor/cli/main.py, harbor/cli/__init__.py | yes | no | no |
-| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+38 more) | yes | no | yes |
-| harbor/utils | harbor/utils/formatting.py, harbor/utils/i18n.py, harbor/utils/__init__.py | yes | no | no |
+| Module | Key Files | L2 README | Canonical Capsule | Docs Export | Skill |
+|---|---|---|---|---|---|
+| harbor | harbor/cli/main.py, harbor/core/audit.py, harbor/core/ddt.py, ... (+61 more) | yes | yes | no | no |
+| harbor/adapters | harbor/adapters/base.py, harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, ... (+11 more) | yes | yes | no | no |
+| harbor/adapters/python | harbor/adapters/python/compat.py, harbor/adapters/python/parser.py, harbor/adapters/python/__init__.py | yes | yes | no | no |
+| harbor/adapters/typescript | harbor/adapters/typescript/adapter.py, harbor/adapters/typescript/hashing.py, harbor/adapters/typescript/jsdoc.py, ... (+5 more) | yes | yes | no | no |
+| harbor/cli | harbor/cli/main.py, harbor/cli/__init__.py | yes | yes | no | no |
+| harbor/core | harbor/core/audit.py, harbor/core/ddt.py, harbor/core/doctor.py, ... (+38 more) | yes | yes | no | yes |
+| harbor/utils | harbor/utils/formatting.py, harbor/utils/i18n.py, harbor/utils/__init__.py | yes | yes | no | no |
 
 ## Supporting Areas
 

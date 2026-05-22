@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "review_checklist"
 module: "tests/fixtures_sqlite"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:46Z"
 generation_command: "harbor module seal tests/fixtures_sqlite --write"
 stale_policy: "advisory"
 source_path_count: 1
@@ -49,6 +49,20 @@ Ask before:
 - changing production config
 - modifying auth, permission, billing, or user data handling
 
+## Generated Context Checks
+
+- If behavior or boundaries changed, refresh and re-check generated context instead of editing it manually.
+- Check project-structure, L2 README, and Module Capsule for stale or misleading summaries.
+
+## Diary Need
+
+- If this change affects workflow semantics, generated context shape, or release-relevant behavior, draft a Diary entry.
+
+## Module-Specific Focus
+
+- Check whether assertions were weakened or no longer verify the intended contract.
+- Inspect DDT/version expectations and generated-context assertions for stale assumptions.
+
 ## Semantic Drift Checks
 
 Mark:
@@ -76,6 +90,7 @@ Change Summary:
 Contract Impact:
 Strictness:
 Tests / DDT:
+Generated Context:
 Semantic Drift:
 Runtime Safety:
 Diary Draft:

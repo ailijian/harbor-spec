@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "tests/core"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:45Z"
 generation_command: "harbor module seal tests/core --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -14,8 +14,8 @@ source_paths:
 source_fingerprint: "sha256:5b1b43fea42acddb24983634659bc86ce9c5032ee2ffd08ad1d76316ec9b1da4"
 contract_fingerprint: "sha256:0cce59270907e86271947c46342e0dc21bca9f22b1968883b3d54781530e24d2"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "9a5a0cbcdf26a8fa5382a2116ea2f5856a33977f518788c754983efa5c087e34"
-fingerprint: "9a5a0cbcdf26a8fa5382a2116ea2f5856a33977f518788c754983efa5c087e34"
+view_fingerprint: "898c27bc3f049d66f4c3fbb0a9d372552a5a2354b715f18436bfe3b6f8d3723f"
+fingerprint: "898c27bc3f049d66f4c3fbb0a9d372552a5a2354b715f18436bfe3b6f8d3723f"
 ---
 
 # Module Card: tests/core
@@ -25,52 +25,43 @@ fingerprint: "9a5a0cbcdf26a8fa5382a2116ea2f5856a33977f518788c754983efa5c087e34"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Provides regression, contract, CLI, and generated-context coverage for Harbor behavior.
 
-```text
-tests/core
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- Weakening assertions or shifting tests away from contract intent.
+- DDT/version binding drift and loss of coverage for strict targets.
 
-## Key Files
+## Common Change Entry Points
+
+- tests/core/test_index_sync_sqlite.py (indexed contracts, covered by matching tests)
+- tests/core/test_storage_migration.py (indexed contracts, covered by matching tests)
+
+## Best Files To Inspect First
+
+- tests/core/test_index_sync_sqlite.py (indexed contracts, covered by matching tests)
+- tests/core/test_storage_migration.py (indexed contracts, covered by matching tests)
+
+## Relevant Tests
+
+- tests/core/test_index_sync_sqlite.py (file-name match, imports target symbols)
+- tests/core/test_storage_migration.py (file-name match, imports target symbols)
+- tests/test_change_window_snapshot.py (imports target symbols, mentions target workflow)
+
+## Detailed Key Files
 
 ```text
 tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
 | tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | standard |
 | tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | standard |
 | tests.core.test_storage_migration.test_storage_migration_preserves_additive_typescript_meta | tests/core/test_storage_migration.py | unknown | standard |
-
-## Tests
-
-```text
-tests/core/test_index_sync_sqlite.py
-tests/core/test_storage_migration.py
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-tests/core/test_index_sync_sqlite.py
-tests/core/test_storage_migration.py
-```
-
 ## Related Views
 
 ```text

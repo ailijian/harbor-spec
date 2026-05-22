@@ -105,7 +105,7 @@ def test_collect_project_structure_context_builds_expected_flags_and_counts(tmp_
     (tmp_path / "harbor" / "core" / "README.md").parent.mkdir(parents=True, exist_ok=True)
     (tmp_path / "harbor" / "core" / "README.md").write_text("# core", encoding="utf-8")
 
-    cap = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    cap = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core"
     cap.mkdir(parents=True, exist_ok=True)
     (cap / "module-card.md").write_text("x", encoding="utf-8")
     (cap / "review-checklist.md").write_text("x", encoding="utf-8")
@@ -124,7 +124,8 @@ def test_collect_project_structure_context_builds_expected_flags_and_counts(tmp_
     assert core.indexed_files_count == 6
     assert core.indexed_contracts_count == 5
     assert core.has_l2_readme is True
-    assert core.has_module_capsule is True
+    assert core.has_canonical_module_capsule is True
+    assert core.has_capsule_export is False
     assert core.has_skill is True
     assert len(core.key_files) == 4
     assert core.key_files[-1] == "... (+3 more)"
@@ -135,7 +136,8 @@ def test_collect_project_structure_context_builds_expected_flags_and_counts(tmp_
     assert cli.indexed_files_count == 2
     assert cli.indexed_contracts_count == 1
     assert cli.has_l2_readme is False
-    assert cli.has_module_capsule is False
+    assert cli.has_canonical_module_capsule is False
+    assert cli.has_capsule_export is False
     assert cli.has_skill is False
     assert cli.key_files[0] == "harbor/cli/main.py"
 
@@ -196,6 +198,7 @@ def test_generate_markdown_contains_required_sections_and_is_deterministic(tmp_p
     assert "## AI Context Loading Guidance" in markdown
     assert "## Regeneration" in markdown
     assert "| Mode | Harbor index |" in markdown
+    assert "| Module | Key Files | L2 README | Canonical Capsule | Docs Export | Skill |" in markdown
     assert "3. `.harbor/views/project-structure.md`" in markdown
     assert "3. `docs/harbor/project-structure.md`" not in markdown
     assert "harbor log" not in markdown
@@ -206,6 +209,35 @@ def test_generate_markdown_contains_required_sections_and_is_deterministic(tmp_p
     assert "C:/external/other-project" not in markdown
     assert "outside.py" not in markdown
     assert re.search(r"\d{4}-\d{2}-\d{2}", markdown) is None
+
+
+def test_collect_project_structure_context_distinguishes_canonical_capsule_and_docs_export(tmp_path: Path):
+    idx = _write_index(tmp_path)
+    canonical = tmp_path / ".harbor" / "views" / "modules" / "harbor" / "core"
+    canonical.mkdir(parents=True, exist_ok=True)
+    (canonical / "module-card.md").write_text("canonical\n", encoding="utf-8")
+    (canonical / "review-checklist.md").write_text("canonical\n", encoding="utf-8")
+    (canonical / "debug-playbook.md").write_text("canonical\n", encoding="utf-8")
+
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text(
+        "views:\n  export:\n    docs:\n      enabled: true\n      root: docs/harbor\n",
+        encoding="utf-8",
+    )
+
+    exported = tmp_path / "docs" / "harbor" / "modules" / "harbor" / "core"
+    exported.mkdir(parents=True, exist_ok=True)
+    (exported / "module-card.md").write_text("export\n", encoding="utf-8")
+    (exported / "review-checklist.md").write_text("export\n", encoding="utf-8")
+    (exported / "debug-playbook.md").write_text("export\n", encoding="utf-8")
+
+    context = collect_project_structure_context(tmp_path, index_path=idx)
+    modules = {m.module: m for m in context.modules}
+    core = modules["harbor/core"]
+
+    assert core.has_canonical_module_capsule is True
+    assert core.has_capsule_export is True
 
 
 def test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing(tmp_path: Path, monkeypatch):

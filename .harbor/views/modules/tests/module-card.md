@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-22T07:09:11Z"
+generated_at: "2026-05-22T08:23:42Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 112
@@ -121,11 +121,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:c80b99cd8aff8ca5ce798a514243875fa4e52382a5d296b986e4ced08473ea1a"
-contract_fingerprint: "sha256:b200faca8ee9e363676ad33f30ab55e52ce7a75d0c5f2ea0daf69ddc7c437427"
+source_fingerprint: "sha256:8b890a35c2a2a674a72a2a195863142b2eff86e5ef530d6294cbc8283d5f79d4"
+contract_fingerprint: "sha256:f082d0580080a4d15492c7177e584fe4523f61a08ae69f289f67a1fc22dadeb9"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "df07253bfded1eb6d892b40b0bdf758065366997fcf819aa65ce8b70455929bc"
-fingerprint: "df07253bfded1eb6d892b40b0bdf758065366997fcf819aa65ce8b70455929bc"
+view_fingerprint: "c2f94095c0ba632076122659ed3244311398322f0042a6035bf278cca5edb916"
+fingerprint: "c2f94095c0ba632076122659ed3244311398322f0042a6035bf278cca5edb916"
 ---
 
 # Module Card: tests
@@ -135,15 +135,34 @@ fingerprint: "df07253bfded1eb6d892b40b0bdf758065366997fcf819aa65ce8b70455929bc"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Provides regression, contract, CLI, and generated-context coverage for Harbor behavior.
 
-```text
-tests
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- Weakening assertions or shifting tests away from contract intent.
+- DDT/version binding drift and loss of coverage for strict targets.
 
-## Key Files
+## Common Change Entry Points
+
+- tests/fixtures_sqlite/sample.py (indexed contracts, strict target)
+- tests/core/test_index_sync_sqlite.py (indexed contracts, covered by matching tests)
+- tests/core/test_storage_migration.py (indexed contracts, covered by matching tests)
+
+## Best Files To Inspect First
+
+- tests/fixtures_sqlite/sample.py (indexed contracts, strict target)
+- tests/core/test_index_sync_sqlite.py (indexed contracts, covered by matching tests)
+- tests/core/test_storage_migration.py (indexed contracts, covered by matching tests)
+- tests/test_accept_cli.py (indexed contracts, covered by matching tests)
+- tests/test_adapter_basic.py (indexed contracts, covered by matching tests)
+
+## Relevant Tests
+
+- tests/test_change_window_snapshot.py (file-name match, imports target symbols)
+- tests/test_checkpoint_ci_guidance.py (file-name match, imports target symbols)
+- tests/test_cli_finish_sync_context.py (file-name match, imports target symbols)
+
+## Detailed Key Files
 
 ```text
 tests/__init__.py
@@ -260,7 +279,7 @@ tests/test_workspace_migrate.py
 tests/test_workspace_paths.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -891,14 +910,17 @@ tests/test_workspace_paths.py
 | tests.test_l2_paths.test_l2_absolute_module_path_outside_repo_still_rejected | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_generate_uses_summary_first_and_dependency_summary | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_meta_hash_matches_canonical_body_after_write | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_meta_write_sanitizes_absolute_and_outside_repo_keys | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_disabled | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_module_path_traversal_rejected_with_export_enabled | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_repeat_write_keeps_canonical_content_when_body_unchanged | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_repo_relative_helpers_handle_duplicate_repo_name_root | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_repo_relative_helpers_normalize_github_actions_windows_path | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_write_refreshes_canonical_when_body_hash_matches_but_frontmatter_drifted | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_write_without_force_still_cleans_dirty_meta_keys | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_write_writes_canonical_and_module_readme_export_by_default | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_normalize_indexed_module_candidate_maps_repo_absolute_file_path | tests/test_l2_paths.py | unknown | standard |
 | tests.test_lock_flags._prepare_proj | tests/test_lock_flags.py | unknown | standard |
@@ -983,11 +1005,13 @@ tests/test_workspace_paths.py
 | tests.test_module_capsule._write_sample_repo | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_collect_module_context_falls_back_to_transient_source_scan_without_cache | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_debug_playbook_deprioritizes_init_and_prefers_workflow_files | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_generators_include_required_sections | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_l2_and_capsule_can_be_generated_without_runtime_index_cache | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_module_capsule_dir_keeps_nested_path | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_no_records_is_friendly | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_review_checklist_highlights_typescript_preview_boundary | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_write_module_capsule_rejects_export_root_outside_repo | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_write_module_capsule_rejects_nested_parent_traversal_module_path | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_write_module_capsule_rejects_parent_traversal_module_path | tests/test_module_capsule.py | unknown | standard |
@@ -1018,6 +1042,7 @@ tests/test_workspace_paths.py
 | tests.test_project_structure._write_source_repo | tests/test_project_structure.py | unknown | standard |
 | tests.test_project_structure.test_classify_project_area_is_stable | tests/test_project_structure.py | unknown | standard |
 | tests.test_project_structure.test_collect_project_structure_context_builds_expected_flags_and_counts | tests/test_project_structure.py | unknown | standard |
+| tests.test_project_structure.test_collect_project_structure_context_distinguishes_canonical_capsule_and_docs_export | tests/test_project_structure.py | unknown | standard |
 | tests.test_project_structure.test_collect_project_structure_context_filters_windows_absolute_paths_on_posix | tests/test_project_structure.py | unknown | standard |
 | tests.test_project_structure.test_collect_project_structure_context_prefers_fresh_source_over_cache | tests/test_project_structure.py | unknown | standard |
 | tests.test_project_structure.test_collect_project_structure_context_uses_filesystem_fallback_when_index_missing | tests/test_project_structure.py | unknown | standard |
@@ -1297,137 +1322,6 @@ tests/test_workspace_paths.py
 | tests.test_workspace_paths.test_windows_absolute_write_path_cannot_escape_repo_root | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_windows_posix_path_normalization | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_write_path_cannot_escape_repo_root | tests/test_workspace_paths.py | unknown | standard |
-
-## Tests
-
-```text
-tests/core/test_index_sync_sqlite.py
-tests/core/test_storage_migration.py
-tests/test_accept_cli.py
-tests/test_adapter_basic.py
-tests/test_adapter_registry.py
-tests/test_adopted_roots.py
-tests/test_audit.py
-tests/test_baseline_artifact.py
-tests/test_cache_isolation_hardening.py
-tests/test_change_window_snapshot.py
-tests/test_changed_scope.py
-tests/test_checkpoint_ci.py
-tests/test_checkpoint_ci_baseline_artifact.py
-tests/test_checkpoint_ci_guidance.py
-tests/test_checkpoint_json_additive_compat.py
-tests/test_ci_mode.py
-tests/test_ci_workflow.py
-tests/test_cli_config.py
-tests/test_cli_decorate.py
-tests/test_cli_docs_modes.py
-tests/test_cli_doctor.py
-tests/test_cli_finish_sync_context.py
-tests/test_cli_help_and_ux.py
-tests/test_cli_i18n.py
-tests/test_cli_i18n_env.py
-tests/test_cli_init_output.py
-tests/test_cli_json_output.py
-tests/test_cli_module_capsule.py
-tests/test_cli_module_capsule_batch.py
-tests/test_cli_module_capsule_stale.py
-tests/test_cli_module_skill.py
-tests/test_cli_progress.py
-tests/test_cli_project_structure.py
-tests/test_cli_stale.py
-tests/test_cli_v2.py
-tests/test_cli_verify_generated.py
-tests/test_cli_workspace_inspect.py
-tests/test_cli_workspace_migrate.py
-tests/test_config_update.py
-tests/test_context_integrity.py
-tests/test_contract_impact.py
-tests/test_contract_presence.py
-tests/test_contract_subject_model.py
-tests/test_ddt_validate.py
-tests/test_ddt_version_baseline.py
-tests/test_decorator_engine.py
-tests/test_derive_adopted_roots.py
-tests/test_diary_workspace_paths.py
-tests/test_doctor.py
-tests/test_drafting.py
-tests/test_drafting_json_parse.py
-tests/test_generated_verify.py
-tests/test_gitignore_prune.py
-tests/test_harbor_next.py
-tests/test_index_builder.py
-tests/test_index_builder_bad_syntax.py
-tests/test_index_builder_registry_integration.py
-tests/test_index_progress.py
-tests/test_init_detector.py
-tests/test_init_governance.py
-tests/test_init_llm_env.py
-tests/test_init_typescript_guidance.py
-tests/test_init_wizard.py
-tests/test_initializer.py
-tests/test_l2_paths.py
-tests/test_lock_flags.py
-tests/test_lock_register_adopted.py
-tests/test_log_draft.py
-tests/test_log_draft_cli.py
-tests/test_log_write_from_draft.py
-tests/test_min_count_one.py
-tests/test_module_capsule.py
-tests/test_module_capsule_stale.py
-tests/test_module_skill.py
-tests/test_performance_baseline.py
-tests/test_project_structure.py
-tests/test_python_adapter_compat.py
-tests/test_python_audit_regression.py
-tests/test_python_contract_source_recognition.py
-tests/test_python_ddt_regression.py
-tests/test_release_packaging.py
-tests/test_repair_guidance.py
-tests/test_semantic_audit_contract_gap.py
-tests/test_semantic_audit_preview.py
-tests/test_stale.py
-tests/test_sync_engine.py
-tests/test_sync_engine_registry_integration.py
-tests/test_typescript_adapter_mvp.py
-tests/test_typescript_boundary_resolution_paths.py
-tests/test_typescript_checkpoint_ci.py
-tests/test_typescript_contract_presence.py
-tests/test_typescript_ddt_preview.py
-tests/test_typescript_next_guidance.py
-tests/test_typescript_not_supported_boundaries.py
-tests/test_typescript_package_exports.py
-tests/test_typescript_preview_productization_assets.py
-tests/test_typescript_public_boundary_evidence.py
-tests/test_typescript_public_boundary_next.py
-tests/test_typescript_public_boundary_presets.py
-tests/test_typescript_re_export_resolver.py
-tests/test_utils_format.py
-tests/test_verification_foundation.py
-tests/test_windows_abs_path_prefix.py
-tests/test_windows_json_stdio_regression.py
-tests/test_workspace_gitignore_policy.py
-tests/test_workspace_i18n.py
-tests/test_workspace_inspect.py
-tests/test_workspace_migrate.py
-tests/test_workspace_paths.py
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-tests/__init__.py
-tests/conftest.py
-```
-
 ## Related Views
 
 ```text

@@ -202,3 +202,141 @@ def test_l2_meta_hash_matches_canonical_body_after_write(tmp_path: Path, monkeyp
 
     assert meta_payload["harbor/core"] == gen.compute_meta_hash(body)
     assert meta_payload["harbor/core"] == gen.compute_meta_hash(canonical_body)
+
+
+def test_l2_generate_uses_summary_first_and_dependency_summary(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    cfg = tmp_path / ".harbor" / "config" / "harbor.yaml"
+    cfg.parent.mkdir(parents=True, exist_ok=True)
+    cfg.write_text("code_roots:\n- harbor/**\n- tests/**\nexclude_paths: []\n", encoding="utf-8")
+
+    sample = tmp_path / "harbor" / "core" / "sample.py"
+    sample.parent.mkdir(parents=True, exist_ok=True)
+    sample.write_text(
+        '''from harbor.utils.formatting import noop
+
+def run(value: int) -> int:
+    """Return the provided integer unchanged.
+
+    Behavior:
+      - Returns the provided integer unchanged.
+
+    Args:
+      value (int): Input integer.
+
+    Returns:
+      int: Same integer value.
+
+    @harbor.scope: public
+    @harbor.l3_strictness: strict
+    """
+    return noop(value)
+''',
+        encoding="utf-8",
+    )
+    util = tmp_path / "harbor" / "utils" / "formatting.py"
+    util.parent.mkdir(parents=True, exist_ok=True)
+    util.write_text("def noop(value):\n    return value\n", encoding="utf-8")
+
+    test_file = tmp_path / "tests" / "test_sample.py"
+    test_file.parent.mkdir(parents=True, exist_ok=True)
+    test_file.write_text(
+        "from harbor.core.sample import run\n\n"
+        "def test_run_value():\n"
+        "    assert run(1) == 1\n",
+        encoding="utf-8",
+    )
+
+    idx = tmp_path / ".harbor" / "cache" / "l3_index.json"
+    idx.parent.mkdir(parents=True, exist_ok=True)
+    idx.write_text(
+        json.dumps(
+            {
+                "files": {
+                    "harbor/core/sample.py": {
+                        "items": [
+                            {
+                                "id": "harbor.core.sample.run",
+                                "qualified_name": "harbor.core.sample.run",
+                                "name": "run",
+                                "lineno": 3,
+                                "scope": "public",
+                                "strictness": "strict",
+                            }
+                        ]
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    md = L2Generator(index_path=idx).generate("harbor/core")
+
+    assert "## Public API Summary" in md
+    assert "## High-Risk Targets" in md
+    assert "## Full Indexed Contracts" in md
+    assert "<details>" in md
+    assert "## Dependency Summary" in md
+    assert "**Outbound Dependencies**" in md
+    assert "**Inbound Dependents**" in md
+    assert "## Public API\n" not in md
+    assert "## Dependency (MVP)" not in md
+    assert "harbor/utils/formatting" in md
+    assert "- tests" in md
+
+
+def test_l2_meta_write_sanitizes_absolute_and_outside_repo_keys(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    gen = L2Generator()
+    body = "# Module: harbor/core\n"
+
+    fixtures_file = tmp_path / "tests" / "fixtures_sqlite" / "sample.py"
+    fixtures_file.parent.mkdir(parents=True, exist_ok=True)
+    fixtures_file.write_text("def sample():\n    return 1\n", encoding="utf-8")
+
+    canonical_meta = tmp_path / ".harbor" / "views" / "l2" / "_meta.json"
+    canonical_meta.parent.mkdir(parents=True, exist_ok=True)
+    canonical_meta.write_text(
+        json.dumps(
+            {
+                str((tmp_path / "harbor" / "core").resolve()): "dir-hash",
+                str(fixtures_file.resolve()): "file-hash",
+                "harbor\\cli": "cli-hash",
+                "C:/Users/GM/AppData/Local/Temp/pytest-of-GM/outside.py": "outside-hash",
+                "": "blank-hash",
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    _ = gen.write("harbor/core", body, force=True)
+    meta_payload = json.loads(canonical_meta.read_text(encoding="utf-8"))
+
+    assert meta_payload["harbor/core"] == gen.compute_meta_hash(body)
+    assert meta_payload["tests/fixtures_sqlite"] == "file-hash"
+    assert meta_payload["harbor/cli"] == "cli-hash"
+    assert all("C:/" not in key for key in meta_payload)
+    assert all("AppData" not in key for key in meta_payload)
+    assert "" not in meta_payload
+
+
+def test_l2_write_without_force_still_cleans_dirty_meta_keys(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    gen = L2Generator()
+    body = "# Module: harbor/core\n## Public API Summary\n"
+    _ = gen.write("harbor/core", body, force=True)
+
+    canonical_meta = tmp_path / ".harbor" / "views" / "l2" / "_meta.json"
+    payload = json.loads(canonical_meta.read_text(encoding="utf-8"))
+    payload["C:/Users/GM/AppData/Local/Temp/pytest-of-GM/outside.py"] = "outside-hash"
+    canonical_meta.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    result = gen.write("harbor/core", body, force=False)
+    cleaned = json.loads(canonical_meta.read_text(encoding="utf-8"))
+
+    assert result is not None
+    assert all("C:/" not in key for key in cleaned)
+    assert cleaned["harbor/core"] == gen.compute_meta_hash(body)

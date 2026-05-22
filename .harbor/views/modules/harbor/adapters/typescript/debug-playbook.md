@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "harbor/adapters/typescript"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:42Z"
 generation_command: "harbor module seal harbor/adapters/typescript --write"
 stale_policy: "advisory"
 source_path_count: 8
@@ -29,18 +29,25 @@ generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2
 
 ## First Files to Inspect
 
-```text
-harbor/adapters/typescript/__init__.py
-harbor/adapters/typescript/adapter.py
-```
+- harbor/adapters/typescript/public_boundary.py (indexed contracts, strict target)
+- harbor/adapters/typescript/adapter.py (indexed contracts, covered by matching tests)
+- harbor/adapters/typescript/resolution.py (indexed contracts, covered by matching tests)
 
 ## Minimal Checks
 
 Run targeted tests first if available.
 
 ```powershell
-pytest tests/test_adapter_basic.py
+pytest tests/test_typescript_adapter_mvp.py
+pytest tests/test_typescript_boundary_resolution_paths.py
+pytest tests/test_typescript_public_boundary_evidence.py
 ```
+
+## Why These Tests
+
+- tests/test_typescript_adapter_mvp.py (module match, file-name match)
+- tests/test_typescript_boundary_resolution_paths.py (module match, file-name match)
+- tests/test_typescript_public_boundary_evidence.py (module match, file-name match)
 
 ## Common Debug Questions
 

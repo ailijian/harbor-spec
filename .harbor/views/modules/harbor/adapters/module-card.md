@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/adapters"
-generated_at: "2026-05-22T07:09:11Z"
+generated_at: "2026-05-22T08:03:41Z"
 generation_command: "harbor module seal harbor/adapters --write"
 stale_policy: "advisory"
 source_path_count: 14
@@ -26,8 +26,8 @@ source_paths:
 source_fingerprint: "sha256:09fd790eec8694f7cdb9e90f189a170e5e1cb14e74421ed2bc06c251af868c9e"
 contract_fingerprint: "sha256:be95ae47fba14443799ae49a038c64f2817468f34b4ee441026aca92817a3f58"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "4871ed67ec6aa7c6704ca1c9483e596f6435415fa6176ad2e9cabbab91b41e1f"
-fingerprint: "4871ed67ec6aa7c6704ca1c9483e596f6435415fa6176ad2e9cabbab91b41e1f"
+view_fingerprint: "9ebc8d81aa81a85a20fb95c59ee5c9baa3c66ccf37b63e078f81399652fb0856"
+fingerprint: "9ebc8d81aa81a85a20fb95c59ee5c9baa3c66ccf37b63e078f81399652fb0856"
 ---
 
 # Module Card: harbor/adapters
@@ -37,15 +37,34 @@ fingerprint: "4871ed67ec6aa7c6704ca1c9483e596f6435415fa6176ad2e9cabbab91b41e1f"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Covers code and indexed contracts under `harbor/adapters`.
+- Acts as a generated maintenance view entrypoint for focused code changes.
 
-```text
-harbor/adapters
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- Public behavior, schema, or file-write changes may require synchronized contract/test updates.
 
-## Key Files
+## Common Change Entry Points
+
+- harbor/adapters/base.py (indexed contracts, strict target)
+- harbor/adapters/typescript/public_boundary.py (indexed contracts, strict target)
+- harbor/adapters/python/parser.py (indexed contracts, strict target)
+
+## Best Files To Inspect First
+
+- harbor/adapters/base.py (indexed contracts, strict target)
+- harbor/adapters/typescript/public_boundary.py (indexed contracts, strict target)
+- harbor/adapters/python/parser.py (indexed contracts, strict target)
+- harbor/adapters/python/compat.py (indexed contracts, covered by matching tests)
+- harbor/adapters/registry.py (indexed contracts, covered by matching tests)
+
+## Relevant Tests
+
+- tests/test_checkpoint_json_additive_compat.py (file-name match, imports target symbols)
+- tests/test_checkpoint_ci_baseline_artifact.py (file-name match, imports target symbols)
+- tests/test_ddt_version_baseline.py (file-name match, imports target symbols)
+
+## Detailed Key Files
 
 ```text
 harbor/adapters/__init__.py
@@ -64,7 +83,7 @@ harbor/adapters/typescript/resolution.py
 harbor/adapters/typescript/symbols.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -179,43 +198,6 @@ harbor/adapters/typescript/symbols.py
 | harbor.adapters.typescript.resolution._split_named_specifiers | harbor/adapters/typescript/resolution.py | unknown | standard |
 | harbor.adapters.typescript.resolution._to_lineno | harbor/adapters/typescript/resolution.py | unknown | standard |
 | harbor.adapters.typescript.resolution._tsconfig_path_candidates | harbor/adapters/typescript/resolution.py | unknown | standard |
-
-## Tests
-
-```text
-tests/test_adapter_basic.py
-tests/test_adapter_registry.py
-tests/test_baseline_artifact.py
-tests/test_checkpoint_ci_baseline_artifact.py
-tests/test_checkpoint_json_additive_compat.py
-tests/test_ddt_version_baseline.py
-tests/test_index_builder_registry_integration.py
-tests/test_performance_baseline.py
-tests/test_python_adapter_compat.py
-tests/test_sync_engine_registry_integration.py
-tests/test_typescript_adapter_mvp.py
-tests/test_typescript_boundary_resolution_paths.py
-tests/test_typescript_public_boundary_evidence.py
-tests/test_typescript_public_boundary_next.py
-tests/test_typescript_public_boundary_presets.py
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-harbor/adapters/__init__.py
-harbor/adapters/base.py
-```
-
 ## Related Views
 
 ```text

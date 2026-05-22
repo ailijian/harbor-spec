@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from harbor.core.l2 import infer_module_from_path
 from harbor.core.context_integrity import build_context_integrity_metadata, compose_markdown_with_frontmatter
-from harbor.core.module_capsule import normalize_module_path
+from harbor.core.module_capsule import normalize_module_path, resolve_module_capsule_paths
 from harbor.core.module_skill import normalize_skill_slug
 from harbor.core.readonly_index import load_readonly_index
 from harbor.core.workspace import load_workspace_config, load_workspace_paths, parse_workspace_export_options
@@ -29,7 +29,8 @@ class ProjectModuleSummary:
     indexed_files_count: int
     indexed_contracts_count: int
     has_l2_readme: bool
-    has_module_capsule: bool
+    has_canonical_module_capsule: bool
+    has_capsule_export: bool
     has_skill: bool
 
 
@@ -196,7 +197,19 @@ def _read_project_metadata(root: Path) -> ProjectMetadata:
 
 
 def _capsule_exists(root: Path, module: str) -> bool:
-    base = root / "docs" / "harbor" / "modules" / Path(module)
+    paths = resolve_module_capsule_paths(module, root=root)
+    base = paths["canonical_dir"]
+    if base is None:
+        return False
+    required = ["module-card.md", "review-checklist.md", "debug-playbook.md"]
+    return all((base / name).exists() for name in required)
+
+
+def _capsule_export_exists(root: Path, module: str) -> bool:
+    paths = resolve_module_capsule_paths(module, root=root)
+    base = paths["export_dir"]
+    if base is None:
+        return False
     required = ["module-card.md", "review-checklist.md", "debug-playbook.md"]
     return all((base / name).exists() for name in required)
 
@@ -490,7 +503,8 @@ def collect_project_structure_context(root: Path, index_path: Optional[Path] = N
                     indexed_files_count=len(unique_files),
                     indexed_contracts_count=contract_count,
                     has_l2_readme=(root / module_norm / "README.md").exists(),
-                    has_module_capsule=_capsule_exists(root, module_norm),
+                    has_canonical_module_capsule=_capsule_exists(root, module_norm),
+                    has_capsule_export=_capsule_export_exists(root, module_norm),
                     has_skill=_skill_exists(root, module_norm),
                 )
             )
@@ -627,18 +641,18 @@ def generate_project_structure_markdown(context: ProjectStructureContext) -> str
             "",
             "## Code Modules",
             "",
-            "| Module | Key Files | L2 README | Module Capsule | Skill |",
-            "|---|---|---|---|---|",
+            "| Module | Key Files | L2 README | Canonical Capsule | Docs Export | Skill |",
+            "|---|---|---|---|---|---|",
         ]
     )
     if context.modules:
         for module in context.modules:
             key_files = ", ".join(module.key_files) if module.key_files else "-"
             lines.append(
-                f"| {_table_cell(module.module)} | {_table_cell(key_files)} | {_yes_no(module.has_l2_readme)} | {_yes_no(module.has_module_capsule)} | {_yes_no(module.has_skill)} |"
+                f"| {_table_cell(module.module)} | {_table_cell(key_files)} | {_yes_no(module.has_l2_readme)} | {_yes_no(module.has_canonical_module_capsule)} | {_yes_no(module.has_capsule_export)} | {_yes_no(module.has_skill)} |"
             )
     else:
-        lines.append("| - | - | no | no | no |")
+        lines.append("| - | - | no | no | no | no |")
         lines.append("")
         lines.append("No indexed modules found.")
 

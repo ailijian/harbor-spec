@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-22T07:09:11Z"
+generated_at: "2026-05-22T08:23:42Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 64
@@ -73,11 +73,11 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:9df244a41d82cda8aba5f91a34a75d01c69f9dbf74118c36840ffefd6cc6aeef"
-contract_fingerprint: "sha256:cf3d4ec288be1645cb0dbf01e8a7ad4649b5ea7737c99cf32f7778eeb415b983"
+source_fingerprint: "sha256:152c49c50fcd0c19ce3aefd906f4e636c4fd0dc938cd0757e39db796cc870d18"
+contract_fingerprint: "sha256:82c402459008cb0a60a27207a46deb4c38bcd6c8cfb7931ad40e8bb476fffc33"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "4569ae75bc689f44ef7e5068d5d495a8a9e6c7b3e9088431d67db3d562b0138c"
-fingerprint: "4569ae75bc689f44ef7e5068d5d495a8a9e6c7b3e9088431d67db3d562b0138c"
+view_fingerprint: "7e5534fcdaf4876c526fd1886d4d4bf86eee72bfc9a795b3a4a136cc8f2a9ea1"
+fingerprint: "7e5534fcdaf4876c526fd1886d4d4bf86eee72bfc9a795b3a4a136cc8f2a9ea1"
 ---
 
 # Module Card: harbor
@@ -87,15 +87,34 @@ fingerprint: "4569ae75bc689f44ef7e5068d5d495a8a9e6c7b3e9088431d67db3d562b0138c"
 
 ## Responsibility
 
-This module appears to cover code under:
+- Covers code and indexed contracts under `harbor`.
+- Acts as a generated maintenance view entrypoint for focused code changes.
 
-```text
-harbor
-```
+## High-Risk Boundaries
 
-If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.
+- Public behavior, schema, or file-write changes may require synchronized contract/test updates.
 
-## Key Files
+## Common Change Entry Points
+
+- harbor/cli/main.py (entrypoint, indexed contracts)
+- harbor/core/doctor.py (workflow file, indexed contracts)
+- harbor/core/generated_verify.py (workflow file, indexed contracts)
+
+## Best Files To Inspect First
+
+- harbor/cli/main.py (entrypoint, indexed contracts)
+- harbor/core/doctor.py (workflow file, indexed contracts)
+- harbor/core/generated_verify.py (workflow file, indexed contracts)
+- harbor/core/l2.py (workflow file, indexed contracts)
+- harbor/core/module_capsule.py (workflow file, indexed contracts)
+
+## Relevant Tests
+
+- tests/test_change_window_snapshot.py (file-name match, imports target symbols)
+- tests/test_cli_finish_sync_context.py (file-name match, imports target symbols)
+- tests/test_harbor_next.py (module match, imports target symbols)
+
+## Detailed Key Files
 
 ```text
 harbor/__init__.py
@@ -164,7 +183,7 @@ harbor/utils/formatting.py
 harbor/utils/i18n.py
 ```
 
-## Public / Indexed Contracts
+## Detailed Indexed Contracts
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -662,19 +681,26 @@ harbor/utils/i18n.py
 | harbor.core.l2.L2Generator._ensure_within_root | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_index | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_meta | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._normalize_meta_key | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._read_meta_file | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._resolve_canonical_readme_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._resolve_export_readme_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._resolve_meta_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._safe_module_subpath | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._sanitize_meta_entries | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._save_meta | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.canonical_readme_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.collect_all_indexed_modules | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.write | harbor/core/l2.py | public | strict |
+| harbor.core.l2._collect_module_dependency_summary | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._extract_import_tokens | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._looks_like_windows_absolute_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._repo_relative_index_path | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._resolve_import_token_to_module | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._safe_read_text | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._strictness_rank | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._to_repo_relative | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.collect_all_indexed_modules | harbor/core/l2.py | public | strict |
 | harbor.core.l2.collect_modules_from_paths | harbor/core/l2.py | unknown | standard |
@@ -761,12 +787,23 @@ harbor/utils/i18n.py
 | harbor.core.log_draft.write_last_log_marker | harbor/core/log_draft.py | public | strict |
 | harbor.core.log_draft.write_latest_diary_draft_cache | harbor/core/log_draft.py | public | strict |
 | harbor.core.module_capsule._belongs_to_module | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._contracts_by_file | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._ensure_within_root | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._extract_import_tokens | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._format_bullets | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._keyword_tokens | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._load_index | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._module_profile | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._module_specific_checklist_lines | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._normalize_rel_path | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._rank_debug_files | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._rank_tests | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._resolve_docs_export_modules_root | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._resolve_module_target_dir | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._safe_module_subpath | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._safe_read_text | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._score_debug_file | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._score_test_candidate | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._sort_unique | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._stable_contract_rows | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._strictness_rank | harbor/core/module_capsule.py | unknown | standard |
@@ -811,6 +848,7 @@ harbor/utils/i18n.py
 | harbor.core.project_structure._belongs_to_module | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._build_transient_index_from_files | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._capsule_exists | harbor/core/project_structure.py | unknown | standard |
+| harbor.core.project_structure._capsule_export_exists | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._collect_fallback_files | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._extract_toml_string_block | harbor/core/project_structure.py | unknown | standard |
 | harbor.core.project_structure._infer_area | harbor/core/project_structure.py | unknown | standard |
@@ -958,109 +996,6 @@ harbor/utils/i18n.py
 | harbor.utils.formatting.format_size | harbor/utils/formatting.py | public | strict |
 | harbor.utils.i18n.get_lang | harbor/utils/i18n.py | public | standard |
 | harbor.utils.i18n.t | harbor/utils/i18n.py | public | standard |
-
-## Tests
-
-```text
-tests/core/test_index_sync_sqlite.py
-tests/core/test_storage_migration.py
-tests/test_adapter_basic.py
-tests/test_adapter_registry.py
-tests/test_audit.py
-tests/test_baseline_artifact.py
-tests/test_change_window_snapshot.py
-tests/test_changed_scope.py
-tests/test_checkpoint_ci.py
-tests/test_checkpoint_ci_baseline_artifact.py
-tests/test_checkpoint_ci_guidance.py
-tests/test_checkpoint_json_additive_compat.py
-tests/test_ci_mode.py
-tests/test_ci_workflow.py
-tests/test_cli_doctor.py
-tests/test_cli_finish_sync_context.py
-tests/test_cli_i18n.py
-tests/test_cli_i18n_env.py
-tests/test_cli_init_output.py
-tests/test_cli_module_capsule.py
-tests/test_cli_module_capsule_batch.py
-tests/test_cli_module_capsule_stale.py
-tests/test_cli_module_skill.py
-tests/test_cli_project_structure.py
-tests/test_cli_stale.py
-tests/test_cli_workspace_inspect.py
-tests/test_cli_workspace_migrate.py
-tests/test_context_integrity.py
-tests/test_contract_impact.py
-tests/test_contract_presence.py
-tests/test_ddt_validate.py
-tests/test_ddt_version_baseline.py
-tests/test_decorator_engine.py
-tests/test_diary_workspace_paths.py
-tests/test_doctor.py
-tests/test_drafting.py
-tests/test_drafting_json_parse.py
-tests/test_generated_verify.py
-tests/test_harbor_next.py
-tests/test_index_builder.py
-tests/test_index_builder_bad_syntax.py
-tests/test_index_builder_registry_integration.py
-tests/test_index_progress.py
-tests/test_init_detector.py
-tests/test_init_governance.py
-tests/test_init_llm_env.py
-tests/test_init_typescript_guidance.py
-tests/test_init_wizard.py
-tests/test_initializer.py
-tests/test_l2_paths.py
-tests/test_log_draft.py
-tests/test_log_draft_cli.py
-tests/test_module_capsule.py
-tests/test_module_capsule_stale.py
-tests/test_module_skill.py
-tests/test_performance_baseline.py
-tests/test_project_structure.py
-tests/test_python_adapter_compat.py
-tests/test_python_audit_regression.py
-tests/test_python_ddt_regression.py
-tests/test_repair_guidance.py
-tests/test_semantic_audit_contract_gap.py
-tests/test_semantic_audit_preview.py
-tests/test_stale.py
-tests/test_sync_engine.py
-tests/test_sync_engine_registry_integration.py
-tests/test_typescript_adapter_mvp.py
-tests/test_typescript_boundary_resolution_paths.py
-tests/test_typescript_checkpoint_ci.py
-tests/test_typescript_contract_presence.py
-tests/test_typescript_ddt_preview.py
-tests/test_typescript_public_boundary_evidence.py
-tests/test_typescript_public_boundary_next.py
-tests/test_typescript_public_boundary_presets.py
-tests/test_utils_format.py
-tests/test_verification_foundation.py
-tests/test_workspace_gitignore_policy.py
-tests/test_workspace_i18n.py
-tests/test_workspace_inspect.py
-tests/test_workspace_migrate.py
-tests/test_workspace_paths.py
-```
-
-## Review Focus
-
-* Check Contract Impact before changing public behavior.
-* Check schema/type drift if this module exposes data structures.
-* Check DDT/test coverage for strict targets.
-* Check Runtime Safety if this module writes files, changes data, or touches external systems.
-
-## Debug Entry Points
-
-Start with:
-
-```text
-harbor/__init__.py
-harbor/adapters/__init__.py
-```
-
 ## Related Views
 
 ```text

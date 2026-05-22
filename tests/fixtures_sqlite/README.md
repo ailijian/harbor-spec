@@ -1,10 +1,34 @@
 # Module: tests/fixtures_sqlite
 
-## Public API
-| Function | Summary | Strictness | DDT Status |
-|---|---|---|---|
-| tests.fixtures_sqlite.sample.func1 | 测试函数。 | strict | ❌ Missing |
+## Public API Summary
+| Metric | Count |
+|---|---:|
+| Public by contract | 1 |
+| Strict targets | 1 |
+| Private-named but strict | 0 |
+| Internal indexed | 0 |
+| Strict targets missing DDT | 1 |
+| Targets with DDT warnings | 0 |
 
+## High-Risk Targets
+| Function | File | Scope | Strictness | DDT Status | Why |
+|---|---|---|---|---|---|
+| tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict | ❌ Missing | strict, public, missing DDT |
 
-## Dependency (MVP)
-- (TBD) 未来基于 import 简要分析模块依赖。
+## Full Indexed Contracts
+<details>
+<summary>All indexed contracts</summary>
+
+| Function | File | Scope | Strictness | DDT Status | Summary |
+|---|---|---|---|---|---|
+| tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict | ❌ Missing | 测试函数。 |
+
+</details>
+
+## Dependency Summary
+
+**Outbound Dependencies**
+- None detected from repo-local Python imports.
+
+**Inbound Dependents**
+- None detected from repo-local Python imports.

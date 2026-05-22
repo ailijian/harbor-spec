@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "harbor/utils"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:44Z"
 generation_command: "harbor module seal harbor/utils --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -24,18 +24,25 @@ generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2
 
 ## First Files to Inspect
 
-```text
-harbor/utils/__init__.py
-harbor/utils/formatting.py
-```
+- harbor/utils/formatting.py (indexed contracts, strict target)
+- harbor/utils/i18n.py (indexed contracts, covered by matching tests)
+- harbor/utils/__init__.py (package marker only)
 
 ## Minimal Checks
 
 Run targeted tests first if available.
 
 ```powershell
+pytest tests/test_utils_format.py
+pytest tests/test_cli_i18n_env.py
 pytest tests/test_cli_i18n.py
 ```
+
+## Why These Tests
+
+- tests/test_utils_format.py (module match, imports target symbols)
+- tests/test_cli_i18n_env.py (file-name match, imports target symbols)
+- tests/test_cli_i18n.py (file-name match, imports target symbols)
 
 ## Common Debug Questions
 

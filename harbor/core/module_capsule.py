@@ -1,4 +1,5 @@
 from __future__ import annotations
+import ast
 
 import hashlib
 import json
@@ -195,25 +196,314 @@ def _belongs_to_module(file_path: str, module: str) -> bool:
     return rel == module or rel.startswith(f"{module}/")
 
 
+def _safe_read_text(path: Path) -> str:
+    try:
+        return path.read_text(encoding="utf-8")
+    except Exception:
+        return ""
+
+
+def _module_profile(module: str) -> Dict[str, List[str]]:
+    normalized = normalize_module_path(module)
+    if normalized == "harbor/core" or normalized.startswith("harbor/core/"):
+        return {
+            "responsibility": [
+                "Coordinates Harbor core workflows for generated context, stale checks, doctor checks, and verification.",
+                "Owns workspace/path safety, file-write boundaries, and readonly index driven views.",
+                "Hosts contract, DDT, CI, diary, baseline, and change-window related core logic.",
+            ],
+            "risks": [
+                "JSON output and machine-readable CLI payload stability.",
+                "Workspace path normalization, file write targets, and generated context safety.",
+                "stale / doctor / verify-generated behavior drift across local and CI environments.",
+                "Diary, change-window, and baseline logic that can mislead release or governance flows.",
+            ],
+            "review_focus": [
+                "Check JSON output keys, file write targets, and workspace safety boundaries together.",
+                "Verify generated context, stale, doctor, and verify-generated remain aligned.",
+                "Inspect DDT, contract, and CI-facing metadata for additive vs blocking drift.",
+            ],
+        }
+    if normalized == "harbor/cli" or normalized.startswith("harbor/cli/"):
+        return {
+            "responsibility": [
+                "Defines Harbor CLI entrypoints, command routing, and user-visible workflow orchestration.",
+                "Bridges core behaviors into stable flags, stdout/stderr, and exit behavior.",
+            ],
+            "risks": [
+                "CLI args, exit behavior, and stdout/stderr contract drift.",
+                "Windows/i18n text output and `--format json` compatibility.",
+            ],
+            "review_focus": [
+                "Check CLI args, exit behavior, JSON output stability, and localized text together.",
+                "Verify PowerShell/Windows stdout behavior remains parseable for JSON routes.",
+            ],
+        }
+    if normalized == "harbor/adapters/typescript" or normalized.startswith("harbor/adapters/typescript/"):
+        return {
+            "responsibility": [
+                "Implements TypeScript public-boundary, contract-source, and preview/advisory logic.",
+                "Keeps TypeScript governance additive and non-blocking where v1.4.x requires preview-only behavior.",
+            ],
+            "risks": [
+                "Preview/advisory semantics accidentally becoming blocking behavior.",
+                "Incorrect JSDoc/TSDoc contract expectations or public-boundary explainability drift.",
+            ],
+            "review_focus": [
+                "Preserve preview/advisory boundaries and avoid claiming formal TypeScript DDT or semantic audit gates.",
+                "Check JSDoc/TSDoc proximity, contract_gap handling, and public-boundary explanation output.",
+            ],
+        }
+    if normalized == "harbor/adapters/python" or normalized.startswith("harbor/adapters/python/"):
+        return {
+            "responsibility": [
+                "Parses and normalizes Python contract-bearing source for Harbor governance workflows.",
+                "Connects Python-specific syntax, compatibility, and export logic to the readonly index.",
+            ],
+            "risks": [
+                "Parser/contract extraction regressions that silently reduce governance coverage.",
+                "Cross-version compatibility and exported evidence drift.",
+            ],
+            "review_focus": [
+                "Check parser output, contract extraction fidelity, and compatibility fallbacks.",
+            ],
+        }
+    if normalized == "tests" or normalized.startswith("tests/"):
+        return {
+            "responsibility": [
+                "Provides regression, contract, CLI, and generated-context coverage for Harbor behavior.",
+            ],
+            "risks": [
+                "Weakening assertions or shifting tests away from contract intent.",
+                "DDT/version binding drift and loss of coverage for strict targets.",
+            ],
+            "review_focus": [
+                "Check whether assertions were weakened or no longer verify the intended contract.",
+                "Inspect DDT/version expectations and generated-context assertions for stale assumptions.",
+            ],
+        }
+    return {
+        "responsibility": [
+            f"Covers code and indexed contracts under `{normalized or '(unknown module)'}`.",
+            "Acts as a generated maintenance view entrypoint for focused code changes.",
+        ],
+        "risks": [
+            "Public behavior, schema, or file-write changes may require synchronized contract/test updates.",
+        ],
+        "review_focus": [
+            "Check contract impact, test coverage, and runtime safety together before changing behavior.",
+        ],
+    }
+
+
+def _keyword_tokens(module: str, key_files: List[str], contracts: List[Dict[str, str]]) -> List[str]:
+    tokens = {module.split("/")[-1].lower()} if module else set()
+    for file_path in key_files:
+        stem = Path(file_path).stem.lower()
+        if stem and stem != "__init__":
+            tokens.add(stem)
+    for contract in contracts:
+        symbol = str(contract.get("symbol") or "").replace("(", ".").replace(")", ".")
+        for part in symbol.replace("/", ".").split("."):
+            part = part.strip().lower()
+            if len(part) >= 3:
+                tokens.add(part)
+    tokens.discard("")
+    return sorted(tokens)
+
+
+def _contracts_by_file(contracts: List[Dict[str, str]]) -> Dict[str, List[Dict[str, str]]]:
+    grouped: Dict[str, List[Dict[str, str]]] = {}
+    for contract in contracts or []:
+        rel = _normalize_rel_path(str(contract.get("file") or ""))
+        if not rel:
+            continue
+        grouped.setdefault(rel, []).append(contract)
+    return grouped
+
+
+def _extract_import_tokens(source: str) -> List[str]:
+    if not source.strip():
+        return []
+    try:
+        tree = ast.parse(source)
+    except Exception:
+        return []
+    tokens: List[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                tokens.append(str(alias.name or ""))
+        elif isinstance(node, ast.ImportFrom):
+            module = str(node.module or "")
+            if module:
+                tokens.append(module)
+            for alias in node.names:
+                name = str(alias.name or "")
+                if module and name:
+                    tokens.append(f"{module}.{name}")
+                elif name:
+                    tokens.append(name)
+    return tokens
+
+
+def _score_debug_file(
+    module: str,
+    file_path: str,
+    contracts: List[Dict[str, str]],
+    tests: List[str],
+) -> tuple[int, List[str]]:
+    rel = _normalize_rel_path(file_path)
+    base = Path(rel).name.lower()
+    stem = Path(rel).stem.lower()
+    grouped = _contracts_by_file(contracts)
+    file_contracts = grouped.get(rel, [])
+    module_name = module.split("/")[-1].lower() if module else ""
+
+    score = 0
+    reasons: List[str] = []
+    if base == "__init__.py":
+        return (-100, ["package marker only"])
+    if base == "main.py":
+        score += 120
+        reasons.append("entrypoint")
+    if base in {"module_capsule.py", "l2.py", "project_structure.py", "generated_verify.py", "stale.py", "doctor.py", "workspace.py", "sync.py"}:
+        score += 70
+        reasons.append("workflow file")
+    if file_contracts:
+        score += 45
+        reasons.append("indexed contracts")
+    if any(str(c.get("strictness") or "").lower() == "strict" for c in file_contracts):
+        score += 20
+        reasons.append("strict target")
+    if module_name and module_name in stem:
+        score += 15
+        reasons.append("module-name match")
+    if any(stem and stem in Path(test_path).stem.lower() for test_path in tests):
+        score += 10
+        reasons.append("covered by matching tests")
+    if rel.endswith(".py"):
+        score += 5
+    return (score, reasons or ["module context"])
+
+
+def _rank_debug_files(context: Dict[str, Any], *, limit: int = 5) -> List[Dict[str, Any]]:
+    module = str(context.get("module") or "")
+    key_files = [_normalize_rel_path(str(p)) for p in (context.get("key_files") or []) if str(p)]
+    contracts = list(context.get("contracts") or [])
+    tests = [_normalize_rel_path(str(p)) for p in (context.get("tests") or []) if str(p)]
+    ranked = []
+    for file_path in key_files:
+        score, reasons = _score_debug_file(module, file_path, contracts, tests)
+        ranked.append({"path": file_path, "score": score, "reason": ", ".join(reasons[:2])})
+    ranked.sort(key=lambda item: (-item["score"], item["path"]))
+    return ranked[:limit]
+
+
+def _score_test_candidate(
+    module: str,
+    test_path: str,
+    key_files: List[str],
+    contracts: List[Dict[str, str]],
+    import_tokens: List[str],
+    text: str,
+) -> tuple[int, List[str]]:
+    name = Path(test_path).stem.lower()
+    module_name = module.split("/")[-1].lower() if module else ""
+    key_stems = {Path(fp).stem.lower() for fp in key_files if Path(fp).stem and Path(fp).stem != "__init__"}
+    contract_tokens = _keyword_tokens(module, key_files, contracts)
+    imports_text = " ".join(import_tokens).lower()
+    lower_text = text.lower()
+
+    score = 0
+    reasons: List[str] = []
+    if module_name and module_name in name:
+        score += 30
+        reasons.append("module match")
+    if any(stem and stem in name for stem in key_stems):
+        score += 20
+        reasons.append("file-name match")
+    if any(token and token in imports_text for token in contract_tokens):
+        score += 35
+        reasons.append("imports target symbols")
+    if any(token and token in lower_text for token in contract_tokens[:10]):
+        score += 10
+        reasons.append("mentions target workflow")
+    if "assert" in lower_text:
+        score += 5
+    if "ddt" in lower_text or "l3_version" in lower_text:
+        score += 10
+        reasons.append("ddt-aware")
+    return (score, reasons or ["nearby regression coverage"])
+
+
+def _rank_tests(context: Dict[str, Any], *, limit: int = 3) -> List[Dict[str, Any]]:
+    module = str(context.get("module") or "")
+    key_files = [_normalize_rel_path(str(p)) for p in (context.get("key_files") or []) if str(p)]
+    contracts = list(context.get("contracts") or [])
+    ranked: List[Dict[str, Any]] = []
+    for test_path in (context.get("tests") or []):
+        rel = _normalize_rel_path(str(test_path))
+        if not rel:
+            continue
+        text = _safe_read_text(Path(rel))
+        imports = _extract_import_tokens(text)
+        score, reasons = _score_test_candidate(module, rel, key_files, contracts, imports, text)
+        ranked.append({"path": rel, "score": score, "reason": ", ".join(reasons[:2])})
+    ranked.sort(key=lambda item: (-item["score"], item["path"]))
+    return ranked[:limit]
+
+
+def _format_bullets(values: List[str]) -> List[str]:
+    if not values:
+        return ["- None."]
+    return [f"- {value}" for value in values]
+
+
+def _module_specific_checklist_lines(module: str) -> List[str]:
+    normalized = normalize_module_path(module)
+    if normalized == "harbor/core" or normalized.startswith("harbor/core/"):
+        return [
+            "- Check JSON output stability, file write targets, and workspace path safety together.",
+            "- Re-verify stale / doctor / verify-generated behavior if generated context or workspace logic changed.",
+            "- Confirm generated context remains aligned with source-of-truth code, tests, and policy.",
+        ]
+    if normalized == "harbor/cli" or normalized.startswith("harbor/cli/"):
+        return [
+            "- Check CLI args, stdout/stderr, exit codes, and `--format json` key stability together.",
+            "- Verify i18n and Windows stdout compatibility for human-readable vs JSON routes.",
+        ]
+    if normalized == "harbor/adapters/typescript" or normalized.startswith("harbor/adapters/typescript/"):
+        return [
+            "- Preserve preview/advisory boundaries; do not imply a formal TypeScript DDT or semantic audit gate.",
+            "- Check nearby JSDoc/TSDoc expectations, contract_gap handling, and public-boundary explanation output.",
+        ]
+    if normalized == "tests" or normalized.startswith("tests/"):
+        return [
+            "- Check whether assertions were weakened or no longer verify the intended contract.",
+            "- Inspect DDT/version expectations and generated-context assertions for stale assumptions.",
+        ]
+    return [
+        "- Check module-specific public behavior, contracts, and runtime safety boundaries together.",
+    ]
+
+
 def detect_tests_for_module(module: str, key_files: List[str], tests_root: Optional[Path] = None) -> List[str]:
     root = tests_root or Path("tests")
     if not root.exists():
         return []
 
-    module_name = module.split("/")[-1] if module else ""
-    keywords = {module_name} if module_name else set()
-    for fp in key_files:
-        stem = Path(fp).stem
-        if stem:
-            keywords.add(stem)
-
-    matches: List[str] = []
+    contracts = [{"file": fp, "symbol": Path(fp).stem, "scope": "unknown", "strictness": "standard"} for fp in key_files]
+    ranked: List[tuple[int, str]] = []
     for test_file in root.rglob("test_*.py"):
         rel = test_file.as_posix()
-        name = test_file.stem.lower()
-        if any(kw and kw.lower() in name for kw in keywords):
-            matches.append(rel)
-    return _sort_unique(matches)
+        text = _safe_read_text(test_file)
+        imports = _extract_import_tokens(text)
+        score, _ = _score_test_candidate(module, rel, key_files, contracts, imports, text)
+        if score > 0:
+            ranked.append((score, rel))
+    ranked.sort(key=lambda item: (-item[0], item[1]))
+    return [rel for _, rel in ranked]
 
 
 def collect_module_context(
@@ -363,8 +653,9 @@ def generate_module_card(context: Dict[str, Any]) -> str:
     module = context.get("module", "")
     key_files = context.get("key_files", []) or []
     contracts = context.get("contracts", []) or []
-    tests = context.get("tests", []) or []
-    debug_entries = key_files[:2]
+    profile = _module_profile(str(module))
+    ranked_files = _rank_debug_files(context, limit=5)
+    ranked_tests = _rank_tests(context, limit=3)
 
     lines: List[str] = [
         f"# Module Card: {module}",
@@ -374,18 +665,57 @@ def generate_module_card(context: Dict[str, Any]) -> str:
         "",
         "## Responsibility",
         "",
-        "This module appears to cover code under:",
-        "",
-        "```text",
-        module or "(unknown module)",
-        "```",
-        "",
-        "If this summary is too generic, update the underlying contracts or module documentation rather than treating this file as the source of truth.",
-        "",
-        "## Key Files",
-        "",
-        "```text",
     ]
+    lines.extend(_format_bullets(profile["responsibility"]))
+    lines.extend(
+        [
+            "",
+            "## High-Risk Boundaries",
+            "",
+        ]
+    )
+    lines.extend(_format_bullets(profile["risks"]))
+    lines.extend(
+        [
+            "",
+            "## Common Change Entry Points",
+            "",
+        ]
+    )
+    if ranked_files:
+        lines.extend([f"- {item['path']} ({item['reason']})" for item in ranked_files[:3]])
+    else:
+        lines.append(f"- {module or '(unknown module)'}")
+    lines.extend(
+        [
+            "",
+            "## Best Files To Inspect First",
+            "",
+        ]
+    )
+    if ranked_files:
+        lines.extend([f"- {item['path']} ({item['reason']})" for item in ranked_files])
+    else:
+        lines.append(f"- {module or '(unknown module)'}")
+    lines.extend(
+        [
+            "",
+            "## Relevant Tests",
+            "",
+        ]
+    )
+    if ranked_tests:
+        lines.extend([f"- {item['path']} ({item['reason']})" for item in ranked_tests])
+    else:
+        lines.append("- No test files detected by Harbor.")
+    lines.extend(
+        [
+            "",
+            "## Detailed Key Files",
+            "",
+            "```text",
+        ]
+    )
     if key_files:
         lines.extend(key_files)
     else:
@@ -394,7 +724,7 @@ def generate_module_card(context: Dict[str, Any]) -> str:
         [
             "```",
             "",
-            "## Public / Indexed Contracts",
+            "## Detailed Indexed Contracts",
             "",
         ]
     )
@@ -412,39 +742,8 @@ def generate_module_card(context: Dict[str, Any]) -> str:
     else:
         lines.extend(["```text", "No indexed contracts found for this module.", "```"])
 
-    lines.extend(["", "## Tests", "", "```text"])
-    if tests:
-        lines.extend(tests)
-    else:
-        lines.append("No test files detected by Harbor.")
-
     lines.extend(
         [
-            "```",
-            "",
-            "## Review Focus",
-            "",
-            "* Check Contract Impact before changing public behavior.",
-            "* Check schema/type drift if this module exposes data structures.",
-            "* Check DDT/test coverage for strict targets.",
-            "* Check Runtime Safety if this module writes files, changes data, or touches external systems.",
-            "",
-            "## Debug Entry Points",
-            "",
-            "Start with:",
-            "",
-            "```text",
-        ]
-    )
-    if debug_entries:
-        lines.extend(debug_entries)
-    else:
-        lines.append(module or "(unknown module)")
-
-    lines.extend(
-        [
-            "```",
-            "",
             "## Related Views",
             "",
             "```text",
@@ -467,41 +766,56 @@ def generate_module_card(context: Dict[str, Any]) -> str:
 
 def generate_review_checklist(context: Dict[str, Any]) -> str:
     module = context.get("module", "")
-    return "\n".join(
+    lines = [
+        f"# Review Checklist: {module}",
+        "",
+        "> This file is generated by Harbor-spec.",
+        "> It helps AI coding assistants review this module without loading the whole repository.",
+        "",
+        "## Contract Checks",
+        "",
+        "- Did behavior, args, returns, raises, schema, side effects, state, idempotency, security, or external-visible result change?",
+        "- If yes, update the relevant Contract before or together with implementation.",
+        "- If no, state `Contract Impact: none`.",
+        "",
+        "## Schema / Type Checks",
+        "",
+        "- Check Pydantic models, OpenAPI, TypeScript types, event schemas, or database migrations if this module touches them.",
+        "- Mark `[Contract Conflict]` if schema and docstring disagree.",
+        "",
+        "## DDT / Test Checks",
+        "",
+        "- Strict targets must use explicit `l3_version`.",
+        '- Do not use `strategy="latest"` for strict targets.',
+        "- Add or update tests for args boundary, returns, raises, side effects, and failure paths.",
+        "",
+        "## Runtime Safety Checks",
+        "",
+        "Ask before:",
+        "",
+        "- deleting files",
+        "- changing migrations",
+        "- changing CI/CD",
+        "- touching secrets",
+        "- installing dependencies",
+        "- changing production config",
+        "- modifying auth, permission, billing, or user data handling",
+        "",
+        "## Generated Context Checks",
+        "",
+        "- If behavior or boundaries changed, refresh and re-check generated context instead of editing it manually.",
+        "- Check project-structure, L2 README, and Module Capsule for stale or misleading summaries.",
+        "",
+        "## Diary Need",
+        "",
+        "- If this change affects workflow semantics, generated context shape, or release-relevant behavior, draft a Diary entry.",
+        "",
+        "## Module-Specific Focus",
+        "",
+    ]
+    lines.extend(_module_specific_checklist_lines(str(module)))
+    lines.extend(
         [
-            f"# Review Checklist: {module}",
-            "",
-            "> This file is generated by Harbor-spec.",
-            "> It helps AI coding assistants review this module without loading the whole repository.",
-            "",
-            "## Contract Checks",
-            "",
-            "- Did behavior, args, returns, raises, schema, side effects, state, idempotency, security, or external-visible result change?",
-            "- If yes, update the relevant Contract before or together with implementation.",
-            "- If no, state `Contract Impact: none`.",
-            "",
-            "## Schema / Type Checks",
-            "",
-            "- Check Pydantic models, OpenAPI, TypeScript types, event schemas, or database migrations if this module touches them.",
-            "- Mark `[Contract Conflict]` if schema and docstring disagree.",
-            "",
-            "## DDT / Test Checks",
-            "",
-            "- Strict targets must use explicit `l3_version`.",
-            '- Do not use `strategy="latest"` for strict targets.',
-            "- Add or update tests for args boundary, returns, raises, side effects, and failure paths.",
-            "",
-            "## Runtime Safety Checks",
-            "",
-            "Ask before:",
-            "",
-            "- deleting files",
-            "- changing migrations",
-            "- changing CI/CD",
-            "- touching secrets",
-            "- installing dependencies",
-            "- changing production config",
-            "- modifying auth, permission, billing, or user data handling",
             "",
             "## Semantic Drift Checks",
             "",
@@ -530,6 +844,7 @@ def generate_review_checklist(context: Dict[str, Any]) -> str:
             "Contract Impact:",
             "Strictness:",
             "Tests / DDT:",
+            "Generated Context:",
             "Semantic Drift:",
             "Runtime Safety:",
             "Diary Draft:",
@@ -537,12 +852,13 @@ def generate_review_checklist(context: Dict[str, Any]) -> str:
             "",
         ]
     )
+    return "\n".join(lines)
 
 
 def generate_debug_playbook(context: Dict[str, Any]) -> str:
     module = context.get("module", "")
-    key_files = context.get("key_files", []) or []
-    tests = context.get("tests", []) or []
+    ranked_files = _rank_debug_files(context, limit=3)
+    ranked_tests = _rank_tests(context, limit=3)
 
     lines = [
         f"# Debug Playbook: {module}",
@@ -552,16 +868,20 @@ def generate_debug_playbook(context: Dict[str, Any]) -> str:
         "",
         "## First Files to Inspect",
         "",
-        "```text",
     ]
-    if key_files:
-        lines.extend(key_files[:2])
+    if ranked_files:
+        lines.extend([f"- {item['path']} ({item['reason']})" for item in ranked_files])
     else:
-        lines.append(module or "(unknown module)")
-    lines.extend(["```", "", "## Minimal Checks", "", "Run targeted tests first if available.", ""])
+        lines.append(f"- {module or '(unknown module)'}")
+    lines.extend(["", "## Minimal Checks", "", "Run targeted tests first if available.", ""])
 
-    if tests:
-        lines.extend(["```powershell", f"pytest {tests[0]}", "```"])
+    if ranked_tests:
+        lines.append("```powershell")
+        for item in ranked_tests:
+            lines.append(f"pytest {item['path']}")
+        lines.append("```")
+        lines.extend(["", "## Why These Tests", ""])
+        lines.extend([f"- {item['path']} ({item['reason']})" for item in ranked_tests])
     else:
         lines.extend(
             [

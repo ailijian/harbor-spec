@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "l2_readme"
 module: "harbor/utils"
-generated_at: "2026-05-15T17:40:42Z"
+generated_at: "2026-05-22T08:22:08Z"
 generation_command: "harbor docs --module harbor/utils --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -19,13 +19,41 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 
 # Module: harbor/utils
 
-## Public API
-| Function | Summary | Strictness | DDT Status |
-|---|---|---|---|
-| harbor.utils.formatting.format_size | 将字节数转换为人类可读的 KB/MB 字符串。 | strict | ✅ Valid |
-| harbor.utils.i18n.get_lang | 解析当前语言。 | standard | ⚪ Missing |
-| harbor.utils.i18n.t | 根据当前语言返回文案。 | standard | ⚪ Missing |
+## Public API Summary
+| Metric | Count |
+|---|---:|
+| Public by contract | 3 |
+| Strict targets | 1 |
+| Private-named but strict | 0 |
+| Internal indexed | 0 |
+| Strict targets missing DDT | 0 |
+| Targets with DDT warnings | 0 |
 
+## High-Risk Targets
+| Function | File | Scope | Strictness | DDT Status | Why |
+|---|---|---|---|---|---|
+| harbor.utils.formatting.format_size | harbor/utils/formatting.py | public | strict | ✅ Valid | strict, public |
+| harbor.utils.i18n.get_lang | harbor/utils/i18n.py | public | standard | ⚪ Missing | public |
+| harbor.utils.i18n.t | harbor/utils/i18n.py | public | standard | ⚪ Missing | public |
 
-## Dependency (MVP)
-- (TBD) 未来基于 import 简要分析模块依赖。
+## Full Indexed Contracts
+<details>
+<summary>All indexed contracts</summary>
+
+| Function | File | Scope | Strictness | DDT Status | Summary |
+|---|---|---|---|---|---|
+| harbor.utils.formatting.format_size | harbor/utils/formatting.py | public | strict | ✅ Valid | 将字节数转换为人类可读的 KB/MB 字符串。 |
+| harbor.utils.i18n.get_lang | harbor/utils/i18n.py | public | standard | ⚪ Missing | 解析当前语言。 |
+| harbor.utils.i18n.t | harbor/utils/i18n.py | public | standard | ⚪ Missing | 根据当前语言返回文案。 |
+
+</details>
+
+## Dependency Summary
+
+**Outbound Dependencies**
+- None detected from repo-local Python imports.
+
+**Inbound Dependents**
+- harbor/cli
+- harbor/core
+- tests

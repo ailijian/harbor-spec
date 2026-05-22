@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "review_checklist"
 module: "tests"
-generated_at: "2026-05-22T07:09:11Z"
+generated_at: "2026-05-22T08:23:42Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 112
@@ -121,8 +121,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:c80b99cd8aff8ca5ce798a514243875fa4e52382a5d296b986e4ced08473ea1a"
-contract_fingerprint: "sha256:b200faca8ee9e363676ad33f30ab55e52ce7a75d0c5f2ea0daf69ddc7c437427"
+source_fingerprint: "sha256:8b890a35c2a2a674a72a2a195863142b2eff86e5ef530d6294cbc8283d5f79d4"
+contract_fingerprint: "sha256:f082d0580080a4d15492c7177e584fe4523f61a08ae69f289f67a1fc22dadeb9"
 generator_fingerprint: "sha256:eadcf0a1aa08dab7adb1a4c205d99d38bfe01803de18aac5ece490c3f07ecb13"
 ---
 
@@ -160,6 +160,20 @@ Ask before:
 - changing production config
 - modifying auth, permission, billing, or user data handling
 
+## Generated Context Checks
+
+- If behavior or boundaries changed, refresh and re-check generated context instead of editing it manually.
+- Check project-structure, L2 README, and Module Capsule for stale or misleading summaries.
+
+## Diary Need
+
+- If this change affects workflow semantics, generated context shape, or release-relevant behavior, draft a Diary entry.
+
+## Module-Specific Focus
+
+- Check whether assertions were weakened or no longer verify the intended contract.
+- Inspect DDT/version expectations and generated-context assertions for stale assumptions.
+
 ## Semantic Drift Checks
 
 Mark:
@@ -187,6 +201,7 @@ Change Summary:
 Contract Impact:
 Strictness:
 Tests / DDT:
+Generated Context:
 Semantic Drift:
 Runtime Safety:
 Diary Draft:

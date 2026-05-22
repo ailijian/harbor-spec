@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "l2_readme"
 module: "harbor/adapters/python"
-generated_at: "2026-05-22T07:09:03Z"
+generated_at: "2026-05-22T08:21:59Z"
 generation_command: "harbor docs --module harbor/adapters/python --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -19,28 +19,55 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 
 # Module: harbor/adapters/python
 
-## Public API
-| Function | Summary | Strictness | DDT Status |
-|---|---|---|---|
-| harbor.adapters.python.parser.PythonAdapter.parse_file | 解析并提取指定 Python 文件中的函数/方法契约元数据。 | strict | ❌ Missing |
+## Public API Summary
+| Metric | Count |
+|---|---:|
+| Public by contract | 1 |
+| Strict targets | 1 |
+| Private-named but strict | 0 |
+| Internal indexed | 9 |
+| Strict targets missing DDT | 1 |
+| Targets with DDT warnings | 0 |
 
-## Internal Details (optional)
+## High-Risk Targets
+| Function | File | Scope | Strictness | DDT Status | Why |
+|---|---|---|---|---|---|
+| harbor.adapters.python.parser.PythonAdapter.parse_file | harbor/adapters/python/parser.py | public | strict | ❌ Missing | strict, public, missing DDT |
+| harbor.adapters.python.parser.PythonAdapter._contract_area | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | indexed target |
+| harbor.adapters.python.parser.PythonAdapter._contract_from_function | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | indexed target |
+| harbor.adapters.python.parser.PythonAdapter._docstring_hashes | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | indexed target |
+| harbor.adapters.python.parser.PythonAdapter._extract_functions | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | indexed target |
+| harbor.adapters.python.parser.PythonAdapter._module_qual_from_path | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | indexed target |
+| harbor.adapters.python.compat._normalize_posix_path | harbor/adapters/python/compat.py | unknown | None | ⚪ Missing | indexed target |
+| harbor.adapters.python.parser.PythonAdapter._parse_tags | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | indexed target |
+| harbor.adapters.python.parser.PythonAdapter._signature_hash | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | indexed target |
+| harbor.adapters.python.compat.function_contract_to_subject | harbor/adapters/python/compat.py | unknown | None | ⚪ Missing | indexed target |
+
+## Full Indexed Contracts
 <details>
-<summary>Internal functions</summary>
+<summary>All indexed contracts</summary>
 
-| Function | Summary | Strictness | DDT Status |
-|---|---|---|---|
-| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取 Harbor 契约区文本（标准段落 + `@harbor.*` tags）。找不到则返回空串。 | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._docstring_hashes | 计算 Docstring 的 raw/contract 双哈希。 | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._extract_functions | 提取顶层函数与类方法的契约元数据。 | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._module_qual_from_path | 根据文件路径生成模块限定名（点分格式）。 | standard | ⚪ Missing |
-| harbor.adapters.python.compat._normalize_posix_path | — | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._parse_tags | 从 Docstring 提取 @harbor.* 标签。 | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._signature_hash | 计算函数签名的稳定哈希。 | standard | ⚪ Missing |
-| harbor.adapters.python.compat.function_contract_to_subject | — | standard | ⚪ Missing |
+| Function | File | Scope | Strictness | DDT Status | Summary |
+|---|---|---|---|---|---|
+| harbor.adapters.python.parser.PythonAdapter._contract_area | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | 提取 Harbor 契约区文本（标准段落 + `@harbor.*` tags）。找不到则返回空串。 |
+| harbor.adapters.python.parser.PythonAdapter._contract_from_function | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | 根据函数节点生成契约元数据。 |
+| harbor.adapters.python.parser.PythonAdapter._docstring_hashes | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | 计算 Docstring 的 raw/contract 双哈希。 |
+| harbor.adapters.python.parser.PythonAdapter._extract_functions | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | 提取顶层函数与类方法的契约元数据。 |
+| harbor.adapters.python.parser.PythonAdapter._module_qual_from_path | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | 根据文件路径生成模块限定名（点分格式）。 |
+| harbor.adapters.python.compat._normalize_posix_path | harbor/adapters/python/compat.py | unknown | None | ⚪ Missing | — |
+| harbor.adapters.python.parser.PythonAdapter._parse_tags | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | 从 Docstring 提取 @harbor.* 标签。 |
+| harbor.adapters.python.parser.PythonAdapter._signature_hash | harbor/adapters/python/parser.py | internal | standard | ⚪ Missing | 计算函数签名的稳定哈希。 |
+| harbor.adapters.python.compat.function_contract_to_subject | harbor/adapters/python/compat.py | unknown | None | ⚪ Missing | — |
+| harbor.adapters.python.parser.PythonAdapter.parse_file | harbor/adapters/python/parser.py | public | strict | ❌ Missing | 解析并提取指定 Python 文件中的函数/方法契约元数据。 |
 
 </details>
 
-## Dependency (MVP)
-- (TBD) 未来基于 import 简要分析模块依赖。
+## Dependency Summary
+
+**Outbound Dependencies**
+- harbor/adapters/base
+
+**Inbound Dependents**
+- harbor/adapters
+- harbor/core
+- tests

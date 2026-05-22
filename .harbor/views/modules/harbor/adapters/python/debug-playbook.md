@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "harbor/adapters/python"
-generated_at: "2026-05-22T07:09:11Z"
+generated_at: "2026-05-22T08:03:41Z"
 generation_command: "harbor module seal harbor/adapters/python --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -24,18 +24,25 @@ generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2
 
 ## First Files to Inspect
 
-```text
-harbor/adapters/python/__init__.py
-harbor/adapters/python/compat.py
-```
+- harbor/adapters/python/parser.py (indexed contracts, strict target)
+- harbor/adapters/python/compat.py (indexed contracts, covered by matching tests)
+- harbor/adapters/python/__init__.py (package marker only)
 
 ## Minimal Checks
 
 Run targeted tests first if available.
 
 ```powershell
+pytest tests/test_python_adapter_compat.py
 pytest tests/test_checkpoint_json_additive_compat.py
+pytest tests/test_python_audit_regression.py
 ```
+
+## Why These Tests
+
+- tests/test_python_adapter_compat.py (module match, file-name match)
+- tests/test_checkpoint_json_additive_compat.py (file-name match, imports target symbols)
+- tests/test_python_audit_regression.py (module match, imports target symbols)
 
 ## Common Debug Questions
 

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "tests"
-generated_at: "2026-05-22T07:09:11Z"
+generated_at: "2026-05-22T08:23:42Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 112
@@ -121,8 +121,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:c80b99cd8aff8ca5ce798a514243875fa4e52382a5d296b986e4ced08473ea1a"
-contract_fingerprint: "sha256:b200faca8ee9e363676ad33f30ab55e52ce7a75d0c5f2ea0daf69ddc7c437427"
+source_fingerprint: "sha256:8b890a35c2a2a674a72a2a195863142b2eff86e5ef530d6294cbc8283d5f79d4"
+contract_fingerprint: "sha256:f082d0580080a4d15492c7177e584fe4523f61a08ae69f289f67a1fc22dadeb9"
 generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2d5a103de17b5441"
 ---
 
@@ -133,18 +133,25 @@ generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2
 
 ## First Files to Inspect
 
-```text
-tests/__init__.py
-tests/conftest.py
-```
+- tests/fixtures_sqlite/sample.py (indexed contracts, strict target)
+- tests/core/test_index_sync_sqlite.py (indexed contracts, covered by matching tests)
+- tests/core/test_storage_migration.py (indexed contracts, covered by matching tests)
 
 ## Minimal Checks
 
 Run targeted tests first if available.
 
 ```powershell
-pytest tests/core/test_index_sync_sqlite.py
+pytest tests/test_change_window_snapshot.py
+pytest tests/test_checkpoint_ci_guidance.py
+pytest tests/test_cli_finish_sync_context.py
 ```
+
+## Why These Tests
+
+- tests/test_change_window_snapshot.py (file-name match, imports target symbols)
+- tests/test_checkpoint_ci_guidance.py (file-name match, imports target symbols)
+- tests/test_cli_finish_sync_context.py (file-name match, imports target symbols)
 
 ## Common Debug Questions
 

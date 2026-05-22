@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "debug_playbook"
 module: "tests/core"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T08:03:45Z"
 generation_command: "harbor module seal tests/core --write"
 stale_policy: "advisory"
 source_path_count: 2
@@ -23,10 +23,8 @@ generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2
 
 ## First Files to Inspect
 
-```text
-tests/core/test_index_sync_sqlite.py
-tests/core/test_storage_migration.py
-```
+- tests/core/test_index_sync_sqlite.py (indexed contracts, covered by matching tests)
+- tests/core/test_storage_migration.py (indexed contracts, covered by matching tests)
 
 ## Minimal Checks
 
@@ -34,7 +32,15 @@ Run targeted tests first if available.
 
 ```powershell
 pytest tests/core/test_index_sync_sqlite.py
+pytest tests/core/test_storage_migration.py
+pytest tests/test_change_window_snapshot.py
 ```
+
+## Why These Tests
+
+- tests/core/test_index_sync_sqlite.py (file-name match, imports target symbols)
+- tests/core/test_storage_migration.py (file-name match, imports target symbols)
+- tests/test_change_window_snapshot.py (imports target symbols, mentions target workflow)
 
 ## Common Debug Questions
 
