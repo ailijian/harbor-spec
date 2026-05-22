@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.5"
+harbor_version: "1.4.6"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-22T09:07:14Z"
+generated_at: "2026-05-22T11:34:18Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 41
@@ -18,9 +18,9 @@ source_paths:
   - "harbor/core/changed_scope.py"
   - "harbor/core/ci.py"
   - "harbor/core/console_output.py"
-source_fingerprint: "sha256:a199429c3b91ddba5fc01a878d38fca8d19d5ae05a5b3392894d6e1d8d4a5104"
-contract_fingerprint: "sha256:841fff98b706bcfe47a96508f6a7fb64a75a2f47de52374a74f455952cd4a602"
-generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08553e55bd0e7e9ee"
+source_fingerprint: "sha256:b156de84a2b70474bfa5ea8b0d6d6a7d7b8fd64c108241c7e5240a86be00e0c6"
+contract_fingerprint: "sha256:d081709d5c73930f5e96a6008e1aeb104ef9ec198aad938c15a9af520f66e06e"
+generator_fingerprint: "sha256:88b0a0a6f104b36d6894cfa15ca2a67be8b338d182c5681279c2d0ecb2a59486"
 ---
 
 # Module: harbor/core
@@ -31,7 +31,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | Public by contract | 102 |
 | Strict targets | 101 |
 | Private-named but strict | 0 |
-| Internal indexed | 587 |
+| Internal indexed | 591 |
 | Strict targets missing DDT | 100 |
 | Targets with DDT warnings | 0 |
 
@@ -69,7 +69,6 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 
 **Outbound Dependencies**
 - harbor/adapters (9 edges): harbor/adapters/base, harbor/adapters/python/compat, harbor/adapters/python/parser, ... (+6 more)
-- harbor (root package) (1 edges): harbor
 - harbor/utils (1 edges): harbor/utils/i18n
 
 **Inbound Dependents**
@@ -114,6 +113,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.core.log_draft._bucket_for_path | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.workspace._build_path | harbor/core/workspace.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.drafting.DiaryDrafter._build_prompt | harbor/core/drafting.py | unknown | unknown | ⚪ Missing | — |
+| harbor.core.l2._build_repo_import_graph | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.log_draft._build_risks | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.audit.SemanticGuard._build_subject_prompt | harbor/core/audit.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.log_draft._build_suggested_diary_entry | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |
@@ -124,6 +124,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.core.verification._build_typescript_ddt_preview_report | harbor/core/verification.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.log_draft._build_why | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.module_capsule._build_workflow_recommendations | harbor/core/module_capsule.py | unknown | unknown | ⚪ Missing | — |
+| harbor.core.generated_verify._cached_l2_body | harbor/core/generated_verify.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.project_structure._capsule_exists | harbor/core/project_structure.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.project_structure._capsule_export_exists | harbor/core/project_structure.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.workspace_inspect._check_git_ignored | harbor/core/workspace_inspect.py | unknown | unknown | ⚪ Missing | — |
@@ -245,6 +246,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.core.ci._get_optional_dict_list | harbor/core/ci.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.ci._get_optional_list | harbor/core/ci.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.ci._get_optional_text | harbor/core/ci.py | unknown | unknown | ⚪ Missing | — |
+| harbor.core.l2.L2Generator._get_repo_import_graph | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.change_window._git_status_lines | harbor/core/change_window.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.init_wizard._has_env_ignore | harbor/core/init_wizard.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.decorator.DecoratorEngine._has_scope_tag | harbor/core/decorator.py | unknown | unknown | ⚪ Missing | — |
@@ -401,6 +403,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.core.module_capsule._resolve_docs_export_modules_root | harbor/core/module_capsule.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | harbor/core/project_structure.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.l2.L2Generator._resolve_export_readme_path | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
+| harbor.core.l2._resolve_file_imports | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.l2._resolve_import_token_to_module | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.readonly_index._resolve_index_path | harbor/core/readonly_index.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.log_draft._resolve_latest_draft_source | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |

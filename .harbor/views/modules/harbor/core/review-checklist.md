@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.5"
+harbor_version: "1.4.6"
 view_type: "review_checklist"
 module: "harbor/core"
-generated_at: "2026-05-22T09:07:56Z"
+generated_at: "2026-05-22T11:35:00Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 41
@@ -18,9 +18,9 @@ source_paths:
   - "harbor/core/changed_scope.py"
   - "harbor/core/ci.py"
   - "harbor/core/console_output.py"
-source_fingerprint: "sha256:a199429c3b91ddba5fc01a878d38fca8d19d5ae05a5b3392894d6e1d8d4a5104"
-contract_fingerprint: "sha256:d51cb363a4e40a1870af93ef817f743a77d0b0814e0f2418bf23c1928d7d9c63"
-generator_fingerprint: "sha256:eadcf0a1aa08dab7adb1a4c205d99d38bfe01803de18aac5ece490c3f07ecb13"
+source_fingerprint: "sha256:b156de84a2b70474bfa5ea8b0d6d6a7d7b8fd64c108241c7e5240a86be00e0c6"
+contract_fingerprint: "sha256:00dd2f9b3a1f1dd205fa92f57cb378351c2715eab82c1f9997592d013beab7c5"
+generator_fingerprint: "sha256:e897a034c1ce8f0e7841f71901b512cba1611a26648f50caea5d2cbd7210899a"
 ---
 
 # Review Checklist: harbor/core

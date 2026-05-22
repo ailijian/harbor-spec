@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.5"
+harbor_version: "1.4.6"
 view_type: "l2_readme"
 module: "tests"
-generated_at: "2026-05-22T09:07:19Z"
+generated_at: "2026-05-22T11:34:21Z"
 generation_command: "harbor docs --module tests --write"
 stale_policy: "advisory"
 source_path_count: 112
@@ -18,9 +18,9 @@ source_paths:
   - "tests/test_accept_cli.py"
   - "tests/test_adapter_basic.py"
   - "tests/test_adapter_registry.py"
-source_fingerprint: "sha256:a9b9f21d3a8669068d9fdb4453fd19fefc16959132682923d458c534bdc193fb"
-contract_fingerprint: "sha256:9ca6bc3ec6633c8555e3e72609c36e6c96aed90f2449b0ae897e453e163c515f"
-generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08553e55bd0e7e9ee"
+source_fingerprint: "sha256:bcfe3e2b43a44c3114f56ee07b4086e65b8d7cbc9d3ba50acce55f55dcfab7bf"
+contract_fingerprint: "sha256:8e971701e6b1321019abf2677894d9f8145dd0cd67d08e51e77aa26c930b5695"
+generator_fingerprint: "sha256:88b0a0a6f104b36d6894cfa15ca2a67be8b338d182c5681279c2d0ecb2a59486"
 ---
 
 # Module: tests
@@ -31,7 +31,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | Public by contract | 1 |
 | Strict targets | 1 |
 | Private-named but strict | 0 |
-| Internal indexed | 1041 |
+| Internal indexed | 1044 |
 | Strict targets missing DDT | 1 |
 | Targets with DDT warnings | 0 |
 
@@ -62,7 +62,6 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 - harbor/core (36 edges): harbor/core, harbor/core/audit, harbor/core/baseline_artifact, ... (+33 more)
 - harbor/adapters (6 edges): harbor/adapters/base, harbor/adapters/python/compat, harbor/adapters/python/parser, ... (+3 more)
 - harbor/utils (2 edges): harbor/utils, harbor/utils/i18n
-- harbor (root package) (1 edges): harbor
 - harbor/cli (1 edges): harbor/cli/main
 - harbor/test_utils (1 edges): harbor/test_utils
 
@@ -630,6 +629,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes | tests/test_generated_verify.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_generated_verify.test_generated_verify_passes_when_views_match | tests/test_generated_verify.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_generated_verify.test_generated_verify_project_structure_passes_without_runtime_cache | tests/test_generated_verify.py | unknown | unknown | ⚪ Missing | — |
+| tests.test_generated_verify.test_generated_verify_reuses_l2_generator_for_all_scope | tests/test_generated_verify.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_contract_impact.test_generated_view_modules_hit_generated_view_format | tests/test_contract_impact.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_module_capsule.test_generators_include_required_sections | tests/test_module_capsule.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance | tests/test_adapter_registry.py | unknown | unknown | ⚪ Missing | — |
@@ -681,6 +681,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | tests.test_l2_paths.test_l2_absolute_module_path_outside_repo_still_rejected | tests/test_l2_paths.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_module_capsule.test_l2_and_capsule_can_be_generated_without_runtime_index_cache | tests/test_module_capsule.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root | tests/test_l2_paths.py | unknown | unknown | ⚪ Missing | — |
+| tests.test_l2_paths.test_l2_dependency_summary_reuses_repo_import_graph_and_filters_root_package | tests/test_l2_paths.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_stale.test_l2_export_disabled_is_explicit_and_not_warn_counter | tests/test_stale.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical | tests/test_l2_paths.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_stale.test_l2_export_ok_when_canonical_has_frontmatter_and_export_is_plain_body | tests/test_stale.py | unknown | unknown | ⚪ Missing | — |
@@ -919,7 +920,8 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior | tests/test_adapter_registry.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | Backward-compatible alias test name kept to avoid baselin... |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | — |
-| tests.test_release_packaging.test_release_notes_include_v145_plan_summary | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | — |
+| tests.test_release_packaging.test_release_notes_include_v145_plan_summary | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | Backward-compatible alias kept to avoid accepted baseline... |
+| tests.test_release_packaging.test_release_notes_include_v146_release_prep_summary | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_release_packaging.test_release_notes_reference_python_ddt_reconciliation_report | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_repair_guidance.test_repair_guidance_has_no_llm_integration_symbols | tests/test_repair_guidance.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_contract_impact.test_report_to_dict_is_deterministic_and_sanitized | tests/test_contract_impact.py | unknown | unknown | ⚪ Missing | — |

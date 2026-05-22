@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.5"
+harbor_version: "1.4.6"
 view_type: "debug_playbook"
 module: "harbor/core"
-generated_at: "2026-05-22T09:07:57Z"
+generated_at: "2026-05-22T11:35:00Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 41
@@ -18,9 +18,9 @@ source_paths:
   - "harbor/core/changed_scope.py"
   - "harbor/core/ci.py"
   - "harbor/core/console_output.py"
-source_fingerprint: "sha256:a199429c3b91ddba5fc01a878d38fca8d19d5ae05a5b3392894d6e1d8d4a5104"
-contract_fingerprint: "sha256:d51cb363a4e40a1870af93ef817f743a77d0b0814e0f2418bf23c1928d7d9c63"
-generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2d5a103de17b5441"
+source_fingerprint: "sha256:b156de84a2b70474bfa5ea8b0d6d6a7d7b8fd64c108241c7e5240a86be00e0c6"
+contract_fingerprint: "sha256:00dd2f9b3a1f1dd205fa92f57cb378351c2715eab82c1f9997592d013beab7c5"
+generator_fingerprint: "sha256:f82dacaceda1fefdf653d6ca865274800f2c40f6e28294efd809a28c7529922a"
 ---
 
 # Debug Playbook: harbor/core

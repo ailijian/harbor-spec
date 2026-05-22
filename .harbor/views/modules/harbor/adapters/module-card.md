@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.5"
+harbor_version: "1.4.6"
 view_type: "module_card"
 module: "harbor/adapters"
-generated_at: "2026-05-22T09:07:48Z"
+generated_at: "2026-05-22T11:34:51Z"
 generation_command: "harbor module seal harbor/adapters --write"
 stale_policy: "advisory"
 source_path_count: 14
@@ -20,7 +20,7 @@ source_paths:
   - "harbor/adapters/typescript/adapter.py"
 source_fingerprint: "sha256:09fd790eec8694f7cdb9e90f189a170e5e1cb14e74421ed2bc06c251af868c9e"
 contract_fingerprint: "sha256:be95ae47fba14443799ae49a038c64f2817468f34b4ee441026aca92817a3f58"
-generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
+generator_fingerprint: "sha256:41780cd4ea727ccf5dc512cea3bb7541ddc22719d05e87faaee93b2bdb9900e1"
 view_fingerprint: "9ebc8d81aa81a85a20fb95c59ee5c9baa3c66ccf37b63e078f81399652fb0856"
 fingerprint: "9ebc8d81aa81a85a20fb95c59ee5c9baa3c66ccf37b63e078f81399652fb0856"
 ---

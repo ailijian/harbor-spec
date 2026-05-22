@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.5"
+harbor_version: "1.4.6"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-22T09:08:03Z"
+generated_at: "2026-05-22T11:35:06Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 112
@@ -18,11 +18,11 @@ source_paths:
   - "tests/test_accept_cli.py"
   - "tests/test_adapter_basic.py"
   - "tests/test_adapter_registry.py"
-source_fingerprint: "sha256:a9b9f21d3a8669068d9fdb4453fd19fefc16959132682923d458c534bdc193fb"
-contract_fingerprint: "sha256:fe49afd4a1e3181546b0cb03874c1d7b9b3e71575d5fd0975527a3e42093b8c1"
-generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "0c3600e4910eecb9eee988342b1bd0f171e0dac8a854a046da61a22ae0308686"
-fingerprint: "0c3600e4910eecb9eee988342b1bd0f171e0dac8a854a046da61a22ae0308686"
+source_fingerprint: "sha256:bcfe3e2b43a44c3114f56ee07b4086e65b8d7cbc9d3ba50acce55f55dcfab7bf"
+contract_fingerprint: "sha256:f13c2712644fac26492d87c29b06ae434e4c699ea70d535e194c63fcaafe52b3"
+generator_fingerprint: "sha256:41780cd4ea727ccf5dc512cea3bb7541ddc22719d05e87faaee93b2bdb9900e1"
+view_fingerprint: "31349faa9a838e76ab113b00f82b5edd9c7276fe9bf438c6aea5571c19e9f6cd"
+fingerprint: "31349faa9a838e76ab113b00f82b5edd9c7276fe9bf438c6aea5571c19e9f6cd"
 ---
 
 # Module Card: tests
@@ -729,6 +729,7 @@ tests/test_workspace_paths.py
 | tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes | tests/test_generated_verify.py | unknown | standard |
 | tests.test_generated_verify.test_generated_verify_passes_when_views_match | tests/test_generated_verify.py | unknown | standard |
 | tests.test_generated_verify.test_generated_verify_project_structure_passes_without_runtime_cache | tests/test_generated_verify.py | unknown | standard |
+| tests.test_generated_verify.test_generated_verify_reuses_l2_generator_for_all_scope | tests/test_generated_verify.py | unknown | standard |
 | tests.test_gitignore_prune.test_gitignore_prunes_node_modules | tests/test_gitignore_prune.py | unknown | standard |
 | tests.test_harbor_next.run_cmd | tests/test_harbor_next.py | unknown | standard |
 | tests.test_harbor_next.test_next_can_consume_verify_generated_ci_json | tests/test_harbor_next.py | unknown | standard |
@@ -812,6 +813,7 @@ tests/test_workspace_paths.py
 | tests.test_l2_paths._write_yaml | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_absolute_module_path_outside_repo_still_rejected | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_dependency_summary_reuses_repo_import_graph_and_filters_root_package | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_generate_displays_unknown_strictness_instead_of_python_none | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_generate_uses_summary_first_and_dependency_summary | tests/test_l2_paths.py | unknown | standard |
@@ -989,6 +991,7 @@ tests/test_workspace_paths.py
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_release_notes_include_v145_plan_summary | tests/test_release_packaging.py | unknown | standard |
+| tests.test_release_packaging.test_release_notes_include_v146_release_prep_summary | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_release_notes_reference_python_ddt_reconciliation_report | tests/test_release_packaging.py | unknown | standard |
 | tests.test_release_packaging.test_source_of_truth_priority_and_conflict_docs_are_present | tests/test_release_packaging.py | unknown | standard |
 | tests.test_repair_guidance.test_contract_gap_guidance_defaults | tests/test_repair_guidance.py | unknown | standard |

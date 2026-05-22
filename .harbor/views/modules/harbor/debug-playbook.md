@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.5"
+harbor_version: "1.4.6"
 view_type: "debug_playbook"
 module: "harbor"
-generated_at: "2026-05-22T09:07:46Z"
+generated_at: "2026-05-22T11:34:49Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 64
@@ -18,9 +18,9 @@ source_paths:
   - "harbor/adapters/python/parser.py"
   - "harbor/adapters/registry.py"
   - "harbor/adapters/typescript/__init__.py"
-source_fingerprint: "sha256:207e957c09ad6139ffcfd238fe93f0e69ad1d73bbf8679ab293eb5c64162decb"
-contract_fingerprint: "sha256:ca0723b6143875680529e574f9253b8655034f84b7f68f835b9212eb28c2be15"
-generator_fingerprint: "sha256:65ccddc1bc55583c079e9298ea5bae682ed823de056cc87d2d5a103de17b5441"
+source_fingerprint: "sha256:731f9e86a2c1d8764a087291add9578746084b88b160047df406250474f07cb5"
+contract_fingerprint: "sha256:7ac16ad0ca97f85cd0f6761ec0a8b4f416ea11883bed020d2133bed1709845f2"
+generator_fingerprint: "sha256:f82dacaceda1fefdf653d6ca865274800f2c40f6e28294efd809a28c7529922a"
 ---
 
 # Debug Playbook: harbor

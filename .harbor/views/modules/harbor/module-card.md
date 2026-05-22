@@ -1,9 +1,9 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.5"
+harbor_version: "1.4.6"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-22T09:07:46Z"
+generated_at: "2026-05-22T11:34:49Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 64
@@ -18,11 +18,11 @@ source_paths:
   - "harbor/adapters/python/parser.py"
   - "harbor/adapters/registry.py"
   - "harbor/adapters/typescript/__init__.py"
-source_fingerprint: "sha256:207e957c09ad6139ffcfd238fe93f0e69ad1d73bbf8679ab293eb5c64162decb"
-contract_fingerprint: "sha256:ca0723b6143875680529e574f9253b8655034f84b7f68f835b9212eb28c2be15"
-generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "b4db98365a985448246e75d6f989ef81aad35ab6d1444c091e003487f21d41bd"
-fingerprint: "b4db98365a985448246e75d6f989ef81aad35ab6d1444c091e003487f21d41bd"
+source_fingerprint: "sha256:731f9e86a2c1d8764a087291add9578746084b88b160047df406250474f07cb5"
+contract_fingerprint: "sha256:7ac16ad0ca97f85cd0f6761ec0a8b4f416ea11883bed020d2133bed1709845f2"
+generator_fingerprint: "sha256:41780cd4ea727ccf5dc512cea3bb7541ddc22719d05e87faaee93b2bdb9900e1"
+view_fingerprint: "1538912573d7a0a33c1496991ffee4a6457ca3f8e3e801de617390399ce06b77"
+fingerprint: "1538912573d7a0a33c1496991ffee4a6457ca3f8e3e801de617390399ce06b77"
 ---
 
 # Module Card: harbor
@@ -511,6 +511,7 @@ harbor/utils/i18n.py
 | harbor.core.generated_verify.ModuleGeneratedVerification.to_dict | harbor/core/generated_verify.py | public | strict |
 | harbor.core.generated_verify.ProjectGeneratedVerification.to_dict | harbor/core/generated_verify.py | public | strict |
 | harbor.core.generated_verify._build_summary | harbor/core/generated_verify.py | unknown | standard |
+| harbor.core.generated_verify._cached_l2_body | harbor/core/generated_verify.py | unknown | standard |
 | harbor.core.generated_verify._collect_repair_commands | harbor/core/generated_verify.py | unknown | standard |
 | harbor.core.generated_verify._compose_expected_canonical_l2_markdown | harbor/core/generated_verify.py | unknown | standard |
 | harbor.core.generated_verify._compose_expected_capsule_markdown | harbor/core/generated_verify.py | unknown | standard |
@@ -629,6 +630,7 @@ harbor/utils/i18n.py
 | harbor.core.l2.L2Generator.__init__ | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator._collect_integrity_inputs | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._ensure_within_root | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2.L2Generator._get_repo_import_graph | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_index | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._load_meta | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2.L2Generator._normalize_meta_key | harbor/core/l2.py | unknown | standard |
@@ -644,6 +646,7 @@ harbor/utils/i18n.py
 | harbor.core.l2.L2Generator.compute_meta_hash | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.write | harbor/core/l2.py | public | strict |
+| harbor.core.l2._build_repo_import_graph | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._collect_module_dependency_summary | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._dependency_group | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._display_strictness | harbor/core/l2.py | unknown | standard |
@@ -651,6 +654,7 @@ harbor/utils/i18n.py
 | harbor.core.l2._format_dependency_group_rows | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._looks_like_windows_absolute_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._repo_relative_index_path | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._resolve_file_imports | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._resolve_import_token_to_module | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._safe_read_text | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._strictness_rank | harbor/core/l2.py | unknown | standard |

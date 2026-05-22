@@ -1,5 +1,5 @@
 {
-  "accepted_at": "2026-05-15T17:31:06Z",
+  "accepted_at": "2026-05-22T11:31:10Z",
   "accepted_by": "harbor accept",
   "baseline": {
     "items": [
@@ -112,8 +112,8 @@
         "target_id": "python:harbor/adapters/python/compat.py:function:harbor.adapters.python.compat.function_contract_to_subject"
       },
       {
-        "body_hash": "12a29862a51f71d896e76efa506ece5609ea88a8d904984e2248f19f6d1e6ba0",
-        "contract_hash": "193663d801b06ce180b9a81e90e57c9f290a70f14782610dd8f4a7c62e8ae4a0",
+        "body_hash": "c55b41305331337f7a7e256fece5f8dda4c842bd5123f306ba1236fd62b1415d",
+        "contract_hash": "6ca4c27622df5128f628b0707ca8c2d121b9e9319627affe42d2c6d100928bbc",
         "contract_presence": "present",
         "contract_required": false,
         "file_path": "harbor/adapters/python/parser.py",
@@ -977,7 +977,7 @@
       },
       {
         "body_hash": "dd43b0d6d0f1664b0f5acc68c58f551c841ead765632683cfafab8901227adcb",
-        "contract_hash": "254ea23db75218f9f5285f6f425232ee5ada2e9e3817c85755483322ca3a5014",
+        "contract_hash": "5f407ddc1da1ff5d364c56f6e56b62ad3a8c969e5aa5848e3820c399a640691e",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/adapters/typescript/public_boundary.py",
@@ -1469,7 +1469,7 @@
       },
       {
         "body_hash": "67744b98eb1c03787950147c650b0617cfb4a40ba303973075ab05eae7edf4e7",
-        "contract_hash": "54eb3b488523a52a6f02c08484d1638d9396fedeb6eb999d00e76898c280e18b",
+        "contract_hash": "bfc4ad5a16bb404ecff5f39e73480991d697d446ed57611b7eb0779653f4bae4",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/cli/main.py",
@@ -1817,7 +1817,7 @@
       },
       {
         "body_hash": "95f6a0ddf95f6159017629d4365a847e6da93fec7bc3e4bed033f9faaec002a4",
-        "contract_hash": "803d0d46f451905477610ba6da98ca6e1905d0dfb20e9bd602327f612925aed3",
+        "contract_hash": "c100e0db1b933049fe158ba3e6682cc06d3fd8a3149dd96cf28fc82c28f4276a",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/audit.py",
@@ -1853,7 +1853,7 @@
       },
       {
         "body_hash": "60d57df05daa0aa4da7561b5c35a5e816c95e43a48f1ae106f53f38b2f43412b",
-        "contract_hash": "6e3943c840d12fc552691e4c93a55e6460f3ce9dc2418c4e0fb4b0965b044e88",
+        "contract_hash": "432a4e44ffba57be3a81f52e5ebf8f5a752bed505e7152935f561e0f6e77620c",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/audit.py",
@@ -2333,8 +2333,8 @@
       },
       {
         "body_hash": "628ca2ae114df4c9bd4a8e10f1766f75f1c31c493450afc1d566f35c915ce9d0",
-        "contract_hash": "567b7eedc4f03544e22a7dcfdd6e0b24f9089a1bb58bd0d08f675946ca346608",
-        "contract_presence": "non_contract_doc",
+        "contract_hash": "54f430cf033c45f0ff37b43822f85560a4ebf65cc4213e1c048988dd5957ecae",
+        "contract_presence": "present",
         "contract_required": false,
         "file_path": "harbor/core/change_window.py",
         "func_id": "harbor.core.change_window.collect_git_workspace_state",
@@ -2357,8 +2357,8 @@
       },
       {
         "body_hash": "7fbc8ed767219ef1f3b509b456ed44e85178be3f83640ff759f01047dbc44a56",
-        "contract_hash": "fc6830417ac2796cf048d7683e9c47a204ea92edcbc272038da4aa482421c451",
-        "contract_presence": "non_contract_doc",
+        "contract_hash": "319bc3eddadf302479d6e2355d72acfb133dd842f87ba00888b5d8d73f253912",
+        "contract_presence": "present",
         "contract_required": false,
         "file_path": "harbor/core/change_window.py",
         "func_id": "harbor.core.change_window.list_change_windows",
@@ -2381,7 +2381,7 @@
       },
       {
         "body_hash": "35d9c8db5c1b683b3718836bd3220f7d8f6b2069ef82ef1f91804d674bc10450",
-        "contract_hash": "48aef2b95b30a24f3e17a6ca6f0e97436e12247a7d265220033c9b306a2a5543",
+        "contract_hash": "9d8aac4c8b578cbb7e64d4778570610c988e0229e1eb6d5848811111fbb6ec2c",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/change_window.py",
@@ -2393,7 +2393,7 @@
       },
       {
         "body_hash": "6f273a6755a8711e2328a90d1989fd5a986d9bde23dc3e95366b699f66f30e75",
-        "contract_hash": "3cfd385d4a9eff969c14e619bb1eb6d7ec0cb7619308cc42f291d530b8c524c6",
+        "contract_hash": "5788cb10a639a24033bce74ef227a6217c4ea3a2e52539b877f381b305ea4da5",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/change_window.py",
@@ -2813,7 +2813,7 @@
       },
       {
         "body_hash": "53d548e6cf94aaa8274e39acd57950da4c8efbb0dd5ea66dc3825f7bcf9c8551",
-        "contract_hash": "657ed07e124594fedd489e9a73f8096a214fe390b75cf410a203c833048905e4",
+        "contract_hash": "7ec2b6b3feaf45d623f86d3251755b8bf9b51cac5df77ea86ddc7ea3aa7a3f68",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/ci.py",
@@ -2825,7 +2825,7 @@
       },
       {
         "body_hash": "d24507444b4e04e3d0e2105e30f9ec8eebb62c444c959d793c8c181b6db75644",
-        "contract_hash": "785ef76d0195a00d93ea48dab1e7a137dc722727294bb9149f364ec7fda55f11",
+        "contract_hash": "42e1b2d8b780082b53b90cf59bdb27a17783677a37dc3c952920157af5ee2ae6",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/ci.py",
@@ -2837,7 +2837,7 @@
       },
       {
         "body_hash": "b6cb1b3c7c9560677e752deffaba2234be2bf07887d03497a97a60ec9b631570",
-        "contract_hash": "4f93950d2cdc7fac2e3e03d41d70cab03e67754f6070acfe178057b51d842af9",
+        "contract_hash": "247351427bdda45cb7e64b166ebab55517e233b2db21df2c301ebddd31f4f5ce",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/ci.py",
@@ -2861,7 +2861,7 @@
       },
       {
         "body_hash": "7bab30c51ed67adc6e99c872a20a61112a01464eca683f911db72d7212d06a3f",
-        "contract_hash": "95581cd58a6e6559b75933c6bce5c2f64a0ca48422c5fb357544696b7d9cbb1e",
+        "contract_hash": "d65854a121c1c164e16098d37e7b9a738c90cecf2246e0beab04f23cd76119fa",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/ci.py",
@@ -2885,7 +2885,7 @@
       },
       {
         "body_hash": "35aefc1f0d870577bb765f7cac29e2c7775fb7e798308a6b7a344e4c8fe854f8",
-        "contract_hash": "d33fd5d5e2c4234f9fbdfa5f56dbb12407560bae50171e71792e7429ec9e8fb0",
+        "contract_hash": "20f8492f56942d3f6c00a3702c8a0c461477dda246e44963317e3fb504edbb17",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/ci.py",
@@ -2909,7 +2909,7 @@
       },
       {
         "body_hash": "933d3072b4d539b81429e194654beef06397e0ebcefd0eb3915632819b975b6e",
-        "contract_hash": "7bf1116c6954af1beb5a68dd3f13a5f784b15c8d4937528bb8e28e5ce754c839",
+        "contract_hash": "2a36fc997f07480a1fa7097a2ff76d8045b2d5da006f7afa583e6d3c24f716c2",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/ci.py",
@@ -3196,7 +3196,7 @@
         "target_id": "python:harbor/core/context_integrity.py:function:harbor.core.context_integrity._yaml_quote"
       },
       {
-        "body_hash": "efda518f93f3c35ea431821a91b6b388e99f095fbdcccd1926483cb09325a00d",
+        "body_hash": "9097ed3350f7095ce7411f0cbe42f37af0a590c4819e4401e81710736e69ae6e",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -3245,7 +3245,7 @@
       },
       {
         "body_hash": "efe193cd2afa8f1f9b119d55a5ee103cff1c08bdbca143cb114421129a021faa",
-        "contract_hash": "8957cfec811f053d509668f425553a180ad2e3b88ee85247130f1840ae4d2776",
+        "contract_hash": "7f4f89e0268d44b7e405939d8db62ea78fb3f986b707f3f77b9fbf9cfb2c115e",
         "contract_presence": "present",
         "contract_required": false,
         "file_path": "harbor/core/context_integrity.py",
@@ -3605,7 +3605,7 @@
       },
       {
         "body_hash": "a948c11c428535ac688d3ad87c7b932721a9bc6aeafac28a2646d4cfea189e0e",
-        "contract_hash": "c5c4ccfdde80bdbbc8cacd5afa6865868ced7b19dc4fc8c911c4cb8601884869",
+        "contract_hash": "e9cb67e39ef63210a22ecc31da4ef32c82ef57b7967893f922e25cc3c8dabb35",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/contract_impact.py",
@@ -3628,7 +3628,7 @@
         "target_id": "python:harbor/core/contract_impact.py:function:harbor.core.contract_impact.format_contract_impact_report"
       },
       {
-        "body_hash": "4f08eb35468a8c62d7e72fb789a91d587a8d686fe32bf9981e09f19c2e00a044",
+        "body_hash": "b2af6cecc51a015656d8ba862c295ffa7b21e466f8da82d4aa3ff61d7b0ecc61",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -3638,6 +3638,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/core/contract_presence.py:function:harbor.core.contract_presence._looks_like_contract_doc"
+      },
+      {
+        "body_hash": "b516d7512bf7e2c58805026f8c250f693332ada476b45c4fbd2649c35fd7963e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/contract_presence.py",
+        "func_id": "harbor.core.contract_presence._normalize_contract_path",
+        "id": "harbor.core.contract_presence._normalize_contract_path",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/contract_presence.py:function:harbor.core.contract_presence._normalize_contract_path"
       },
       {
         "body_hash": "f85fb014b5c22251574e60ad8244c415e1955fb4cb8a2727ca8664dc4c429a55",
@@ -3652,7 +3664,7 @@
         "target_id": "python:harbor/core/contract_presence.py:function:harbor.core.contract_presence.evaluate_contract_presence"
       },
       {
-        "body_hash": "a0297361642b5518b629822c1bd0f03d19390c6fbee42f213fd1b185e919e231",
+        "body_hash": "5cf38a109d563653d88ef859d452dca392828db23bc6e61d0b042b646552dc8d",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -4049,7 +4061,7 @@
       },
       {
         "body_hash": "2198b83d5ce69a2ff8389dd44fd458d783895e14ffb63802cd350c25c812e492",
-        "contract_hash": "502f51beee5f5e590a1ad32675ac096a739c2590cf1d24cff9fd8d66b39df2e2",
+        "contract_hash": "23b446fa8f79c9f0c217ca0d0948f24714e20cbe3aed5f36ae2a7bf9e9f2276a",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/diary.py",
@@ -4313,7 +4325,7 @@
       },
       {
         "body_hash": "13480e087a1072f5bdcb3b4bfed8537f8a296750c6118ae1e76033b8d6402d4a",
-        "contract_hash": "4f7161301c2e2470185c2d90635eee45a7d44ea83c297b3756a880f21a9d765a",
+        "contract_hash": "76b960b0f7e5c2e3f668557301c0ee5812445eb6f8f51c4c160fc8ae32a500c6",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/doctor.py",
@@ -4325,7 +4337,7 @@
       },
       {
         "body_hash": "49ec61020bd452ad1a2c9fab2994fb13d7de1ab96e8293d3a929fa8cb69b51c1",
-        "contract_hash": "ffc5de60174e2696fbeedbf78a1107e582936fa656ca6b5300496011ef073ce7",
+        "contract_hash": "ae52f6fe23363a04f40dbf54bb9f94273c45ff5389bebc10e567a4d78c26a52c",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/doctor.py",
@@ -4430,6 +4442,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._build_summary"
+      },
+      {
+        "body_hash": "88aeddb2d11fd23707efdfe847de2f183f855dbd74c302a8d55cae35a91b1f4e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/generated_verify.py",
+        "func_id": "harbor.core.generated_verify._cached_l2_body",
+        "id": "harbor.core.generated_verify._cached_l2_body",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify._cached_l2_body"
       },
       {
         "body_hash": "e0e5ff35bcc1e40a7495ff0ba7f860026ba4b481a768916bf00243ca664d99be",
@@ -4577,7 +4601,7 @@
       },
       {
         "body_hash": "238ebffbe29e684f5ebecbbcdd022e744acd643569f16c7b3255931671bcbc94",
-        "contract_hash": "b4a1b473392b0b778c762d6b2ae3aba2ba7579643d41f5a63b0f4e093167686b",
+        "contract_hash": "c6af8aae2b918aa04e203e872bb7bbc4d0f8d8c14453eb953656fa1cacf06c0c",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/generated_verify.py",
@@ -4588,8 +4612,8 @@
         "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.build_generated_verification_ci_result"
       },
       {
-        "body_hash": "15ca03cbd3d10a84cdfb0b61ce0d599533ce96ece8c6dca8be91c863b48d3fea",
-        "contract_hash": "b7ffcfc5fbbd7bbf30b61c5e72431c07a8780e5e5b5260855819ac249d44135f",
+        "body_hash": "04e3fc618e6ea1d0ef25449535f32e7c1c87adf6f6a0f90ad4fd422331045928",
+        "contract_hash": "c0ff41b2dcf157ceaa33d3b3256d75c1ea5a8bac57a509619ee94e7c587b94c7",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/generated_verify.py",
@@ -4613,7 +4637,7 @@
       },
       {
         "body_hash": "af00a9e9112ab222d38ef702105c2c1ff64ab75cf626be041180e0d831bb607b",
-        "contract_hash": "bd7a2ac8829e83195e6b2bafe4841f5b22c389d3027a480d538cb2345e1a6ac1",
+        "contract_hash": "a894433432b754336574da400ef740bbce0fe2c4fdf959957d6475f9b162d19e",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/generated_verify.py",
@@ -4636,7 +4660,7 @@
         "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.re_match_absolute_path"
       },
       {
-        "body_hash": "ea9a1816f9666f5addc93890b21cb5cbeed368143b75dd7952a78eff473301d5",
+        "body_hash": "ae20f7cd887f66f3c7f050a2fa6bd90cb6298a3e418d5ba365bf63a578a88a3c",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -4648,7 +4672,7 @@
         "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.verify_canonical_l2_readme"
       },
       {
-        "body_hash": "35952ddf5cd2ad003a1f442fc645b4eb9d9efe56f59e1ff1a2c4114993e53aac",
+        "body_hash": "0c4410580b3db6995300dc4a3c0b602ced5d6e23c4fbcd8247448c6b052395c6",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -4660,7 +4684,7 @@
         "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.verify_export_l2_readme"
       },
       {
-        "body_hash": "6db41c40bdd042232a889d9e8844db66d56ef74d3949fc61e97df03643b01a62",
+        "body_hash": "634c5610ac2c2dd6b82437b1c87b88462a07efb813ec739bc5f7ad50c8ed8467",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -4684,7 +4708,7 @@
         "target_id": "python:harbor/core/generated_verify.py:function:harbor.core.generated_verify.verify_module_capsule"
       },
       {
-        "body_hash": "155834805e726c56f651b683ec51517e659e65ab075dc60c5112223c2de2fa5c",
+        "body_hash": "a4353606d0206517b267cd83f2871f1f01d36ce2364170ef77023535b5f1b81f",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -4709,7 +4733,7 @@
       },
       {
         "body_hash": "8b25d97b73b07a2346b8cb4d29e83912dd6faef8a265027247ea5832e9ab8be4",
-        "contract_hash": "19e7bd120477fa7e2982da49fa8329a91e790e0d1909ad79116f34ac3c67c95e",
+        "contract_hash": "ecfedf86c5ba0a01fef6e9027de7361ad8f6d2bc413bcfd673d4b8ae97d2ec18",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/generated_verify.py",
@@ -4721,7 +4745,7 @@
       },
       {
         "body_hash": "87d8719c9fe0b6cf65a8888cdc5675550e173e697fb993ebcd52b01aad9ccf64",
-        "contract_hash": "1f51eb81ea7fa38c664db08ea1296ddeb80258cd3a2fee3dc4aedcaf7d6d71ce",
+        "contract_hash": "82f6dc152c294d70bba893b529c9eab31a3de1f26e5e087ba9d1f8d744e4fe41",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/generated_verify.py",
@@ -4733,7 +4757,7 @@
       },
       {
         "body_hash": "4d0156bbe65a6d8c2e84462342daf0fb80c034512fdfc9460d5444031af05925",
-        "contract_hash": "04b7c41a5ccebfdbff04ae2a826d62027186757c8a8712b5fbc844d29538d58e",
+        "contract_hash": "8a2c79cb51d80932000a081799bdcd7131f017ac84321759629132c9526963d5",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/generated_verify.py",
@@ -4745,7 +4769,7 @@
       },
       {
         "body_hash": "d321197969bc5efd4ac473cfb95f2c6a611c213cf050313dfa2e5883baf37825",
-        "contract_hash": "2144cac42a5de2a23b005c81f6635ae9a94086c1b86b03c6611449bb10bf46f3",
+        "contract_hash": "5bc6441895824f6f462089d4bb6b0e32688ae9bbb8d4faca90fcbad28da37b92",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/generated_verify.py",
@@ -4828,8 +4852,8 @@
         "target_id": "python:harbor/core/index.py:function:harbor.core.index._load_worker_typescript_config"
       },
       {
-        "body_hash": "6b15038085685ed6b5a1153a1e4dc303bf4074433f16c1b5e98a3f5d1a246148",
-        "contract_hash": "eb16618a9b29e38626282eb89cd88ef675eadf25104dafbb2c6d9d649e78354c",
+        "body_hash": "e90a46a65246945a51ca8c900400c70ee29455cca7989915a39e12f6dedd6e8d",
+        "contract_hash": "1dcbea4fb74fc0eba6ba8440e4ffca18b88fde1b0cc61511ecd25ee6424ea8e8",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/index.py",
@@ -5032,7 +5056,7 @@
         "target_id": "python:harbor/core/index_entry.py:function:harbor.core.index_entry._source_kinds"
       },
       {
-        "body_hash": "383dc6d7f55cde0a2651f1f967363a1301b6fefb4b6f8164c24f18698e3e6611",
+        "body_hash": "ecfe607f0a24bca5fc8b2858c5ee92fc7ebbb6fe5f28a48a073b15611f14bc2d",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -5105,7 +5129,7 @@
       },
       {
         "body_hash": "cb84631790b2c07f27864d9df5bb66a60b7fa4e87d9fbb8d290bcce25b15bbe2",
-        "contract_hash": "ac1fcb07529117b527dc931dac59ec0558d94952d7a82e6d8e539d57e21a6d2e",
+        "contract_hash": "b8e8b4e3c892810f3a7a3e97bde14a3262d779a0e027ea074c630c4a33ac0ce3",
         "contract_presence": "present",
         "contract_required": false,
         "file_path": "harbor/core/init.py",
@@ -5117,7 +5141,7 @@
       },
       {
         "body_hash": "b98140e3a2d42a272397aaa7b4f334e98fea245657df55dd12b9e0fd50e9487c",
-        "contract_hash": "bdc60b3fd4dba5f8c71f0db540d5356bb7e779978028e0a1ca15dfb3ab8913c3",
+        "contract_hash": "743787dbe60e934287b14512e7aa3f9461e0a34626cc335aee2d760dde83c080",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/init.py",
@@ -5860,6 +5884,78 @@
         "target_id": "python:harbor/core/init_wizard.py:method:harbor.core.init_wizard.InitWizard.run"
       },
       {
+        "body_hash": "c05426598b898a431fbffba9bbe0a13a2d2c4d78c22eeb545dc17927688c0825",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._build_repo_import_graph",
+        "id": "harbor.core.l2._build_repo_import_graph",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._build_repo_import_graph"
+      },
+      {
+        "body_hash": "d7ed9ccdb8a2d17f34d837446b326f3e61f9bf22d301de8233d5e011d090d1a1",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._collect_module_dependency_summary",
+        "id": "harbor.core.l2._collect_module_dependency_summary",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._collect_module_dependency_summary"
+      },
+      {
+        "body_hash": "e8b283f3f9ca3f6198aa905f88da9095c13251be9fa79ed559bbf6e51c47b047",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._dependency_group",
+        "id": "harbor.core.l2._dependency_group",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._dependency_group"
+      },
+      {
+        "body_hash": "b3ea01221c9b5f44e4f973a4dfb67226fff83c0171beee24a6290625beef37e9",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._display_strictness",
+        "id": "harbor.core.l2._display_strictness",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._display_strictness"
+      },
+      {
+        "body_hash": "19c5c7b6c812f9ba3432d8468ef4516220c4e552ed1630a240e8789d12016751",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._extract_import_tokens",
+        "id": "harbor.core.l2._extract_import_tokens",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._extract_import_tokens"
+      },
+      {
+        "body_hash": "15255943af9cc81d833e0797261cbcd7da1a33bba0067fc23833bfb17b3f0bd9",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._format_dependency_group_rows",
+        "id": "harbor.core.l2._format_dependency_group_rows",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._format_dependency_group_rows"
+      },
+      {
         "body_hash": "1cf8149ecc46ed68935674e63de9e66d17041027c6a83efb81567b09c5169d7e",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -5884,6 +5980,54 @@
         "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._repo_relative_index_path"
       },
       {
+        "body_hash": "2750d87b7cd9eff36591c0427d9390d8f532fb23bf7ad443e4858f4b0a05f952",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._resolve_file_imports",
+        "id": "harbor.core.l2._resolve_file_imports",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._resolve_file_imports"
+      },
+      {
+        "body_hash": "d1ae7811ac7418b629dc38829f268dc004923d36479ce76c1167068cc6aba8e3",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._resolve_import_token_to_module",
+        "id": "harbor.core.l2._resolve_import_token_to_module",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._resolve_import_token_to_module"
+      },
+      {
+        "body_hash": "db6ccf319176f7626012d7f12e3a0edda1ef115d7def6f98472e2d562c91eb70",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._safe_read_text",
+        "id": "harbor.core.l2._safe_read_text",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._safe_read_text"
+      },
+      {
+        "body_hash": "b5bb89c51b78f46426826e9b76b622c17be5a94f0f25c34cc99d6394a46b0542",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2._strictness_rank",
+        "id": "harbor.core.l2._strictness_rank",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/l2.py:function:harbor.core.l2._strictness_rank"
+      },
+      {
         "body_hash": "d2dea18bd911238bda06fdb176102f65689bbf9e16f0252b257b926c15f8ca0f",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -5897,7 +6041,7 @@
       },
       {
         "body_hash": "6296afc4c21b838a2e744e77cb8cacef515e12b310d267640aca7148b50cb958",
-        "contract_hash": "47a03767398d8c11bb4e2b02bfaae80860868a479f5f53695443ee72f39b3d43",
+        "contract_hash": "4d3b394859cbf574643b92974b94e532d28642e6e6c1c2d003338965e0460028",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/l2.py",
@@ -5944,8 +6088,8 @@
         "target_id": "python:harbor/core/l2.py:function:harbor.core.l2.normalize_indexed_module_candidate"
       },
       {
-        "body_hash": "45e75c0262d99b944ba0adecfe6c35af89e62faffab900a522da3255a48332fa",
-        "contract_hash": "c2f53053979cadea78fdf18791732dfa480d8b95a25a7f5c594369ca743b58e3",
+        "body_hash": "13d482f0aae159db8c687a175d9e82a15d9319cf52b4e2dcd9844351d3ad8743",
+        "contract_hash": "aaf0e87ff396521c599a5db1659b059ab7ec54207546d39c56b98c453313aaca",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/l2.py",
@@ -5980,6 +6124,18 @@
         "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator._ensure_within_root"
       },
       {
+        "body_hash": "0a135e84295ff6043e5003749917a6e82cf83002c94e9e15d2fc88fe430ad696",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2.L2Generator._get_repo_import_graph",
+        "id": "harbor.core.l2.L2Generator._get_repo_import_graph",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator._get_repo_import_graph"
+      },
+      {
         "body_hash": "23c14b54ef27deee462caed8b2a7e770930829836944b75837b9318e87d99efe",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -5992,7 +6148,7 @@
         "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator._load_index"
       },
       {
-        "body_hash": "33859151f28278066d4b95b178e29231da579a919e53aaf479e2ed0ebf518a2a",
+        "body_hash": "89f08da946da0db177ab24bf5b0e8ad87c36242839212302789c25ba521ff121",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -6002,6 +6158,18 @@
         "language": "python",
         "symbol_kind": "method",
         "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator._load_meta"
+      },
+      {
+        "body_hash": "3be7e33b8964560a99bb58b1794a353da27e91a9329a9c58693b84c165adf1f3",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2.L2Generator._normalize_meta_key",
+        "id": "harbor.core.l2.L2Generator._normalize_meta_key",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator._normalize_meta_key"
       },
       {
         "body_hash": "1455ea4ea31f1616aee0ad5517c38c9333dc2da4182ff1ac060475ee43d886e0",
@@ -6064,7 +6232,19 @@
         "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator._safe_module_subpath"
       },
       {
-        "body_hash": "091dcdbfbf3fcaf1d3d345cd11b7b680e4481c775faad18e073df610dbe26832",
+        "body_hash": "afd65e7f764273345523bbcf71d7cdc68b0d66e03b8eeb530c87f0b7f735cdb3",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/l2.py",
+        "func_id": "harbor.core.l2.L2Generator._sanitize_meta_entries",
+        "id": "harbor.core.l2.L2Generator._sanitize_meta_entries",
+        "language": "python",
+        "symbol_kind": "method",
+        "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator._sanitize_meta_entries"
+      },
+      {
+        "body_hash": "892fc40690df89405bae50d1addc04e0e8ae30005ba5a89ae4fc5b30a139d831",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -6101,7 +6281,7 @@
       },
       {
         "body_hash": "746d42912b6c6e281fb1d14a895c6630f315bbf245a250be97facdf7956a17dd",
-        "contract_hash": "d3e1d06d5b695af0913a9ff842ce52322448da0234b7044e2b4be037860982bf",
+        "contract_hash": "b7af3ad0b2adbf13dac757dbcd42f6d6a945916032235e85e9711d64b24401ab",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/l2.py",
@@ -6112,7 +6292,7 @@
         "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator.compute_meta_hash"
       },
       {
-        "body_hash": "dbbcbb58ee092c7817c897b0d32cc909444e46ce0d7c62541bd6b40bb467b420",
+        "body_hash": "c3325e2289b6894db9f51929c38e8706be6a971ee2bbacc15f9643060feea484",
         "contract_hash": "eae31c8837771e4cb8e048739e41db02b79a313b27fe543ef06a8af8047e24a9",
         "contract_presence": "present",
         "contract_required": true,
@@ -6124,8 +6304,8 @@
         "target_id": "python:harbor/core/l2.py:method:harbor.core.l2.L2Generator.generate"
       },
       {
-        "body_hash": "d5c422df38d6ff65f2994e4299e35b733613ea9a3fde3706113b936b88d05d63",
-        "contract_hash": "348f76298e0a218ff92edd9e00b573fd0b594cc1bbd5e24ccfd649059f39a8c6",
+        "body_hash": "2b76732aab977449dd1585de9dc826cf59a7b69ae29b3522ae81f9a00c64ddb5",
+        "contract_hash": "62aebf54a492691c44774cc2b7ab404a2c15a8f9a03e66f305fe0e918fe91f5b",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/l2.py",
@@ -6965,7 +7145,7 @@
       },
       {
         "body_hash": "aeb83544a2c9decc9fbccfde1b3d26c28ec673ee8d542aeb8760ad0c10a18fc3",
-        "contract_hash": "b83c4cc0d931b0f027a5cebca908ba914fa04f08f2ebf26a63e9c00114687a0d",
+        "contract_hash": "6c35cc072d2ca8085b612684c03d68c250cd6ca764e30bd376396e7b42c27ac4",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/log_draft.py",
@@ -6977,7 +7157,7 @@
       },
       {
         "body_hash": "3f292321b108d4c87dc6b75e74444885cb42284621db3c2a268b8dd5c0504452",
-        "contract_hash": "803d0d46f451905477610ba6da98ca6e1905d0dfb20e9bd602327f612925aed3",
+        "contract_hash": "2814fbb12252db568059a277911867804293397c69c0f1c5505f0e0f220bfba9",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/log_draft.py",
@@ -6989,8 +7169,8 @@
       },
       {
         "body_hash": "40a78aec31b1ae533f9d2dc4408340f1569a0719f38704a35e3583f1e15f9e29",
-        "contract_hash": "6f6d559ad8cf9c5c3abe68fb31bb1c4a3f3f645e4038a6aebc74b5ecc7523be7",
-        "contract_presence": "non_contract_doc",
+        "contract_hash": "6fd1814f3fa743b514ac7a18534cb62f5307c6e1e6233762fbea21eea2db14a6",
+        "contract_presence": "present",
         "contract_required": false,
         "file_path": "harbor/core/log_draft.py",
         "func_id": "harbor.core.log_draft.build_saved_diary_draft_output_path",
@@ -7001,7 +7181,7 @@
       },
       {
         "body_hash": "b8dc06cc0cd9c91d26c8f74ddfc0c491237e738706d62e2d6eb07a7deffdabc5",
-        "contract_hash": "c3d534d0535ac3e914f50559d0ad8645100a21072a10ce19c37fb6b29e21d6d3",
+        "contract_hash": "b1a583a9710739024dbd3f475ddc1fcd61c338fd65d1408a950217aeadac38f5",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/log_draft.py",
@@ -7013,7 +7193,7 @@
       },
       {
         "body_hash": "8e01c6fa939b1f69e7389b447421dbc4651a9cb4dd79f88dbdc1a86bb72a0f7b",
-        "contract_hash": "c44a3f5ad871b2b35580b9957e5f55b3b32bdbac8346192ecbc5eeaa329a7841",
+        "contract_hash": "1b4b4c47a3e02e47f22bb90d88e2337e6f82757a30481df277e261324278677d",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/log_draft.py",
@@ -7025,7 +7205,7 @@
       },
       {
         "body_hash": "9aa3f96ddfb8649c3a095ecb71b14763e273df06083051102389ea8492bd5b3a",
-        "contract_hash": "ce76f52425a0a1da0f8923327b50f243b3ee210bd3558f20929c281df4bda695",
+        "contract_hash": "ef828a31c97fd56ddb190dffd4c2eae635828389f34de8df3da26a494bbab555",
         "contract_presence": "present",
         "contract_required": false,
         "file_path": "harbor/core/log_draft.py",
@@ -7037,7 +7217,7 @@
       },
       {
         "body_hash": "76dbff002d9eb7ea3e62046619b3d4dc2fa38c9c818fdf2f861592669137b5ca",
-        "contract_hash": "82f1cb47317dbdfcf8a9c94204d6b227f54ae6368e5d697d3049baad8e0664bb",
+        "contract_hash": "a6cf04783e797aff62f4cc539072027958a0dfa71daae542d458171921040766",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/log_draft.py",
@@ -7049,7 +7229,7 @@
       },
       {
         "body_hash": "77bd68f335c2512f2268835695072aa8a4c0b83f0c6929fc3c9045bef73bcaab",
-        "contract_hash": "a8cb5db17c15d88ae6d1710a03e88572cb8a47143ad2bcccfd498cf5c3ded501",
+        "contract_hash": "4305a7b3f5b746130bd1a7f047b92034813a0b81aadde18722dc3b99c4ced181",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/log_draft.py",
@@ -7061,7 +7241,7 @@
       },
       {
         "body_hash": "ca2e0480c41bb3dfd7cd5a7c7166a9c1c7b633c2203262254bee56f8f6985ce7",
-        "contract_hash": "a8cb5db17c15d88ae6d1710a03e88572cb8a47143ad2bcccfd498cf5c3ded501",
+        "contract_hash": "1ca95b5e6c82cee0ac38537bf7d06a1f66a22ec01098a5620140662c01bccda6",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/log_draft.py",
@@ -7073,7 +7253,7 @@
       },
       {
         "body_hash": "3b11bcf89724a55fea577b11dcf5e27882758db4f779f025e6d939cdd4224390",
-        "contract_hash": "622f703cf0a6e465da6c2d996d822bc08cec1e4e54f05a84eecc5c2d91424d08",
+        "contract_hash": "755797de08749fec568b7b02647a5a0606997f66e3e51e5e9441768f267e97d7",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/log_draft.py",
@@ -7085,7 +7265,7 @@
       },
       {
         "body_hash": "b9d13673857f214104a4f851f54f1cd29d39e803963e5d6a382759b8e6ae8e79",
-        "contract_hash": "13610260b4e572376085fe12cb8ce8ad353ed0588270c67280702928e62a4147",
+        "contract_hash": "3017bd70c73279b4649f88b65ac0bfceb56706ad72d1011e9da31c04822999b2",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/log_draft.py",
@@ -7108,6 +7288,30 @@
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._belongs_to_module"
       },
       {
+        "body_hash": "5bac94b82b394fbbffa3d049e95c679897eed9a3cb68a7fe79df772968d61a0b",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._build_workflow_recommendations",
+        "id": "harbor.core.module_capsule._build_workflow_recommendations",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._build_workflow_recommendations"
+      },
+      {
+        "body_hash": "04874a02c412a1c1ee7395e880612677b317e708155a09d1d73343d14a3f68ea",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._contracts_by_file",
+        "id": "harbor.core.module_capsule._contracts_by_file",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._contracts_by_file"
+      },
+      {
         "body_hash": "609287df0eac3e34de30f8e3f5b8d82cba17842ad49e5981176f85ae1165f878",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -7118,6 +7322,42 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._ensure_within_root"
+      },
+      {
+        "body_hash": "19c5c7b6c812f9ba3432d8468ef4516220c4e552ed1630a240e8789d12016751",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._extract_import_tokens",
+        "id": "harbor.core.module_capsule._extract_import_tokens",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._extract_import_tokens"
+      },
+      {
+        "body_hash": "dbafe1d5d103be2f390304405a4372d10ba6636acd27e920f5cc1863addc1f28",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._format_bullets",
+        "id": "harbor.core.module_capsule._format_bullets",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._format_bullets"
+      },
+      {
+        "body_hash": "c7bed92acad8f9c212c7794668ff60c22c325388e7a78ed3d753634ff93b2ca1",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._keyword_tokens",
+        "id": "harbor.core.module_capsule._keyword_tokens",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._keyword_tokens"
       },
       {
         "body_hash": "fe7ffa5ba7400e92f5e358cd16b2b902baf823dcd4e29049c3ac4e23ebb19d3d",
@@ -7132,6 +7372,30 @@
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._load_index"
       },
       {
+        "body_hash": "b48f5ede24e70a033a563c8f16e4f4c5f71a5f5a5183580f658bd252e422047d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._module_profile",
+        "id": "harbor.core.module_capsule._module_profile",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._module_profile"
+      },
+      {
+        "body_hash": "bd80ac96ffb4f1a29aed00a8715528008d91f6aa3848f411798afa8464448ca4",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._module_specific_checklist_lines",
+        "id": "harbor.core.module_capsule._module_specific_checklist_lines",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._module_specific_checklist_lines"
+      },
+      {
         "body_hash": "7ced413216a8feff2fc022b9b04df5595ba97823737949dacbb629cc242ef0b4",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -7142,6 +7406,30 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._normalize_rel_path"
+      },
+      {
+        "body_hash": "b426782ebc4f28aba02c258dbe7213270e4c51600881f84e81895ed8d4e5160d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._rank_debug_files",
+        "id": "harbor.core.module_capsule._rank_debug_files",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._rank_debug_files"
+      },
+      {
+        "body_hash": "2d898ba3733e29c42c342ed92c269b79d7531ed61b8c901c9d6cc444fdd89311",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._rank_tests",
+        "id": "harbor.core.module_capsule._rank_tests",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._rank_tests"
       },
       {
         "body_hash": "00d6ca2d3bb8ffb91dc4ad9d6ad91ec2024b0ebfe0be0d6ff706374b5ec53222",
@@ -7178,6 +7466,42 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._safe_module_subpath"
+      },
+      {
+        "body_hash": "db6ccf319176f7626012d7f12e3a0edda1ef115d7def6f98472e2d562c91eb70",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._safe_read_text",
+        "id": "harbor.core.module_capsule._safe_read_text",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._safe_read_text"
+      },
+      {
+        "body_hash": "61b2b5841146051c8c6782c8a8ed9c6cab7e996ba76a0f827db51c41e919d4dd",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._score_debug_file",
+        "id": "harbor.core.module_capsule._score_debug_file",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._score_debug_file"
+      },
+      {
+        "body_hash": "e430f75bdb256672cce5719d518e476d32b00cc61a93466f2eff4a95557700dc",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._score_test_candidate",
+        "id": "harbor.core.module_capsule._score_test_candidate",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._score_test_candidate"
       },
       {
         "body_hash": "ad8603473fd9b670551bee55988ee09242e5d6d034a7aabd6469692c4379f469",
@@ -7228,6 +7552,42 @@
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._summarize_strictness"
       },
       {
+        "body_hash": "e5d6b39ae13ab1ab4fa584204be4acbb8e0013adc92543efef2ffc5bafc6fa3d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._workflow_file_matches",
+        "id": "harbor.core.module_capsule._workflow_file_matches",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._workflow_file_matches"
+      },
+      {
+        "body_hash": "7f332e65fea99335ee96c7984d016402cf6f022733370aa64c1ef148497f523a",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._workflow_group_specs",
+        "id": "harbor.core.module_capsule._workflow_group_specs",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._workflow_group_specs"
+      },
+      {
+        "body_hash": "ef9835568021eefb717b14b9c897a3dad51f54c5ba8e35472bfe03826c947b0b",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/module_capsule.py",
+        "func_id": "harbor.core.module_capsule._workflow_test_matches",
+        "id": "harbor.core.module_capsule._workflow_test_matches",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule._workflow_test_matches"
+      },
+      {
         "body_hash": "3faee561691a9d71f0b82ad608d5fbbbaeee976f329314d6954fafb76eaf32ec",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -7253,7 +7613,7 @@
       },
       {
         "body_hash": "8813e8bde15ffac1abb25aad08dead551d4db25d24b20562168ef7bd309a71ad",
-        "contract_hash": "291a39446ccf214350d1555a3cbe41211c00fe829c731f9df1dfe72373536cae",
+        "contract_hash": "f48f66dd8603e79dab12863bbc81436fadbf801ac6628f7d86a5659d23292fc9",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/module_capsule.py",
@@ -7276,7 +7636,7 @@
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule.compute_module_fingerprint"
       },
       {
-        "body_hash": "35083411083a260d06f6ba1c4f54fdb8f3763518b9f7c107373148a3987d0977",
+        "body_hash": "1a92e3f1bae35e889f25d67c0c7658aa8ee0915ecf490a3259f264f51ddbb006",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": true,
@@ -7288,7 +7648,7 @@
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule.detect_tests_for_module"
       },
       {
-        "body_hash": "14aad252d1dfa26be3f2e2b7e758d9037fc54fac8b5ddb0c55158b659b870394",
+        "body_hash": "26b35eb6969499bc9c49132ea5d707b361ed39ff7ed72ba077c109eea2ce5fc3",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": true,
@@ -7300,7 +7660,7 @@
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule.generate_debug_playbook"
       },
       {
-        "body_hash": "1b1f13d7a9a03a45ad8684e3203cdacf97e6582d672b25562c3cd7a30ae5b9b7",
+        "body_hash": "cd41e4ca36e8e01a6c431ee5d4328be527f568a941446043fc9c7e26bdb7cd8e",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": true,
@@ -7312,7 +7672,7 @@
         "target_id": "python:harbor/core/module_capsule.py:function:harbor.core.module_capsule.generate_module_card"
       },
       {
-        "body_hash": "8be3d311fb8eadc089eaf3592ebb600005a12453c4c3a80f2dd85b0f68af59d5",
+        "body_hash": "1dd6bd5cf536cd6ce7586c084777ba6acff30b3c3ab6d91f18bc7ba89a3d179e",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": true,
@@ -7385,7 +7745,7 @@
       },
       {
         "body_hash": "4f2437188d4a7337046ed18801c8da265997ceb3d29a1cfdf0dc08e70317718b",
-        "contract_hash": "7a03be057edb83b90323bbe2d6fc3d5be68b07b2586e9c2b9b283f8c3d5a75b2",
+        "contract_hash": "423cdfc136c792e272c6dc0b45747f92ba7043ba0f06ab435cf57abbc1a54b8d",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/module_capsule.py",
@@ -7565,7 +7925,7 @@
       },
       {
         "body_hash": "ea81d7063678f7e23d7b7355520c854d45a41768cee8cf9440c7fe352f6b3051",
-        "contract_hash": "eb25e80f1ad402bc18aa9df54d8bc12f3e95e9131141b9bc84a4f29e2981fec4",
+        "contract_hash": "37449da5dc8c2b0a12a319477a0c305d75d24507fe141686e6305a226be54560",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/performance_baseline.py",
@@ -7589,7 +7949,7 @@
       },
       {
         "body_hash": "74ef2abb9637305cc4670ec206a2efafe12b5b3707712b5ed6041ea933e154b5",
-        "contract_hash": "28e0e1a4e3c95257e276b91f76076922be410a2b11ca638da5933da426987a89",
+        "contract_hash": "72082a847c50a47cd234505dcb25481f5902eec836f5c7eadc37b09c2ebe491c",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/performance_baseline.py",
@@ -7601,7 +7961,7 @@
       },
       {
         "body_hash": "0d9f6f362a4e620520422ea80769ef89dbc5da3e5050c9cca31846361e0e4946",
-        "contract_hash": "1f0f0b448fd3ad4344b08aedde143406f71eda96ac21c916b0251f6f59df9e0d",
+        "contract_hash": "862129972cd8a99943c5e3ae5726290fb4bca12611fac386b27d4c9e78bf0cf3",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/performance_baseline.py",
@@ -7613,7 +7973,7 @@
       },
       {
         "body_hash": "7d96bbe1646b84c2e04b87d2bc1b776984ea991b2cedf1378d0b0fa5169378e9",
-        "contract_hash": "586be312346dac5e244e6dd38eaec0c38c376bae7420a029a29b40b565864008",
+        "contract_hash": "df3f065c48804248a0c9685f03826103d0842ee6ecb2583cae28fc6e0fd6b2f4",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/performance_baseline.py",
@@ -7625,7 +7985,7 @@
       },
       {
         "body_hash": "6a18ffb0d62bf3dd670da7bda0d0d49da6ee2e7797c7847adc1db53602dbc375",
-        "contract_hash": "515592b9fc9cb5f5a80ae17a90f277c77b56e20b6730fd555a0cbc758fb309f6",
+        "contract_hash": "62c722e23d1b9fc039236e7d35ecfc168b18713329c19a5d4243ce575ecdf076",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/performance_baseline.py",
@@ -7637,7 +7997,7 @@
       },
       {
         "body_hash": "57e6424355df1f51b25f5728c9c1e94c4cb2008234f4afc9ea8be37f402e6384",
-        "contract_hash": "1e47ef7ba9dd90c001b9384a770e69cc7cde675bf6015c4cade9cda02fd5f860",
+        "contract_hash": "f70ae88ec7407f35825d1a457494c88b1dd4e4e64d65658ad14a35c504a0f14f",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/performance_baseline.py",
@@ -7649,7 +8009,7 @@
       },
       {
         "body_hash": "17e21fc7a577ac57a81862c2227e84c638c4ba8c926f1d534c2a15cbcce5cd3b",
-        "contract_hash": "0c9226bcf1cb1c5277a30a4323305aa913db66264b72fd6ecd70275fa4297348",
+        "contract_hash": "a8356937e54b1455bbbead0ecf9d7274f6525c075dbeba673cc276bf09dfee72",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/performance_baseline.py",
@@ -7696,7 +8056,7 @@
         "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure._build_transient_index_from_files"
       },
       {
-        "body_hash": "d7663cdc462d1bb806ae5d4a113e3a07e0508f50f89c833206f5c0584c6dc452",
+        "body_hash": "2deefebf73e9dd0a6add6ffee555fc6fad6c341a1e10359011e5df75b2dff8db",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -7706,6 +8066,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure._capsule_exists"
+      },
+      {
+        "body_hash": "2395958338662c0803e76e344a4df4f3218c622afe8c03d6771ed28fb26349ae",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/project_structure.py",
+        "func_id": "harbor.core.project_structure._capsule_export_exists",
+        "id": "harbor.core.project_structure._capsule_export_exists",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure._capsule_export_exists"
       },
       {
         "body_hash": "ee32deaf679506aa339223fc9d8e184e6edccac28e2742e41613e5e0842e7c21",
@@ -7900,8 +8272,8 @@
         "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure.classify_project_area"
       },
       {
-        "body_hash": "4b3d8b2c242baf3fb5a9b45da3a14cd7207fc761f24afd155b39da825bb3c86e",
-        "contract_hash": "fe0a805862d8ebdbb5c373ae2cfd8f9d4af90a1db33118fca01a5fa6573d31b5",
+        "body_hash": "fe8c67e64ab101d2cdcf13bbbd86c0ef9360ff9ea2b6eb87152687b33f3c6fe5",
+        "contract_hash": "eaeda3f03f9237e62aa03654b1fdabae1083639632f83def1bb4253469d4c323",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/project_structure.py",
@@ -7913,7 +8285,7 @@
       },
       {
         "body_hash": "92fbc66405db8c361ef6071dc6eead87eefc8696c903c1d5cbff6a32ba40d98d",
-        "contract_hash": "24824592265ff8d2bb8ca0436beec0c42d8c4953546873bf3791f7ce2a3d2bfa",
+        "contract_hash": "a07f43ee3624c81a46f79335e5039f30b7b4d4fb0bab83fbf8de3870aa0a4691",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/project_structure.py",
@@ -7924,8 +8296,8 @@
         "target_id": "python:harbor/core/project_structure.py:function:harbor.core.project_structure.collect_project_structure_integrity_inputs"
       },
       {
-        "body_hash": "810edcaa3b695f1b12f3edb3301b198b01b5286b55f9c7af3abb38498b314b8d",
-        "contract_hash": "84ca69caab5710a73c78db95263943a392f34fab0f595bd34523e18727b74e6a",
+        "body_hash": "bfbc59f7bf6b2fe2942e65528008c0978a3da242c8252689ec62f217d1bd86a6",
+        "contract_hash": "aaff9c303d91169816d7ecdc660c114116a822bec13f70ee7318016d072a73d4",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/project_structure.py",
@@ -7949,7 +8321,7 @@
       },
       {
         "body_hash": "71087191d92ca44d78e90a0335ba78a873a127b6444a910c7a66e251012f2c8f",
-        "contract_hash": "7023d08f243b5c7cbc7bc33d3dfaf8a74bbe23d0079097262b218bf6f704d85c",
+        "contract_hash": "f0537828d8269afac052b97da03e17c6ce8494dee1a03e85f4cf5e741bee55e6",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/project_structure.py",
@@ -7972,7 +8344,7 @@
         "target_id": "python:harbor/core/readonly_index.py:function:harbor.core.readonly_index._build_transient_index"
       },
       {
-        "body_hash": "0c104534f41f1c1bccae9dcb208f96015c20eebebc7c529a01aa9619dfc61191",
+        "body_hash": "7c4298df464faac3d96073658cc8ad4a9da8d512e7d827b8efe9657d003dfdac",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -7997,7 +8369,7 @@
       },
       {
         "body_hash": "40523b18a06c44892b0bac1ed0b52861bfb51ed105dc5f498b79364303e5f1d1",
-        "contract_hash": "e071d0c3d6ca5d3ec020494161c7fcdad6f310ac1e7e3b796f8acbd4c7c73584",
+        "contract_hash": "4762b1068525096ac7da55dd838ca54a4e99e3e104083bfcf4c5b931e8045967",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/readonly_index.py",
@@ -8057,7 +8429,7 @@
       },
       {
         "body_hash": "e8ce716cf198047f0288485b3fd1f7a7a27ef05dc8dc00a7830fbbf01be50910",
-        "contract_hash": "803d0d46f451905477610ba6da98ca6e1905d0dfb20e9bd602327f612925aed3",
+        "contract_hash": "9c896cd76f51f65ba82a03d943cb2fb2af40b9c3d2815d7e099cc5a03cabaedc",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/repair_guidance.py",
@@ -8165,7 +8537,7 @@
       },
       {
         "body_hash": "24dcc92622b2b1b7eacbf088a19bff969183c24b299b9b02511486d933eb5072",
-        "contract_hash": "645baaca01cbf0dc51e485b8f5911f14c3ecfdc4b2075b88ea9aa31bc8fe2d95",
+        "contract_hash": "53cf9418c917937c3af6b4ea08a75ad1964f8d888d90479511afe8f66d282ea4",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/stale.py",
@@ -8201,7 +8573,7 @@
       },
       {
         "body_hash": "8025ff3e2963ce1b9ea589dc8770018803b582e91daa4c91cfc4be27c485c2b0",
-        "contract_hash": "8b6bacdd4d28b09ee2543073063d022a503390ff898e9a33fd070ceb3b120226",
+        "contract_hash": "1baf5f6edbcd39232b8122a6aa5675b39ceb51a5516a5574e941bbd95d61b608",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/stale.py",
@@ -8213,7 +8585,7 @@
       },
       {
         "body_hash": "6201c8af2c71999deb123cbd5dd94556d4c05e9abfa538bc824e595a35cf4fc5",
-        "contract_hash": "4b4c70212dd2cc1cad32de276b91236125ce473679024f0df5cd0a4a0559551c",
+        "contract_hash": "75bfbc713b8ed410fc0886cb320967e3860f04ca13d91d1a8c5b1739d574f1cf",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/stale.py",
@@ -8368,6 +8740,18 @@
         "target_id": "python:harbor/core/storage.py:method:harbor.core.storage.HarborDB.upsert_file"
       },
       {
+        "body_hash": "de67de16f328be7b0cbdd798aff047a548934780d2ef2fdb4dbf8de1d9d4b13d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "harbor/core/sync.py",
+        "func_id": "harbor.core.sync._python_snapshot_item",
+        "id": "harbor.core.sync._python_snapshot_item",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:harbor/core/sync.py:function:harbor.core.sync._python_snapshot_item"
+      },
+      {
         "body_hash": "ba504f016f87c533a5bc9caf4dbdfd6e963b9d672ba44e38c401df9e0a5bc33d",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -8416,7 +8800,7 @@
         "target_id": "python:harbor/core/sync.py:method:harbor.core.sync.SyncEngine.__init__"
       },
       {
-        "body_hash": "1b5fe37b409e4de9c82d08a16a91f83755e717258a592aef107582199639c6cf",
+        "body_hash": "3eb22388de29f985d0add963b9500a825e06f5ab325a31ad969e09a8c3b8f87f",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -8560,8 +8944,8 @@
         "target_id": "python:harbor/core/sync.py:method:harbor.core.sync.SyncEngine.adapter"
       },
       {
-        "body_hash": "2c5206be83c0857526979895e7fb95cc16c2cd463d2386ed335179c30616ba76",
-        "contract_hash": "f61d979e86117be66be29dc33533ef9b4253231f38e3b8d752e1160849f65372",
+        "body_hash": "b6bdd26abbe0d5d457816b3a52149aeacce08f6cb25e365241bdbc47f3be5678",
+        "contract_hash": "5d8ba2d9a48700d44da73a542d5c0136b3a524c9dcf4014ab345db8e5cb73e4a",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/sync.py",
@@ -8801,7 +9185,7 @@
       },
       {
         "body_hash": "b85c27a279fc3aeab29973a7b7d03de669f64eec942c3c16132de1da44e1fb90",
-        "contract_hash": "d09b2ab0f6bd06c31dec3ed351b948e1fa64f9b6f4dbe50aaf2321d36aac566a",
+        "contract_hash": "b5f82d26321ee71fc69dd0201915f240bace75167b6426788a801869e566841e",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -8813,7 +9197,7 @@
       },
       {
         "body_hash": "deeff02a8a198e262efd373c7ddd67c95b1418ff0e6c59324174e49bf61e1d01",
-        "contract_hash": "eec4520287c9cd3f7d3fc68f601b55629d59ce6c919eb6f8f9156de6b583f5b1",
+        "contract_hash": "32624790714ab51a2d7fb0a77c180c12122d0c7156b02fd114754a6f9a90c25b",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -8837,7 +9221,7 @@
       },
       {
         "body_hash": "a111984cfc6499a7f3c6c2cc71865076d960b44bc156bd98706f6ea195d4d7d5",
-        "contract_hash": "5b6a16142d4b25ee604e1ed0a54e6934a90c8d25a033723bcc90a01060d1efa3",
+        "contract_hash": "779b57465bbde5b963418148a0a8904521b352a6debe417e35aae1be3454a724",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -8849,7 +9233,7 @@
       },
       {
         "body_hash": "a850351eb32f6fa336d3f0f512ce5f13d293070cef4d396062a0d49b408e9dbd",
-        "contract_hash": "5fc70530821d13faa6380636b7c4e54613fad99a71b5d0e8fcd58c3e0c291609",
+        "contract_hash": "1ba8b84dd061097ce0af2c0216f6dbc74d5177c8800ca7e6b1dd87c655fcaa0a",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -8861,7 +9245,7 @@
       },
       {
         "body_hash": "07651e787bc1083a950a1a368cd6fc5e3fd2ae121bc193193dad66cf428ca562",
-        "contract_hash": "7e408aa322db1e5d729607ddcb8585049af1f9a25599b73e2ed8d14060d76c74",
+        "contract_hash": "3bdbcdda37cc5e65a60e8b009bf48a421fbbf94866af5658e77d271aaa640ba5",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -8897,7 +9281,7 @@
       },
       {
         "body_hash": "ca534fd760be4a7fa800bb286b8ad46b5c61b116448d1a685c5348df6f2615dc",
-        "contract_hash": "e8b2b2ca0018d64b2f4f2c89a147ec2ece2dcc8de027b8ff50428ea096cd4890",
+        "contract_hash": "6d2fbba2a170b3b0a419926afa053323a93952e4efde6895457a83edf6edddb6",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -8909,7 +9293,7 @@
       },
       {
         "body_hash": "7086a22fd70624f4b4be6ab9d1101dd9022cd4369606a6c35f8e8118c4bbf55a",
-        "contract_hash": "f64b987e96c436d8eda4e67bd51c75ac034bd57e36877dc47fa55335c06d18c8",
+        "contract_hash": "f94844070f043be6bd7f68f7f60559bd9e24f61936ef550d08641130c3ba4ae1",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -8933,7 +9317,7 @@
       },
       {
         "body_hash": "4be0c6beea19888822527e41673580a4566c6c9c80b9afd4087dde52f9c617f6",
-        "contract_hash": "6772369b23b94eda21d94b1b2514dbd7ebf03616641680f102cd94353ac37a88",
+        "contract_hash": "e630547d814c64348b57f51a43e151097b27421f2b636281ec147274b23e211b",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -8957,7 +9341,7 @@
       },
       {
         "body_hash": "f1808cc1a4a0bef1e53a44663b54f1ae2e85f248de1bbc0bfb245c02458ac22e",
-        "contract_hash": "6e1ecefde38ea8e22e15baf73bff811187f99f07d7a89da272ab1e236ba03b83",
+        "contract_hash": "9e0fe203d831848c9f4a8b594cf52d1584b7a2f1d5452e106e8dc2848f135cd5",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -8993,7 +9377,7 @@
       },
       {
         "body_hash": "0d806b491d1d6bb71e299f024bd0355036bf3488dc43781d244be886de801979",
-        "contract_hash": "b51f3f0b8062eabb3f6bb5f26c1b4ceb322304fa46e2f8e2383a2739113f3990",
+        "contract_hash": "b20c2757cc8ef5af9ef904b7d47103bef598332cebb9c5a243166228852f92c7",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -9005,7 +9389,7 @@
       },
       {
         "body_hash": "d9e27068073f4b1ac0663deb93333f0e0c9b91ac82bcb77e694afd1248e39279",
-        "contract_hash": "aa9944e9218c19460ad4a4d2f24e0e60d7ba5edbadb751ac394e27bc003e69b0",
+        "contract_hash": "26b5cb16b1f17e2bc495be002c0bd9840dd91f2ced61aa1a3cf2b67ef93e7d44",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/verification.py",
@@ -9137,7 +9521,7 @@
       },
       {
         "body_hash": "c2477edac734d40289e62ef19a6707a2cd323c532c883266358aecd75015fb9c",
-        "contract_hash": "23c4bc35dabcae58e98085fe229a65a73528edd0013c5c05543e9c59e8a641ee",
+        "contract_hash": "53e3803f498860bd173a765b85c2edfd00d530426b2f9d643d6a79978c6eb245",
         "contract_presence": "present",
         "contract_required": true,
         "file_path": "harbor/core/workspace.py",
@@ -13108,7 +13492,7 @@
         "target_id": "python:tests/test_cli_module_capsule.py:function:tests.test_cli_module_capsule.test_module_seal_windows_style_path_normalizes_to_nested_dir"
       },
       {
-        "body_hash": "744fe38d1bd3ba5ca96f94c0745c3d18dd8304a4972a40f805f5b9667695d746",
+        "body_hash": "f75e576c23f2a9d2eda98e912f3024b782ef36f7192fd5a2d70a05fdf9756edc",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -13588,7 +13972,7 @@
         "target_id": "python:tests/test_cli_module_skill.py:function:tests.test_cli_module_skill.test_module_promote_skill_up_to_date_generates_skill"
       },
       {
-        "body_hash": "85b4914c6cedc9a0c6855bb8e81f9a73f9ae899bd5fe05cdeafcc8f91d8713d8",
+        "body_hash": "8fc021ddd9144992c6e9d6bcc79dd90d3d94d53b5c131bf87d9fc541e464cb0e",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -13708,7 +14092,7 @@
         "target_id": "python:tests/test_cli_progress.py:function:tests.test_cli_progress.test_progress_reporter_emits_phase_lines_and_does_not_swallow_errors"
       },
       {
-        "body_hash": "045c0b558b93cb944e33e9ee442ba9a10acc5c863452aa9f63db41d7ff3212e7",
+        "body_hash": "bc145a00fe5c7c336c01a38bb98adf67a749036002f36211152b7334c906fa3c",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -13876,7 +14260,7 @@
         "target_id": "python:tests/test_cli_project_structure.py:function:tests.test_cli_project_structure.test_project_structure_no_index_is_friendly_and_not_crash_when_no_filesystem_fallback"
       },
       {
-        "body_hash": "e488e4b0f6c886c2ab46c7c979f4fabfbbf50817f230b7a6bcbaea56747332ef",
+        "body_hash": "95f3f357c9e5e66c4c18106b4b1628fd664699a44327586272169cac69e3cc01",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -14812,7 +15196,7 @@
         "target_id": "python:tests/test_context_integrity.py:function:tests.test_context_integrity.test_content_without_generated_at_for_compare_ignores_only_timestamp"
       },
       {
-        "body_hash": "fd1c33037de25e3d476d3697ae2d81c4ed6161c187c2d4d3391239cd4f9d3a4c",
+        "body_hash": "deb102a5caf875abbd78aee0da85ed4cadea801c051d05880ddcc9b5371a2225",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -14846,6 +15230,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_context_integrity.py:function:tests.test_context_integrity.test_metadata_has_no_absolute_paths"
+      },
+      {
+        "body_hash": "103bf2f0e4503f1c20a4432b037aa9e940a1bf031710667990eedd980b24334e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_context_integrity.py",
+        "func_id": "tests.test_context_integrity.test_metadata_truncates_source_paths_but_keeps_total_count",
+        "id": "tests.test_context_integrity.test_metadata_truncates_source_paths_but_keeps_total_count",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_context_integrity.py:function:tests.test_context_integrity.test_metadata_truncates_source_paths_but_keeps_total_count"
       },
       {
         "body_hash": "3045a3aa195c79586c4ebdc59229b76cb109afc34b692228c068776e484f95ff",
@@ -15062,6 +15458,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_contract_presence.py:function:tests.test_contract_presence._fc"
+      },
+      {
+        "body_hash": "5314a1505071c4a42fbc8ffe4e7223502f8331c07aaa5b4c28ae4e6d7ef4b34e",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_contract_presence.py",
+        "func_id": "tests.test_contract_presence.test_behavior_only_docstring_counts_as_contract_for_required_target",
+        "id": "tests.test_contract_presence.test_behavior_only_docstring_counts_as_contract_for_required_target",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_contract_presence.py:function:tests.test_contract_presence.test_behavior_only_docstring_counts_as_contract_for_required_target"
       },
       {
         "body_hash": "022baed641c01d8a930245b2ec3b14d2a53eeccc1bee9eff0febf36da4a35eb0",
@@ -15964,6 +16372,18 @@
         "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_project_structure_passes_without_runtime_cache"
       },
       {
+        "body_hash": "2462d6a4333ba73c83a7ad70076d0320a78837d5d2c7d8249921b7dcb6fb8159",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_generated_verify.py",
+        "func_id": "tests.test_generated_verify.test_generated_verify_reuses_l2_generator_for_all_scope",
+        "id": "tests.test_generated_verify.test_generated_verify_reuses_l2_generator_for_all_scope",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_generated_verify.py:function:tests.test_generated_verify.test_generated_verify_reuses_l2_generator_for_all_scope"
+      },
+      {
         "body_hash": "4cba5e1ca746c13bed8f47f18eaa373596ef17e0b27d398835678545f938d977",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -16144,7 +16564,7 @@
         "target_id": "python:tests/test_index_builder_registry_integration.py:function:tests.test_index_builder_registry_integration._write_file"
       },
       {
-        "body_hash": "0eccea40f9c8325b9bfac34dc4dd5fa47e879009b174ffe354606a18d9a88385",
+        "body_hash": "c82705662784f3a90dc5087a884927b9e1bbbd94bea321a903fd897c588bae2b",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -16960,6 +17380,18 @@
         "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root"
       },
       {
+        "body_hash": "494c4d484dc1c1e8dc3bd9ef964198eb70ac0dc401708976285718205ac23a58",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_l2_paths.py",
+        "func_id": "tests.test_l2_paths.test_l2_dependency_summary_reuses_repo_import_graph_and_filters_root_package",
+        "id": "tests.test_l2_paths.test_l2_dependency_summary_reuses_repo_import_graph_and_filters_root_package",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_dependency_summary_reuses_repo_import_graph_and_filters_root_package"
+      },
+      {
         "body_hash": "d3ef3abf464a4f09049b0dd62955f6ea034a40e47ce975bc8dcc79ef7a3bbd22",
         "contract_hash": "",
         "contract_presence": "missing",
@@ -16970,6 +17402,30 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical"
+      },
+      {
+        "body_hash": "1b8a8a814e30510aa3bdcc6f521cba7a389bddc792fe492ba3336e3d24e1408b",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_l2_paths.py",
+        "func_id": "tests.test_l2_paths.test_l2_generate_displays_unknown_strictness_instead_of_python_none",
+        "id": "tests.test_l2_paths.test_l2_generate_displays_unknown_strictness_instead_of_python_none",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_generate_displays_unknown_strictness_instead_of_python_none"
+      },
+      {
+        "body_hash": "1a25212338af457f8202a18167a593ea4e76ef6e8926a786264c8dc81cb7cc0b",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_l2_paths.py",
+        "func_id": "tests.test_l2_paths.test_l2_generate_uses_summary_first_and_dependency_summary",
+        "id": "tests.test_l2_paths.test_l2_generate_uses_summary_first_and_dependency_summary",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_generate_uses_summary_first_and_dependency_summary"
       },
       {
         "body_hash": "772c18e1e416cd2b1cf5e52e2655911770fa5df9bd2f7551bf403dd19ec70a40",
@@ -16994,6 +17450,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only"
+      },
+      {
+        "body_hash": "3b78d1a781e41bf47ca36fe49699b4d527cdfdc0a380239eeb6d67462469d21c",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_l2_paths.py",
+        "func_id": "tests.test_l2_paths.test_l2_meta_write_sanitizes_absolute_and_outside_repo_keys",
+        "id": "tests.test_l2_paths.test_l2_meta_write_sanitizes_absolute_and_outside_repo_keys",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_meta_write_sanitizes_absolute_and_outside_repo_keys"
       },
       {
         "body_hash": "afc0b77ff884450a6e52cfb46c46d93a5da0ff58c30255624cff4bd251d1140e",
@@ -17066,6 +17534,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_write_refreshes_canonical_when_body_hash_matches_but_frontmatter_drifted"
+      },
+      {
+        "body_hash": "719943c134ee0ac146752bf01cb3de0680c99ada8b38a066378945ad3611edee",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_l2_paths.py",
+        "func_id": "tests.test_l2_paths.test_l2_write_without_force_still_cleans_dirty_meta_keys",
+        "id": "tests.test_l2_paths.test_l2_write_without_force_still_cleans_dirty_meta_keys",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_l2_paths.py:function:tests.test_l2_paths.test_l2_write_without_force_still_cleans_dirty_meta_keys"
       },
       {
         "body_hash": "78914739c4911b012e380ca4da8b16570863da4629608381f096c7f6f0db2005",
@@ -18076,7 +18556,31 @@
         "target_id": "python:tests/test_module_capsule.py:function:tests.test_module_capsule.test_collect_module_context_matches_prefix_only"
       },
       {
-        "body_hash": "280b045224172c51e2c6fb9c32b2a0f2ca1143903812fc2a7b2df8e4a3730608",
+        "body_hash": "bae6e545d51591333c00e45054164bacac79cb5c7703e3a1c20788111cfa9ec7",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_module_capsule.py",
+        "func_id": "tests.test_module_capsule.test_debug_playbook_deprioritizes_init_and_prefers_workflow_files",
+        "id": "tests.test_module_capsule.test_debug_playbook_deprioritizes_init_and_prefers_workflow_files",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_module_capsule.py:function:tests.test_module_capsule.test_debug_playbook_deprioritizes_init_and_prefers_workflow_files"
+      },
+      {
+        "body_hash": "8818720bc56d058fbff1fc6f8ad2f9ece5572f5d80d30bd374b8f867fdadb56a",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_module_capsule.py",
+        "func_id": "tests.test_module_capsule.test_debug_playbook_prioritizes_typescript_preview_workflow",
+        "id": "tests.test_module_capsule.test_debug_playbook_prioritizes_typescript_preview_workflow",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_module_capsule.py:function:tests.test_module_capsule.test_debug_playbook_prioritizes_typescript_preview_workflow"
+      },
+      {
+        "body_hash": "f2ba24c0dfd449f8755178d016b688895ecfa54c74025f26d3971f160aa04b08",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -18134,6 +18638,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_module_capsule.py:function:tests.test_module_capsule.test_normalize_module_path_supports_windows_and_posix"
+      },
+      {
+        "body_hash": "a7d16c37054fe3d226e4cc59d2d97526c8a6f03e1775c9111f122aa81da8e308",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_module_capsule.py",
+        "func_id": "tests.test_module_capsule.test_review_checklist_highlights_typescript_preview_boundary",
+        "id": "tests.test_module_capsule.test_review_checklist_highlights_typescript_preview_boundary",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_module_capsule.py:function:tests.test_module_capsule.test_review_checklist_highlights_typescript_preview_boundary"
       },
       {
         "body_hash": "48dc6665225af2137cc7ab749a401d6458ada4004bea0376320712b68a30cc72",
@@ -18484,7 +19000,7 @@
         "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure.test_classify_project_area_is_stable"
       },
       {
-        "body_hash": "af889a74237b2d7465addaa01e9fa6d090104733d1b295ffb9d7d97b7e0340ca",
+        "body_hash": "70b2e9309afcc9f36a8d2c86f78c308e1957d18c6d4b41f4deb257caf08dd491",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -18494,6 +19010,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure.test_collect_project_structure_context_builds_expected_flags_and_counts"
+      },
+      {
+        "body_hash": "c3005e87c48e25cbf3d349a9cdbf937c1a49a7b1ccf63a728ee5449fdceb0ae3",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_project_structure.py",
+        "func_id": "tests.test_project_structure.test_collect_project_structure_context_distinguishes_canonical_capsule_and_docs_export",
+        "id": "tests.test_project_structure.test_collect_project_structure_context_distinguishes_canonical_capsule_and_docs_export",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure.test_collect_project_structure_context_distinguishes_canonical_capsule_and_docs_export"
       },
       {
         "body_hash": "1a2a6927f239eb54cc814ed8f1a901ac5feb3fde074db6e66ce18e2a838e2d70",
@@ -18544,7 +19072,7 @@
         "target_id": "python:tests/test_project_structure.py:function:tests.test_project_structure.test_collect_project_structure_reads_metadata_from_pyproject"
       },
       {
-        "body_hash": "661f2d450821798a3c46e066c97e8dfe168db823ef758d8c0520969f6e6193e3",
+        "body_hash": "c2f96a935e5b23ff46f3d6f8a2b2296c7810a48f3060de4d35564482cf5e193a",
         "contract_hash": "",
         "contract_presence": "missing",
         "contract_required": false,
@@ -18698,6 +19226,102 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_python_audit_regression.py:function:tests.test_python_audit_regression.test_python_semantic_audit_still_calls_provider_and_returns_ok"
+      },
+      {
+        "body_hash": "aa87ca140a62dfdb37fd051f2a8febfa4f10014107855def61c9359837f2c818",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_python_contract_source_recognition.py",
+        "func_id": "tests.test_python_contract_source_recognition._empty_ddt_report",
+        "id": "tests.test_python_contract_source_recognition._empty_ddt_report",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_python_contract_source_recognition.py:function:tests.test_python_contract_source_recognition._empty_ddt_report"
+      },
+      {
+        "body_hash": "6a1d92ecf1f2e3e4200e13f1b235b89c5f18a8dd6c46bb6e8b8e62d988d5c67f",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_python_contract_source_recognition.py",
+        "func_id": "tests.test_python_contract_source_recognition._no_contract_impact_report",
+        "id": "tests.test_python_contract_source_recognition._no_contract_impact_report",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_python_contract_source_recognition.py:function:tests.test_python_contract_source_recognition._no_contract_impact_report"
+      },
+      {
+        "body_hash": "ba2e8675a045363c634e9f80bb0ee77506d51bd74b903dff59faf67bb55938d3",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_python_contract_source_recognition.py",
+        "func_id": "tests.test_python_contract_source_recognition._write_file",
+        "id": "tests.test_python_contract_source_recognition._write_file",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_python_contract_source_recognition.py:function:tests.test_python_contract_source_recognition._write_file"
+      },
+      {
+        "body_hash": "130d8946c0ccd8f579dc66de25d6f97d24ad74bfc1801e88e393790ee971918d",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_python_contract_source_recognition.py",
+        "func_id": "tests.test_python_contract_source_recognition._write_workspace_config",
+        "id": "tests.test_python_contract_source_recognition._write_workspace_config",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_python_contract_source_recognition.py:function:tests.test_python_contract_source_recognition._write_workspace_config"
+      },
+      {
+        "body_hash": "3ac92efa23a4d22ba69d216976b79f357a1732bb166bb67e466f7139cd763d62",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_python_contract_source_recognition.py",
+        "func_id": "tests.test_python_contract_source_recognition.test_behavior_only_docstring_is_present_in_readonly_index_for_required_python_target",
+        "id": "tests.test_python_contract_source_recognition.test_behavior_only_docstring_is_present_in_readonly_index_for_required_python_target",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_python_contract_source_recognition.py:function:tests.test_python_contract_source_recognition.test_behavior_only_docstring_is_present_in_readonly_index_for_required_python_target"
+      },
+      {
+        "body_hash": "bc8c6f0ed58bc45ea441ea2694b9a6e584b69044a0b59886ab083bdb4f936fdc",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_python_contract_source_recognition.py",
+        "func_id": "tests.test_python_contract_source_recognition.test_checkpoint_full_json_exposes_python_contract_source_fingerprint",
+        "id": "tests.test_python_contract_source_recognition.test_checkpoint_full_json_exposes_python_contract_source_fingerprint",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_python_contract_source_recognition.py:function:tests.test_python_contract_source_recognition.test_checkpoint_full_json_exposes_python_contract_source_fingerprint"
+      },
+      {
+        "body_hash": "f6ddb8c6250dd5938655bfb8918e2cdf339761aeefbd51217ce1c407562c65b2",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_python_contract_source_recognition.py",
+        "func_id": "tests.test_python_contract_source_recognition.test_python_behavior_docstring_change_is_not_false_drift",
+        "id": "tests.test_python_contract_source_recognition.test_python_behavior_docstring_change_is_not_false_drift",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_python_contract_source_recognition.py:function:tests.test_python_contract_source_recognition.test_python_behavior_docstring_change_is_not_false_drift"
+      },
+      {
+        "body_hash": "f886453b0eb340d35cf7c241df49520a84634eb6ad4fbb0001fe16a30e88e17a",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_python_contract_source_recognition.py",
+        "func_id": "tests.test_python_contract_source_recognition.test_python_db_readonly_fallback_keeps_contract_source_metadata",
+        "id": "tests.test_python_contract_source_recognition.test_python_db_readonly_fallback_keeps_contract_source_metadata",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_python_contract_source_recognition.py:function:tests.test_python_contract_source_recognition.test_python_db_readonly_fallback_keeps_contract_source_metadata"
       },
       {
         "body_hash": "b9f8aab4b3ef0b790bbaac1a65448be07effcccf9267472caed60a3b8dfcb2fc",
@@ -18880,9 +19504,9 @@
         "target_id": "python:tests/test_release_packaging.py:function:tests.test_release_packaging.test_release_notes_include_v130_release_track"
       },
       {
-        "body_hash": "8e0f8885539f5b0ce269d9e28e87c1f1582cc6d2548153286fc28e937a49bf77",
-        "contract_hash": "",
-        "contract_presence": "missing",
+        "body_hash": "6153b1ac767b43dbaa393027605d0132efd41240e29495a7d03f3dc1c22b94d7",
+        "contract_hash": "24238e842bf3a4dfbf3a51a0ba222e4596bdf6b6a4419beacc3d06e654ed05e3",
+        "contract_presence": "non_contract_doc",
         "contract_required": false,
         "file_path": "tests/test_release_packaging.py",
         "func_id": "tests.test_release_packaging.test_release_notes_include_v145_plan_summary",
@@ -18890,6 +19514,18 @@
         "language": "python",
         "symbol_kind": "function",
         "target_id": "python:tests/test_release_packaging.py:function:tests.test_release_packaging.test_release_notes_include_v145_plan_summary"
+      },
+      {
+        "body_hash": "ee2b1908025bbaae393687cf4e4eaed8ef61c4ad5afb7a23fb016fa3ee40b343",
+        "contract_hash": "",
+        "contract_presence": "missing",
+        "contract_required": false,
+        "file_path": "tests/test_release_packaging.py",
+        "func_id": "tests.test_release_packaging.test_release_notes_include_v146_release_prep_summary",
+        "id": "tests.test_release_packaging.test_release_notes_include_v146_release_prep_summary",
+        "language": "python",
+        "symbol_kind": "function",
+        "target_id": "python:tests/test_release_packaging.py:function:tests.test_release_packaging.test_release_notes_include_v146_release_prep_summary"
       },
       {
         "body_hash": "6f8caba463913bbbe3ef06acf759c04dcf65241159fd47f8c0951699d4a79ba7",
@@ -21749,7 +22385,7 @@
       }
     ]
   },
-  "harbor_version": "1.4.4",
+  "harbor_version": "1.4.6",
   "kind": "accepted_checkpoint_baseline",
   "schema_version": "1.0"
 }

@@ -1,8 +1,8 @@
 ---
 generated_by: "harbor-spec"
-harbor_version: "1.4.5"
+harbor_version: "1.4.6"
 view_type: "project_structure"
-generated_at: "2026-05-22T09:06:32Z"
+generated_at: "2026-05-22T11:33:44Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
 source_path_count: 176
@@ -17,9 +17,9 @@ source_paths:
   - "harbor/adapters/python/parser.py"
   - "harbor/adapters/registry.py"
   - "harbor/adapters/typescript/__init__.py"
-source_fingerprint: "sha256:f4735f87e858c7090ff55ec470e5ea383b37f881922cfb9dcc0b1d7d9de17a0d"
-contract_fingerprint: "sha256:bb62bcdc053be79bf2bfba4af5d08dfde69b142c01bc6d37d85ff334c3d4b881"
-generator_fingerprint: "sha256:7cb91b5679a749a52609ee0fa3a3dd00d7c00ee2ec863c6a6bf002de3cde8266"
+source_fingerprint: "sha256:6d65bd6cac1e919a6d3eab4e75debd47f35ba7c2bd8fcf16c9af165bde73d0a4"
+contract_fingerprint: "sha256:23b3931a77ce79814ba45795a79f71985fc96cde8765a65922b0cc32889143ea"
+generator_fingerprint: "sha256:6a9ece1afe770b7785626c4390dea0e68a7083c5017ae69fcd02073c6f0833fa"
 ---
 
 # Project Structure
@@ -32,7 +32,7 @@ generator_fingerprint: "sha256:7cb91b5679a749a52609ee0fa3a3dd00d7c00ee2ec863c6a6
 | Field | Value |
 |---|---|
 | Name | harbor-spec |
-| Version | 1.4.5 |
+| Version | 1.4.6 |
 | Description | Harbor-spec: context governance engine for AI coding, with contract drift detection, DDT validation, workflow facades, L2 README generation, module capsules, and advisory health checks. |
 | CLI Entrypoint | harbor.cli.main:main |
 
@@ -60,9 +60,9 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 | Area | Purpose | Discovered Files | Indexed Contracts |
 |---|---|---:|---:|
 | harbor/cli | CLI command parsing and workflow facade | 2 | 12 |
-| harbor/core | Core Harbor logic | 41 | 689 |
+| harbor/core | Core Harbor logic | 41 | 693 |
 | harbor/utils | Shared utilities | 3 | 3 |
-| tests | Test suite | 112 | 1042 |
+| tests | Test suite | 112 | 1045 |
 | harbor | Derived from indexed files under harbor. | 18 | 112 |
 
 ## Code Modules

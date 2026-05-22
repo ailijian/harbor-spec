@@ -111,26 +111,31 @@ def test_release_notes_reference_python_ddt_reconciliation_report():
     assert "`ddt_advisory=5`" not in release_text
 
 
-def test_release_notes_include_v145_plan_summary():
+def test_release_notes_include_v146_release_prep_summary():
     release_text = (_repo_root() / "RELEASE.md").read_text(encoding="utf-8")
-    assert "# Harbor-spec v1.4.5 — Workflow UX & Preview Productization" in release_text
-    assert "状态：正式版" in release_text
+    assert "# Harbor-spec v1.4.6 — Generated Context Optimization & Release Closure" in release_text
+    assert "状态：候选发布" in release_text
     assert "## 版本主题" in release_text
-    assert "Workflow UX & Preview Productization" in release_text
+    assert "Generated Context Optimization & Release Closure" in release_text
     assert "## 四条完成面" in release_text
-    assert "1. DDT advisory reconciliation" in release_text
-    assert "2. Progress Feedback Framework" in release_text
-    assert "3. Runtime Performance Baseline" in release_text
-    assert "4. Preview Productization" in release_text
+    assert "1. Generated frontmatter noise reduction" in release_text
+    assert "2. Workflow-grouped debug playbook" in release_text
+    assert "3. L2 behavior-risk and dependency tightening" in release_text
+    assert "4. Release closeout and source-verified local CLI guidance" in release_text
     assert "## DDT Advisory 状态" in release_text
     assert "`ddt_version_baseline_missing=5`" in release_text
     assert "`ACCEPTED_BACKLOG`" in release_text
     assert "## 发布验证事实" in release_text
-    assert "Diary：正式写入" in release_text
+    assert "Diary：已正式写入；release closeout draft：已生成" in release_text
     assert "accepted baseline：已更新" in release_text
     assert "不做 JavaScript first-class governance" in release_text
-    assert "不做大规模性能架构重构" in release_text
-    assert "docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md" in release_text
+    assert "不做结构性性能重构或 runtime architecture redesign" in release_text
+    assert ".harbor/reports/v1.4.6-release-closeout-diary-draft.md" in release_text
+
+
+def test_release_notes_include_v145_plan_summary():
+    """Backward-compatible alias kept to avoid accepted baseline missing_function drift."""
+    test_release_notes_include_v146_release_prep_summary()
 
 
 def test_python_ddt_reconciliation_report_is_present_and_explicit():

@@ -6,7 +6,7 @@
 | Public by contract | 1 |
 | Strict targets | 1 |
 | Private-named but strict | 0 |
-| Internal indexed | 1041 |
+| Internal indexed | 1044 |
 | Strict targets missing DDT | 1 |
 | Targets with DDT warnings | 0 |
 
@@ -37,7 +37,6 @@
 - harbor/core (36 edges): harbor/core, harbor/core/audit, harbor/core/baseline_artifact, ... (+33 more)
 - harbor/adapters (6 edges): harbor/adapters/base, harbor/adapters/python/compat, harbor/adapters/python/parser, ... (+3 more)
 - harbor/utils (2 edges): harbor/utils, harbor/utils/i18n
-- harbor (root package) (1 edges): harbor
 - harbor/cli (1 edges): harbor/cli/main
 - harbor/test_utils (1 edges): harbor/test_utils
 
@@ -605,6 +604,7 @@
 | tests.test_generated_verify.test_generated_verify_ignores_generated_at_only_changes | tests/test_generated_verify.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_generated_verify.test_generated_verify_passes_when_views_match | tests/test_generated_verify.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_generated_verify.test_generated_verify_project_structure_passes_without_runtime_cache | tests/test_generated_verify.py | unknown | unknown | ⚪ Missing | — |
+| tests.test_generated_verify.test_generated_verify_reuses_l2_generator_for_all_scope | tests/test_generated_verify.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_contract_impact.test_generated_view_modules_hit_generated_view_format | tests/test_contract_impact.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_module_capsule.test_generators_include_required_sections | tests/test_module_capsule.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_adapter_registry.test_get_adapter_python_returns_python_adapter_instance | tests/test_adapter_registry.py | unknown | unknown | ⚪ Missing | — |
@@ -656,6 +656,7 @@
 | tests.test_l2_paths.test_l2_absolute_module_path_outside_repo_still_rejected | tests/test_l2_paths.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_module_capsule.test_l2_and_capsule_can_be_generated_without_runtime_index_cache | tests/test_module_capsule.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root | tests/test_l2_paths.py | unknown | unknown | ⚪ Missing | — |
+| tests.test_l2_paths.test_l2_dependency_summary_reuses_repo_import_graph_and_filters_root_package | tests/test_l2_paths.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_stale.test_l2_export_disabled_is_explicit_and_not_warn_counter | tests/test_stale.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical | tests/test_l2_paths.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_stale.test_l2_export_ok_when_canonical_has_frontmatter_and_export_is_plain_body | tests/test_stale.py | unknown | unknown | ⚪ Missing | — |
@@ -894,7 +895,8 @@
 | tests.test_adapter_registry.test_registry_does_not_change_python_adapter_parse_file_behavior | tests/test_adapter_registry.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_release_packaging.test_release_notes_include_unreleased_v130_track | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | Backward-compatible alias test name kept to avoid baselin... |
 | tests.test_release_packaging.test_release_notes_include_v130_release_track | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | — |
-| tests.test_release_packaging.test_release_notes_include_v145_plan_summary | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | — |
+| tests.test_release_packaging.test_release_notes_include_v145_plan_summary | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | Backward-compatible alias kept to avoid accepted baseline... |
+| tests.test_release_packaging.test_release_notes_include_v146_release_prep_summary | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_release_packaging.test_release_notes_reference_python_ddt_reconciliation_report | tests/test_release_packaging.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_repair_guidance.test_repair_guidance_has_no_llm_integration_symbols | tests/test_repair_guidance.py | unknown | unknown | ⚪ Missing | — |
 | tests.test_contract_impact.test_report_to_dict_is_deterministic_and_sanitized | tests/test_contract_impact.py | unknown | unknown | ⚪ Missing | — |

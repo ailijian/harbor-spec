@@ -1,80 +1,79 @@
-# Harbor-spec v1.4.5 — Workflow UX & Preview Productization
+# Harbor-spec v1.4.6 — Generated Context Optimization & Release Closure
 
-状态：正式版  
-发布类型：Workflow UX / Advisory Reconciliation / Performance Baseline / Preview Productization
+状态：候选发布  
+发布类型：Generated Context Optimization / Module Capsule Ergonomics / Release Closeout
 
 ## 版本主题
 
-Workflow UX & Preview Productization
+Generated Context Optimization & Release Closure
 
 ## Summary
 
-- `v1.4.5` 建立在 `v1.4.4` 已完成的 TypeScript Verification Preview 基础之上。
-- 本版本不继续横向扩张治理能力边界，而是转向产品成熟度与工作流体验收口。
-- 当前版本定位聚焦四项：DDT advisory reconciliation、Progress Feedback Framework、Runtime Performance Baseline、Preview Productization。
+- `v1.4.6` 建立在 `v1.4.5` 已完成的 workflow UX、preview productization 与 runtime baseline 基础之上。
+- 本版本不扩张 Harbor 治理边界，也不把 `v1.4.6` 转成结构性性能优化版本，而是优先收敛 generated context 首屏噪声、任务入口相关性与 release closeout 一致性。
+- 当前版本定位聚焦四项：generated frontmatter 压缩、workflow-grouped debug playbook、L2 风险/依赖语义收紧、本地源码验证与 release-prep 收口。
 
 ## 四条完成面
 
-1. DDT advisory reconciliation
-   - `5` 条 Python strict DDT advisory 已正式裁决为 `ACCEPTED_BACKLOG`
-   - advisory category 保持 `ddt_version_baseline_missing`
-   - 当前不阻塞 `v1.4.5` 正式发布，因为仓库尚无 repo-owned `l3_version` baseline source
-   - 正式裁决报告：`.harbor/reports/python-ddt-advisory-reconciliation.md`
-2. Progress Feedback Framework
-   - `checkpoint` / `finish` / `verify-generated` / `docs` / `module seal` / `stale` / `doctor` / `accept` / `project structure` / `adopt` 已具备统一文本进度反馈
-   - `stale` / `doctor` progress coverage 已补齐
-   - progress i18n label 渲染问题已修复，不再泄漏原始 `cli.progress.label.*` key
-   - `--format json` / `--format jsonl` / `--ci` 机器输出纯度保持不回归
-3. Runtime Performance Baseline
-   - 基线报告：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.md`
-   - 机器可读版本：`.harbor/reports/harbor-spec-runtime-performance-baseline-v145.json`
-   - `finish` 重复状态扫描 quick win 已落地
-   - 结构性性能优化明确延后到后续版本再判断
-4. Preview Productization
-   - sidecar example：`examples/typescript-verification-preview/README.md`
-   - package-public demo：`examples/typescript-verification-preview/package-public/README.md`
-   - semantic audit preview demo：`examples/typescript-verification-preview/semantic-audit-preview/README.md`
-   - guide：`docs/guides/typescript-verification-preview.md`
-   - troubleshooting：`docs/guides/typescript-verification-preview-troubleshooting.md`
-   - README 入口：`README.md` / `README.en.md`
+1. Generated frontmatter noise reduction
+   - 保留 `fingerprint` / `generator` / `module` / `source_path_count` / `generation_command` 等完整性校验必需字段
+   - `source_paths` 改为 deterministic Top N 摘要，并新增 `source_paths_omitted_count`
+   - `verify-generated --all --ci --format json` 继续通过，未削弱完整性校验
+   - `.harbor/views/**` 继续保持 repo-relative 路径，不回流本地绝对路径
+2. Workflow-grouped debug playbook
+   - `debug-playbook.md` 从单一粗粒度列表升级为按任务工作流分组推荐
+   - `harbor/core` 可按 generated context、CLI / JSON、workspace / file write、Diary / change-window、tests / DDT 选择入口
+   - `harbor/adapters/typescript` 优先指向 TypeScript adapter / public boundary preview 相关入口
+3. L2 behavior-risk and dependency tightening
+   - `High-Risk Targets` 优先显示 CLI、JSON、file write、workspace path、generated context、baseline / diary 等行为风险
+   - contract / DDT coverage gap 独立展示，不再淹没真正的行为高风险入口
+   - `strictness` 对用户不再暴露 Python `None`
+   - `Dependency Summary` 按 `harbor/core`、`harbor/cli`、`harbor/adapters`、`harbor/utils`、`tests` 等 repo 内子域分组展示
+4. Release closeout and source-verified local CLI guidance
+   - README / README.en 本地验证示例优先使用 `python -m harbor.cli.main ...`
+   - 只有确认 editable install 已刷新时，才把裸 `harbor ...` 视为等价命令
+   - 已完成基线接受、Diary 写入、全量 generated context 刷新与 release-prep 收口
 
 ## DDT Advisory 状态
 
 - `ddt_version_baseline_missing=5`
-- 已正式裁决为 `ACCEPTED_BACKLOG`
+- 延续 `ACCEPTED_BACKLOG`
 - `non-blocking`
 
 ## 发布验证事实
 
-- `pytest`：最终全量通过
-- `checkpoint --ci --format json --advice basic`：post-accept `PASS`
-- `stale --ci --format json`：`PASS`
-- `doctor --ci --format json`：`PASS`
-- `verify-generated --changed --ci --format json`：`PASS`
-- `verify-generated --all --ci --format json`：`PASS`
+- `python -m pytest tests/test_context_integrity.py tests/test_l2_paths.py tests/test_module_capsule.py tests/test_cli_module_capsule.py tests/test_cli_module_capsule_batch.py tests/test_release_packaging.py`：`PASS`
+- `python -m pytest tests/test_generated_verify.py tests/test_cli_verify_generated.py tests/test_cli_docs_modes.py tests/test_project_structure.py`：`PASS`
+- `python -m pytest tests/test_release_packaging.py`：`PASS`
+- `python -m harbor.cli.main checkpoint --ci --format json --detail summary`：post-accept `PASS`
+- `python -m harbor.cli.main verify-generated --all --ci --format json`：`PASS`
+- `python -m harbor.cli.main stale --ci --format json`：`PASS`
+- `python -m harbor.cli.main doctor --ci --format json`：`PASS`
 - accepted baseline：已更新
-- Diary：正式写入
+- Diary：已正式写入；release closeout draft：已生成
 
 ## Positioning
 
-- 本版本不扩治理边界，而是产品成熟度与工作流体验版本
-- 正式完成基线接受、发布说明封板、全量上下文刷新与全量发版验证
+- 本版本是 generated context ergonomics 与 release closeout 版本，不引入新 artifact，也不改变默认 context loading order
+- `v1.4.5` 中预留的 `v1.4.6` 性能候选轨道，本轮未被采纳为正式主题；runtime baseline 未显示必须优先进行结构性性能重构
+- 正式收口 frontmatter 噪声、L2 行为风险语义、Module Capsule 人体工学与本地 CLI 防漂移约束
 
 ## Non-Goals
 
+- 不新增 `agent-card.md`
+- 不改变 AGENTS / Project Rules / skills 的默认加载顺序
+- 不把 TypeScript preview 升级为正式 gate
 - 不做 JavaScript first-class governance
 - 不做 TSX / JSX / `.d.ts` 扩张
-- 不把 TS DDT Preview 升级为正式 gate
-- 不把 TS Semantic Audit Preview 升级为正式 gate
 - 不做 Jest / Vitest AST inference
 - 不做 coverage proof
 - 不做自动 test-to-target binding
-- 不做大规模性能架构重构
-- 不在本版本完成真实外部项目 pilot
+- 不做结构性性能重构或 runtime architecture redesign
 
 ## References
 
 - `docs/《Harbor-spec v1.4.5｜Workflow UX & Preview Productization 定稿版》.md`
+- `.harbor/reports/v1.4.6-release-closeout-diary-draft.md`
 - `README.md`
 - `README.en.md`
 

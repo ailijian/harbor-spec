@@ -79,6 +79,35 @@ def test_generated_verify_passes_when_views_match(tmp_path: Path, monkeypatch):
     assert all(status == ARTIFACT_STATUS_UP_TO_DATE for status in statuses)
 
 
+def test_generated_verify_reuses_l2_generator_for_all_scope(tmp_path: Path, monkeypatch):
+    _write_sample_repo(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    _generate_views(tmp_path)
+
+    import harbor.core.generated_verify as generated_verify
+
+    created = []
+    generated_modules = []
+    real_generator = generated_verify.L2Generator
+
+    class SpyL2Generator(real_generator):
+        def __init__(self, *args, **kwargs):
+            created.append(self)
+            super().__init__(*args, **kwargs)
+
+        def generate(self, module_path: str) -> str:
+            generated_modules.append(module_path)
+            return super().generate(module_path)
+
+    monkeypatch.setattr(generated_verify, "L2Generator", SpyL2Generator)
+
+    report = generated_verify.build_generated_verification_report(scope="all", modules=["harbor/core"])
+
+    assert report.status == "pass"
+    assert len(created) == 1
+    assert generated_modules == ["harbor/core"]
+
+
 def test_generated_verify_ignores_generated_at_only_changes(tmp_path: Path, monkeypatch):
     _write_sample_repo(tmp_path)
     monkeypatch.chdir(tmp_path)

@@ -6,7 +6,7 @@
 | Public by contract | 102 |
 | Strict targets | 101 |
 | Private-named but strict | 0 |
-| Internal indexed | 587 |
+| Internal indexed | 591 |
 | Strict targets missing DDT | 100 |
 | Targets with DDT warnings | 0 |
 
@@ -44,7 +44,6 @@
 
 **Outbound Dependencies**
 - harbor/adapters (9 edges): harbor/adapters/base, harbor/adapters/python/compat, harbor/adapters/python/parser, ... (+6 more)
-- harbor (root package) (1 edges): harbor
 - harbor/utils (1 edges): harbor/utils/i18n
 
 **Inbound Dependents**
@@ -89,6 +88,7 @@
 | harbor.core.log_draft._bucket_for_path | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.workspace._build_path | harbor/core/workspace.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.drafting.DiaryDrafter._build_prompt | harbor/core/drafting.py | unknown | unknown | ⚪ Missing | — |
+| harbor.core.l2._build_repo_import_graph | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.log_draft._build_risks | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.audit.SemanticGuard._build_subject_prompt | harbor/core/audit.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.log_draft._build_suggested_diary_entry | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |
@@ -99,6 +99,7 @@
 | harbor.core.verification._build_typescript_ddt_preview_report | harbor/core/verification.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.log_draft._build_why | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.module_capsule._build_workflow_recommendations | harbor/core/module_capsule.py | unknown | unknown | ⚪ Missing | — |
+| harbor.core.generated_verify._cached_l2_body | harbor/core/generated_verify.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.project_structure._capsule_exists | harbor/core/project_structure.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.project_structure._capsule_export_exists | harbor/core/project_structure.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.workspace_inspect._check_git_ignored | harbor/core/workspace_inspect.py | unknown | unknown | ⚪ Missing | — |
@@ -220,6 +221,7 @@
 | harbor.core.ci._get_optional_dict_list | harbor/core/ci.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.ci._get_optional_list | harbor/core/ci.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.ci._get_optional_text | harbor/core/ci.py | unknown | unknown | ⚪ Missing | — |
+| harbor.core.l2.L2Generator._get_repo_import_graph | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.change_window._git_status_lines | harbor/core/change_window.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.init_wizard._has_env_ignore | harbor/core/init_wizard.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.decorator.DecoratorEngine._has_scope_tag | harbor/core/decorator.py | unknown | unknown | ⚪ Missing | — |
@@ -376,6 +378,7 @@
 | harbor.core.module_capsule._resolve_docs_export_modules_root | harbor/core/module_capsule.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.project_structure._resolve_docs_export_project_structure_path | harbor/core/project_structure.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.l2.L2Generator._resolve_export_readme_path | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
+| harbor.core.l2._resolve_file_imports | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.l2._resolve_import_token_to_module | harbor/core/l2.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.readonly_index._resolve_index_path | harbor/core/readonly_index.py | unknown | unknown | ⚪ Missing | — |
 | harbor.core.log_draft._resolve_latest_draft_source | harbor/core/log_draft.py | unknown | unknown | ⚪ Missing | — |

@@ -213,7 +213,8 @@ def test_l2_generate_uses_summary_first_and_dependency_summary(tmp_path: Path, m
     sample = tmp_path / "harbor" / "core" / "sample.py"
     sample.parent.mkdir(parents=True, exist_ok=True)
     sample.write_text(
-        '''from harbor.utils.formatting import noop
+        '''import harbor
+from harbor.utils.formatting import noop
 
 def run(value: int) -> int:
     """Return the provided integer unchanged.
@@ -284,7 +285,70 @@ def run(value: int) -> int:
     assert "## Public API\n" not in md
     assert "## Dependency (MVP)" not in md
     assert "harbor/utils (1 edges): harbor/utils/formatting" in md
+    assert "harbor (root package)" not in md
     assert "- tests" in md
+
+
+def test_l2_dependency_summary_reuses_repo_import_graph_and_filters_root_package(
+    tmp_path: Path,
+    monkeypatch,
+):
+    monkeypatch.chdir(tmp_path)
+    core = tmp_path / "harbor" / "core" / "sample.py"
+    core.parent.mkdir(parents=True, exist_ok=True)
+    core.write_text(
+        "import harbor\n"
+        "from harbor.utils.formatting import noop\n\n"
+        "def run(value):\n"
+        "    return noop(value)\n",
+        encoding="utf-8",
+    )
+    cli = tmp_path / "harbor" / "cli" / "main.py"
+    cli.parent.mkdir(parents=True, exist_ok=True)
+    cli.write_text(
+        "from harbor.core.sample import run\n\n"
+        "def main():\n"
+        "    return run(1)\n",
+        encoding="utf-8",
+    )
+    util = tmp_path / "harbor" / "utils" / "formatting.py"
+    util.parent.mkdir(parents=True, exist_ok=True)
+    util.write_text("def noop(value):\n    return value\n", encoding="utf-8")
+    idx = tmp_path / ".harbor" / "cache" / "l3_index.json"
+    idx.parent.mkdir(parents=True, exist_ok=True)
+    idx.write_text(
+        json.dumps(
+            {
+                "files": {
+                    "harbor/core/sample.py": {"items": [{"id": "harbor.core.sample.run", "name": "run"}]},
+                    "harbor/cli/main.py": {"items": [{"id": "harbor.cli.main.main", "name": "main"}]},
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    import harbor.core.l2 as l2_module
+
+    build_calls = 0
+    original_build = l2_module._build_repo_import_graph
+
+    def spy_build(repo_root: Path):
+        nonlocal build_calls
+        build_calls += 1
+        return original_build(repo_root)
+
+    monkeypatch.setattr(l2_module, "_build_repo_import_graph", spy_build)
+    gen = L2Generator(index_path=idx)
+
+    core_md = gen.generate("harbor/core")
+    cli_md = gen.generate("harbor/cli")
+
+    assert build_calls == 1
+    assert "harbor (root package)" not in core_md
+    assert "harbor/utils (1 edges): harbor/utils/formatting" in core_md
+    assert "harbor/cli (1 edges): harbor/cli" in core_md
+    assert "harbor/core (1 edges): harbor/core/sample" in cli_md
 
 
 def test_l2_generate_displays_unknown_strictness_instead_of_python_none(tmp_path: Path, monkeypatch):

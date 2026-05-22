@@ -136,7 +136,7 @@ def _dependency_group(module_path: str) -> str:
     if parts[0] == "harbor":
         if len(parts) >= 2:
             return "/".join(parts[:2])
-        return "harbor (root package)"
+        return ""
     if parts[0] == "tests":
         return "tests"
     if len(parts) >= 2:
@@ -164,16 +164,66 @@ def _format_dependency_group_rows(groups: Dict[str, set[str]], *, sample_limit: 
     return rendered
 
 
-def _collect_module_dependency_summary(module_path: str, module_files: List[str], *, repo_root: Path) -> Dict[str, List[str]]:
+def _build_repo_import_graph(repo_root: Path) -> Dict[str, Dict[str, set[str]]]:
+    imports_by_file: Dict[str, set[str]] = {}
+    module_by_file: Dict[str, set[str]] = {}
+    scan_roots = ["harbor", "tests"]
+    all_python_files: List[Path] = []
+    for root_name in scan_roots:
+        root_dir = repo_root / root_name
+        if root_dir.exists():
+            all_python_files.extend(sorted(root_dir.rglob("*.py")))
+
+    for abs_path in all_python_files:
+        try:
+            rel = abs_path.resolve().relative_to(repo_root).as_posix()
+        except Exception:
+            continue
+        source = _safe_read_text(abs_path)
+        imports = {
+            resolved
+            for resolved in (
+                _resolve_import_token_to_module(token, repo_root=repo_root)
+                for token in _extract_import_tokens(source)
+            )
+            if resolved
+        }
+        imports_by_file[rel] = imports
+        module_by_file.setdefault(rel, set()).add(infer_module_from_path(rel))
+    return {"imports_by_file": imports_by_file, "module_by_file": module_by_file}
+
+
+def _resolve_file_imports(rel: str, *, repo_root: Path, import_graph: Dict[str, Dict[str, set[str]]]) -> set[str]:
+    normalized = str(rel or "").replace("\\", "/").strip("/")
+    cached = import_graph.get("imports_by_file", {}).get(normalized)
+    if cached is not None:
+        return set(cached)
+    source = _safe_read_text(repo_root / normalized)
+    return {
+        resolved
+        for resolved in (
+            _resolve_import_token_to_module(token, repo_root=repo_root)
+            for token in _extract_import_tokens(source)
+        )
+        if resolved
+    }
+
+
+def _collect_module_dependency_summary(
+    module_path: str,
+    module_files: List[str],
+    *,
+    repo_root: Path,
+    import_graph: Optional[Dict[str, Dict[str, set[str]]]] = None,
+) -> Dict[str, List[str]]:
     normalized_module = str(module_path or "").replace("\\", "/").strip("/")
     python_files = [fp for fp in module_files if str(fp).endswith(".py")]
     outbound_groups: Dict[str, set[str]] = {}
     inbound_groups: Dict[str, set[str]] = {}
+    graph = import_graph or _build_repo_import_graph(repo_root)
 
     for rel in python_files:
-        source = _safe_read_text(repo_root / rel)
-        for token in _extract_import_tokens(source):
-            resolved = _resolve_import_token_to_module(token, repo_root=repo_root)
+        for resolved in _resolve_file_imports(rel, repo_root=repo_root, import_graph=graph):
             if not resolved or resolved == normalized_module or resolved.startswith(f"{normalized_module}/"):
                 continue
             group = _dependency_group(resolved)
@@ -181,23 +231,11 @@ def _collect_module_dependency_summary(module_path: str, module_files: List[str]
                 continue
             outbound_groups.setdefault(group, set()).add(resolved)
 
-    scan_roots = ["harbor", "tests"]
-    all_python_files: List[Path] = []
-    for root_name in scan_roots:
-        root_dir = repo_root / root_name
-        if root_dir.exists():
-            all_python_files.extend(sorted(root_dir.rglob("*.py")))
     module_file_set = {str(fp).replace("\\", "/").strip("/") for fp in python_files}
-    target_prefixes = {normalized_module}
-    target_prefixes.update(module_file_set)
 
-    for abs_path in all_python_files:
-        rel = abs_path.resolve().relative_to(repo_root).as_posix()
+    for rel, imports in sorted(graph.get("imports_by_file", {}).items()):
         if rel in module_file_set:
             continue
-        source = _safe_read_text(abs_path)
-        imports = [_resolve_import_token_to_module(token, repo_root=repo_root) for token in _extract_import_tokens(source)]
-        imports = [token for token in imports if token]
         if not imports:
             continue
         if any(
@@ -206,7 +244,8 @@ def _collect_module_dependency_summary(module_path: str, module_files: List[str]
             or imported in module_file_set
             for imported in imports
         ):
-            importer_module = infer_module_from_path(rel)
+            importer_modules = graph.get("module_by_file", {}).get(rel) or {infer_module_from_path(rel)}
+            importer_module = sorted(importer_modules)[0]
             group = _dependency_group(importer_module)
             if not group:
                 continue
@@ -294,6 +333,7 @@ class L2Generator:
         self.scanner = DDTScanner()
         # validator uses default paths unless overridden
         self.validator = DDTValidator()
+        self._repo_import_graph: Optional[Dict[str, Dict[str, set[str]]]] = None
 
     def generate(self, module_path: str) -> str:
         """生成指定模块的 L2 README Markdown 文本。
@@ -303,6 +343,10 @@ class L2Generator:
           - 调用 DDT 校验，生成每个函数的绑定状态。
           - 按稳定多键顺序排序并渲染为 Markdown 文本。
           - 当多个符号短名相同时，跨平台保持一致的 README 行顺序。
+          - 使用实例级 repo import graph 缓存生成静态依赖摘要，避免
+            docs/verify 全量流程为每个模块重复扫描整个仓库。
+          - 依赖摘要只展示可定位的 repo 内子域边，不展示 `import harbor`
+            这类低信息量根包边。
 
         使用场景:
           - CLI `harbor gen l2`。
@@ -487,7 +531,12 @@ class L2Generator:
             key=lambda row: (-row["score"], item_sort_key(row["item"])),
         )
         top_coverage_gaps = ranked_coverage_gaps[:10]
-        dependencies = _collect_module_dependency_summary(module_norm, sorted(set(module_files)), repo_root=cwd)
+        dependencies = _collect_module_dependency_summary(
+            module_norm,
+            sorted(set(module_files)),
+            repo_root=cwd,
+            import_graph=self._get_repo_import_graph(),
+        )
 
         lines: List[str] = []
         lines.append(f"# Module: {module_path}")
@@ -716,6 +765,11 @@ class L2Generator:
             repo_root=self.repo_root,
             prefer_fresh_source=self.prefer_fresh_source,
         )
+
+    def _get_repo_import_graph(self) -> Dict[str, Dict[str, set[str]]]:
+        if self._repo_import_graph is None:
+            self._repo_import_graph = _build_repo_import_graph(self.repo_root)
+        return self._repo_import_graph
 
     def _load_meta(self, path: Optional[Path] = None) -> Dict[str, Any]:
         if path is not None:

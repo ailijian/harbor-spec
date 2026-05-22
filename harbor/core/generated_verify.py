@@ -157,6 +157,10 @@ def build_generated_verification_report(*, scope: str, modules: Sequence[str]) -
     Behavior:
       - Rebuilds expected project-level and module-level generated artifacts from fresh source-derived inputs.
       - Compares current tracked files against the recomputed expectations while ignoring timestamp-only drift.
+      - Reuses one L2 generator across meta/canonical/export checks so repo
+        import graph caching remains effective during all-scope verification.
+      - Caches each module's rendered L2 body within the report so meta,
+        canonical, and export checks do not render the same module repeatedly.
       - Reports mismatches and missing artifacts but never performs repair automatically.
 
     Args:
@@ -182,11 +186,16 @@ def build_generated_verification_report(*, scope: str, modules: Sequence[str]) -
     """
     normalized_modules = sorted({normalize_module_path(module) for module in modules if str(module or "").strip()})
 
+    l2_generator = L2Generator(prefer_fresh_source=True)
+    l2_body_cache: Dict[str, str] = {}
     project_artifacts = [
         verify_project_structure(),
-        verify_l2_meta(normalized_modules),
+        verify_l2_meta(normalized_modules, generator=l2_generator, body_cache=l2_body_cache),
     ]
-    module_reports = [verify_module_generated(module) for module in normalized_modules]
+    module_reports = [
+        verify_module_generated(module, l2_generator=l2_generator, l2_body_cache=l2_body_cache)
+        for module in normalized_modules
+    ]
 
     summary = _build_summary(project_artifacts, module_reports)
     status = _derive_report_status(summary)
@@ -250,8 +259,13 @@ def verify_project_structure() -> GeneratedArtifactVerification:
     )
 
 
-def verify_l2_meta(modules: Sequence[str]) -> GeneratedArtifactVerification:
-    gen = L2Generator(prefer_fresh_source=True)
+def verify_l2_meta(
+    modules: Sequence[str],
+    *,
+    generator: Optional[L2Generator] = None,
+    body_cache: Optional[Dict[str, str]] = None,
+) -> GeneratedArtifactVerification:
+    gen = generator or L2Generator(prefer_fresh_source=True)
     display_path = _repo_display_path(gen.meta_path)
     meta_exists = gen.meta_path.exists() or gen.legacy_meta_path.exists()
     if not meta_exists:
@@ -265,7 +279,8 @@ def verify_l2_meta(modules: Sequence[str]) -> GeneratedArtifactVerification:
 
     current_meta = gen._load_meta()
     for module in modules:
-        expected_hash = gen.compute_meta_hash(gen.generate(module))
+        expected_body = _cached_l2_body(gen, module, body_cache)
+        expected_hash = gen.compute_meta_hash(expected_body)
         current_hash = str(current_meta.get(module) or "").strip()
         if not current_hash:
             return GeneratedArtifactVerification(
@@ -299,11 +314,39 @@ def verify_l2_meta(modules: Sequence[str]) -> GeneratedArtifactVerification:
     )
 
 
-def verify_module_generated(module: str) -> ModuleGeneratedVerification:
+def _cached_l2_body(
+    generator: L2Generator,
+    module: str,
+    body_cache: Optional[Dict[str, str]],
+) -> str:
+    normalized = normalize_module_path(module)
+    if body_cache is None:
+        return generator.generate(normalized)
+    if normalized not in body_cache:
+        body_cache[normalized] = generator.generate(normalized)
+    return body_cache[normalized]
+
+
+def verify_module_generated(
+    module: str,
+    *,
+    l2_generator: Optional[L2Generator] = None,
+    l2_body_cache: Optional[Dict[str, str]] = None,
+) -> ModuleGeneratedVerification:
     normalized = normalize_module_path(module)
     l2_context = collect_module_context(normalized, prefer_fresh_source=True)
-    l2_artifact = verify_canonical_l2_readme(normalized, context=l2_context)
-    export_artifact = verify_export_l2_readme(normalized, canonical_artifact=l2_artifact)
+    l2_artifact = verify_canonical_l2_readme(
+        normalized,
+        context=l2_context,
+        generator=l2_generator,
+        body_cache=l2_body_cache,
+    )
+    export_artifact = verify_export_l2_readme(
+        normalized,
+        canonical_artifact=l2_artifact,
+        generator=l2_generator,
+        body_cache=l2_body_cache,
+    )
     capsule_artifacts = verify_module_capsule(normalized, context=l2_context)
     return ModuleGeneratedVerification(
         module=normalized,
@@ -315,10 +358,12 @@ def verify_canonical_l2_readme(
     module: str,
     *,
     context: Optional[Dict[str, Any]] = None,
+    generator: Optional[L2Generator] = None,
+    body_cache: Optional[Dict[str, str]] = None,
 ) -> GeneratedArtifactVerification:
     normalized = normalize_module_path(module)
     l2_context = context or collect_module_context(normalized, prefer_fresh_source=True)
-    gen = L2Generator(prefer_fresh_source=True)
+    gen = generator or L2Generator(prefer_fresh_source=True)
     display_path = _repo_display_path(gen.canonical_readme_path(normalized))
 
     if not l2_context.get("key_files") and not l2_context.get("contracts"):
@@ -331,7 +376,7 @@ def verify_canonical_l2_readme(
             suggested_command=None,
         )
 
-    expected_body = gen.generate(normalized)
+    expected_body = _cached_l2_body(gen, normalized, body_cache)
     expected_markdown = _compose_expected_canonical_l2_markdown(gen, normalized, expected_body)
     current_path = gen.canonical_readme_path(normalized)
 
@@ -401,6 +446,8 @@ def verify_export_l2_readme(
     module: str,
     *,
     canonical_artifact: GeneratedArtifactVerification,
+    generator: Optional[L2Generator] = None,
+    body_cache: Optional[Dict[str, str]] = None,
 ) -> GeneratedArtifactVerification:
     normalized = normalize_module_path(module)
     loaded = load_workspace_config(Path.cwd())
@@ -441,8 +488,8 @@ def verify_export_l2_readme(
             suggested_command=f"harbor docs --module {normalized} --write",
         )
 
-    gen = L2Generator(prefer_fresh_source=True)
-    expected_body = gen.generate(normalized)
+    gen = generator or L2Generator(prefer_fresh_source=True)
+    expected_body = _cached_l2_body(gen, normalized, body_cache)
     try:
         current_text = export_path.read_text(encoding="utf-8")
     except Exception:
