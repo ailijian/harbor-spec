@@ -257,20 +257,18 @@ harbor checkpoint
 ### 5. 推荐日常流
 
 ```powershell
-python -m harbor.cli.main start
+harbor start
 
 # Work with your AI IDE...
 
-python -m harbor.cli.main finish --sync-context
-python -m harbor.cli.main doctor
+harbor finish --sync-context
+harbor doctor
 ```
-
-本地源码验证场景建议优先使用 `python -m harbor.cli.main ...`，确保命令命中当前工作区源码，而不是用户机器上可能尚未刷新的全局 `harbor.exe`。
 
 如果你已经人工复核并准备接受新基线：
 
 ```powershell
-python -m harbor.cli.main accept
+harbor accept
 ```
 
 > HarborSpec 搭配 Cursor、Windsurf、Trae、Claude Code、Codex 等 AI IDE 的终端使用体验最佳。
@@ -301,9 +299,9 @@ harbor accept
 更严格的本地收尾：
 
 ```powershell
-python -m harbor.cli.main finish --sync-context
-python -m harbor.cli.main stale
-python -m harbor.cli.main doctor
+harbor finish --sync-context
+harbor stale
+harbor doctor
 ```
 
 说明：
@@ -619,20 +617,18 @@ HarborSpec 命令较多，但日常不需要全部记住。
 通常你只需要：
 
 ```powershell
-python -m harbor.cli.main finish --sync-context
+harbor finish --sync-context
 ```
 
 需要精确控制时可使用：
 
 | 命令                                      | 说明                                  |
 | --------------------------------------- | ----------------------------------- |
-| `python -m harbor.cli.main project structure --write`      | 写入 canonical project structure view |
-| `python -m harbor.cli.main docs --changed --write`         | 刷新 changed modules 的 L2 README      |
-| `python -m harbor.cli.main docs --module <module> --write` | 刷新单模块 L2 README                     |
-| `python -m harbor.cli.main module seal --changed --write`  | 刷新 changed modules 的 Module Capsule |
-| `python -m harbor.cli.main module seal <module> --write`   | 刷新单模块 Module Capsule                |
-
-如果你已经确认 editable install 已刷新，裸命令仍可作为等价调用，例如 `harbor project structure --write`。
+| `harbor project structure --write`      | 写入 canonical project structure view |
+| `harbor docs --changed --write`         | 刷新 changed modules 的 L2 README      |
+| `harbor docs --module <module> --write` | 刷新单模块 L2 README                     |
+| `harbor module seal --changed --write`  | 刷新 changed modules 的 Module Capsule |
+| `harbor module seal <module> --write`   | 刷新单模块 Module Capsule                |
 
 ---
 
