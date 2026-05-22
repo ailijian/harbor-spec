@@ -8,6 +8,7 @@ generation_command: "harbor module seal harbor/utils --write"
 stale_policy: "advisory"
 source_path_count: 3
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"

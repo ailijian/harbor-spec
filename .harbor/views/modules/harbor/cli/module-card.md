@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/cli"
-generated_at: "2026-05-22T08:03:42Z"
+generated_at: "2026-05-22T09:07:53Z"
 generation_command: "harbor module seal harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"
@@ -40,8 +41,7 @@ fingerprint: "6cf4227ecbeea144c301c55e6b00c8c4a2ab59867d50fe8c1db6d95e98be78ab"
 
 ## Best Files To Inspect First
 
-- harbor/cli/main.py (entrypoint, indexed contracts)
-- harbor/cli/__init__.py (package marker only)
+- Common change entry points already cover the primary file starts for this module.
 
 ## Relevant Tests
 
@@ -51,12 +51,20 @@ fingerprint: "6cf4227ecbeea144c301c55e6b00c8c4a2ab59867d50fe8c1db6d95e98be78ab"
 
 ## Detailed Key Files
 
+<details>
+<summary>All key files</summary>
+
 ```text
 harbor/cli/__init__.py
 harbor/cli/main.py
 ```
 
+</details>
+
 ## Detailed Indexed Contracts
+
+<details>
+<summary>All indexed contracts</summary>
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -72,6 +80,8 @@ harbor/cli/main.py
 | harbor.cli.main._resolve_windows_redirected_stdio_encoding | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main._resolve_windows_stdio_target | harbor/cli/main.py | unknown | standard |
 | harbor.cli.main.main | harbor/cli/main.py | public | strict |
+
+</details>
 ## Related Views
 
 ```text

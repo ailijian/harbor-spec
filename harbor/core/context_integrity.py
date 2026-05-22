@@ -30,6 +30,7 @@ FRONTMATTER_FIELDS = [
     "stale_policy",
     "source_path_count",
     "source_paths_truncated",
+    "source_paths_omitted_count",
     "source_paths",
     "source_fingerprint",
     "contract_fingerprint",
@@ -183,13 +184,14 @@ def build_context_integrity_metadata(
     stale_policy: str = DEFAULT_STALE_POLICY,
     generator_name: str = DEFAULT_GENERATOR_NAME,
     schema_version: int = DEFAULT_SCHEMA_VERSION,
-    max_source_paths: int = 120,
+    max_source_paths: int = 8,
     include_view_fingerprint: bool = False,
 ) -> Dict[str, Any]:
     root = (repo_root or Path.cwd()).resolve()
     normalized = sorted({_as_repo_relative(path, root) for path in source_paths if _as_repo_relative(path, root)})
     source_path_count = len(normalized)
     shown_paths = normalized[: max(1, int(max_source_paths))]
+    omitted_count = max(0, source_path_count - len(shown_paths))
     metadata: Dict[str, Any] = {
         "generated_by": DEFAULT_GENERATOR_NAME,
         "harbor_version": str(HARBOR_VERSION),
@@ -198,7 +200,8 @@ def build_context_integrity_metadata(
         "generation_command": str(generation_command or ""),
         "stale_policy": str(stale_policy or DEFAULT_STALE_POLICY),
         "source_path_count": source_path_count,
-        "source_paths_truncated": source_path_count > len(shown_paths),
+        "source_paths_truncated": omitted_count > 0,
+        "source_paths_omitted_count": omitted_count,
         "source_paths": shown_paths,
         "source_fingerprint": compute_source_fingerprint(normalized, repo_root=root),
         "contract_fingerprint": compute_contract_fingerprint(contract_records or []),

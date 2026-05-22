@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "tests/core"
-generated_at: "2026-05-22T08:03:45Z"
+generated_at: "2026-05-22T09:08:05Z"
 generation_command: "harbor module seal tests/core --write"
 stale_policy: "advisory"
 source_path_count: 2
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"
@@ -39,8 +40,7 @@ fingerprint: "898c27bc3f049d66f4c3fbb0a9d372552a5a2354b715f18436bfe3b6f8d3723f"
 
 ## Best Files To Inspect First
 
-- tests/core/test_index_sync_sqlite.py (indexed contracts, covered by matching tests)
-- tests/core/test_storage_migration.py (indexed contracts, covered by matching tests)
+- Common change entry points already cover the primary file starts for this module.
 
 ## Relevant Tests
 
@@ -50,18 +50,28 @@ fingerprint: "898c27bc3f049d66f4c3fbb0a9d372552a5a2354b715f18436bfe3b6f8d3723f"
 
 ## Detailed Key Files
 
+<details>
+<summary>All key files</summary>
+
 ```text
 tests/core/test_index_sync_sqlite.py
 tests/core/test_storage_migration.py
 ```
 
+</details>
+
 ## Detailed Indexed Contracts
+
+<details>
+<summary>All indexed contracts</summary>
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
 | tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | standard |
 | tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | standard |
 | tests.core.test_storage_migration.test_storage_migration_preserves_additive_typescript_meta | tests/core/test_storage_migration.py | unknown | standard |
+
+</details>
 ## Related Views
 
 ```text

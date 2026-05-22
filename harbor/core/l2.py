@@ -79,6 +79,13 @@ def _strictness_rank(value: str) -> int:
     return mapping.get((value or "standard").lower(), 2)
 
 
+def _display_strictness(value: Any, *, default: str = "unknown") -> str:
+    normalized = str(value or "").strip().lower()
+    if normalized in {"light", "standard", "strict"}:
+        return normalized
+    return default
+
+
 def _extract_import_tokens(source: str) -> List[str]:
     if not source.strip():
         return []
@@ -119,11 +126,49 @@ def _resolve_import_token_to_module(token: str, *, repo_root: Path) -> str:
     return ""
 
 
+def _dependency_group(module_path: str) -> str:
+    normalized = str(module_path or "").replace("\\", "/").strip("/")
+    if not normalized:
+        return ""
+    parts = [part for part in normalized.split("/") if part]
+    if not parts:
+        return ""
+    if parts[0] == "harbor":
+        if len(parts) >= 2:
+            return "/".join(parts[:2])
+        return "harbor (root package)"
+    if parts[0] == "tests":
+        return "tests"
+    if len(parts) >= 2:
+        return "/".join(parts[:2])
+    return parts[0]
+
+
+def _format_dependency_group_rows(groups: Dict[str, set[str]], *, sample_limit: int = 3, row_limit: int = 8) -> List[str]:
+    rows: List[tuple[str, int, List[str]]] = []
+    for group, values in groups.items():
+        normalized_values = sorted({str(value or "").replace("\\", "/").strip("/") for value in values if str(value or "").strip("/")})
+        if not group or not normalized_values:
+            continue
+        rows.append((group, len(normalized_values), normalized_values))
+    rows.sort(key=lambda item: (-item[1], item[0]))
+
+    rendered: List[str] = []
+    for group, edge_count, samples in rows[:row_limit]:
+        shown = samples[:sample_limit]
+        omitted = max(0, len(samples) - len(shown))
+        sample_text = ", ".join(shown)
+        if omitted:
+            sample_text = f"{sample_text}, ... (+{omitted} more)"
+        rendered.append(f"{group} ({edge_count} edges): {sample_text}")
+    return rendered
+
+
 def _collect_module_dependency_summary(module_path: str, module_files: List[str], *, repo_root: Path) -> Dict[str, List[str]]:
     normalized_module = str(module_path or "").replace("\\", "/").strip("/")
     python_files = [fp for fp in module_files if str(fp).endswith(".py")]
-    outbound: set[str] = set()
-    inbound: set[str] = set()
+    outbound_groups: Dict[str, set[str]] = {}
+    inbound_groups: Dict[str, set[str]] = {}
 
     for rel in python_files:
         source = _safe_read_text(repo_root / rel)
@@ -131,7 +176,10 @@ def _collect_module_dependency_summary(module_path: str, module_files: List[str]
             resolved = _resolve_import_token_to_module(token, repo_root=repo_root)
             if not resolved or resolved == normalized_module or resolved.startswith(f"{normalized_module}/"):
                 continue
-            outbound.add(resolved)
+            group = _dependency_group(resolved)
+            if not group:
+                continue
+            outbound_groups.setdefault(group, set()).add(resolved)
 
     scan_roots = ["harbor", "tests"]
     all_python_files: List[Path] = []
@@ -158,11 +206,15 @@ def _collect_module_dependency_summary(module_path: str, module_files: List[str]
             or imported in module_file_set
             for imported in imports
         ):
-            inbound.add(infer_module_from_path(rel))
+            importer_module = infer_module_from_path(rel)
+            group = _dependency_group(importer_module)
+            if not group:
+                continue
+            inbound_groups.setdefault(group, set()).add(importer_module)
 
     return {
-        "outbound": sorted(outbound)[:8],
-        "inbound": sorted({item for item in inbound if item})[:8],
+        "outbound": _format_dependency_group_rows(outbound_groups),
+        "inbound": _format_dependency_group_rows(inbound_groups),
     }
 
 
@@ -336,42 +388,65 @@ class L2Generator:
         def file_path_for(it: Dict[str, Any]) -> str:
             return str(it.get("_rel_file_path") or _to_repo_relative(str(it.get("_file_path") or ""), cwd) or "").replace("\\", "/")
 
-        def risk_score(it: Dict[str, Any]) -> Tuple[int, str]:
+        def behavior_risk_score(it: Dict[str, Any]) -> Tuple[int, str, str]:
             fn = str(it.get("qualified_name") or it.get("id") or "")
             scope = str(it.get("scope") or "internal")
-            strictness = str(it.get("strictness") or "standard")
-            status = ddt_status(it)
+            strictness = _display_strictness(it.get("strictness"), default="standard")
             file_rel = file_path_for(it)
             score = 0
             reasons: List[str] = []
-            if strictness == "strict":
-                score += 40
-                reasons.append("strict")
-            if scope == "public":
-                score += 30
-                reasons.append("public")
-            if status.startswith("❌"):
-                score += 50
-                reasons.append("missing DDT")
-            elif status.startswith("⚠️"):
-                score += 35
-                reasons.append("DDT violation")
             lowered = f"{fn} {file_rel}".lower()
             for keyword, weight, reason in (
-                ("write", 20, "file-write path"),
-                ("export", 16, "export path"),
-                ("json", 14, "json/output"),
-                ("to_dict", 16, "json serialization"),
-                ("report_to_dict", 16, "report serialization"),
-                ("main", 12, "entrypoint"),
-                ("doctor", 12, "doctor workflow"),
-                ("stale", 12, "stale workflow"),
-                ("verify", 12, "verification"),
+                ("write", 36, "file write"),
+                ("export", 24, "export/output path"),
+                ("json", 34, "JSON output"),
+                ("to_dict", 38, "JSON serialization"),
+                ("report_to_dict", 38, "report serialization"),
+                ("cli", 34, "CLI behavior"),
+                ("main", 18, "entrypoint"),
+                ("doctor", 22, "doctor workflow"),
+                ("stale", 24, "stale workflow"),
+                ("verify", 28, "generated verification"),
+                ("generated", 24, "generated context"),
+                ("workspace", 36, "workspace path"),
+                ("path", 16, "path normalization"),
+                ("safety", 26, "safety boundary"),
+                ("baseline", 28, "baseline state"),
+                ("diary", 28, "diary persistence"),
+                ("log", 18, "log/change window"),
+                ("change_window", 24, "change-window state"),
             ):
                 if keyword in lowered:
                     score += weight
                     reasons.append(reason)
-            return score, ", ".join(reasons[:3]) or "indexed target"
+            if strictness == "strict":
+                score += 18
+                reasons.append("strict target")
+            if scope == "public":
+                score += 14
+                reasons.append("public surface")
+            focus = reasons[0] if reasons else "behavioral hotspot"
+            return score, focus, ", ".join(reasons[:3]) or "indexed target"
+
+        def coverage_gap_score(it: Dict[str, Any]) -> Tuple[int, str]:
+            status = ddt_status(it)
+            scope = str(it.get("scope") or "internal")
+            strictness = _display_strictness(it.get("strictness"), default="standard")
+            score = 0
+            reasons: List[str] = []
+            if status.startswith("❌"):
+                score += 60
+                reasons.append("Missing DDT")
+            elif status.startswith("⚠️"):
+                score += 42
+                reasons.append("DDT violation")
+            if strictness == "strict":
+                score += 25
+                reasons.append("strict target")
+            if scope == "public":
+                score += 18
+                reasons.append("public surface")
+            return score, ", ".join(reasons[:3]) or "coverage review needed"
 
         summary_rows = {
             "Public by contract": sum(1 for it in items_sorted if (it.get("scope") or "internal") == "public"),
@@ -385,18 +460,33 @@ class L2Generator:
             ),
             "Targets with DDT warnings": sum(1 for it in items_sorted if ddt_status(it).startswith("⚠️")),
         }
-        ranked_targets = sorted(
+        ranked_behavior_targets = sorted(
             [
                 {
                     "item": it,
-                    "score": risk_score(it)[0],
-                    "reason": risk_score(it)[1],
+                    "score": behavior_risk_score(it)[0],
+                    "focus": behavior_risk_score(it)[1],
+                    "reason": behavior_risk_score(it)[2],
                 }
                 for it in items_sorted
+                if behavior_risk_score(it)[0] > 0
             ],
             key=lambda row: (-row["score"], item_sort_key(row["item"])),
         )
-        top_targets = ranked_targets[:15]
+        top_behavior_targets = ranked_behavior_targets[:12]
+        ranked_coverage_gaps = sorted(
+            [
+                {
+                    "item": it,
+                    "score": coverage_gap_score(it)[0],
+                    "reason": coverage_gap_score(it)[1],
+                }
+                for it in items_sorted
+                if coverage_gap_score(it)[0] > 0
+            ],
+            key=lambda row: (-row["score"], item_sort_key(row["item"])),
+        )
+        top_coverage_gaps = ranked_coverage_gaps[:10]
         dependencies = _collect_module_dependency_summary(module_norm, sorted(set(module_files)), repo_root=cwd)
 
         lines: List[str] = []
@@ -409,35 +499,31 @@ class L2Generator:
             lines.append(f"| {label} | {count} |")
         lines.append("")
         lines.append("## High-Risk Targets")
-        if top_targets:
-            lines.append("| Function | File | Scope | Strictness | DDT Status | Why |")
+        if top_behavior_targets:
+            lines.append("| Function | File | Risk Focus | Scope | Strictness | Why |")
             lines.append("|---|---|---|---|---|---|")
-            for row in top_targets:
+            for row in top_behavior_targets:
                 it = row["item"]
                 lines.append(
-                    f"| {it.get('qualified_name', it.get('id', ''))} | {file_path_for(it)} | {it.get('scope', 'internal')} | {it.get('strictness', 'standard')} | {ddt_status(it)} | {row['reason']} |"
+                    f"| {it.get('qualified_name', it.get('id', ''))} | {file_path_for(it)} | {row['focus']} | {it.get('scope', 'internal')} | {_display_strictness(it.get('strictness'))} | {row['reason']} |"
                 )
         else:
             lines.append("```text")
-            lines.append("No indexed contracts found for this module.")
+            lines.append("No behavior-oriented hotspots detected from indexed contracts.")
             lines.append("```")
         lines.append("")
-        lines.append("## Full Indexed Contracts")
-        if items_sorted:
-            lines.append("<details>")
-            lines.append("<summary>All indexed contracts</summary>")
-            lines.append("")
-            lines.append("| Function | File | Scope | Strictness | DDT Status | Summary |")
+        lines.append("### Contract / DDT Coverage Gaps")
+        if top_coverage_gaps:
+            lines.append("| Function | File | Scope | Strictness | DDT Status | Why |")
             lines.append("|---|---|---|---|---|---|")
-            for it in items_sorted:
+            for row in top_coverage_gaps:
+                it = row["item"]
                 lines.append(
-                    f"| {it.get('qualified_name', it.get('id', ''))} | {file_path_for(it)} | {it.get('scope', 'internal')} | {it.get('strictness', 'standard')} | {ddt_status(it)} | {summary_for(it)} |"
+                    f"| {it.get('qualified_name', it.get('id', ''))} | {file_path_for(it)} | {it.get('scope', 'internal')} | {_display_strictness(it.get('strictness'))} | {ddt_status(it)} | {row['reason']} |"
                 )
-            lines.append("")
-            lines.append("</details>")
         else:
             lines.append("```text")
-            lines.append("No indexed contracts found for this module.")
+            lines.append("No contract or DDT coverage gaps detected from indexed contracts.")
             lines.append("```")
         lines.append("")
         lines.append("## Dependency Summary")
@@ -455,6 +541,24 @@ class L2Generator:
                 lines.append(f"- {dep}")
         else:
             lines.append("- None detected from repo-local Python imports.")
+        lines.append("")
+        lines.append("## Full Indexed Contracts")
+        if items_sorted:
+            lines.append("<details>")
+            lines.append("<summary>All indexed contracts</summary>")
+            lines.append("")
+            lines.append("| Function | File | Scope | Strictness | DDT Status | Summary |")
+            lines.append("|---|---|---|---|---|---|")
+            for it in items_sorted:
+                lines.append(
+                    f"| {it.get('qualified_name', it.get('id', ''))} | {file_path_for(it)} | {it.get('scope', 'internal')} | {_display_strictness(it.get('strictness'))} | {ddt_status(it)} | {summary_for(it)} |"
+                )
+            lines.append("")
+            lines.append("</details>")
+        else:
+            lines.append("```text")
+            lines.append("No indexed contracts found for this module.")
+            lines.append("```")
         md = "\n".join(lines)
         return md
 

@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-22T08:23:42Z"
+generated_at: "2026-05-22T09:08:03Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
 source_path_count: 112
-source_paths_truncated: false
+source_paths_truncated: true
+source_paths_omitted_count: 104
 source_paths:
   - "tests/__init__.py"
   - "tests/conftest.py"
@@ -17,115 +18,11 @@ source_paths:
   - "tests/test_accept_cli.py"
   - "tests/test_adapter_basic.py"
   - "tests/test_adapter_registry.py"
-  - "tests/test_adopted_roots.py"
-  - "tests/test_audit.py"
-  - "tests/test_baseline_artifact.py"
-  - "tests/test_cache_isolation_hardening.py"
-  - "tests/test_change_window_snapshot.py"
-  - "tests/test_changed_scope.py"
-  - "tests/test_checkpoint_ci.py"
-  - "tests/test_checkpoint_ci_baseline_artifact.py"
-  - "tests/test_checkpoint_ci_guidance.py"
-  - "tests/test_checkpoint_json_additive_compat.py"
-  - "tests/test_ci_mode.py"
-  - "tests/test_ci_workflow.py"
-  - "tests/test_cli_config.py"
-  - "tests/test_cli_decorate.py"
-  - "tests/test_cli_docs_modes.py"
-  - "tests/test_cli_doctor.py"
-  - "tests/test_cli_finish_sync_context.py"
-  - "tests/test_cli_help_and_ux.py"
-  - "tests/test_cli_i18n.py"
-  - "tests/test_cli_i18n_env.py"
-  - "tests/test_cli_init_output.py"
-  - "tests/test_cli_json_output.py"
-  - "tests/test_cli_module_capsule.py"
-  - "tests/test_cli_module_capsule_batch.py"
-  - "tests/test_cli_module_capsule_stale.py"
-  - "tests/test_cli_module_skill.py"
-  - "tests/test_cli_progress.py"
-  - "tests/test_cli_project_structure.py"
-  - "tests/test_cli_stale.py"
-  - "tests/test_cli_v2.py"
-  - "tests/test_cli_verify_generated.py"
-  - "tests/test_cli_workspace_inspect.py"
-  - "tests/test_cli_workspace_migrate.py"
-  - "tests/test_config_update.py"
-  - "tests/test_context_integrity.py"
-  - "tests/test_contract_impact.py"
-  - "tests/test_contract_presence.py"
-  - "tests/test_contract_subject_model.py"
-  - "tests/test_ddt_validate.py"
-  - "tests/test_ddt_version_baseline.py"
-  - "tests/test_decorator_engine.py"
-  - "tests/test_derive_adopted_roots.py"
-  - "tests/test_diary_workspace_paths.py"
-  - "tests/test_doctor.py"
-  - "tests/test_drafting.py"
-  - "tests/test_drafting_json_parse.py"
-  - "tests/test_generated_verify.py"
-  - "tests/test_gitignore_prune.py"
-  - "tests/test_harbor_next.py"
-  - "tests/test_index_builder.py"
-  - "tests/test_index_builder_bad_syntax.py"
-  - "tests/test_index_builder_registry_integration.py"
-  - "tests/test_index_progress.py"
-  - "tests/test_init_detector.py"
-  - "tests/test_init_governance.py"
-  - "tests/test_init_llm_env.py"
-  - "tests/test_init_typescript_guidance.py"
-  - "tests/test_init_wizard.py"
-  - "tests/test_initializer.py"
-  - "tests/test_l2_paths.py"
-  - "tests/test_lock_flags.py"
-  - "tests/test_lock_register_adopted.py"
-  - "tests/test_log_draft.py"
-  - "tests/test_log_draft_cli.py"
-  - "tests/test_log_write_from_draft.py"
-  - "tests/test_min_count_one.py"
-  - "tests/test_module_capsule.py"
-  - "tests/test_module_capsule_stale.py"
-  - "tests/test_module_skill.py"
-  - "tests/test_performance_baseline.py"
-  - "tests/test_project_structure.py"
-  - "tests/test_python_adapter_compat.py"
-  - "tests/test_python_audit_regression.py"
-  - "tests/test_python_contract_source_recognition.py"
-  - "tests/test_python_ddt_regression.py"
-  - "tests/test_release_packaging.py"
-  - "tests/test_repair_guidance.py"
-  - "tests/test_semantic_audit_contract_gap.py"
-  - "tests/test_semantic_audit_preview.py"
-  - "tests/test_stale.py"
-  - "tests/test_sync_engine.py"
-  - "tests/test_sync_engine_registry_integration.py"
-  - "tests/test_typescript_adapter_mvp.py"
-  - "tests/test_typescript_boundary_resolution_paths.py"
-  - "tests/test_typescript_checkpoint_ci.py"
-  - "tests/test_typescript_contract_presence.py"
-  - "tests/test_typescript_ddt_preview.py"
-  - "tests/test_typescript_next_guidance.py"
-  - "tests/test_typescript_not_supported_boundaries.py"
-  - "tests/test_typescript_package_exports.py"
-  - "tests/test_typescript_preview_productization_assets.py"
-  - "tests/test_typescript_public_boundary_evidence.py"
-  - "tests/test_typescript_public_boundary_next.py"
-  - "tests/test_typescript_public_boundary_presets.py"
-  - "tests/test_typescript_re_export_resolver.py"
-  - "tests/test_utils_format.py"
-  - "tests/test_verification_foundation.py"
-  - "tests/test_windows_abs_path_prefix.py"
-  - "tests/test_windows_json_stdio_regression.py"
-  - "tests/test_workspace_gitignore_policy.py"
-  - "tests/test_workspace_i18n.py"
-  - "tests/test_workspace_inspect.py"
-  - "tests/test_workspace_migrate.py"
-  - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:8b890a35c2a2a674a72a2a195863142b2eff86e5ef530d6294cbc8283d5f79d4"
-contract_fingerprint: "sha256:f082d0580080a4d15492c7177e584fe4523f61a08ae69f289f67a1fc22dadeb9"
+source_fingerprint: "sha256:a9b9f21d3a8669068d9fdb4453fd19fefc16959132682923d458c534bdc193fb"
+contract_fingerprint: "sha256:fe49afd4a1e3181546b0cb03874c1d7b9b3e71575d5fd0975527a3e42093b8c1"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "c2f94095c0ba632076122659ed3244311398322f0042a6035bf278cca5edb916"
-fingerprint: "c2f94095c0ba632076122659ed3244311398322f0042a6035bf278cca5edb916"
+view_fingerprint: "0c3600e4910eecb9eee988342b1bd0f171e0dac8a854a046da61a22ae0308686"
+fingerprint: "0c3600e4910eecb9eee988342b1bd0f171e0dac8a854a046da61a22ae0308686"
 ---
 
 # Module Card: tests
@@ -150,9 +47,6 @@ fingerprint: "c2f94095c0ba632076122659ed3244311398322f0042a6035bf278cca5edb916"
 
 ## Best Files To Inspect First
 
-- tests/fixtures_sqlite/sample.py (indexed contracts, strict target)
-- tests/core/test_index_sync_sqlite.py (indexed contracts, covered by matching tests)
-- tests/core/test_storage_migration.py (indexed contracts, covered by matching tests)
 - tests/test_accept_cli.py (indexed contracts, covered by matching tests)
 - tests/test_adapter_basic.py (indexed contracts, covered by matching tests)
 
@@ -163,6 +57,9 @@ fingerprint: "c2f94095c0ba632076122659ed3244311398322f0042a6035bf278cca5edb916"
 - tests/test_cli_finish_sync_context.py (file-name match, imports target symbols)
 
 ## Detailed Key Files
+
+<details>
+<summary>All key files</summary>
 
 ```text
 tests/__init__.py
@@ -279,7 +176,12 @@ tests/test_workspace_migrate.py
 tests/test_workspace_paths.py
 ```
 
+</details>
+
 ## Detailed Indexed Contracts
+
+<details>
+<summary>All indexed contracts</summary>
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -732,6 +634,7 @@ tests/test_workspace_paths.py
 | tests.test_context_integrity.test_frontmatter_render_parse_roundtrip | tests/test_context_integrity.py | unknown | standard |
 | tests.test_context_integrity.test_merge_generated_at_keeps_old_when_fingerprints_and_body_same | tests/test_context_integrity.py | unknown | standard |
 | tests.test_context_integrity.test_metadata_has_no_absolute_paths | tests/test_context_integrity.py | unknown | standard |
+| tests.test_context_integrity.test_metadata_truncates_source_paths_but_keeps_total_count | tests/test_context_integrity.py | unknown | standard |
 | tests.test_context_integrity.test_missing_file_handling_is_deterministic | tests/test_context_integrity.py | unknown | standard |
 | tests.test_context_integrity.test_normalized_source_content_for_fingerprint_converts_cr_to_lf | tests/test_context_integrity.py | unknown | standard |
 | tests.test_context_integrity.test_normalized_source_content_for_fingerprint_preserves_non_utf8_bytes | tests/test_context_integrity.py | unknown | standard |
@@ -910,6 +813,7 @@ tests/test_workspace_paths.py
 | tests.test_l2_paths.test_l2_absolute_module_path_outside_repo_still_rejected | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_canonical_root_cannot_escape_repo_root | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_export_module_readme_disabled_writes_only_canonical | tests/test_l2_paths.py | unknown | standard |
+| tests.test_l2_paths.test_l2_generate_displays_unknown_strictness_instead_of_python_none | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_generate_uses_summary_first_and_dependency_summary | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_meta_hash_matches_canonical_body_after_write | tests/test_l2_paths.py | unknown | standard |
 | tests.test_l2_paths.test_l2_meta_reads_legacy_then_writes_canonical_only | tests/test_l2_paths.py | unknown | standard |
@@ -1006,6 +910,7 @@ tests/test_workspace_paths.py
 | tests.test_module_capsule.test_collect_module_context_falls_back_to_transient_source_scan_without_cache | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_collect_module_context_matches_prefix_only | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_debug_playbook_deprioritizes_init_and_prefers_workflow_files | tests/test_module_capsule.py | unknown | standard |
+| tests.test_module_capsule.test_debug_playbook_prioritizes_typescript_preview_workflow | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_generators_include_required_sections | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_l2_and_capsule_can_be_generated_without_runtime_index_cache | tests/test_module_capsule.py | unknown | standard |
 | tests.test_module_capsule.test_module_capsule_dir_keeps_nested_path | tests/test_module_capsule.py | unknown | standard |
@@ -1322,6 +1227,8 @@ tests/test_workspace_paths.py
 | tests.test_workspace_paths.test_windows_absolute_write_path_cannot_escape_repo_root | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_windows_posix_path_normalization | tests/test_workspace_paths.py | unknown | standard |
 | tests.test_workspace_paths.test_write_path_cannot_escape_repo_root | tests/test_workspace_paths.py | unknown | standard |
+
+</details>
 ## Related Views
 
 ```text

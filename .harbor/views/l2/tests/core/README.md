@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "l2_readme"
 module: "tests/core"
-generated_at: "2026-05-22T08:22:13Z"
+generated_at: "2026-05-22T09:07:20Z"
 generation_command: "harbor docs --module tests/core --write"
 stale_policy: "advisory"
 source_path_count: 2
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"
@@ -29,11 +30,22 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | Targets with DDT warnings | 0 |
 
 ## High-Risk Targets
-| Function | File | Scope | Strictness | DDT Status | Why |
+| Function | File | Risk Focus | Scope | Strictness | Why |
 |---|---|---|---|---|---|
-| tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | None | ⚪ Missing | json/output |
-| tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | None | ⚪ Missing | indexed target |
-| tests.core.test_storage_migration.test_storage_migration_preserves_additive_typescript_meta | tests/core/test_storage_migration.py | unknown | None | ⚪ Missing | indexed target |
+| tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | JSON output | unknown | unknown | JSON output |
+
+### Contract / DDT Coverage Gaps
+```text
+No contract or DDT coverage gaps detected from indexed contracts.
+```
+
+## Dependency Summary
+
+**Outbound Dependencies**
+- harbor/core (3 edges): harbor/core/index, harbor/core/storage, harbor/core/sync
+
+**Inbound Dependents**
+- None detected from repo-local Python imports.
 
 ## Full Indexed Contracts
 <details>
@@ -41,18 +53,8 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 
 | Function | File | Scope | Strictness | DDT Status | Summary |
 |---|---|---|---|---|---|
-| tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | None | ⚪ Missing | — |
-| tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | None | ⚪ Missing | — |
-| tests.core.test_storage_migration.test_storage_migration_preserves_additive_typescript_meta | tests/core/test_storage_migration.py | unknown | None | ⚪ Missing | — |
+| tests.core.test_index_sync_sqlite.test_index_and_sync_detects_body_drift | tests/core/test_index_sync_sqlite.py | unknown | unknown | ⚪ Missing | — |
+| tests.core.test_storage_migration.test_storage_migration_imports_json_to_sqlite | tests/core/test_storage_migration.py | unknown | unknown | ⚪ Missing | — |
+| tests.core.test_storage_migration.test_storage_migration_preserves_additive_typescript_meta | tests/core/test_storage_migration.py | unknown | unknown | ⚪ Missing | — |
 
 </details>
-
-## Dependency Summary
-
-**Outbound Dependencies**
-- harbor/core/index
-- harbor/core/storage
-- harbor/core/sync
-
-**Inbound Dependents**
-- None detected from repo-local Python imports.

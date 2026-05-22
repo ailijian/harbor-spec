@@ -460,6 +460,151 @@ def _format_bullets(values: List[str]) -> List[str]:
     return [f"- {value}" for value in values]
 
 
+def _workflow_group_specs(module: str) -> List[Dict[str, Any]]:
+    normalized = normalize_module_path(module)
+    specs: List[Dict[str, Any]] = [
+        {
+            "title": "Generated context / verify / stale / doctor",
+            "description": "Use this path for generated context rendering, stale diagnosis, and verify-generated drift.",
+            "keywords": ["generated", "verify", "stale", "doctor", "l2", "module_capsule", "project_structure"],
+        },
+        {
+            "title": "CLI / JSON output",
+            "description": "Use this path when behavior is visible through CLI text, CI JSON, or stable serialization.",
+            "keywords": ["cli", "json", "to_dict", "report_to_dict", "ci", "main"],
+        },
+        {
+            "title": "Workspace path / file write safety",
+            "description": "Use this path for path normalization, repo-relative writes, export roots, and write safety.",
+            "keywords": ["workspace", "path", "write", "export", "resolve"],
+        },
+        {
+            "title": "Diary / log / change-window",
+            "description": "Use this path for decision memory, log draft flow, baseline, and change-window state.",
+            "keywords": ["diary", "log", "change_window", "baseline"],
+        },
+        {
+            "title": "TypeScript adapter / public boundary preview",
+            "description": "Use this path for TypeScript preview, public-boundary explainability, and advisory output.",
+            "keywords": ["typescript", "preview", "public_boundary", "verification", "audit"],
+        },
+        {
+            "title": "Tests / DDT / fixtures",
+            "description": "Use this path for DDT bindings, fixture-backed regression checks, and contract-oriented tests.",
+            "keywords": ["tests", "ddt", "fixture", "fixtures", "binding", "contract"],
+        },
+    ]
+    if normalized == "harbor/adapters/typescript" or normalized.startswith("harbor/adapters/typescript/"):
+        preferred = [
+            "TypeScript adapter / public boundary preview",
+            "Tests / DDT / fixtures",
+            "CLI / JSON output",
+        ]
+        specs.sort(key=lambda item: (preferred.index(item["title"]) if item["title"] in preferred else len(preferred), item["title"]))
+    return specs
+
+
+def _workflow_file_matches(
+    module: str,
+    file_path: str,
+    contracts: List[Dict[str, str]],
+    tests: List[str],
+    keywords: List[str],
+) -> tuple[int, List[str]]:
+    score, base_reasons = _score_debug_file(module, file_path, contracts, tests)
+    lowered_path = file_path.lower()
+    lowered_contracts = " ".join(
+        f"{c.get('symbol', '')} {c.get('scope', '')} {c.get('strictness', '')}"
+        for c in contracts
+        if _normalize_rel_path(str(c.get("file") or "")) == _normalize_rel_path(file_path)
+    ).lower()
+    reasons: List[str] = []
+    if any(keyword in lowered_path for keyword in keywords):
+        score += 55
+        reasons.append("keyword-matched entry file")
+    if lowered_contracts and any(keyword in lowered_contracts for keyword in keywords):
+        score += 28
+        reasons.append("indexed contract evidence")
+    reasons.extend(base_reasons[:2])
+    unique_reasons: List[str] = []
+    for reason in reasons:
+        if reason not in unique_reasons:
+            unique_reasons.append(reason)
+    return score, unique_reasons
+
+
+def _workflow_test_matches(
+    module: str,
+    test_path: str,
+    key_files: List[str],
+    contracts: List[Dict[str, str]],
+    keywords: List[str],
+) -> tuple[int, List[str]]:
+    text = _safe_read_text(Path(test_path))
+    imports = _extract_import_tokens(text)
+    score, base_reasons = _score_test_candidate(module, test_path, key_files, contracts, imports, text)
+    lowered = f"{test_path} {' '.join(imports)} {text}".lower()
+    reasons: List[str] = []
+    if any(keyword in lowered for keyword in keywords):
+        score += 35
+        reasons.append("workflow-specific assert/import evidence")
+    if "fixture" in lowered:
+        score += 10
+        reasons.append("fixture coverage")
+    reasons.extend(base_reasons[:2])
+    unique_reasons: List[str] = []
+    for reason in reasons:
+        if reason not in unique_reasons:
+            unique_reasons.append(reason)
+    return score, unique_reasons
+
+
+def _build_workflow_recommendations(
+    context: Dict[str, Any],
+    *,
+    file_limit: int = 2,
+    test_limit: int = 2,
+    group_limit: int = 6,
+) -> List[Dict[str, Any]]:
+    module = str(context.get("module") or "")
+    key_files = [_normalize_rel_path(str(p)) for p in (context.get("key_files") or []) if str(p)]
+    contracts = list(context.get("contracts") or [])
+    tests = [_normalize_rel_path(str(p)) for p in (context.get("tests") or []) if str(p)]
+    groups: List[Dict[str, Any]] = []
+    for spec in _workflow_group_specs(module):
+        ranked_files: List[Dict[str, str]] = []
+        for file_path in key_files:
+            score, reasons = _workflow_file_matches(module, file_path, contracts, tests, spec["keywords"])
+            if score <= 0:
+                continue
+            ranked_files.append({"path": file_path, "score": score, "reason": ", ".join(reasons[:3])})
+        ranked_files.sort(key=lambda item: (-int(item["score"]), item["path"]))
+
+        ranked_tests: List[Dict[str, str]] = []
+        for test_path in tests:
+            score, reasons = _workflow_test_matches(module, test_path, key_files, contracts, spec["keywords"])
+            if score <= 0:
+                continue
+            ranked_tests.append({"path": test_path, "score": score, "reason": ", ".join(reasons[:3])})
+        ranked_tests.sort(key=lambda item: (-int(item["score"]), item["path"]))
+
+        if not ranked_files and not ranked_tests:
+            continue
+        groups.append(
+            {
+                "title": spec["title"],
+                "description": spec["description"],
+                "files": ranked_files[:file_limit],
+                "tests": ranked_tests[:test_limit],
+                "score": max(
+                    [int(item["score"]) for item in ranked_files[:file_limit] + ranked_tests[:test_limit]] or [0]
+                ),
+            }
+        )
+    groups.sort(key=lambda item: (-int(item["score"]), item["title"]))
+    return groups[:group_limit]
+
+
 def _module_specific_checklist_lines(module: str) -> List[str]:
     normalized = normalize_module_path(module)
     if normalized == "harbor/core" or normalized.startswith("harbor/core/"):
@@ -656,6 +801,8 @@ def generate_module_card(context: Dict[str, Any]) -> str:
     profile = _module_profile(str(module))
     ranked_files = _rank_debug_files(context, limit=5)
     ranked_tests = _rank_tests(context, limit=3)
+    entry_points = ranked_files[:3]
+    remaining_files = [item for item in ranked_files if item["path"] not in {row["path"] for row in entry_points}]
 
     lines: List[str] = [
         f"# Module Card: {module}",
@@ -682,8 +829,8 @@ def generate_module_card(context: Dict[str, Any]) -> str:
             "",
         ]
     )
-    if ranked_files:
-        lines.extend([f"- {item['path']} ({item['reason']})" for item in ranked_files[:3]])
+    if entry_points:
+        lines.extend([f"- {item['path']} ({item['reason']})" for item in entry_points])
     else:
         lines.append(f"- {module or '(unknown module)'}")
     lines.extend(
@@ -693,8 +840,10 @@ def generate_module_card(context: Dict[str, Any]) -> str:
             "",
         ]
     )
-    if ranked_files:
-        lines.extend([f"- {item['path']} ({item['reason']})" for item in ranked_files])
+    if remaining_files:
+        lines.extend([f"- {item['path']} ({item['reason']})" for item in remaining_files])
+    elif entry_points:
+        lines.append("- Common change entry points already cover the primary file starts for this module.")
     else:
         lines.append(f"- {module or '(unknown module)'}")
     lines.extend(
@@ -713,6 +862,9 @@ def generate_module_card(context: Dict[str, Any]) -> str:
             "",
             "## Detailed Key Files",
             "",
+            "<details>",
+            "<summary>All key files</summary>",
+            "",
             "```text",
         ]
     )
@@ -724,6 +876,8 @@ def generate_module_card(context: Dict[str, Any]) -> str:
         [
             "```",
             "",
+            "</details>",
+            "",
             "## Detailed Indexed Contracts",
             "",
         ]
@@ -731,6 +885,9 @@ def generate_module_card(context: Dict[str, Any]) -> str:
     if contracts:
         lines.extend(
             [
+                "<details>",
+                "<summary>All indexed contracts</summary>",
+                "",
                 "| Symbol | File | Scope | Strictness |",
                 "| ------ | ---- | ----- | ---------- |",
             ]
@@ -739,6 +896,7 @@ def generate_module_card(context: Dict[str, Any]) -> str:
             lines.append(
                 f"| {c.get('symbol','')} | {c.get('file','')} | {c.get('scope','unknown')} | {c.get('strictness','standard')} |"
             )
+        lines.extend(["", "</details>"])
     else:
         lines.extend(["```text", "No indexed contracts found for this module.", "```"])
 
@@ -859,6 +1017,7 @@ def generate_debug_playbook(context: Dict[str, Any]) -> str:
     module = context.get("module", "")
     ranked_files = _rank_debug_files(context, limit=3)
     ranked_tests = _rank_tests(context, limit=3)
+    workflow_groups = _build_workflow_recommendations(context)
 
     lines = [
         f"# Debug Playbook: {module}",
@@ -866,9 +1025,30 @@ def generate_debug_playbook(context: Dict[str, Any]) -> str:
         "> This file is generated by Harbor-spec.",
         "> It is a derived debug guide, not a source of truth.",
         "",
-        "## First Files to Inspect",
+        "## Workflow Entry Points",
         "",
     ]
+    if workflow_groups:
+        for group in workflow_groups:
+            lines.extend(
+                [
+                    f"### {group['title']}",
+                    "",
+                    f"- Why: {group['description']}",
+                ]
+            )
+            if group["files"]:
+                for item in group["files"]:
+                    lines.append(f"- File: {item['path']} ({item['reason']})")
+            if group["tests"]:
+                for item in group["tests"]:
+                    lines.append(f"- Test: {item['path']} ({item['reason']})")
+            lines.append("")
+        if lines[-1] == "":
+            lines.pop()
+    else:
+        lines.append(f"- {module or '(unknown module)'}")
+    lines.extend(["", "## First Files to Inspect", ""])
     if ranked_files:
         lines.extend([f"- {item['path']} ({item['reason']})" for item in ranked_files])
     else:

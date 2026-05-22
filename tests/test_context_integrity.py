@@ -23,6 +23,7 @@ def test_frontmatter_render_parse_roundtrip():
         "stale_policy": "advisory",
         "source_path_count": 2,
         "source_paths_truncated": False,
+        "source_paths_omitted_count": 0,
         "source_paths": ["harbor/core/l2.py", "harbor/core/stale.py"],
         "source_fingerprint": "sha256:a",
         "contract_fingerprint": "sha256:b",
@@ -33,6 +34,7 @@ def test_frontmatter_render_parse_roundtrip():
     assert parsed is not None
     assert parsed["harbor_version"] == "1.3.0"
     assert parsed["view_type"] == "l2_readme"
+    assert parsed["source_paths_omitted_count"] == 0
     assert parsed["source_paths"] == ["harbor/core/l2.py", "harbor/core/stale.py"]
 
 
@@ -107,6 +109,29 @@ def test_metadata_has_no_absolute_paths(tmp_path: Path):
     )
     assert metadata["source_paths"] == ["harbor/core/a.py"]
     assert ":" not in metadata["source_paths"][0]
+
+
+def test_metadata_truncates_source_paths_but_keeps_total_count(tmp_path: Path):
+    source_paths = []
+    for idx in range(10):
+        file_path = tmp_path / "harbor" / "core" / f"sample_{idx}.py"
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        file_path.write_text(f"value = {idx}\n", encoding="utf-8")
+        source_paths.append(str(file_path.resolve()))
+
+    metadata = build_context_integrity_metadata(
+        view_type="module_card",
+        module="harbor/core",
+        generation_command="harbor module seal harbor/core --write",
+        source_paths=source_paths,
+        contract_records=[],
+        repo_root=tmp_path,
+    )
+
+    assert metadata["source_path_count"] == 10
+    assert metadata["source_paths_truncated"] is True
+    assert metadata["source_paths_omitted_count"] == 2
+    assert len(metadata["source_paths"]) == 8
 
 
 def test_missing_file_handling_is_deterministic(tmp_path: Path):

@@ -7,7 +7,8 @@ generated_at: "2026-05-22T08:03:41Z"
 generation_command: "harbor module seal harbor/adapters --write"
 stale_policy: "advisory"
 source_path_count: 14
-source_paths_truncated: false
+source_paths_truncated: true
+source_paths_omitted_count: 6
 source_paths:
   - "harbor/adapters/__init__.py"
   - "harbor/adapters/base.py"
@@ -17,12 +18,6 @@ source_paths:
   - "harbor/adapters/registry.py"
   - "harbor/adapters/typescript/__init__.py"
   - "harbor/adapters/typescript/adapter.py"
-  - "harbor/adapters/typescript/hashing.py"
-  - "harbor/adapters/typescript/jsdoc.py"
-  - "harbor/adapters/typescript/parser.py"
-  - "harbor/adapters/typescript/public_boundary.py"
-  - "harbor/adapters/typescript/resolution.py"
-  - "harbor/adapters/typescript/symbols.py"
 source_fingerprint: "sha256:09fd790eec8694f7cdb9e90f189a170e5e1cb14e74421ed2bc06c251af868c9e"
 contract_fingerprint: "sha256:be95ae47fba14443799ae49a038c64f2817468f34b4ee441026aca92817a3f58"
 generator_fingerprint: "sha256:eadcf0a1aa08dab7adb1a4c205d99d38bfe01803de18aac5ece490c3f07ecb13"

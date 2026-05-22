@@ -8,6 +8,7 @@ generation_command: "harbor module seal harbor/adapters/typescript --write"
 stale_policy: "advisory"
 source_path_count: 8
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "harbor/adapters/typescript/__init__.py"
   - "harbor/adapters/typescript/adapter.py"

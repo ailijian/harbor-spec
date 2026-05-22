@@ -11,9 +11,22 @@
 | Targets with DDT warnings | 0 |
 
 ## High-Risk Targets
+| Function | File | Risk Focus | Scope | Strictness | Why |
+|---|---|---|---|---|---|
+| tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | strict target | public | strict | strict target, public surface |
+
+### Contract / DDT Coverage Gaps
 | Function | File | Scope | Strictness | DDT Status | Why |
 |---|---|---|---|---|---|
-| tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict | ❌ Missing | strict, public, missing DDT |
+| tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict | ❌ Missing | Missing DDT, strict target, public surface |
+
+## Dependency Summary
+
+**Outbound Dependencies**
+- None detected from repo-local Python imports.
+
+**Inbound Dependents**
+- None detected from repo-local Python imports.
 
 ## Full Indexed Contracts
 <details>
@@ -24,11 +37,3 @@
 | tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict | ❌ Missing | 测试函数。 |
 
 </details>
-
-## Dependency Summary
-
-**Outbound Dependencies**
-- None detected from repo-local Python imports.
-
-**Inbound Dependents**
-- None detected from repo-local Python imports.

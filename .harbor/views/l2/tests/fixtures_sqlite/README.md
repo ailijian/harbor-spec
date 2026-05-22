@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "l2_readme"
 module: "tests/fixtures_sqlite"
-generated_at: "2026-05-22T08:22:14Z"
+generated_at: "2026-05-22T09:07:21Z"
 generation_command: "harbor docs --module tests/fixtures_sqlite --write"
 stale_policy: "advisory"
 source_path_count: 1
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "tests/fixtures_sqlite/sample.py"
 source_fingerprint: "sha256:4366e71d00d3548af0c9334a2541193888a12981225580bbd4470ac2065d9fc2"
@@ -28,9 +29,22 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | Targets with DDT warnings | 0 |
 
 ## High-Risk Targets
+| Function | File | Risk Focus | Scope | Strictness | Why |
+|---|---|---|---|---|---|
+| tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | strict target | public | strict | strict target, public surface |
+
+### Contract / DDT Coverage Gaps
 | Function | File | Scope | Strictness | DDT Status | Why |
 |---|---|---|---|---|---|
-| tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict | ❌ Missing | strict, public, missing DDT |
+| tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict | ❌ Missing | Missing DDT, strict target, public surface |
+
+## Dependency Summary
+
+**Outbound Dependencies**
+- None detected from repo-local Python imports.
+
+**Inbound Dependents**
+- None detected from repo-local Python imports.
 
 ## Full Indexed Contracts
 <details>
@@ -41,11 +55,3 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict | ❌ Missing | 测试函数。 |
 
 </details>
-
-## Dependency Summary
-
-**Outbound Dependencies**
-- None detected from repo-local Python imports.
-
-**Inbound Dependents**
-- None detected from repo-local Python imports.

@@ -8,6 +8,7 @@ generation_command: "harbor module seal tests/fixtures_sqlite --write"
 stale_policy: "advisory"
 source_path_count: 1
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "tests/fixtures_sqlite/sample.py"
 source_fingerprint: "sha256:4366e71d00d3548af0c9334a2541193888a12981225580bbd4470ac2065d9fc2"

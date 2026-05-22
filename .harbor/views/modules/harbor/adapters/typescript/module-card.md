@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/adapters/typescript"
-generated_at: "2026-05-22T08:03:42Z"
+generated_at: "2026-05-22T09:07:52Z"
 generation_command: "harbor module seal harbor/adapters/typescript --write"
 stale_policy: "advisory"
 source_path_count: 8
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "harbor/adapters/typescript/__init__.py"
   - "harbor/adapters/typescript/adapter.py"
@@ -47,9 +48,6 @@ fingerprint: "8179feff9639db1f5aad918ecf25ece2c9fd121f3438fa13af73f8b5f72cc10f"
 
 ## Best Files To Inspect First
 
-- harbor/adapters/typescript/public_boundary.py (indexed contracts, strict target)
-- harbor/adapters/typescript/adapter.py (indexed contracts, covered by matching tests)
-- harbor/adapters/typescript/resolution.py (indexed contracts, covered by matching tests)
 - harbor/adapters/typescript/hashing.py (indexed contracts)
 - harbor/adapters/typescript/jsdoc.py (indexed contracts)
 
@@ -60,6 +58,9 @@ fingerprint: "8179feff9639db1f5aad918ecf25ece2c9fd121f3438fa13af73f8b5f72cc10f"
 - tests/test_typescript_public_boundary_evidence.py (module match, file-name match)
 
 ## Detailed Key Files
+
+<details>
+<summary>All key files</summary>
 
 ```text
 harbor/adapters/typescript/__init__.py
@@ -72,7 +73,12 @@ harbor/adapters/typescript/resolution.py
 harbor/adapters/typescript/symbols.py
 ```
 
+</details>
+
 ## Detailed Indexed Contracts
+
+<details>
+<summary>All indexed contracts</summary>
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -160,6 +166,8 @@ harbor/adapters/typescript/symbols.py
 | harbor.adapters.typescript.resolution._split_named_specifiers | harbor/adapters/typescript/resolution.py | unknown | standard |
 | harbor.adapters.typescript.resolution._to_lineno | harbor/adapters/typescript/resolution.py | unknown | standard |
 | harbor.adapters.typescript.resolution._tsconfig_path_candidates | harbor/adapters/typescript/resolution.py | unknown | standard |
+
+</details>
 ## Related Views
 
 ```text

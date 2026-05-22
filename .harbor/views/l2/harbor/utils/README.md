@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "l2_readme"
 module: "harbor/utils"
-generated_at: "2026-05-22T08:22:08Z"
+generated_at: "2026-05-22T09:07:15Z"
 generation_command: "harbor docs --module harbor/utils --write"
 stale_policy: "advisory"
 source_path_count: 3
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
@@ -30,11 +31,28 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | Targets with DDT warnings | 0 |
 
 ## High-Risk Targets
+| Function | File | Risk Focus | Scope | Strictness | Why |
+|---|---|---|---|---|---|
+| harbor.utils.formatting.format_size | harbor/utils/formatting.py | strict target | public | strict | strict target, public surface |
+| harbor.utils.i18n.get_lang | harbor/utils/i18n.py | public surface | public | standard | public surface |
+| harbor.utils.i18n.t | harbor/utils/i18n.py | public surface | public | standard | public surface |
+
+### Contract / DDT Coverage Gaps
 | Function | File | Scope | Strictness | DDT Status | Why |
 |---|---|---|---|---|---|
-| harbor.utils.formatting.format_size | harbor/utils/formatting.py | public | strict | ✅ Valid | strict, public |
-| harbor.utils.i18n.get_lang | harbor/utils/i18n.py | public | standard | ⚪ Missing | public |
-| harbor.utils.i18n.t | harbor/utils/i18n.py | public | standard | ⚪ Missing | public |
+| harbor.utils.formatting.format_size | harbor/utils/formatting.py | public | strict | ✅ Valid | strict target, public surface |
+| harbor.utils.i18n.get_lang | harbor/utils/i18n.py | public | standard | ⚪ Missing | public surface |
+| harbor.utils.i18n.t | harbor/utils/i18n.py | public | standard | ⚪ Missing | public surface |
+
+## Dependency Summary
+
+**Outbound Dependencies**
+- None detected from repo-local Python imports.
+
+**Inbound Dependents**
+- harbor/cli (1 edges): harbor/cli
+- harbor/core (1 edges): harbor/core
+- tests (1 edges): tests
 
 ## Full Indexed Contracts
 <details>
@@ -47,13 +65,3 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.utils.i18n.t | harbor/utils/i18n.py | public | standard | ⚪ Missing | 根据当前语言返回文案。 |
 
 </details>
-
-## Dependency Summary
-
-**Outbound Dependencies**
-- None detected from repo-local Python imports.
-
-**Inbound Dependents**
-- harbor/cli
-- harbor/core
-- tests

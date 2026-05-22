@@ -8,6 +8,7 @@ generation_command: "harbor module seal harbor/cli --write"
 stale_policy: "advisory"
 source_path_count: 2
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "harbor/cli/__init__.py"
   - "harbor/cli/main.py"

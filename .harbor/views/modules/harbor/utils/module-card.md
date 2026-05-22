@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/utils"
-generated_at: "2026-05-22T08:03:44Z"
+generated_at: "2026-05-22T09:07:58Z"
 generation_command: "harbor module seal harbor/utils --write"
 stale_policy: "advisory"
 source_path_count: 3
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
@@ -41,9 +42,7 @@ fingerprint: "0e46c5983036d23b269019016e6e9204e186fb82c90380b7a9056872942239c9"
 
 ## Best Files To Inspect First
 
-- harbor/utils/formatting.py (indexed contracts, strict target)
-- harbor/utils/i18n.py (indexed contracts, covered by matching tests)
-- harbor/utils/__init__.py (package marker only)
+- Common change entry points already cover the primary file starts for this module.
 
 ## Relevant Tests
 
@@ -53,19 +52,29 @@ fingerprint: "0e46c5983036d23b269019016e6e9204e186fb82c90380b7a9056872942239c9"
 
 ## Detailed Key Files
 
+<details>
+<summary>All key files</summary>
+
 ```text
 harbor/utils/__init__.py
 harbor/utils/formatting.py
 harbor/utils/i18n.py
 ```
 
+</details>
+
 ## Detailed Indexed Contracts
+
+<details>
+<summary>All indexed contracts</summary>
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
 | harbor.utils.formatting.format_size | harbor/utils/formatting.py | public | strict |
 | harbor.utils.i18n.get_lang | harbor/utils/i18n.py | public | standard |
 | harbor.utils.i18n.t | harbor/utils/i18n.py | public | standard |
+
+</details>
 ## Related Views
 
 ```text

@@ -275,6 +275,7 @@ def run(value: int) -> int:
 
     assert "## Public API Summary" in md
     assert "## High-Risk Targets" in md
+    assert "### Contract / DDT Coverage Gaps" in md
     assert "## Full Indexed Contracts" in md
     assert "<details>" in md
     assert "## Dependency Summary" in md
@@ -282,8 +283,40 @@ def run(value: int) -> int:
     assert "**Inbound Dependents**" in md
     assert "## Public API\n" not in md
     assert "## Dependency (MVP)" not in md
-    assert "harbor/utils/formatting" in md
+    assert "harbor/utils (1 edges): harbor/utils/formatting" in md
     assert "- tests" in md
+
+
+def test_l2_generate_displays_unknown_strictness_instead_of_python_none(tmp_path: Path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    idx = tmp_path / ".harbor" / "cache" / "l3_index.json"
+    idx.parent.mkdir(parents=True, exist_ok=True)
+    idx.write_text(
+        json.dumps(
+            {
+                "files": {
+                    "harbor/core/sample.py": {
+                        "items": [
+                            {
+                                "id": "harbor.core.sample.run",
+                                "qualified_name": "harbor.core.sample.run",
+                                "name": "run",
+                                "lineno": 1,
+                                "scope": "unknown",
+                                "strictness": None,
+                            }
+                        ]
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    md = L2Generator(index_path=idx).generate("harbor/core")
+
+    assert "| harbor.core.sample.run | harbor/core/sample.py | unknown | unknown |" in md
+    assert "| unknown | None |" not in md
 
 
 def test_l2_meta_write_sanitizes_absolute_and_outside_repo_keys(tmp_path: Path, monkeypatch):

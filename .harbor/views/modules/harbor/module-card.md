@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor"
-generated_at: "2026-05-22T08:23:42Z"
+generated_at: "2026-05-22T09:07:46Z"
 generation_command: "harbor module seal harbor --write"
 stale_policy: "advisory"
 source_path_count: 64
-source_paths_truncated: false
+source_paths_truncated: true
+source_paths_omitted_count: 56
 source_paths:
   - "harbor/__init__.py"
   - "harbor/adapters/__init__.py"
@@ -17,67 +18,11 @@ source_paths:
   - "harbor/adapters/python/parser.py"
   - "harbor/adapters/registry.py"
   - "harbor/adapters/typescript/__init__.py"
-  - "harbor/adapters/typescript/adapter.py"
-  - "harbor/adapters/typescript/hashing.py"
-  - "harbor/adapters/typescript/jsdoc.py"
-  - "harbor/adapters/typescript/parser.py"
-  - "harbor/adapters/typescript/public_boundary.py"
-  - "harbor/adapters/typescript/resolution.py"
-  - "harbor/adapters/typescript/symbols.py"
-  - "harbor/cli/__init__.py"
-  - "harbor/cli/main.py"
-  - "harbor/core/__init__.py"
-  - "harbor/core/advice_config.py"
-  - "harbor/core/audit.py"
-  - "harbor/core/baseline_artifact.py"
-  - "harbor/core/change_window.py"
-  - "harbor/core/changed_scope.py"
-  - "harbor/core/ci.py"
-  - "harbor/core/console_output.py"
-  - "harbor/core/context_integrity.py"
-  - "harbor/core/contract_impact.py"
-  - "harbor/core/contract_presence.py"
-  - "harbor/core/ddt.py"
-  - "harbor/core/decorator.py"
-  - "harbor/core/diary.py"
-  - "harbor/core/doctor.py"
-  - "harbor/core/drafting.py"
-  - "harbor/core/generated_verify.py"
-  - "harbor/core/git_utils.py"
-  - "harbor/core/index.py"
-  - "harbor/core/index_entry.py"
-  - "harbor/core/init.py"
-  - "harbor/core/init_prompt.py"
-  - "harbor/core/init_wizard.py"
-  - "harbor/core/l2.py"
-  - "harbor/core/log_draft.py"
-  - "harbor/core/module_capsule.py"
-  - "harbor/core/module_skill.py"
-  - "harbor/core/path_normalization.py"
-  - "harbor/core/performance_baseline.py"
-  - "harbor/core/project_structure.py"
-  - "harbor/core/readonly_index.py"
-  - "harbor/core/repair_guidance.py"
-  - "harbor/core/stale.py"
-  - "harbor/core/storage.py"
-  - "harbor/core/sync.py"
-  - "harbor/core/t_decorate.py"
-  - "harbor/core/utils.py"
-  - "harbor/core/verification.py"
-  - "harbor/core/workspace.py"
-  - "harbor/core/workspace_inspect.py"
-  - "harbor/core/workspace_migrate.py"
-  - "harbor/templates/__init__.py"
-  - "harbor/templates/init/__init__.py"
-  - "harbor/test_utils.py"
-  - "harbor/utils/__init__.py"
-  - "harbor/utils/formatting.py"
-  - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:152c49c50fcd0c19ce3aefd906f4e636c4fd0dc938cd0757e39db796cc870d18"
-contract_fingerprint: "sha256:82c402459008cb0a60a27207a46deb4c38bcd6c8cfb7931ad40e8bb476fffc33"
+source_fingerprint: "sha256:207e957c09ad6139ffcfd238fe93f0e69ad1d73bbf8679ab293eb5c64162decb"
+contract_fingerprint: "sha256:ca0723b6143875680529e574f9253b8655034f84b7f68f835b9212eb28c2be15"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "7e5534fcdaf4876c526fd1886d4d4bf86eee72bfc9a795b3a4a136cc8f2a9ea1"
-fingerprint: "7e5534fcdaf4876c526fd1886d4d4bf86eee72bfc9a795b3a4a136cc8f2a9ea1"
+view_fingerprint: "b4db98365a985448246e75d6f989ef81aad35ab6d1444c091e003487f21d41bd"
+fingerprint: "b4db98365a985448246e75d6f989ef81aad35ab6d1444c091e003487f21d41bd"
 ---
 
 # Module Card: harbor
@@ -102,9 +47,6 @@ fingerprint: "7e5534fcdaf4876c526fd1886d4d4bf86eee72bfc9a795b3a4a136cc8f2a9ea1"
 
 ## Best Files To Inspect First
 
-- harbor/cli/main.py (entrypoint, indexed contracts)
-- harbor/core/doctor.py (workflow file, indexed contracts)
-- harbor/core/generated_verify.py (workflow file, indexed contracts)
 - harbor/core/l2.py (workflow file, indexed contracts)
 - harbor/core/module_capsule.py (workflow file, indexed contracts)
 
@@ -115,6 +57,9 @@ fingerprint: "7e5534fcdaf4876c526fd1886d4d4bf86eee72bfc9a795b3a4a136cc8f2a9ea1"
 - tests/test_harbor_next.py (module match, imports target symbols)
 
 ## Detailed Key Files
+
+<details>
+<summary>All key files</summary>
 
 ```text
 harbor/__init__.py
@@ -183,7 +128,12 @@ harbor/utils/formatting.py
 harbor/utils/i18n.py
 ```
 
+</details>
+
 ## Detailed Indexed Contracts
+
+<details>
+<summary>All indexed contracts</summary>
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -695,7 +645,10 @@ harbor/utils/i18n.py
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.write | harbor/core/l2.py | public | strict |
 | harbor.core.l2._collect_module_dependency_summary | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._dependency_group | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._display_strictness | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._extract_import_tokens | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._format_dependency_group_rows | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._looks_like_windows_absolute_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._repo_relative_index_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._resolve_import_token_to_module | harbor/core/l2.py | unknown | standard |
@@ -787,6 +740,7 @@ harbor/utils/i18n.py
 | harbor.core.log_draft.write_last_log_marker | harbor/core/log_draft.py | public | strict |
 | harbor.core.log_draft.write_latest_diary_draft_cache | harbor/core/log_draft.py | public | strict |
 | harbor.core.module_capsule._belongs_to_module | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._build_workflow_recommendations | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._contracts_by_file | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._ensure_within_root | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._extract_import_tokens | harbor/core/module_capsule.py | unknown | standard |
@@ -808,6 +762,9 @@ harbor/utils/i18n.py
 | harbor.core.module_capsule._stable_contract_rows | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._strictness_rank | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._summarize_strictness | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._workflow_file_matches | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._workflow_group_specs | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._workflow_test_matches | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.build_module_card_frontmatter | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.check_module_capsule_stale | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.collect_module_context | harbor/core/module_capsule.py | public | strict |
@@ -996,6 +953,8 @@ harbor/utils/i18n.py
 | harbor.utils.formatting.format_size | harbor/utils/formatting.py | public | strict |
 | harbor.utils.i18n.get_lang | harbor/utils/i18n.py | public | standard |
 | harbor.utils.i18n.t | harbor/utils/i18n.py | public | standard |
+
+</details>
 ## Related Views
 
 ```text

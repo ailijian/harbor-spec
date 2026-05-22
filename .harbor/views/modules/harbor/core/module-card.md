@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-22T08:23:42Z"
+generated_at: "2026-05-22T09:07:56Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 41
-source_paths_truncated: false
+source_paths_truncated: true
+source_paths_omitted_count: 33
 source_paths:
   - "harbor/core/__init__.py"
   - "harbor/core/advice_config.py"
@@ -17,44 +18,11 @@ source_paths:
   - "harbor/core/changed_scope.py"
   - "harbor/core/ci.py"
   - "harbor/core/console_output.py"
-  - "harbor/core/context_integrity.py"
-  - "harbor/core/contract_impact.py"
-  - "harbor/core/contract_presence.py"
-  - "harbor/core/ddt.py"
-  - "harbor/core/decorator.py"
-  - "harbor/core/diary.py"
-  - "harbor/core/doctor.py"
-  - "harbor/core/drafting.py"
-  - "harbor/core/generated_verify.py"
-  - "harbor/core/git_utils.py"
-  - "harbor/core/index.py"
-  - "harbor/core/index_entry.py"
-  - "harbor/core/init.py"
-  - "harbor/core/init_prompt.py"
-  - "harbor/core/init_wizard.py"
-  - "harbor/core/l2.py"
-  - "harbor/core/log_draft.py"
-  - "harbor/core/module_capsule.py"
-  - "harbor/core/module_skill.py"
-  - "harbor/core/path_normalization.py"
-  - "harbor/core/performance_baseline.py"
-  - "harbor/core/project_structure.py"
-  - "harbor/core/readonly_index.py"
-  - "harbor/core/repair_guidance.py"
-  - "harbor/core/stale.py"
-  - "harbor/core/storage.py"
-  - "harbor/core/sync.py"
-  - "harbor/core/t_decorate.py"
-  - "harbor/core/utils.py"
-  - "harbor/core/verification.py"
-  - "harbor/core/workspace.py"
-  - "harbor/core/workspace_inspect.py"
-  - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:342aa68a5eca337025c1634a62e2c9e2a504be82704c34afe18e2b3c4e2b1502"
-contract_fingerprint: "sha256:b11f571b0b4b3f3d9d6ebdaee2c6cdacb6140c1067004fc9f81096a7d3d8157b"
+source_fingerprint: "sha256:a199429c3b91ddba5fc01a878d38fca8d19d5ae05a5b3392894d6e1d8d4a5104"
+contract_fingerprint: "sha256:d51cb363a4e40a1870af93ef817f743a77d0b0814e0f2418bf23c1928d7d9c63"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "49317c18d1793fe7cd4be4f7a935e0222e83ca750536342ec35ca498cbb96e2b"
-fingerprint: "49317c18d1793fe7cd4be4f7a935e0222e83ca750536342ec35ca498cbb96e2b"
+view_fingerprint: "b6c0dff522d647a6e375bc7c498ba3e39e2d6ab45ba62df844c73a2dde6c5490"
+fingerprint: "b6c0dff522d647a6e375bc7c498ba3e39e2d6ab45ba62df844c73a2dde6c5490"
 ---
 
 # Module Card: harbor/core
@@ -83,9 +51,6 @@ fingerprint: "49317c18d1793fe7cd4be4f7a935e0222e83ca750536342ec35ca498cbb96e2b"
 
 ## Best Files To Inspect First
 
-- harbor/core/doctor.py (workflow file, indexed contracts)
-- harbor/core/generated_verify.py (workflow file, indexed contracts)
-- harbor/core/l2.py (workflow file, indexed contracts)
 - harbor/core/module_capsule.py (workflow file, indexed contracts)
 - harbor/core/project_structure.py (workflow file, indexed contracts)
 
@@ -96,6 +61,9 @@ fingerprint: "49317c18d1793fe7cd4be4f7a935e0222e83ca750536342ec35ca498cbb96e2b"
 - tests/test_module_capsule.py (file-name match, imports target symbols)
 
 ## Detailed Key Files
+
+<details>
+<summary>All key files</summary>
 
 ```text
 harbor/core/__init__.py
@@ -141,7 +109,12 @@ harbor/core/workspace_inspect.py
 harbor/core/workspace_migrate.py
 ```
 
+</details>
+
 ## Detailed Indexed Contracts
+
+<details>
+<summary>All indexed contracts</summary>
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -530,7 +503,10 @@ harbor/core/workspace_migrate.py
 | harbor.core.l2.L2Generator.generate | harbor/core/l2.py | public | strict |
 | harbor.core.l2.L2Generator.write | harbor/core/l2.py | public | strict |
 | harbor.core.l2._collect_module_dependency_summary | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._dependency_group | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._display_strictness | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._extract_import_tokens | harbor/core/l2.py | unknown | standard |
+| harbor.core.l2._format_dependency_group_rows | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._looks_like_windows_absolute_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._repo_relative_index_path | harbor/core/l2.py | unknown | standard |
 | harbor.core.l2._resolve_import_token_to_module | harbor/core/l2.py | unknown | standard |
@@ -622,6 +598,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.log_draft.write_last_log_marker | harbor/core/log_draft.py | public | strict |
 | harbor.core.log_draft.write_latest_diary_draft_cache | harbor/core/log_draft.py | public | strict |
 | harbor.core.module_capsule._belongs_to_module | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._build_workflow_recommendations | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._contracts_by_file | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._ensure_within_root | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._extract_import_tokens | harbor/core/module_capsule.py | unknown | standard |
@@ -643,6 +620,9 @@ harbor/core/workspace_migrate.py
 | harbor.core.module_capsule._stable_contract_rows | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._strictness_rank | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule._summarize_strictness | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._workflow_file_matches | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._workflow_group_specs | harbor/core/module_capsule.py | unknown | standard |
+| harbor.core.module_capsule._workflow_test_matches | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.build_module_card_frontmatter | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.check_module_capsule_stale | harbor/core/module_capsule.py | unknown | standard |
 | harbor.core.module_capsule.collect_module_context | harbor/core/module_capsule.py | public | strict |
@@ -827,6 +807,8 @@ harbor/core/workspace_migrate.py
 | harbor.core.workspace_migrate.format_workspace_migrate_report | harbor/core/workspace_migrate.py | unknown | standard |
 | harbor.core.workspace_migrate.sanitize_text | harbor/core/workspace_migrate.py | unknown | standard |
 | harbor.core.workspace_migrate.workspace_migrate_report_to_dict | harbor/core/workspace_migrate.py | unknown | standard |
+
+</details>
 ## Related Views
 
 ```text

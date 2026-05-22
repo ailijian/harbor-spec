@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/adapters/python"
-generated_at: "2026-05-22T08:03:41Z"
+generated_at: "2026-05-22T09:07:50Z"
 generation_command: "harbor module seal harbor/adapters/python --write"
 stale_policy: "advisory"
 source_path_count: 3
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "harbor/adapters/python/__init__.py"
   - "harbor/adapters/python/compat.py"
@@ -42,9 +43,7 @@ fingerprint: "097e4a409d44780441617fba463b3b15f55a48f4504d756226ee27f0749ab0e0"
 
 ## Best Files To Inspect First
 
-- harbor/adapters/python/parser.py (indexed contracts, strict target)
-- harbor/adapters/python/compat.py (indexed contracts, covered by matching tests)
-- harbor/adapters/python/__init__.py (package marker only)
+- Common change entry points already cover the primary file starts for this module.
 
 ## Relevant Tests
 
@@ -54,13 +53,21 @@ fingerprint: "097e4a409d44780441617fba463b3b15f55a48f4504d756226ee27f0749ab0e0"
 
 ## Detailed Key Files
 
+<details>
+<summary>All key files</summary>
+
 ```text
 harbor/adapters/python/__init__.py
 harbor/adapters/python/compat.py
 harbor/adapters/python/parser.py
 ```
 
+</details>
+
 ## Detailed Indexed Contracts
+
+<details>
+<summary>All indexed contracts</summary>
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
@@ -74,6 +81,8 @@ harbor/adapters/python/parser.py
 | harbor.adapters.python.parser.PythonAdapter._parse_tags | harbor/adapters/python/parser.py | internal | standard |
 | harbor.adapters.python.parser.PythonAdapter._signature_hash | harbor/adapters/python/parser.py | internal | standard |
 | harbor.adapters.python.parser.PythonAdapter.parse_file | harbor/adapters/python/parser.py | public | strict |
+
+</details>
 ## Related Views
 
 ```text

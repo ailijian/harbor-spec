@@ -8,6 +8,7 @@ generation_command: "harbor module seal tests/core --write"
 stale_policy: "advisory"
 source_path_count: 2
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "tests/core/test_index_sync_sqlite.py"
   - "tests/core/test_storage_migration.py"

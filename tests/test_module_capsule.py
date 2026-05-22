@@ -148,6 +148,8 @@ def test_generators_include_required_sections(tmp_path: Path, monkeypatch):
     assert "stale / doctor / verify-generated" in checklist
 
     assert "## First Files to Inspect" in playbook
+    assert "## Workflow Entry Points" in playbook
+    assert "Generated context / verify / stale / doctor" in playbook
     assert "## Why These Tests" in playbook
     assert "## Safe Fix Order" in playbook
     assert "## When to Escalate" in playbook
@@ -193,6 +195,7 @@ def test_debug_playbook_deprioritizes_init_and_prefers_workflow_files():
     assert "harbor/core/__init__.py" not in playbook
     assert "harbor/core/module_capsule.py" in playbook
     assert "harbor/core/l2.py" in playbook
+    assert "Workspace path / file write safety" in playbook
 
 
 def test_review_checklist_highlights_typescript_preview_boundary():
@@ -208,6 +211,36 @@ def test_review_checklist_highlights_typescript_preview_boundary():
 
     assert "preview/advisory boundaries" in checklist
     assert "formal TypeScript DDT or semantic audit gate" in checklist
+
+
+def test_debug_playbook_prioritizes_typescript_preview_workflow():
+    ctx = {
+        "module": "harbor/adapters/typescript",
+        "key_files": [
+            "harbor/adapters/typescript/adapter.py",
+            "harbor/adapters/typescript/public_boundary.py",
+            "harbor/adapters/typescript/parser.py",
+        ],
+        "contracts": [
+            {
+                "symbol": "harbor.adapters.typescript.public_boundary.describe_boundary",
+                "file": "harbor/adapters/typescript/public_boundary.py",
+                "scope": "public",
+                "strictness": "strict",
+            }
+        ],
+        "tests": [
+            "tests/test_typescript_adapter_mvp.py",
+            "tests/test_semantic_audit_preview.py",
+        ],
+        "strictness": "strict",
+    }
+
+    playbook = generate_debug_playbook(ctx)
+
+    assert "TypeScript adapter / public boundary preview" in playbook
+    assert "harbor/adapters/typescript/public_boundary.py" in playbook
+    assert "tests/test_semantic_audit_preview.py" in playbook
 
 
 def test_write_module_capsule_writes_three_files(tmp_path: Path):

@@ -3,11 +3,12 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "tests/fixtures_sqlite"
-generated_at: "2026-05-22T08:03:46Z"
+generated_at: "2026-05-22T09:08:06Z"
 generation_command: "harbor module seal tests/fixtures_sqlite --write"
 stale_policy: "advisory"
 source_path_count: 1
 source_paths_truncated: false
+source_paths_omitted_count: 0
 source_paths:
   - "tests/fixtures_sqlite/sample.py"
 source_fingerprint: "sha256:4366e71d00d3548af0c9334a2541193888a12981225580bbd4470ac2065d9fc2"
@@ -37,7 +38,7 @@ fingerprint: "8cf214f32856f1f23766ee8ce88385ac91148ef8c2f5d3813c08c09475e14c71"
 
 ## Best Files To Inspect First
 
-- tests/fixtures_sqlite/sample.py (indexed contracts, strict target)
+- Common change entry points already cover the primary file starts for this module.
 
 ## Relevant Tests
 
@@ -47,15 +48,25 @@ fingerprint: "8cf214f32856f1f23766ee8ce88385ac91148ef8c2f5d3813c08c09475e14c71"
 
 ## Detailed Key Files
 
+<details>
+<summary>All key files</summary>
+
 ```text
 tests/fixtures_sqlite/sample.py
 ```
 
+</details>
+
 ## Detailed Indexed Contracts
+
+<details>
+<summary>All indexed contracts</summary>
 
 | Symbol | File | Scope | Strictness |
 | ------ | ---- | ----- | ---------- |
 | tests.fixtures_sqlite.sample.func1 | tests/fixtures_sqlite/sample.py | public | strict |
+
+</details>
 ## Related Views
 
 ```text

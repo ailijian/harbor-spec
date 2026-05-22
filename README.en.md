@@ -245,18 +245,20 @@ This checks the current Harbor baseline state and runs a fast DDT check.
 ### 5. Recommended Daily Flow
 
 ```powershell
-harbor start
+python -m harbor.cli.main start
 
 # Work with your AI IDE...
 
-harbor finish --sync-context
-harbor doctor
+python -m harbor.cli.main finish --sync-context
+python -m harbor.cli.main doctor
 ```
+
+For local source verification, prefer `python -m harbor.cli.main ...` so the command resolves against the current workspace source instead of a potentially stale global `harbor.exe`.
 
 If you have reviewed the changes and are ready to accept the new baseline:
 
 ```powershell
-harbor accept
+python -m harbor.cli.main accept
 ```
 
 > HarborSpec works best when used from the terminal alongside AI IDEs such as Cursor, Windsurf, Trae, Claude Code, or Codex.
@@ -287,9 +289,9 @@ harbor accept
 For a stricter local finish:
 
 ```powershell
-harbor finish --sync-context
-harbor stale
-harbor doctor
+python -m harbor.cli.main finish --sync-context
+python -m harbor.cli.main stale
+python -m harbor.cli.main doctor
 ```
 
 Notes:
@@ -601,18 +603,20 @@ Use them by scenario.
 Usually, you only need:
 
 ```powershell
-harbor finish --sync-context
+python -m harbor.cli.main finish --sync-context
 ```
 
 For precise control:
 
 | Command                                 | Description                             |
 | --------------------------------------- | --------------------------------------- |
-| `harbor project structure --write`      | Write canonical project structure view  |
-| `harbor docs --changed --write`         | Refresh changed modules' L2 README      |
-| `harbor docs --module <module> --write` | Refresh one module's L2 README          |
-| `harbor module seal --changed --write`  | Refresh changed modules' Module Capsule |
-| `harbor module seal <module> --write`   | Refresh one module's Module Capsule     |
+| `python -m harbor.cli.main project structure --write`      | Write canonical project structure view  |
+| `python -m harbor.cli.main docs --changed --write`         | Refresh changed modules' L2 README      |
+| `python -m harbor.cli.main docs --module <module> --write` | Refresh one module's L2 README          |
+| `python -m harbor.cli.main module seal --changed --write`  | Refresh changed modules' Module Capsule |
+| `python -m harbor.cli.main module seal <module> --write`   | Refresh one module's Module Capsule     |
+
+Once you have confirmed the editable install is refreshed, the bare command remains an equivalent form, for example `harbor project structure --write`.
 
 ---
 
