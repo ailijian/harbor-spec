@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "tests"
-generated_at: "2026-05-15T18:58:51Z"
+generated_at: "2026-05-22T07:09:11Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 111
+source_path_count: 112
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -90,6 +90,7 @@ source_paths:
   - "tests/test_project_structure.py"
   - "tests/test_python_adapter_compat.py"
   - "tests/test_python_audit_regression.py"
+  - "tests/test_python_contract_source_recognition.py"
   - "tests/test_python_ddt_regression.py"
   - "tests/test_release_packaging.py"
   - "tests/test_repair_guidance.py"
@@ -120,11 +121,11 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:757f074756d6d10b4f28dc23cb50bab087511dee327c0c4b3dd4b45d3179acf5"
-contract_fingerprint: "sha256:21ea3a9645429a7f63cc4ed2de802cd2dad64871a8eefca81418d501b5f0342d"
+source_fingerprint: "sha256:c80b99cd8aff8ca5ce798a514243875fa4e52382a5d296b986e4ced08473ea1a"
+contract_fingerprint: "sha256:b200faca8ee9e363676ad33f30ab55e52ce7a75d0c5f2ea0daf69ddc7c437427"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "03ccc7d88933d5c916d4fdb4a2e0732c59079f7fd1d0fc93ee6106f37ac81c08"
-fingerprint: "03ccc7d88933d5c916d4fdb4a2e0732c59079f7fd1d0fc93ee6106f37ac81c08"
+view_fingerprint: "df07253bfded1eb6d892b40b0bdf758065366997fcf819aa65ce8b70455929bc"
+fingerprint: "df07253bfded1eb6d892b40b0bdf758065366997fcf819aa65ce8b70455929bc"
 ---
 
 # Module Card: tests
@@ -226,6 +227,7 @@ tests/test_performance_baseline.py
 tests/test_project_structure.py
 tests/test_python_adapter_compat.py
 tests/test_python_audit_regression.py
+tests/test_python_contract_source_recognition.py
 tests/test_python_ddt_regression.py
 tests/test_release_packaging.py
 tests/test_repair_guidance.py
@@ -729,6 +731,7 @@ tests/test_workspace_paths.py
 | tests.test_contract_impact.test_to_dict_symbol_hits_cli_json_output | tests/test_contract_impact.py | unknown | standard |
 | tests.test_contract_impact.test_write_function_hits_file_write_target_and_writes_files | tests/test_contract_impact.py | unknown | standard |
 | tests.test_contract_presence._fc | tests/test_contract_presence.py | unknown | standard |
+| tests.test_contract_presence.test_behavior_only_docstring_counts_as_contract_for_required_target | tests/test_contract_presence.py | unknown | standard |
 | tests.test_contract_presence.test_private_light_helper_without_docstring_is_skippable | tests/test_contract_presence.py | unknown | standard |
 | tests.test_contract_presence.test_public_without_docstring_is_contract_gap_required | tests/test_contract_presence.py | unknown | standard |
 | tests.test_contract_presence.test_strict_without_docstring_is_contract_gap_required | tests/test_contract_presence.py | unknown | standard |
@@ -1032,6 +1035,14 @@ tests/test_workspace_paths.py
 | tests.test_python_adapter_compat.test_target_id_uses_python_file_symbol_qualified_name_rule | tests/test_python_adapter_compat.py | unknown | standard |
 | tests.test_python_audit_regression.test_python_semantic_audit_mismatch_mapping_unchanged | tests/test_python_audit_regression.py | unknown | standard |
 | tests.test_python_audit_regression.test_python_semantic_audit_still_calls_provider_and_returns_ok | tests/test_python_audit_regression.py | unknown | standard |
+| tests.test_python_contract_source_recognition._empty_ddt_report | tests/test_python_contract_source_recognition.py | unknown | standard |
+| tests.test_python_contract_source_recognition._no_contract_impact_report | tests/test_python_contract_source_recognition.py | unknown | standard |
+| tests.test_python_contract_source_recognition._write_file | tests/test_python_contract_source_recognition.py | unknown | standard |
+| tests.test_python_contract_source_recognition._write_workspace_config | tests/test_python_contract_source_recognition.py | unknown | standard |
+| tests.test_python_contract_source_recognition.test_behavior_only_docstring_is_present_in_readonly_index_for_required_python_target | tests/test_python_contract_source_recognition.py | unknown | standard |
+| tests.test_python_contract_source_recognition.test_checkpoint_full_json_exposes_python_contract_source_fingerprint | tests/test_python_contract_source_recognition.py | unknown | standard |
+| tests.test_python_contract_source_recognition.test_python_behavior_docstring_change_is_not_false_drift | tests/test_python_contract_source_recognition.py | unknown | standard |
+| tests.test_python_contract_source_recognition.test_python_db_readonly_fallback_keeps_contract_source_metadata | tests/test_python_contract_source_recognition.py | unknown | standard |
 | tests.test_python_ddt_regression._write | tests/test_python_ddt_regression.py | unknown | standard |
 | tests.test_python_ddt_regression.test_python_ddt_strict_forbids_latest_and_strict_version_stays_valid | tests/test_python_ddt_regression.py | unknown | standard |
 | tests.test_python_ddt_regression.test_typescript_binding_is_advisory_and_does_not_change_python_rules | tests/test_python_ddt_regression.py | unknown | standard |
@@ -1368,6 +1379,7 @@ tests/test_performance_baseline.py
 tests/test_project_structure.py
 tests/test_python_adapter_compat.py
 tests/test_python_audit_regression.py
+tests/test_python_contract_source_recognition.py
 tests/test_python_ddt_regression.py
 tests/test_release_packaging.py
 tests/test_repair_guidance.py

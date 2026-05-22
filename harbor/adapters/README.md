@@ -31,7 +31,7 @@
 | harbor.adapters.typescript.public_boundary._confidence_sort_key | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._configured_entrypoint_evidence | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._context_for | — | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
+| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取 Harbor 契约区文本（标准段落 + `@harbor.*` tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._contract_hash_for_sources | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution._dedupe_paths | — | standard | ⚪ Missing |

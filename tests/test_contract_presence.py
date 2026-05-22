@@ -53,3 +53,17 @@ def test_to_dict_like_without_docstring_is_required():
     res = evaluate_contract_presence(fc, "harbor/core/x.py")
     assert res.required is True
     assert res.presence == "missing"
+
+
+def test_behavior_only_docstring_counts_as_contract_for_required_target():
+    fc = _fc(
+        name="main",
+        qualified_name="harbor.cli.main.main",
+        docstring="Execute CLI.\n\nBehavior:\n  - Dispatches commands.",
+        contract_hash="hash",
+        scope=None,
+        strictness=None,
+    )
+    res = evaluate_contract_presence(fc, "harbor/cli/main.py")
+    assert res.required is True
+    assert res.presence == "present"

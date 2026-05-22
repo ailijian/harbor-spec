@@ -43,6 +43,19 @@ def contract_subject_to_index_entry(subject: ContractSubject) -> Dict[str, Any]:
             "lineno": subject.lineno,
             "qualified_name": subject.qualified_name,
             "docstring_raw_hash": metadata.get("docstring_raw_hash"),
+            "target_id": subject.target_id,
+            "func_id": subject.legacy_func_id or subject.target_id,
+            "legacy_func_id": subject.legacy_func_id,
+            "language": subject.language,
+            "symbol_kind": subject.symbol_kind,
+            "file_path": subject.file_path,
+            "end_lineno": subject.end_lineno,
+            "visibility": subject.visibility,
+            "contract_presence": subject.contract_presence,
+            "contract_required": subject.contract_required,
+            "contract_source_kinds": _source_kinds(subject.contract_sources),
+            "contract_source_fingerprints": _source_fingerprints(subject.contract_sources),
+            "source_confidence_summary": _source_confidence_summary(subject.contract_sources),
         }
     else:
         meta = dict(metadata)

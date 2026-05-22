@@ -81,6 +81,34 @@ def _subject_source_confidence_summary(subject: object) -> Optional[str]:
     return strongest
 
 
+def _python_snapshot_item(
+    contract: object,
+    *,
+    file_path: str,
+    body_hash: str,
+    presence: object,
+    subject: object,
+) -> Dict[str, Any]:
+    return {
+        "id": str(getattr(contract, "id", "") or ""),
+        "name": str(getattr(contract, "name", "") or ""),
+        "file_path": file_path,
+        "target_id": str(getattr(subject, "target_id", "") or ""),
+        "func_id": str(getattr(contract, "id", "") or ""),
+        "language": "python",
+        "symbol_kind": str(getattr(subject, "symbol_kind", "") or ""),
+        "adapter": "python",
+        "body_hash": body_hash,
+        "contract_hash": str(getattr(contract, "contract_hash", "") or ""),
+        "contract_presence": str(getattr(presence, "presence", "") or "missing"),
+        "contract_required": bool(getattr(presence, "required", False)),
+        "contract_reason": str(getattr(presence, "reason", "") or ""),
+        "contract_source_kinds": _subject_source_kinds(subject),
+        "contract_source_fingerprints": _subject_source_fingerprints(subject),
+        "source_confidence_summary": _subject_source_confidence_summary(subject),
+    }
+
+
 @dataclass
 class StatusReport:
     """`SyncEngine.check_status()` 的聚合结果。
@@ -132,6 +160,17 @@ class SyncEngine:
     ) -> StatusReport:
         """对比缓存索引与当前代码，输出 Harbor 上下文状态。
 
+        Behavior:
+          - Compares current source-derived snapshot items against runtime cache
+            or accepted baseline items using normalized `body_hash` and
+            `contract_hash` values.
+          - Preserves Python and TypeScript additive contract-source metadata in
+            snapshot/status items so checkpoint full JSON can expose current
+            fingerprints for investigation.
+          - Treats contract-source absence as `contract_gap` /
+            `skipped_no_contract`, and only reports drift when a comparable
+            contract remains static while the implementation body changes.
+
         功能:
           - 基于 HarborDB 快照或显式传入的 accepted baseline artifact 快照进行比对
             （初始化阶段会尝试从 `.harbor/cache/l3_index.json` 迁移旧索引）。
@@ -139,6 +178,9 @@ class SyncEngine:
             缺失或非法 artifact 由 CLI 层单独归类，不回退到 runtime cache。
           - 通过 AdapterRegistry 的启用语言门控获取待扫描文件，按语言收集 Python / TypeScript 快照项。
           - Python 路径实时解析 `code_roots` 下源码并计算 `body_hash` 与 `contract_hash`。
+          - Python checkpoint snapshot 会保留 additive contract-source explainability，
+            包括 `contract_source_kinds` / `contract_source_fingerprints` /
+            `source_confidence_summary`，便于 full JSON 排障。
           - TypeScript 路径收集 additive snapshot metadata（如 `target_id`、`language`、`symbol_kind`、
             `contract_source_*` 以及 v1.4.3 的 `public_boundary_*` /
             `boundary_preset_mode`），并纳入统一 snapshot / explainability 保留路径。
@@ -286,23 +328,24 @@ class SyncEngine:
                 node = find_function_node(source, fc.lineno, fc.name)
                 body_hash = compute_body_hash(source, node) if node else ""
                 presence = evaluate_contract_presence(fc, fp)
-                new_items[fc.id] = {
-                    "id": fc.id,
-                    "name": fc.name,
-                    "body_hash": body_hash,
-                    "contract_hash": fc.contract_hash,
-                    "contract_presence": presence.presence,
-                    "contract_required": presence.required,
-                    "contract_reason": presence.reason,
-                }
+                fc.contract_presence = presence.presence
+                fc.contract_required = presence.required
+                subject = function_contract_to_subject(fc, fp)
+                new_items[fc.id] = _python_snapshot_item(
+                    fc,
+                    file_path=fp,
+                    body_hash=body_hash,
+                    presence=presence,
+                    subject=subject,
+                )
             old_items = {it["id"]: it for it in self.db.get_file_entries(fp)}
             all_ids = set(old_items.keys()) | set(new_items.keys())
             for id_ in sorted(all_ids):
                 c = old_items.get(id_)
                 n = new_items.get(id_)
                 if c and n:
-                    body_changed = (c.get("body_hash") != n.get("body_hash"))
-                    contract_changed_flag = (c.get("contract_hash") != n.get("contract_hash"))
+                    body_changed = str(c.get("body_hash") or "") != str(n.get("body_hash") or "")
+                    contract_changed_flag = str(c.get("contract_hash") or "") != str(n.get("contract_hash") or "")
                     # Preserve accepted baseline semantics across fresh clones/worktrees:
                     # if implementation and contract hashes are unchanged, do not
                     # re-surface historical contract gaps purely because mtime changed.
@@ -311,10 +354,8 @@ class SyncEngine:
                     presence = str(n.get("contract_presence") or "present")
                     if presence == "malformed":
                         contract_parse_error.append(
-                            StatusEntry(
-                                id=id_,
-                                name=n.get("name", ""),
-                                file_path=fp,
+                            self._status_entry_from_snapshot_item(
+                                n,
                                 change_type="Contract Parse Error",
                                 details=str(n.get("contract_reason") or "Contract source malformed"),
                             )
@@ -324,39 +365,33 @@ class SyncEngine:
                         required = bool(n.get("contract_required"))
                         if required:
                             contract_gap.append(
-                                StatusEntry(
-                                    id=id_,
-                                    name=n.get("name", ""),
-                                    file_path=fp,
+                                self._status_entry_from_snapshot_item(
+                                    n,
                                     change_type="Contract Gap",
                                     details="No contract source found for required target",
                                 )
                             )
                         else:
                             skipped_no_contract.append(
-                                StatusEntry(
-                                    id=id_,
-                                    name=n.get("name", ""),
-                                    file_path=fp,
+                                self._status_entry_from_snapshot_item(
+                                    n,
                                     change_type="Skipped No Contract",
                                     details="No contract required for this target",
                                 )
                             )
                         continue
                     if body_changed and not contract_changed_flag:
-                        drift.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=fp, change_type="Drift", details="Body changed, Contract static"))
+                        drift.append(self._status_entry_from_snapshot_item(n, change_type="Drift", details="Body changed, Contract static"))
                     elif body_changed and contract_changed_flag:
-                        modified.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=fp, change_type="Modified", details="Body + Contract changed"))
+                        modified.append(self._status_entry_from_snapshot_item(n, change_type="Modified", details="Body + Contract changed"))
                     elif (not body_changed) and contract_changed_flag:
-                        contract_changed.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=fp, change_type="Contract Changed", details="Contract updated"))
+                        contract_changed.append(self._status_entry_from_snapshot_item(n, change_type="Contract Changed", details="Contract updated"))
                 elif n and not c:
                     presence = str(n.get("contract_presence") or "present")
                     if presence == "malformed":
                         contract_parse_error.append(
-                            StatusEntry(
-                                id=id_,
-                                name=n.get("name", ""),
-                                file_path=fp,
+                            self._status_entry_from_snapshot_item(
+                                n,
                                 change_type="Contract Parse Error",
                                 details=str(n.get("contract_reason") or "Contract source malformed"),
                             )
@@ -365,16 +400,14 @@ class SyncEngine:
                         required = bool(n.get("contract_required"))
                         target = contract_gap if required else skipped_no_contract
                         target.append(
-                            StatusEntry(
-                                id=id_,
-                                name=n.get("name", ""),
-                                file_path=fp,
+                            self._status_entry_from_snapshot_item(
+                                n,
                                 change_type="Contract Gap" if required else "Skipped No Contract",
                                 details="No contract source found for required target" if required else "No contract required for this target",
                             )
                         )
                     else:
-                        untracked.append(StatusEntry(id=id_, name=n.get("name", ""), file_path=fp, change_type="Untracked", details="New function"))
+                        untracked.append(self._status_entry_from_snapshot_item(n, change_type="Untracked", details="New function"))
                 elif c and not n:
                     missing.append(StatusEntry(id=id_, name=c.get("meta", {}).get("name", ""), file_path=fp, change_type="Missing", details="Function removed"))
 
@@ -624,21 +657,13 @@ class SyncEngine:
             contract.contract_presence = presence.presence
             contract.contract_required = presence.required
             subject = function_contract_to_subject(contract, file_path)
-            items[contract.id] = {
-                "id": contract.id,
-                "name": contract.name,
-                "file_path": file_path,
-                "target_id": subject.target_id,
-                "func_id": contract.id,
-                "language": "python",
-                "symbol_kind": subject.symbol_kind,
-                "adapter": "python",
-                "body_hash": body_hash,
-                "contract_hash": str(contract.contract_hash or ""),
-                "contract_presence": presence.presence,
-                "contract_required": bool(presence.required),
-                "contract_reason": presence.reason,
-            }
+            items[contract.id] = _python_snapshot_item(
+                contract,
+                file_path=file_path,
+                body_hash=body_hash,
+                presence=presence,
+                subject=subject,
+            )
         return items
 
     def _collect_typescript_snapshot_items(self, file_path: str) -> Dict[str, Dict[str, Any]]:

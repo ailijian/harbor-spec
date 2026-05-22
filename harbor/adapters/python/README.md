@@ -11,7 +11,7 @@
 
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
-| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
+| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取 Harbor 契约区文本（标准段落 + `@harbor.*` tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._docstring_hashes | 计算 Docstring 的 raw/contract 双哈希。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._extract_functions | 提取顶层函数与类方法的契约元数据。 | standard | ⚪ Missing |

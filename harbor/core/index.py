@@ -21,6 +21,7 @@ from harbor.adapters.typescript.adapter import TypeScriptAdapter
 from harbor.adapters.typescript.hashing import normalized_sha256
 from harbor.adapters.typescript.parser import TypeScriptLightweightParser
 from harbor.adapters.typescript.symbols import TypeScriptSymbol
+from harbor.core.contract_presence import evaluate_contract_presence
 from harbor.core.utils import (
     compute_body_hash,
     discover_indexable_files,
@@ -75,9 +76,18 @@ class ProgressEvent:
 def process_file_worker(fp: str) -> Tuple[str, float, List[Dict[str, Any]], Optional[str]]:
     """并行 Worker：解析并计算单文件条目。
 
+    Behavior:
+      - Chooses the Python or TypeScript adapter based on the source file suffix.
+      - Persists Python-side `contract_presence` / `contract_required` alongside
+        comparable hashes so readonly index snapshots keep unified contract
+        metadata for later checkpoint and generated-context consumers.
+      - Returns normalized entries without mutating caller-owned state.
+
     功能:
       - 读取 Python / TypeScript 源文件，并按文件语言选择对应 adapter。
       - Python 路径使用 `PythonAdapter.parse_file` 提取契约，查找函数节点并计算 `body_hash`。
+      - Python 路径会同步评估 `contract_presence` / `contract_required`，确保统一持久化条目
+        能保留契约存在性与 source metadata。
       - TypeScript 路径使用 `TypeScriptAdapter.parse_file` 提取 ContractSubject，并转换为统一 index entry。
       - 产出可直接写入 HarborDB / 缓存快照的 normalized entry 列表，作为 generalized persistence 的统一入口。
 
@@ -112,6 +122,9 @@ def process_file_worker(fp: str) -> Tuple[str, float, List[Dict[str, Any]], Opti
         for fc in adapter.parse_file(fp):
             node = find_function_node(source, fc.lineno, fc.name)
             body_hash = compute_body_hash(source, node) if node else ""
+            presence = evaluate_contract_presence(fc, fp)
+            fc.contract_presence = presence.presence
+            fc.contract_required = presence.required
             items.append(
                 function_contract_to_index_entry(
                     fc,

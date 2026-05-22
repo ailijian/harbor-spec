@@ -8,6 +8,26 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union, Literal
 
 
+_CONTRACT_SECTION_HEADERS = {
+    "why:",
+    "when:",
+    "behavior:",
+    "invariants:",
+    "args:",
+    "returns:",
+    "raises:",
+    "cli args / flags:",
+    "exit behavior:",
+    "output contract:",
+    "file write targets:",
+    "rejected paths / safety boundaries:",
+    "non-interactive behavior:",
+    "side effects:",
+    "idempotency:",
+    "security:",
+}
+
+
 @dataclass
 class FunctionContract:
     id: str
@@ -35,7 +55,9 @@ class PythonAdapter:
         功能:
           - 读取并解析 Python 源文件的 AST。
           - 提取所有顶层函数与类方法的名称、签名哈希与 Docstring 双哈希。
-          - 识别 Docstring 中的 `@harbor.*` 标签与契约区 (Args/Returns/Raises) 文本。
+          - 识别 Docstring 中的 `@harbor.*` 标签与 Harbor 契约段落，
+            包括 `Behavior`、`Args`、`Returns`、`Raises`、`Side Effects`、
+            `Idempotency`、`Security` 以及 CLI / 输出 / 写入相关段落。
 
         使用场景:
           - Harbor 索引构建（Phase 1）基座；为 `build-index` 提供 L3 解析能力。
@@ -185,7 +207,13 @@ class PythonAdapter:
         return raw, contract
 
     def _contract_area(self, doc: str) -> str:
-        """提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。
+        """提取 Harbor 契约区文本（标准段落 + `@harbor.*` tags）。找不到则返回空串。
+
+        Behavior:
+          - Collects Harbor-recognized contract sections such as `Behavior`,
+            `Args`, `Returns`, `Raises`, `Side Effects`, `Idempotency`,
+            `Security`, and CLI / output / file-write sections.
+          - Preserves `@harbor.*` tags as part of the comparable contract text.
 
         @harbor.scope: internal
         @harbor.l3_strictness: standard
@@ -199,13 +227,12 @@ class PythonAdapter:
         lines = doc.split("\n")
         captured: List[str] = []
         capturing = False
-        target_headers = {"Args:", "Returns:", "Raises:"}
         for i, line in enumerate(lines):
             s = line.strip()
             if s.startswith("@harbor."):
                 captured.append(s)
                 continue
-            if s in target_headers:
+            if s.lower() in _CONTRACT_SECTION_HEADERS:
                 capturing = True
                 captured.append(s)
                 continue

@@ -46,6 +46,7 @@
 | tests.test_typescript_checkpoint_ci._empty_contract_report | — | standard | ⚪ Missing |
 | tests.test_typescript_ddt_preview._empty_contract_report | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries._empty_contract_report | — | standard | ⚪ Missing |
+| tests.test_python_contract_source_recognition._empty_ddt_report | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_preview._empty_ddt_report | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._empty_ddt_report | — | standard | ⚪ Missing |
 | tests.test_typescript_ddt_preview._empty_ddt_report | — | standard | ⚪ Missing |
@@ -105,6 +106,7 @@
 | tests.test_log_draft_cli._isolate_workspace | — | standard | ⚪ Missing |
 | tests.test_log_write_from_draft._isolate_workspace | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths._month_pair | — | standard | ⚪ Missing |
+| tests.test_python_contract_source_recognition._no_contract_impact_report | — | standard | ⚪ Missing |
 | tests.test_drafting_json_parse._parse | — | standard | ⚪ Missing |
 | tests.test_cli_doctor._pass_report | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci._patch_checkpoint_inputs | — | standard | ⚪ Missing |
@@ -183,6 +185,7 @@
 | tests.test_sync_engine_registry_integration._write_config | — | standard | ⚪ Missing |
 | tests.test_typescript_checkpoint_ci._write_config | — | standard | ⚪ Missing |
 | tests.test_index_builder_registry_integration._write_file | — | standard | ⚪ Missing |
+| tests.test_python_contract_source_recognition._write_file | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule._write_index | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_batch._write_index | — | standard | ⚪ Missing |
 | tests.test_cli_module_capsule_stale._write_index | — | standard | ⚪ Missing |
@@ -217,6 +220,7 @@
 | tests.test_cli_module_capsule_batch._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_cli_project_structure._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_diary_workspace_paths._write_workspace_config | — | standard | ⚪ Missing |
+| tests.test_python_contract_source_recognition._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_workspace_inspect._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_workspace_migrate._write_workspace_config | — | standard | ⚪ Missing |
 | tests.test_cli_workspace_inspect._write_workspace_fixture | — | standard | ⚪ Missing |
@@ -296,6 +300,8 @@
 | tests.test_log_draft.test_auto_discovery_skips_non_utf8_reports | — | standard | ⚪ Missing |
 | tests.test_change_window_snapshot.test_bad_json_snapshot_is_skipped_with_warning | — | standard | ⚪ Missing |
 | tests.test_log_draft.test_bad_snapshot_json_is_skipped_without_crashing | — | standard | ⚪ Missing |
+| tests.test_contract_presence.test_behavior_only_docstring_counts_as_contract_for_required_target | — | standard | ⚪ Missing |
+| tests.test_python_contract_source_recognition.test_behavior_only_docstring_is_present_in_readonly_index_for_required_python_target | — | standard | ⚪ Missing |
 | tests.test_typescript_adapter_mvp.test_body_only_change_does_not_change_typescript_contract_hash | — | standard | ⚪ Missing |
 | tests.test_typescript_boundary_resolution_paths.test_boundary_resolution_supports_index_fallback_and_tsconfig_paths | — | standard | ⚪ Missing |
 | tests.test_baseline_artifact.test_build_checkpoint_baseline_artifact_rejects_duplicate_target_ids | — | standard | ⚪ Missing |
@@ -359,6 +365,7 @@
 | tests.test_cli_v2.test_checkpoint_does_not_trigger_semantic_audit | — | standard | ⚪ Missing |
 | tests.test_cli_i18n.test_checkpoint_format_error_uses_zh_i18n | — | standard | ⚪ Missing |
 | tests.test_checkpoint_ci.test_checkpoint_format_json_requires_ci_mode | — | standard | ⚪ Missing |
+| tests.test_python_contract_source_recognition.test_checkpoint_full_json_exposes_python_contract_source_fingerprint | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_checkpoint_json_additive_shape_is_stable_for_golden_assert | — | standard | ⚪ Missing |
 | tests.test_semantic_audit_preview.test_checkpoint_json_adds_semantic_audit_preview_without_changing_exit_code | — | standard | ⚪ Missing |
 | tests.test_typescript_ddt_preview.test_checkpoint_json_adds_typescript_ddt_preview_without_polluting_ci_failures | — | standard | ⚪ Missing |
@@ -807,8 +814,10 @@
 | tests.test_init_wizard.test_pytest_env_does_not_try_arrow_selector | — | standard | ⚪ Missing |
 | tests.test_python_adapter_compat.test_python_adapter_parse_file_behavior_unchanged | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_python_audit_provider_behavior_unchanged | — | standard | ⚪ Missing |
+| tests.test_python_contract_source_recognition.test_python_behavior_docstring_change_is_not_false_drift | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_python_checkpoint_json_keeps_legacy_fields_and_adds_identity_fields | — | standard | ⚪ Missing |
 | tests.test_checkpoint_json_additive_compat.test_python_checkpoint_pass_fail_semantics_unchanged | — | standard | ⚪ Missing |
+| tests.test_python_contract_source_recognition.test_python_db_readonly_fallback_keeps_contract_source_metadata | — | standard | ⚪ Missing |
 | tests.test_release_packaging.test_python_ddt_reconciliation_report_is_present_and_explicit | — | standard | ⚪ Missing |
 | tests.test_typescript_not_supported_boundaries.test_python_ddt_strict_and_latest_rules_unchanged | — | standard | ⚪ Missing |
 | tests.test_python_ddt_regression.test_python_ddt_strict_forbids_latest_and_strict_version_stays_valid | — | standard | ⚪ Missing |

@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/adapters/python"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T07:09:11Z"
 generation_command: "harbor module seal harbor/adapters/python --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -12,11 +12,11 @@ source_paths:
   - "harbor/adapters/python/__init__.py"
   - "harbor/adapters/python/compat.py"
   - "harbor/adapters/python/parser.py"
-source_fingerprint: "sha256:81cdd3c9b7f3cf968e7bc17cebd7bd88d79ba29b3e4020915311a8b3c46b3206"
+source_fingerprint: "sha256:bd7cc0652e5fa35029e33fbae3acf5d6b824ad752c4747ed0754e41e2a26b962"
 contract_fingerprint: "sha256:4776bd421c93a3c9be1aa666ef36a76fa41db4698842de438752c34c21873a33"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "f8986816ef41c8a6616d443837d33cc95e8b1638e1c4e4e595b5446aa1c2db12"
-fingerprint: "f8986816ef41c8a6616d443837d33cc95e8b1638e1c4e4e595b5446aa1c2db12"
+view_fingerprint: "29f5b8bdc2511ccaee46ee9ec1e99da0852c3fa93fecb6c9614bf416727d510f"
+fingerprint: "29f5b8bdc2511ccaee46ee9ec1e99da0852c3fa93fecb6c9614bf416727d510f"
 ---
 
 # Module Card: harbor/adapters/python
@@ -63,6 +63,7 @@ harbor/adapters/python/parser.py
 tests/test_checkpoint_json_additive_compat.py
 tests/test_python_adapter_compat.py
 tests/test_python_audit_regression.py
+tests/test_python_contract_source_recognition.py
 tests/test_python_ddt_regression.py
 ```
 

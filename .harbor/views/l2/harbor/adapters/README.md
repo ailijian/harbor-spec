@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "l2_readme"
 module: "harbor/adapters"
-generated_at: "2026-05-15T17:40:36Z"
+generated_at: "2026-05-22T07:09:02Z"
 generation_command: "harbor docs --module harbor/adapters --write"
 stale_policy: "advisory"
 source_path_count: 14
@@ -23,7 +23,7 @@ source_paths:
   - "harbor/adapters/typescript/public_boundary.py"
   - "harbor/adapters/typescript/resolution.py"
   - "harbor/adapters/typescript/symbols.py"
-source_fingerprint: "sha256:6a433baa93a5c80949db63d102714fe56d974b01f6fb266fa5ae72915697786d"
+source_fingerprint: "sha256:09fd790eec8694f7cdb9e90f189a170e5e1cb14e74421ed2bc06c251af868c9e"
 contract_fingerprint: "sha256:e430565259a391f812335116964ee47f46a3f524daee48a9d310845ab7fcb33a"
 generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08553e55bd0e7e9ee"
 ---
@@ -61,7 +61,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.adapters.typescript.public_boundary._confidence_sort_key | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._configured_entrypoint_evidence | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._context_for | — | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
+| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取 Harbor 契约区文本（标准段落 + `@harbor.*` tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._contract_hash_for_sources | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution._dedupe_paths | — | standard | ⚪ Missing |

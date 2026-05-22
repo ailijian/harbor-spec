@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "l2_readme"
 module: "harbor/core"
-generated_at: "2026-05-15T17:40:41Z"
+generated_at: "2026-05-22T07:09:08Z"
 generation_command: "harbor docs --module harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 41
@@ -50,8 +50,8 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:5cb6480068d17a9c1295306d1966e9561a53505689149da2ce7c5640a3cbc8d8"
-contract_fingerprint: "sha256:0699b800cc9e494fa4c3aad142969e8f2f24ce065adfa7e70e0791c60e5d4ab0"
+source_fingerprint: "sha256:8954d1653f562eed6d6822b8871e12e5f49643fb3be0f75fd47d41485945b0a0"
+contract_fingerprint: "sha256:a8364cfb43388592bfbc1b91c6f240b4a62a8283c0bcc36d1d46f40c33871adc"
 generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08553e55bd0e7e9ee"
 ---
 
@@ -401,6 +401,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_cli_input_path | Normalize repo-relative CLI paths so Windows separators s... | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
+| harbor.core.contract_presence._normalize_contract_path | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._normalize_contract_presence | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
@@ -443,6 +444,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.core.init_wizard.InitWizard._print | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |
 | harbor.core.performance_baseline._pushd | — | standard | ⚪ Missing |
+| harbor.core.sync._python_snapshot_item | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_draft_source_file | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._read_env_keys | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_last_log_marker | — | standard | ⚪ Missing |

@@ -344,6 +344,7 @@
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_cli_input_path | Normalize repo-relative CLI paths so Windows separators s... | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
+| harbor.core.contract_presence._normalize_contract_path | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._normalize_contract_presence | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
 | harbor.core.init.ProjectDetector._normalize_glob | — | standard | ⚪ Missing |
@@ -386,6 +387,7 @@
 | harbor.core.init_wizard.InitWizard._print | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |
 | harbor.core.performance_baseline._pushd | — | standard | ⚪ Missing |
+| harbor.core.sync._python_snapshot_item | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_draft_source_file | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._read_env_keys | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_last_log_marker | — | standard | ⚪ Missing |

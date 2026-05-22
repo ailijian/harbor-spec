@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Literal
 
 from harbor.adapters.python.parser import FunctionContract
@@ -9,6 +10,25 @@ from harbor.adapters.python.parser import FunctionContract
 
 _TO_DICT_RE = re.compile(r"(^|[_\.])(to_dict|report_to_dict)$", re.IGNORECASE)
 _WRITE_RE = re.compile(r"(^|[_\.])write_[a-z0-9_]*$", re.IGNORECASE)
+_CONTRACT_DOC_TOKENS = (
+    "why:",
+    "when:",
+    "behavior:",
+    "invariants:",
+    "args:",
+    "returns:",
+    "raises:",
+    "cli args / flags:",
+    "exit behavior:",
+    "output contract:",
+    "file write targets:",
+    "rejected paths / safety boundaries:",
+    "non-interactive behavior:",
+    "side effects:",
+    "idempotency:",
+    "security:",
+    "@harbor.",
+)
 
 
 @dataclass
@@ -23,7 +43,7 @@ def is_contract_required(contract: FunctionContract, file_path: str) -> bool:
     name = str(getattr(contract, "name", "") or "").strip()
     scope = str(getattr(contract, "scope", "") or "").strip().lower()
     strictness = str(getattr(contract, "strictness", "") or "").strip().lower()
-    rel = str(file_path or "").replace("\\", "/").strip().lower()
+    rel = _normalize_contract_path(file_path)
 
     # Internal helpers and test utilities are opt-out by default.
     if rel.startswith("tests/") or "/tests/" in rel:
@@ -97,5 +117,17 @@ def evaluate_contract_presence(contract: FunctionContract, file_path: str) -> Co
 
 def _looks_like_contract_doc(doc: str) -> bool:
     text = (doc or "").lower()
-    return any(token in text for token in ("args:", "returns:", "raises:", "@harbor."))
+    return any(token in text for token in _CONTRACT_DOC_TOKENS)
 
+
+def _normalize_contract_path(file_path: str) -> str:
+    raw = str(file_path or "").replace("\\", "/").strip()
+    if not raw:
+        return ""
+    candidate = Path(raw)
+    if candidate.is_absolute():
+        try:
+            raw = candidate.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except Exception:
+            raw = candidate.as_posix()
+    return raw.lower()

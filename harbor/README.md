@@ -216,7 +216,7 @@
 | harbor.cli.main._configure_windows_stdio | Apply a Windows CLI-wide UTF-8-first stdio strategy when ... | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._configured_entrypoint_evidence | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._context_for | — | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
+| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取 Harbor 契约区文本（标准段落 + `@harbor.*` tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._contract_hash_for_sources | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._current_file_path | — | standard | ⚪ Missing |
@@ -402,6 +402,7 @@
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_cli_input_path | Normalize repo-relative CLI paths so Windows separators s... | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
+| harbor.core.contract_presence._normalize_contract_path | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._normalize_contract_presence | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution._normalize_exports_block | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
@@ -462,6 +463,7 @@
 | harbor.core.init_wizard.InitWizard._print | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |
 | harbor.core.performance_baseline._pushd | — | standard | ⚪ Missing |
+| harbor.core.sync._python_snapshot_item | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_draft_source_file | — | standard | ⚪ Missing |
 | harbor.adapters.registry.AdapterRegistry._read_enabled_flag | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._read_env_keys | — | standard | ⚪ Missing |

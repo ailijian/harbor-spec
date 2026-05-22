@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "l2_readme"
 module: "harbor/adapters/python"
-generated_at: "2026-05-15T17:40:36Z"
+generated_at: "2026-05-22T07:09:03Z"
 generation_command: "harbor docs --module harbor/adapters/python --write"
 stale_policy: "advisory"
 source_path_count: 3
@@ -12,7 +12,7 @@ source_paths:
   - "harbor/adapters/python/__init__.py"
   - "harbor/adapters/python/compat.py"
   - "harbor/adapters/python/parser.py"
-source_fingerprint: "sha256:81cdd3c9b7f3cf968e7bc17cebd7bd88d79ba29b3e4020915311a8b3c46b3206"
+source_fingerprint: "sha256:bd7cc0652e5fa35029e33fbae3acf5d6b824ad752c4747ed0754e41e2a26b962"
 contract_fingerprint: "sha256:1b6c3d3b0bc1af1e4449b75f903247c8791b5f35f42330028c4176009a0a76c4"
 generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08553e55bd0e7e9ee"
 ---
@@ -30,7 +30,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 
 | Function | Summary | Strictness | DDT Status |
 |---|---|---|---|
-| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
+| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取 Harbor 契约区文本（标准段落 + `@harbor.*` tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._docstring_hashes | 计算 Docstring 的 raw/contract 双哈希。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._extract_functions | 提取顶层函数与类方法的契约元数据。 | standard | ⚪ Missing |

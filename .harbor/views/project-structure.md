@@ -2,10 +2,10 @@
 generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "project_structure"
-generated_at: "2026-05-15T18:58:48Z"
+generated_at: "2026-05-22T07:10:55Z"
 generation_command: "harbor project structure --write"
 stale_policy: "advisory"
-source_path_count: 175
+source_path_count: 176
 source_paths_truncated: true
 source_paths:
   - "harbor/__init__.py"
@@ -128,8 +128,8 @@ source_paths:
   - "tests/test_drafting_json_parse.py"
   - "tests/test_generated_verify.py"
   - "tests/test_gitignore_prune.py"
-source_fingerprint: "sha256:0f6a68459f829c95716e38ba442bc6d21021ed6c5ca1982f95540dc00a32f8f5"
-contract_fingerprint: "sha256:a33771d5bf0859efceb6eed457d695f1eab4546caa3f52d75a82c1ac9817d1b3"
+source_fingerprint: "sha256:ad148e725a9912bcd024a49007bdeae9852d2fa1274d5360471ec2e2dae94806"
+contract_fingerprint: "sha256:d8017b770a61bcaa0574378a4d530071db85fc5d64a83ea155f0f6c560f381ab"
 generator_fingerprint: "sha256:7cb91b5679a749a52609ee0fa3a3dd00d7c00ee2ec863c6a6bf002de3cde8266"
 ---
 
@@ -171,9 +171,9 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 | Area | Purpose | Discovered Files | Indexed Contracts |
 |---|---|---:|---:|
 | harbor/cli | CLI command parsing and workflow facade | 2 | 12 |
-| harbor/core | Core Harbor logic | 41 | 661 |
+| harbor/core | Core Harbor logic | 41 | 663 |
 | harbor/utils | Shared utilities | 3 | 3 |
-| tests | Test suite | 111 | 1024 |
+| tests | Test suite | 112 | 1033 |
 | harbor | Derived from indexed files under harbor. | 18 | 112 |
 
 ## Code Modules
@@ -192,7 +192,7 @@ Update the underlying code, contracts, schemas, tests, or Harbor metadata, then 
 
 | Area | Purpose | Key Files |
 |---|---|---|
-| tests | Test suite | tests/conftest.py, tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, ... (+108 more) |
+| tests | Test suite | tests/conftest.py, tests/fixtures_sqlite/sample.py, tests/core/test_index_sync_sqlite.py, ... (+109 more) |
 | tests/core | Core test suite | tests/core/test_index_sync_sqlite.py, tests/core/test_storage_migration.py |
 | tests/fixtures_sqlite | Test fixtures | tests/fixtures_sqlite/sample.py |
 

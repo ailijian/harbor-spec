@@ -153,21 +153,7 @@ def _load_existing_db_index(*, repo_root: Path) -> Dict[str, Any] | None:
         for fp, mtime in db.get_all_files():
             items = []
             for it in db.get_file_entries(fp):
-                meta = it.get("meta", {}) or {}
-                items.append(
-                    {
-                        "id": it.get("id"),
-                        "qualified_name": meta.get("qualified_name"),
-                        "name": meta.get("name"),
-                        "signature_hash": it.get("signature_hash"),
-                        "body_hash": it.get("body_hash"),
-                        "contract_hash": it.get("contract_hash"),
-                        "docstring_raw_hash": meta.get("docstring_raw_hash"),
-                        "scope": meta.get("scope"),
-                        "strictness": meta.get("strictness"),
-                        "lineno": meta.get("lineno"),
-                    }
-                )
+                items.append(index_entry_to_cache_item(it))
             files[fp] = {"mtime": mtime, "file_hash": "", "items": items}
         if not files:
             return None

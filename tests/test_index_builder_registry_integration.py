@@ -193,7 +193,24 @@ def test_build_keeps_python_entry_shape_stable(tmp_path: Path):
         "lineno",
         "qualified_name",
         "docstring_raw_hash",
+        "target_id",
+        "func_id",
+        "legacy_func_id",
+        "language",
+        "symbol_kind",
+        "file_path",
+        "end_lineno",
+        "visibility",
+        "contract_presence",
+        "contract_required",
+        "contract_source_kinds",
+        "contract_source_fingerprints",
+        "source_confidence_summary",
     }
+    assert entry["meta"]["contract_presence"] == "non_contract_doc"
+    assert entry["meta"]["contract_required"] is False
+    assert entry["meta"]["contract_source_kinds"] == ["docstring"]
+    assert len(entry["meta"]["contract_source_fingerprints"]) == 1
 
 
 def test_typescript_enabled_persists_ts_subjects_without_breaking_python_index(tmp_path: Path):

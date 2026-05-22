@@ -3,10 +3,10 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "review_checklist"
 module: "tests"
-generated_at: "2026-05-15T18:58:51Z"
+generated_at: "2026-05-22T07:09:11Z"
 generation_command: "harbor module seal tests --write"
 stale_policy: "advisory"
-source_path_count: 111
+source_path_count: 112
 source_paths_truncated: false
 source_paths:
   - "tests/__init__.py"
@@ -90,6 +90,7 @@ source_paths:
   - "tests/test_project_structure.py"
   - "tests/test_python_adapter_compat.py"
   - "tests/test_python_audit_regression.py"
+  - "tests/test_python_contract_source_recognition.py"
   - "tests/test_python_ddt_regression.py"
   - "tests/test_release_packaging.py"
   - "tests/test_repair_guidance.py"
@@ -120,8 +121,8 @@ source_paths:
   - "tests/test_workspace_inspect.py"
   - "tests/test_workspace_migrate.py"
   - "tests/test_workspace_paths.py"
-source_fingerprint: "sha256:757f074756d6d10b4f28dc23cb50bab087511dee327c0c4b3dd4b45d3179acf5"
-contract_fingerprint: "sha256:21ea3a9645429a7f63cc4ed2de802cd2dad64871a8eefca81418d501b5f0342d"
+source_fingerprint: "sha256:c80b99cd8aff8ca5ce798a514243875fa4e52382a5d296b986e4ced08473ea1a"
+contract_fingerprint: "sha256:b200faca8ee9e363676ad33f30ab55e52ce7a75d0c5f2ea0daf69ddc7c437427"
 generator_fingerprint: "sha256:eadcf0a1aa08dab7adb1a4c205d99d38bfe01803de18aac5ece490c3f07ecb13"
 ---
 

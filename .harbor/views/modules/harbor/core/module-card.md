@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "module_card"
 module: "harbor/core"
-generated_at: "2026-05-15T17:41:00Z"
+generated_at: "2026-05-22T07:09:11Z"
 generation_command: "harbor module seal harbor/core --write"
 stale_policy: "advisory"
 source_path_count: 41
@@ -50,11 +50,11 @@ source_paths:
   - "harbor/core/workspace.py"
   - "harbor/core/workspace_inspect.py"
   - "harbor/core/workspace_migrate.py"
-source_fingerprint: "sha256:5cb6480068d17a9c1295306d1966e9561a53505689149da2ce7c5640a3cbc8d8"
-contract_fingerprint: "sha256:4b6accafa988ca672bd9fa7f2fa0446a1d3575702175c258469e95edcd6712ad"
+source_fingerprint: "sha256:8954d1653f562eed6d6822b8871e12e5f49643fb3be0f75fd47d41485945b0a0"
+contract_fingerprint: "sha256:39e9a53affb470a92199b35dd5357c05d7a2fee8847b6c37a721a8e399eb048f"
 generator_fingerprint: "sha256:8ccba1fca6f0b8682e7fdd6d2b90ebbf2d4aaa8903e38a021889c4fbadc8583e"
-view_fingerprint: "3bdea6590a7f0683053edd0045552303235e0bc5aae4cbf479ea4de31cf38bd0"
-fingerprint: "3bdea6590a7f0683053edd0045552303235e0bc5aae4cbf479ea4de31cf38bd0"
+view_fingerprint: "f7aed6e70b7a784c8fa5fb6ff7e6c8591a9db16f2cd60b78dfc923acab9606e4"
+fingerprint: "f7aed6e70b7a784c8fa5fb6ff7e6c8591a9db16f2cd60b78dfc923acab9606e4"
 ---
 
 # Module Card: harbor/core
@@ -302,6 +302,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.contract_impact.contract_impact_report_to_dict | harbor/core/contract_impact.py | public | strict |
 | harbor.core.contract_impact.format_contract_impact_report | harbor/core/contract_impact.py | unknown | standard |
 | harbor.core.contract_presence._looks_like_contract_doc | harbor/core/contract_presence.py | unknown | standard |
+| harbor.core.contract_presence._normalize_contract_path | harbor/core/contract_presence.py | unknown | standard |
 | harbor.core.contract_presence.evaluate_contract_presence | harbor/core/contract_presence.py | unknown | standard |
 | harbor.core.contract_presence.is_contract_required | harbor/core/contract_presence.py | unknown | standard |
 | harbor.core.ddt.DDTBinding.to_verification_binding | harbor/core/ddt.py | public | strict |
@@ -711,6 +712,7 @@ harbor/core/workspace_migrate.py
 | harbor.core.sync.SyncEngine.adapter | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync.SyncEngine.check_status | harbor/core/sync.py | public | strict |
 | harbor.core.sync.SyncEngine.collect_current_snapshot | harbor/core/sync.py | unknown | standard |
+| harbor.core.sync._python_snapshot_item | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync._subject_source_confidence_summary | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync._subject_source_fingerprints | harbor/core/sync.py | unknown | standard |
 | harbor.core.sync._subject_source_kinds | harbor/core/sync.py | unknown | standard |

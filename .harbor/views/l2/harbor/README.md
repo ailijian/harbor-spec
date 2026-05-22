@@ -3,7 +3,7 @@ generated_by: "harbor-spec"
 harbor_version: "1.4.5"
 view_type: "l2_readme"
 module: "harbor"
-generated_at: "2026-05-15T17:40:35Z"
+generated_at: "2026-05-22T07:09:01Z"
 generation_command: "harbor docs --module harbor --write"
 stale_policy: "advisory"
 source_path_count: 64
@@ -73,8 +73,8 @@ source_paths:
   - "harbor/utils/__init__.py"
   - "harbor/utils/formatting.py"
   - "harbor/utils/i18n.py"
-source_fingerprint: "sha256:f789293797e041957758cb0dbb125e39c9fb9ef05e8c6abef92de3e60af92f91"
-contract_fingerprint: "sha256:32fa88926055244118be05a4bc4d0bcc860fccde0604a6ba8ffdb5f3b7b3256c"
+source_fingerprint: "sha256:9df244a41d82cda8aba5f91a34a75d01c69f9dbf74118c36840ffefd6cc6aeef"
+contract_fingerprint: "sha256:4385fce5abe45bea46c88787f3004a6a6020d78ea6ffff7d6523f53e3291688f"
 generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08553e55bd0e7e9ee"
 ---
 
@@ -296,7 +296,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.cli.main._configure_windows_stdio | Apply a Windows CLI-wide UTF-8-first stdio strategy when ... | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._configured_entrypoint_evidence | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution.TypeScriptBoundaryResolver._context_for | — | standard | ⚪ Missing |
-| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取契约区文本（Args/Returns/Raises + @harbor.* tags）。找不到则返回空串。 | standard | ⚪ Missing |
+| harbor.adapters.python.parser.PythonAdapter._contract_area | 提取 Harbor 契约区文本（标准段落 + `@harbor.*` tags）。找不到则返回空串。 | standard | ⚪ Missing |
 | harbor.adapters.python.parser.PythonAdapter._contract_from_function | 根据函数节点生成契约元数据。 | standard | ⚪ Missing |
 | harbor.adapters.typescript.adapter._contract_hash_for_sources | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._current_file_path | — | standard | ⚪ Missing |
@@ -482,6 +482,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.core.ci._normalize_checkpoint_key_path | — | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_cli_input_path | Normalize repo-relative CLI paths so Windows separators s... | standard | ⚪ Missing |
 | harbor.core.log_draft._normalize_contract_impact | — | standard | ⚪ Missing |
+| harbor.core.contract_presence._normalize_contract_path | — | standard | ⚪ Missing |
 | harbor.core.baseline_artifact._normalize_contract_presence | — | standard | ⚪ Missing |
 | harbor.adapters.typescript.resolution._normalize_exports_block | — | standard | ⚪ Missing |
 | harbor.core.diary.DiaryManager._normalize_for_hash | — | standard | ⚪ Missing |
@@ -542,6 +543,7 @@ generator_fingerprint: "sha256:68b2aca4bf5c13c668bc92889e1a0784af297a9177096fc08
 | harbor.core.init_wizard.InitWizard._print | — | standard | ⚪ Missing |
 | harbor.core.ci._push_status_failures | — | standard | ⚪ Missing |
 | harbor.core.performance_baseline._pushd | — | standard | ⚪ Missing |
+| harbor.core.sync._python_snapshot_item | — | standard | ⚪ Missing |
 | harbor.core.log_draft._read_draft_source_file | — | standard | ⚪ Missing |
 | harbor.adapters.registry.AdapterRegistry._read_enabled_flag | — | standard | ⚪ Missing |
 | harbor.core.init_wizard._read_env_keys | — | standard | ⚪ Missing |
